@@ -1,0 +1,7 @@
+rmsSlopeWin = 0.030000
+
+n = 2
+0 INTENSITY_AND_RATIO_ABOVE_THRESH 0.01 1.5 {}
+2 OST_END NaN NaN {}
+
+n = 0

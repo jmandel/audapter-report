@@ -1,4 +1,142 @@
 {
+ "fix-ost-f2": {
+  "regression": {
+   "fmtshift": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "fmtshift2d": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "passthru": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "pcf": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "pvoc": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "tdshift": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "target": {
+   "shippedBug": true,
+   "variantBug": false,
+   "shipped": "state 2 at 0.202/0.404/0.606 s, held 0.002/0.002/0.002 s; fix-ost-f1 alone: state 2 at 0.202/0.202/0.202 s, held 0.002/0.002/0.002 s",
+   "variant": "state 2 at 0.202/0.202/0.202 s, held 0.102/0.102/0.102 s; regression (no maxIOI, reloaded OST, 2 trials): bit-identical to shipped"
+  }
+ },
+ "fix-ost-f1": {
+  "regression": {
+   "fmtshift": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "fmtshift2d": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "passthru": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "pcf": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "pvoc": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "tdshift": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "target": {
+   "shippedBug": true,
+   "variantBug": false,
+   "shipped": "trial B state 2 at 0.504 s first, 1.722 s after A",
+   "variant": "trial B state 2 at 0.504 s first, 0.504 s after A"
+  }
+ },
+ "fix-i-01": {
+  "regression": {
+   "fmtshift": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "fmtshift2d": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "passthru": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "pcf": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "pvoc": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "tdshift": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "target": {
+   "shippedBug": true,
+   "variantBug": false,
+   "shipped": "5 s datapb, 12 s fb 2 trial: noise absent 5.02-10.00 s",
+   "variant": "5 s datapb: noise throughout; regression: 480000-sample datapb, 12 s fb 2 + fb 3 trials: 0 of 1152000 output samples differ from shipped"
+  }
+ },
  "fix-pt-5": {
   "regression": {
    "fmtshift": [
@@ -43,6 +181,98 @@
    "variantBug": false,
    "shipped": "0 st level +3.52 dB re bPitchShift = 0; step at 0 -> +2 st -1.43 dB; time-warp mode -3.03 dB",
    "variant": "0 st level -0.00 dB re bPitchShift = 0; step at 0 -> +2 st -1.43 dB; regression: time-warp mode (PCF warp, no shift) 0 of 67200 output samples differ from shipped"
+  }
+ },
+ "alt-f6": {
+  "regression": {
+   "fmtshift": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "fmtshift2d": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "passthru": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "pcf": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "pvoc": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "tdshift": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "target": {
+   "shippedBug": true,
+   "variantBug": false,
+   "shipped": "re-arms on re-entry: glide shifted 0.118-0.352, 0.876-1.200 s, dip 0.118-0.608, 0.624-1.202 s (= blab harness export)",
+   "variant": "alternative: glide shifted 0.118-0.352 s, dip 0.118-0.608 s (= upstream 2.1.5 harness export); field never left (f1min 0): 0 values differ from shipped (output/signalOut/sF1)"
+  }
+ },
+ "fix-i-02": {
+  "regression": {
+   "fmtshift": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "fmtshift2d": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "passthru": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "pcf": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "pvoc": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "tdshift": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "target": {
+   "shippedBug": true,
+   "variantBug": false,
+   "shipped": "mix 1.28 / -0.71 / 5.29 dB at dScale 1 / 0.795 / 1.587 (spread 6.00 dB); matches harness data.json to 2.2e-16 dB",
+   "variant": "mix 1.28 / 1.28 / 1.28 dB at dScale 1 / 0.795 / 1.587 (spread 0.00 dB); regression vs shipped: fb 5 at dScale 1 bit-identical, fb 2 bit-identical, fb 3 bit-identical, fb 4 bit-identical"
   }
  }
 }

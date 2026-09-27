@@ -1,0 +1,67 @@
+# Full finding card OST-F8. Rendered by build.py; see PLAN.md section 3 for the fields.
+# Note: setup/matters are raw HTML (not templated); expected/observed/numbers are templated and escaped (no HTML, {{}} = literal {}).
+id: OST-F8
+log: OST-F8
+notes: "notes/ost-pcf.md#f8"
+headline: "With the documented {} in field 5, blab's INTENSITY_AND_RATIO rules have no hold: state 2 starts 48 ms early, and a 20 ms click can trigger it"
+severity: med
+origin: blab
+origin_note: >
+  Blab-only. Modes 40 and 45 (INTENSITY_AND_RATIO_ABOVE/BELOW_THRESH), the prm3 column and the removal of the check that field 5 is {}
+  all came in blab commit 9039c07 ("New basic heuristics for Audapter (#2)", 2021). Upstream 2.1.5 rejects both the mode name and anything
+  but {} in field 5, so there is no upstream run; the origin is from reading the diff.
+status: [H, D]
+effect:
+  setup: >
+    OST: <code>0 INTENSITY_AND_RATIO_ABOVE_THRESH 0.01 1.5 <i>field 5</i></code> → <code>2 OST_END</code>, a fricative-onset
+    detector (smoothed RMS above 0.01 and pre-emphasised/plain RMS ratio above 1.5). Field 5 is either <code>0.05</code>
+    (the hold, as the code reads it) or <code>{}</code> (what the manual says field 5 must be, and what every example OST and
+    <code>gen_multi_pert_pcf.m</code> write). PCF: intensity +10 dB in state 2, so the onset of state 2 is audible. Inputs: a synthetic
+    "sa" (/s/ from 0.40 s, /a/ from 0.65 s), and the same with a 20 ms high-frequency click at 0.10 s, the kind of
+    transient a hold is there to reject.
+  expected: "State 2 begins after the condition has held for {hold_ms:.0f} ms ({hold_frames} frames in state 1): at {hold_state2_s:.3f} s, {hold_delay_ms:.0f} ms after the /s/ starts. The click enters state 1 and falls back to state 0."
+  observed: >
+    With {{}} the hold is 0 s: state 1 lasts {braces_frames} frame and state 2 begins at {braces_state2_s:.3f} s, {early_ms:.0f} ms earlier.
+    With the click, state 2 begins at {click_braces_state2_s:.3f} s, {click_lead_s:.2f} s before the word, so the whole utterance is played {int_db:g} dB louder.
+    In the first 55 ms of the /s/ the output is {early_s_gain_braces_db:+.1f} dB re the input with {{}} and {early_s_gain_hold_db:+.1f} dB with the hold.
+    Nothing is printed: the verbose load summary shows prm1 and prm2 only.
+  matters: >
+    An OST written the way the manual describes gets a detector with no debounce, and there is no warning. Onsets move earlier by the
+    whole intended hold, and any short transient (a click, a breath, a keyboard noise) that passes both thresholds for two frames can start
+    the perturbation. The same parsing change means that junk in field 5 is accepted without complaint for every mode, so a typo is silently ignored.
+  numbers:
+    - ["State 2 onset, field 5 = {hold_s:g} / {{}}", "{hold_state2_s:.3f} / {braces_state2_s:.3f} s"]
+    - ["Delay after /s/ onset, field 5 = {hold_s:g} / {{}}", "{hold_delay_ms:.0f} / {braces_delay_ms:.0f} ms"]
+    - ["Frames in state 1 (the hold), field 5 = {hold_s:g} / {{}}", "{hold_frames} / {braces_frames}"]
+    - ["With the click: state 2 onset, field 5 = {hold_s:g} / {{}}", "{click_hold_state2_s:.3f} / {click_braces_state2_s:.3f} s"]
+    - ["Output re input, first 55 ms of the /s/ (click trial), field 5 = {hold_s:g} / {{}}", "{early_s_gain_hold_db:+.1f} / {early_s_gain_braces_db:+.1f} dB"]
+sketch: ost_f8
+interactive:
+  status: planned
+  plan: >
+    type field 5 (<code>{}</code>, 0.02, 0.05, 0.1) and the click level, and see and hear when state 2 starts, on the released build and on one
+    that rejects a non-numeric field 5 for modes 40 and 45 at load.
+asset_dir: ost-f8
+audio:
+  - {file: input_click.wav, role: input}
+  - {file: output_click_hold.wav, role: expected}
+  - {file: output_click_braces.wav, role: observed}
+  - {file: output_braces.wav, role: observed}
+cause:
+  summary: >
+    Blab's two new modes need a third parameter, and they take it from field 5, the column the file format reserves for <code>{}</code>.
+    To allow that, the parser no longer checks field 5, and <code>atof("{}")</code> returns 0. With <code>minDurN = 0</code> the rule advances on the
+    second qualifying frame, so the hold disappears. The verbose printout never shows <code>prm3</code>, so nothing reveals it.
+  refs:
+    - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [228, 231], hl: [230], expect: "if (items.size() != 5)", note: "Only the field count is checked now; upstream also required field 5 to be <code>{}</code>."}
+    - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [247, 253], hl: [249], expect: "prm3[i0] = atof(items[4].c_str());", note: "<code>atof(\"{}\")</code> is 0, without an error. The verbose line prints prm1 and prm2 only."}
+    - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [675, 682], hl: [676, 680], expect: "minDurN = (int)floor(prm3[k] / frameDur + 0.5);", note: "The hold for mode 40 (mode 45 at line 702 is the same). With prm3 = 0 the second qualifying frame advances."}
+  upstream_refs:
+    - {repo: upstream-mex, path: TransShiftMex/ost.cpp, lines: [215, 217], expect: "items[4] != string(\"{}\")"}
+  fix: "Give modes 40 and 45 an explicit, documented parameter layout: reject <code>{}</code> (or any non-numeric field 5) for them at load with a clear error, keep the upstream <code>{}</code> check for all other modes, and document field 5 as the hold for these two. Print prm3 in the verbose summary."
+verify:
+  - {kind: H, what: "harness test", name: "t_ost.m", test: "OST F8: AND_RATIO field-4 hold (50 ms) honoured"}
+  - {kind: H, what: "report export (fricative + click, audible)", name: "report_ost_f8.m", detail: "blab build only; upstream rejects the mode"}
+  - {kind: D, what: "standalone driver of ost.cpp", name: "scratch/ost-pcf/t/drv.cpp hold", detail: "field 5 = 0.05: 25 frames; {}: 1 frame"}
+  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+reproduce: "cd audit/harness && ./run-oct.sh report_ost_f8.m"

@@ -1,0 +1,9 @@
+R=2 200Hz    rms gain 1.5392 (3.75 dB)
+R=2 DC       rms gain 2.5224 (8.04 dB)  inst gain range [2.0000, 3.0000]
+R=2 complex  rms gain 1.5412 (3.76 dB)
+R=4 200Hz    rms gain 1.5000 (3.52 dB)
+R=4 DC       rms gain 2.5000 (7.96 dB)  inst gain range [2.5000, 2.5000]
+R=4 complex  rms gain 1.5000 (3.52 dB)
+R=8 200Hz    rms gain 1.5000 (3.52 dB)
+R=8 DC       rms gain 2.5000 (7.96 dB)  inst gain range [2.5000, 2.5000]
+R=8 complex  rms gain 1.5000 (3.52 dB)

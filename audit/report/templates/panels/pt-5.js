@@ -28,15 +28,15 @@ AudPanels.register('pt-5', async function (P) {
       R[v][s.k] = d;
     }
   }
-  var sgn = function (z) { return (z >= 0 ? '+' : '−') + Math.abs(z).toFixed(1); };
+  var sgn = function (z) { if (Math.abs(z) < 0.05) return '0.0'; return (z >= 0 ? '+' : '−') + Math.abs(z).toFixed(1); };
   var GAIN = 1.2;                              // same playback gain for every clip, so loudness differences are real
   function show(k) {
     var h = P.row('OST state', 'PCF: 0 st, then the step', P.states(ost, 'expected', T1, fr), 'step at 0.6 s');
-    h += P.row('Reference', 'bPitchShift = 0', P.line(ref.lev, dt, T1, -9, 9, 'expected', [-6, -3, 0, 3, 6], ' dB'), sgn(mean(ref.lev, 0.3, 1.15)) + ' dB',
+    h += P.row('Reference', 'bPitchShift = 0', P.line(ref.lev, dt, T1, -4.5, 5, 'expected', [-3, 0, 3], ' dB'), sgn(mean(ref.lev, 0.3, 1.15)) + ' dB',
       function () { P.play(ref.signalOut, 16000, GAIN); });
     P.variants.forEach(function (v) {
       var d = R[v][k];
-      h += P.row(v === 'shipped' ? 'As released' : 'With the fix', 'level re input, 20 ms', P.line(d.lev, dt, T1, -9, 9, v === 'shipped' ? 'observed' : 'expected', [-6, -3, 0, 3, 6], ' dB'),
+      h += P.row(v === 'shipped' ? 'As released' : 'With the fix', 'level re input, 20 ms', P.line(d.lev, dt, T1, -4.5, 5, v === 'shipped' ? 'observed' : 'expected', [-3, 0, 3], ' dB'),
         'before ' + sgn(d.before) + ' dB<br>after ' + sgn(d.after) + ' dB<br>step ' + sgn(d.after - d.before) + ' dB',
         function () { P.play(d.signalOut, 16000, GAIN); });
     });

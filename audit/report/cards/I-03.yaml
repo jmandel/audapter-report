@@ -1,0 +1,59 @@
+# Full finding card I-03. Rendered by build.py; see PLAN.md section 3 for the fields.
+id: I-03
+log: I-03
+notes: "notes/interface.md#i-03"
+headline: "A 35 s trial returns only its last 5 s of data, and the OST, trialLen mute and onset ramp restart at 30 s"
+severity: med
+origin: upstream
+origin_note: "Upstream behaviour: the same export script on build-upstream (Audapter 2.1.5) wraps every 14.4 s and returns the last 6.2 s of the 35 s trial. Blab commit 3c90a3a raised the recorder size to 480000 samples, which moved the wrap to 30 s at 16 kHz; it did not change the mechanism."
+status: [H]
+effect:
+  setup: >
+    One 35 s trial, as in a long reading or continuous-speech task: a 0.6 s vowel every second. OST:
+    <code>0 ELAPSED_TIME 10</code> → <code>1 ELAPSED_TIME 22</code> → <code>2 OST_END</code>, i.e. a perturbation block from 10 to 32 s.
+    <code>trialLen = 34</code> s with <code>AudapterIO</code>'s default <code>rampLen = 0.05</code> s. Blab defaults otherwise, 16 kHz. We read
+    <code>AudapterIO('getData')</code> once just before 30 s, to see what happened, and once at the end, as an experiment script would.
+  expected: "getData returns all {trial_s:.0f} s. The OST enters state 1 at {ost_elapsed[0]} s and state 2 at {state2_due_s:g} s; the output fades out at the end of trialLen and is silent after {trialLen:g} s."
+  observed: "getData returns {returned_s:.2f} s ({returned_rows} data rows), starting at {returned_from_s:.2f} s into the trial, with nothing to say that anything is missing. State 1 began at {state1_onset_s:.3f} s, but state 2 never came, even when the session ran on to {ext_total_s:.0f} s. At {wrap_s:.0f} s the heard output fades in again from zero over {rampLen:.2f} s ({ramp_db:.1f} dB over that stretch), and it is not muted after {trialLen:g} s."
+  matters: >
+    Any trial longer than 30 s (14.4 s on upstream builds) loses its beginning without an error, and the part that is kept starts at an
+    arbitrary point. Time-based OST rules stall after the wrap, because <code>data_counter</code> restarts at 0 while the stored state onsets do not:
+    here the perturbation that should end at 32 s never ends. A <code>trialLen</code> of 30 s or more can never mute the output, and a shorter one
+    stops muting at 30 s. Affected past sessions can be found from the logs: the returned <code>signalIn</code> is shorter than the trial, and,
+    if an OST was loaded, <code>ost_stat</code> may start in a state other than 0.
+  numbers:
+    - ["Recorder size / wrap time (blab)", "{maxRecSize} samples / {wrap_s:.1f} s at {sr} Hz"]
+    - ["Returned by getData after a {trial_s:.0f} s trial: blab / upstream 2.1.5", "{returned_s:.2f} s / {up_returned_s:.2f} s"]
+    - ["OST: state 1 onset / state 2 onset (due at {state2_due_s:g} s)", "{state1_onset_s:.3f} s / never (checked to {ext_total_s:.0f} s)"]
+    - ["Heard output, first {rampLen:.2f} s after the wrap, re the preceding 0.14 s", "{ramp_db:.1f} dB"]
+    - ["Heard output 34.0–34.25 s (trialLen {trialLen:g} s): RMS", "{out_rms_after_triallen:.4f} (0.25 s earlier: {out_rms_ref:.4f})"]
+    - ["Input recorder beyond the returned part still holds the old 5–30 s", "{stale_text} (Audapter(22) reads it; getData does not)"]
+sketch: i03
+asset_dir: i-03
+audio:
+  - {file: output_27_to_35s.wav, role: observed, offset: 27}
+audio_note: "Heard output, 27–35 s of the trial, device rate decimated to 16 kHz. Most of this finding is about data rather than sound, so the figure carries it; the clip lets you hear the fade-in at 30 s and the missing mute at 34 s. There is no in-browser panel: the browser (\"lite\") build records only 10 s, so it would wrap at 10 s instead of 30 s; a panel would need the full-size build."
+cause:
+  summary: >
+    After each frame, <code>handleBuffer</code> checks whether the recorder is full and, if so, sets
+    <code>frame_counter</code> and <code>data_counter</code> to 0 and keeps going. The next frames overwrite the start of the recorders, and
+    <code>getSignal</code>/<code>getData</code> return only the first <code>frame_counter·frameLen</code> samples and <code>data_counter</code> rows.
+    The same counters are the trial clock for the trialLen mute and the ramps, and <code>data_counter</code> is the OST's clock, so all of
+    them restart. The code comment says the reset exists to avoid a segmentation violation.
+  refs:
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2307, 2311], hl: [2307, 2309, 2310], expect: "frame_counter)*p.frameLen>=maxRecSize", note: "The silent wrap: both counters go back to 0; no flag is set."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.h, lines: [165, 166], hl: [165], expect: "maxRecSize = 480000", note: "30 s at 16 kHz (upstream: 230400, 14.4 s)."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1602, 1604], hl: [1603], expect: "size = frame_counter*p.frameLen", note: "getData returns only what was recorded since the last wrap."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2285, 2296], hl: [2286, 2293], expect: "p.trialLen) ) {", note: "The trialLen mute and the onset ramp use frame_counter as the trial clock."}
+    - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [371, 374], hl: [372], expect: "(data_counter - statOnsetIndices[stat]) * frameDur", note: "ELAPSED_TIME compares the restarted data_counter with a state onset stored before the wrap, so the difference stays negative."}
+  upstream_refs:
+    - {repo: upstream-mex, path: TransShiftMex/Audapter.h, lines: [161, 162], expect: "maxRecSize = 230400"}
+    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [2133, 2136], expect: "frame_counter)*p.frameLen>=maxRecSize"}
+    - {repo: upstream-mex, path: TransShiftMex/ost.cpp, lines: [357, 357], expect: "data_counter - statOnsetIndices[stat]"}
+  fix: "Saturate instead of wrapping: at the end of the recorder, stop recording but keep counting time (a separate trial clock for OST, mute and ramps), and expose an overflow flag or the true trial length through <code>getData</code> so <code>AudapterIO</code> can warn. At minimum, have <code>AudapterIO('getData')</code> warn when the returned length is shorter than the time since <code>reset</code>."
+verify:
+  - {kind: H, what: "sanitizer scenario (35.2 s trial)", name: "t_mem.m SCEN=long", detail: "input 35.2 s, getData returned 5.20 s"}
+  - {kind: H, what: "interface check", name: "scratch/interface/t_wrap.m", detail: "after 31 s of input, signalIn has 16000 samples (1.0 s)"}
+  - {kind: H, what: "report export (OST, trialLen, heard output)", name: "report_i03.m", detail: "blab and upstream builds"}
+  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+reproduce: "cd audit/harness && ./run-oct.sh report_i03.m"

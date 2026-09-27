@@ -1,0 +1,70 @@
+# Full finding card LIVE-6 (the live consequence of I-11). Rendered by build.py; see PLAN.md section 3 for the fields.
+# Data: live line (audit/live, fake ASIO driver + JACK dummy), exported by report/live/export_live.py.
+id: LIVE-6
+log: LIVE-6
+notes: "live/README.md#live-6"
+headline: "If the sound card's buffer is not exactly 96 samples, the participant hears their raw voice an octave up, chopped 375 times a second"
+severity: med
+origin: upstream
+origin_note: "Inherited: upstream 2.1.5 has the same unchecked buffer size (audioIO.cpp:89), the same RtAudio negotiation (RtAudio.cpp:5182) and the same early return in handleBuffer (Audapter.cpp:1522 there). Known from reading both trees; the simulation ran the blab build."
+fidelity: "Simulation, not a Windows rig: the real mexFunction, audioIO.cpp and RtAudio ASIO code, built with GCC on Linux, driven by a fake ASIO driver in docker, and cross-checked through RtAudio's JACK backend. The heard signal follows deterministically from the code, so it should not depend on the machine; how a given ASIO driver reports its buffer sizes does."
+status: [D]
+effect:
+  setup: >
+    Default parameters: <code>frameLen</code> 32 at 16 kHz × <code>downFact</code> 3 = a 96-sample callback at 48 kHz. The fake ASIO driver
+    offers buffer sizes 64–2048 with a preferred size of 128 and granularity −1, as a control panel set to 128 samples would. One default-flow
+    trial (<code>start</code>, 2 s, <code>stop</code>, <code>getData</code>) with a synthetic vowel at the microphone. Reference: the same trial with a
+    96-sample buffer.
+  expected: "Either Audapter processes the voice and plays it back (as with a 96-sample buffer), or start fails with an error."
+  observed: "start succeeds and {callbacks} callbacks run, but every one returns without processing. The headphones get the raw microphone signal: in each {buf}-sample buffer the first half plays the mic samples of two buffers earlier at double speed (every second sample, one octave up) and the second half is silent (mean |x| = {half2_mean_abs:.0f}). The model matches the recorded headphone signal to {model_err:.1e}; through JACK it matches exactly (max error {jack_model_err:.0f})."
+  matters: >
+    The participant hears a buzzy, octave-up, unprocessed version of their own voice with no perturbation, no Audapter gain and no
+    <code>dScale</code> calibration, and may simply carry on with the session. The data side fails only afterwards: <code>getData</code> returns 1 × 1
+    arrays, so <code>AudapterIO('getData')</code> errors, and the MEX writes a third output MATLAB never allocated (I-11). The trigger is ordinary:
+    ASIO control panels commonly offer 64, 128 or 256 samples, and RtAudio 3.0.3 replaces the requested 96 with the driver's preferred size
+    whenever the driver reports granularity −1.
+    <br><strong>Fidelity.</strong> Simulation, not a Windows rig: the real MEX, <code>audioIO.cpp</code> and RtAudio ASIO code, built with GCC on Linux, driven
+    by a fake ASIO driver in docker and cross-checked through RtAudio's JACK backend. What is heard follows from the code; which buffer size a real
+    driver hands over depends on that driver.
+  numbers:
+    - ["Device buffer / Audapter callback size", "{buf} / {frame} samples"]
+    - ["Callbacks in the 2 s trial / rows returned by getData", "{callbacks} / {getdata_rows}"]
+    - ["Outputs written past MATLAB's plhs", "{plhs_overflow}"]
+    - ["Max |heard − model| (fake ASIO, Int32) / (JACK, float32)", "{model_err:.1e} / {jack_model_err:.1e}"]
+    - ["Second half of every buffer, mean |x|", "{half2_mean_abs:.1e}"]
+    - ["On/off gating rate / buffer length", "{gate_hz:.0f} Hz / {buf_ms:.2f} ms"]
+    - ["Level during voicing re the mic: heard / Audapter output with a 96 buffer", "{heard_re_mic_db:+.1f} dB / {expected_re_mic_db:+.1f} dB"]
+sketch: live6
+asset_dir: live-6
+audio:
+  - {file: input_vowel.wav, role: input}
+  - {file: output_matched_buffer.wav, role: expected}
+  - {file: output_buffer_128.wav, role: observed}
+audio_note: >
+  All clips share one playback gain, so level differences you hear are real. 48 kHz, 16-bit, the signal at the sound card (left channel;
+  the right channel gets the odd-numbered mic samples). The expected clip is the same trial with a 96-sample buffer.
+cause:
+  summary: >
+    <code>audioIO::startdev</code> requests <code>frameLen*downFact</code> samples and passes the variable to RtAudio, which may change it:
+    with granularity −1 the ASIO code rounds to a power of two and then takes the driver's preferred size. Nobody compares the result with
+    what Audapter needs. <code>handleBuffer</code> then sees a buffer of the wrong size and returns at once. RtAudio's user buffer still holds
+    the mono input it copied in after the previous callback, and RtAudio plays that buffer as interleaved stereo output.
+  refs:
+    - {repo: blab-mex, path: rtaudio/RtAudio.cpp, lines: [5174, 5182], hl: [5176, 5182], expect: "else *bufferSize = preferSize;", note: "Granularity −1: the requested size is replaced by the driver's preferred size."}
+    - {repo: blab-mex, path: audioIO/audioIO.cpp, lines: [89, 94], hl: [94], expect: "&buffer_size, 1);", note: "buffer_size is passed by pointer and may come back changed; it is never checked against algosize."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1667, 1668], hl: [1667, 1668], expect: "if (frame_size != p.downFact * p.frameLen)", note: "\"Just for safeguard\": the callback returns without touching the output buffer."}
+    - {repo: blab-mex, path: rtaudio/RtAudio.cpp, lines: [5559, 5564], hl: [5562], expect: "callback(stream_.userBuffer, stream_.bufferSize, info->userData)", note: "The callback runs before the new input is copied in, so the untouched user buffer still holds the previous period's mono input, which is then played."}
+    - {repo: blab-mex, path: TransShiftMex/mexLibrary.cpp, lines: [221, 228], hl: [224, 227], expect: "devpar.chans = 1;", note: "One input channel, two output channels: the mono input samples are read as interleaved left/right pairs."}
+    - {repo: blab-mex, path: TransShiftMex/mexLibrary.cpp, lines: [333, 338], hl: [337], expect: "plhs[2] = mxCreateDoubleMatrix(1,1, mxREAL);", note: "With no frames processed, getData returns 1 × 1 and writes a third output (I-11)."}
+  upstream_refs:
+    - {repo: upstream-mex, path: audioIO/audioIO.cpp, lines: [89, 89], expect: "buffer_size = algosize;"}
+    - {repo: upstream-mex, path: rtaudio/RtAudio.cpp, lines: [5182, 5182], expect: "else *bufferSize = preferSize;"}
+    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [1522, 1522], expect: "frame_size != p.downFact * p.frameLen"}
+  fix: >
+    In <code>audioIO::startdev</code>, after opening: <code>if (buffer_size != algosize) { stopdev(1); return 1; }</code>, and make
+    <code>Audapter('start')</code> raise an error when <code>startdev</code> fails (see LIVE-4). The message should name the required buffer size.
+verify:
+  - {kind: D, what: "live simulation driver (fake ASIO, buffer 128) and JACK dummy server (period 128)", name: "live/run.sh mismatch", detail: "heard signal = raw-input model; getData 1 × 1, plhs[2] written"}
+  - {kind: D, what: "report export (model check, levels, clips; JACK model check added here)", name: "report/live/export_live.py live6"}
+  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+reproduce: "audit/live/run.sh equiv mismatch && python3 audit/report/live/export_live.py live6"

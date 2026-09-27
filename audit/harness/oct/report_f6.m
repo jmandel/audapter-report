@@ -4,9 +4,10 @@
 % Scenario 1 (glide): /a/ -> /i/ -> /a/ in one 1.0 s vowel (F1 850 -> 310 -> 850 Hz, F2 1220 -> 2790 -> 1220 Hz).
 % Scenario 2 (dip):   steady /a/ (F1 760 Hz) with a 40 ms F1 dip to 520 Hz at 0.6 s, standing in for a tracker excursion
 %                     out of the field (the "dropout" the blab change addresses).
-% Scenario 3: the glide again with minVowelLen = 1000 frames (upstream: re-arms; blab: identical to minVowelLen 60).
-% Usage: ./run-oct.sh report_f6.m
-%        VARIANT=upstream ./run-oct.sh report_f6.m build-upstream upstream/audapter_matlab
+% Scenario 3: the glide with minVowelLen = 5, 60, 1000 frames (no effect on either build; see the comment at the sweep).
+% Usage (order matters: blab writes the params, upstream saves its outputs, blab then plays both at one gain):
+%   ./run-oct.sh report_f6.m; VARIANT=upstream ./run-oct.sh report_f6.m build-upstream upstream/audapter_matlab; ./run-oct.sh report_f6.m
+%   (on the first blab run the two upstream clips are silent placeholders)
 % Output: out/report/f6/<build>/{*.wav,data.json}
 1;
 function s = seg_of(on, fr)
@@ -34,14 +35,17 @@ Fd = [760 - dip, 1150 * ones(n,1), 2500 * ones(n,1), 3500 * ones(n,1)];
 xd = synth_vowel(fs, 1.0, f0, Fd, BW, 'onset', 0.1, 'offset', 0.2, 'amp', 0.3);
 dg = run_trial(p, xg);
 dd = run_trial(p, xd);
-q = p; q.minVowelLen = 1000; dg1000 = run_trial(q, xg);
+% minVowelLen sweep: setting it changes nothing on either build. Blab never reads it; in upstream the setter writes an
+% int into the double p.minVowelLen (Audapter.cpp setGetParam, TYPE_INT), so the value stays 60 frames plus a few ulps.
+MVL = [5 60 1000]; dm = cell(1, numel(MVL)); mvl_get = zeros(1, numel(MVL));
+for i = 1:numel(MVL), q = p; q.minVowelLen = MVL(i); dm{i} = run_trial(q, xg); mvl_get(i) = Audapter('getParam', 'minvowellen'); end
 segs = @(d) seg_of(d.sfmts(:,1) > 0, fr);
 r = struct();
 r.build = ifelse(UP, 'upstream', 'blab'); r.frame_s = fr; r.F1Min = p.F1Min; r.minVowelLen = p.minVowelLen;
 r.vowel_on_s = 0.1; r.vowel_off_s = 1.1; r.dip_center_s = 0.6;
-r.glide_segments = segs(dg); r.dip_segments = segs(dd); r.glide1000_segments = segs(dg1000);
-r.glide_n_shifted = nnz(dg.sfmts(:,1) > 0); r.glide1000_n_shifted = nnz(dg1000.sfmts(:,1) > 0);
-r.glide1000_identical = isequal(dg.sfmts, dg1000.sfmts) && isequal(dg.signalOut, dg1000.signalOut);
+r.glide_segments = segs(dg); r.dip_segments = segs(dd); r.glide_n_shifted = nnz(dg.sfmts(:,1) > 0);
+r.mvl_values = MVL; r.mvl_getparam = mvl_get; r.mvl_segments = cellfun(@(d) segs(d), dm, 'UniformOutput', false);
+r.mvl_all_identical = all(cellfun(@(d) isequal(d.sfmts, dg.sfmts) && isequal(d.signalOut, dg.signalOut), dm));
 % where the tracked F1 leaves / re-enters the field (first/last in-field frames of the glide, from Audapter's own track)
 inF = dg.fmts(:,1) >= p.F1Min; e = diff([0; inF; 0]);
 r.glide_field_runs = [(find(e == 1) - 1) * fr, (find(e == -1) - 1) * fr];
@@ -52,7 +56,7 @@ r.glide_first_a_F1_in_hz = hf(dg.signalIn, 0.15, 0.25); r.glide_first_a_F1_out_h
 r.dip_after_F1_in_hz = hf(dd.signalIn, 0.75, 1.0); r.dip_after_F1_out_hz = hf(dd.signalOut, 0.75, 1.0);
 printf('[%s] glide shifted: %s\n', r.build, mat2str(r.glide_segments, 4));
 printf('[%s] dip shifted:   %s\n', r.build, mat2str(r.dip_segments, 4));
-printf('[%s] glide minVowelLen=1000 shifted: %s identical=%d\n', r.build, mat2str(r.glide1000_segments, 4), r.glide1000_identical);
+printf('[%s] minVowelLen %s (getParam %s): all identical to default = %d\n', r.build, mat2str(MVL), mat2str(mvl_get), r.mvl_all_identical);
 printf('[%s] F1 heard last /a/: in %.0f out %.0f; dip vowel after dip: in %.0f out %.0f\n', r.build, r.glide_last_a_F1_in_hz, r.glide_last_a_F1_out_hz, r.dip_after_F1_in_hz, r.dip_after_F1_out_hz);
 k = 1:5:size(dg.fmts, 1); lg = @(v) round(v(k)' * 1e4) / 1e4;
 r.t = round((k-1) * fr * 1e4) / 1e4;
@@ -60,10 +64,23 @@ r.rms_glide = lg(dg.rms(:,1)); r.rms_dip = lg(dd.rms(:,1));
 r.F1_glide = round(dg.fmts(k,1))'; r.F1_dip = round(dd.fmts(k,1))';
 r.sF1_glide = round(dg.sfmts(k,1))'; r.sF1_dip = round(dd.sfmts(k,1))';
 od = report_outdir('f6');
-c = struct('name', {'glide_input', 'glide_output', 'dip_input', 'dip_output'}, ...
-  'x', {dg.signalIn, dg.signalOut, dd.signalIn, dd.signalOut}, ...
-  'label', {'Input: /a/ → /i/ → /a/ glide', sprintf('Output (%s build): glide', r.build), 'Input: /a/ with a 40 ms F1 dip', sprintf('Output (%s build): /a/ with dip', r.build)}, ...
-  'warn', {'', '', '', ''});
+uf = '/h/oct/out/report/f6-upstream-out.mat';     % upstream outputs, so the card can play both builds at one shared gain
+if UP
+  up_glide = dg.signalOut; up_dip = dd.signalOut; save('-binary', uf, 'up_glide', 'up_dip');
+  c = struct('name', {'glide_input', 'glide_output', 'dip_input', 'dip_output'}, ...
+    'x', {dg.signalIn, dg.signalOut, dd.signalIn, dd.signalOut}, ...
+    'label', {'Input: /a/ → /i/ → /a/ glide', 'Output, upstream 2.1.5: glide', 'Input: /a/ with a 40 ms F1 dip', 'Output, upstream 2.1.5: /a/ with dip'}, ...
+    'warn', {'', '', '', ''});
+else
+  if exist(uf, 'file'), U = load(uf);
+  else, printf('NOTE: no upstream outputs yet (%s); their clips are silent placeholders until the upstream run and a rerun\n', uf);
+    U = struct('up_glide', zeros(size(dg.signalOut)), 'up_dip', zeros(size(dd.signalOut))); end
+  c = struct('name', {'glide_input', 'glide_output_upstream', 'glide_output', 'dip_input', 'dip_output_upstream', 'dip_output'}, ...
+    'x', {dg.signalIn, U.up_glide, dg.signalOut, dd.signalIn, U.up_dip, dd.signalOut}, ...
+    'label', {'Input: /a/ → /i/ → /a/ glide', 'Output, upstream 2.1.5 build (same script): glide', 'Output, blab build: glide', ...
+              'Input: /a/ with a 40 ms F1 dip', 'Output, upstream 2.1.5 build (same script): /a/ with dip', 'Output, blab build: /a/ with dip'}, ...
+    'warn', {'', '', '', '', '', ''});
+end
 r.audio = report_wavgroup(od, p.sr, c);
 r.params = struct('sr', p.sr, 'downFact', p.downFact, 'frameLen', p.frameLen, 'rmsThresh', p.rmsThresh, 'minVowelLen', p.minVowelLen, 'F1Min', p.F1Min);
 if ~UP

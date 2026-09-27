@@ -2,7 +2,7 @@
 // Progressive enhancement: loaded on click from classic <script> bundles, so they work from file:// and offline.
 // Each panel module (templates/panels/<id>.js) calls AudPanels.register(id, async function (ctx) {...}).
 var AudPanels = (function () {
-  var scripts = {}, shared = {}, registry = {};
+  var scripts = {}, registry = {};
   function load(src) {
     if (!scripts[src]) scripts[src] = new Promise(function (ok, bad) {
       var s = document.createElement('script'); s.src = src; s.onload = ok;
@@ -10,10 +10,11 @@ var AudPanels = (function () {
     });
     return scripts[src];
   }
-  // One instance per variant; "shipped" is shared by every panel, fix variants are created per run (about 160 MB each).
+  // A fresh instance for every run, never cached: each holds a ~150-320 MB heap, and reusing the unpatched
+  // build across panels could let one panel's trials leak state into the next (the bugs this report is about).
+  // Panels must not keep references after returning, so the browser can reclaim the memory.
   async function instance(v) {
     await load('wasm/audapter-' + v + '.js');
-    if (v === 'shipped') { shared[v] = shared[v] || Audapter.create(v); return shared[v]; }
     return Audapter.create(v);
   }
   function b64(s) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
@@ -96,6 +97,8 @@ var AudPanels = (function () {
       var label = btn.textContent;
       btn.addEventListener('click', async function () {
         btn.disabled = true; status.textContent = 'Loading the Audapter core…';
+        // draw rows at their on-screen pixel width so SVG text stays at its CSS size (label 150, value 140, button 60, gaps 36)
+        W = Math.max(280, Math.round(out.clientWidth - 150 - 140 - 60 - 36));
         try {
           var t0 = performance.now();
           var html = await registry[id]({ instance: instance, data: function () { return data(id); }, status: function (s) { status.textContent = s; },

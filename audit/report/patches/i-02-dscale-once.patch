@@ -1,0 +1,11 @@
+--- a/Audapter.cpp	2026-09-27 10:02:00.519828690 -0500
++++ b/Audapter.cpp	2026-09-27 10:02:00.537434340 -0500
+@@ -2196,7 +2196,7 @@
+ 				outFrameBufSum[n + p.pvocFrameLen - p.frameLen] = data_pb[pbCounter] * rms_fb * p.fb4Gain * p.dScale;
+             else if (p.fb == 5) { // Mode 5: constant amplitude playback + speech-modulated playback
+ 				dtype playback_component = data_pb[pbCounter] * p.fb5Gain_playback;
+-				dtype speech_modulated_component = data_pb[pbCounter] * rms_fb * p.fb5Gain_speech * p.dScale;
++				dtype speech_modulated_component = data_pb[pbCounter] * rms_fb * p.fb5Gain_speech;	/* audit fix I-02: no * p.dScale here; upSampSig applies dScale to the whole output once (fb 4 left as upstream) */
+ 				outFrameBufSum[n + p.pvocFrameLen - p.frameLen] = speech_modulated_component + playback_component;
+ 			}
+ 			pbCounter += p.downFact;

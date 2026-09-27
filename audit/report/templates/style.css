@@ -249,3 +249,21 @@ details.ipatch summary { cursor: pointer; }
 .short-v { font-size: 0.9rem; color: var(--ink-2); }
 table.findings tr.group td { font-weight: 700; color: var(--ink-2); border-bottom: 1.5px solid var(--ink); padding-top: 18px; }
 table.compact td { font-size: 0.88rem; }
+.interactive select, .interactive label { font: inherit; font-size: 0.92rem; }
+.interactive select { padding: 3px 6px; border: 1px solid var(--rule-2); border-radius: 3px; background: var(--paper); color: var(--ink); }
+
+/* print is always light, whatever the screen scheme */
+@media print {
+:root, :root:where(*) {
+  color-scheme: light;
+  --paper: #ffffff; --surface: #fcfcfb; --tint: #f3f5f7;
+  --ink: #1d2530; --ink-2: #4a5563; --ink-3: #6f7985; --rule: #dde2e7; --rule-2: #c3cad2;
+  --input: #aab2bb; --observed: #2a78d6; --on-observed: #ffffff; --context: #e8ebee;
+  --disc: #eb6834; --disc-fill: rgba(235, 104, 52, 0.16); --disc-line: rgba(235, 104, 52, 0.55);
+  --vowel-i: #4a3aa7;
+  --sev-high: #d03b3b; --sev-med: #d98a00; --sev-low: #8a939d;
+  --pass: #0a7d0a; --fail: #c62f2f;
+  --serif: "Charis SIL", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+  --mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+}
+}

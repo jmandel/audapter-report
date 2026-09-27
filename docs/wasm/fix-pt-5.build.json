@@ -1,0 +1,1 @@
+{"variant":"fix-pt-5","source":"blab-lab/audapter_mex","sha":"169cadffef4c2d82a33939b840245b8a8a9db0de","sizes":"lite","maxPBSize":480000,"maxRecSize":160000,"patches":[{"file":"pt-5-ola-normalise.patch","sha256":"8097435cf93d741fe0262941f50b60430b2ddc7ccdc0314500c6cd59e465a5eb"}],"bytes":392591}

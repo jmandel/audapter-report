@@ -24,13 +24,6 @@ OUT = os.path.join(HERE, "prototype")
 E = html.escape
 AUDIT_URL = ""   # set from findings.yaml report.repo_url + "/audit"
 
-EXPORT_CMDS = [
-    ["./run-oct.sh", "report_ost_f1.m"],
-    ["env", "VARIANT=upstream", "./run-oct.sh", "report_ost_f1.m", "build-upstream", "upstream/audapter_matlab"],
-    ["./run-oct.sh", "report_i01.m"],
-    ["env", "VARIANT=upstream", "./run-oct.sh", "report_i01.m", "build-upstream", "upstream/audapter_matlab"],
-    ["./run-oct.sh", "report_pt5.m"],
-]
 
 # ----------------------------------------------------------------------------------------------- checks
 def fail(msg):
@@ -42,14 +35,27 @@ def check_log_ids(ids):
         if not re.search(r"\*\*[^*]*\b" + re.escape(i) + r"\b[^*]*\*\*", log):
             fail(f"finding id {i} not found in FINDINGS-LOG.md")
 
+class Tests(dict):
+    """logs-summary.txt results. Lookup by (script, test name); the name is matched as a prefix of the line because
+    long names leave only one space before the detail column."""
+    def __init__(self, path):
+        super().__init__()
+        self.lines = []
+        for line in open(path):
+            m = re.match(r"\[(\S+)\] (PASS|FAIL)\s+(.*)$", line.rstrip())
+            if m:
+                self.lines.append((m.group(1) + ".m", m.group(2), m.group(3)))
+                n = re.split(r"\s{2,}", m.group(3), maxsplit=1)
+                self[(m.group(1) + ".m", n[0].strip())] = (m.group(2), n[1].strip() if len(n) > 1 else "")
+    def get(self, key, default=None):
+        f, name = key
+        for ff, st, rest in self.lines:
+            if ff == f and rest.startswith(name):
+                return (st, rest[len(name):].strip())
+        return default
+
 def test_results():
-    res = {}
-    p = os.path.join(HARNESS, "logs-summary.txt")
-    for line in open(p):
-        m = re.match(r"\[(\S+)\] (PASS|FAIL)\s+(.*?)(?:\s{2,}(.*))?$", line.rstrip())
-        if m:
-            res[(m.group(1) + ".m", m.group(3).strip())] = (m.group(2), (m.group(4) or "").strip())
-    return res
+    return Tests(os.path.join(HARNESS, "logs-summary.txt"))
 
 # ----------------------------------------------------------------------------------------------- code refs
 def excerpt(repos, ref):
@@ -108,7 +114,7 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
         warn = f'<p class="warn"><span aria-hidden="true">!</span> {E(m["warn"])}</p>' if m.get("warn") else ""
         audio.append(f'<li class="clip role-{a["role"]}"><span class="swatch" aria-hidden="true"></span>'
                      f'<div><p class="clip-l" data-file="{a["file"]}"><strong>{ROLE[a["role"]]}.</strong> {E(re.sub(r"^(Input|Output):\s*", "", m["label"]))} <span class="dur">{m["dur_s"]:.1f} s</span></p>'
-                     f'<audio controls preload="none" src="{asset_rel}/{a["file"]}" data-sketch="sk-{card["id"].lower()}" data-offset="{a.get("offset", 0)}"></audio>{warn}</div></li>')
+                     f'<audio controls preload="none" src="{asset_rel}/{a["file"]}" data-sketch="sk-{anchor(card["id"]).lower()}" data-offset="{a.get("offset", 0)}"></audio>{warn}</div></li>')
     if audio:
         listen = (f'<section class="listen" aria-label="Audio"><h4>Listen</h4><ul class="clips">{"".join(audio)}</ul>'
                   f'<p class="norm">{card.get("audio_note", "All clips in this card share one playback gain, so level differences you hear are real. 16 kHz, 16-bit, as recorded by Audapter (<code>signalIn</code>, <code>signalOut</code>).")}</p></section>')
@@ -128,16 +134,16 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
         ver.append(f'<li class="{cls.strip()}"><span class="vk-l">{x["kind"]}</span> {E(x["what"])}: {file_link(x["name"])}{res}</li>')
     sketch = mod.sketch(data, up)
     return f'''
-<article class="card" id="{card["id"]}" aria-labelledby="{card["id"]}-h">
+<article class="card" id="{anchor(card["id"])}" aria-labelledby="{anchor(card["id"])}-h">
   <aside class="rail">
-    <p class="fid">{card["id"]}</p>
+    <p class="fid">{E(card["id"])}</p>
     <p class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev} severity</p>
     <p class="origin">{ORIGIN[card["origin"]]}</p>
     <ul class="vks" aria-label="Verification">{badges}</ul>
     <p class="railnote"><a href="{notes_url(card["notes"])}">Audit notes</a><br><a href="{AUDIT_URL}/FINDINGS-LOG.md">Findings log</a></p>
   </aside>
   <div class="main">
-    <h3 id="{card["id"]}-h">{E(card["headline"])}</h3>
+    <h3 id="{anchor(card["id"])}-h">{E(card["headline"])}</h3>
     <p class="setup">{eff["setup"]}</p>
     <dl class="eo">
       <div class="eo-e"><dt>Expected</dt><dd>{E(eff["expected"].format(**v))}</dd></div>
@@ -156,7 +162,7 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
       {refs}
       <p class="upstream">Upstream 2.1.5: {uprefs}.</p>
       <p class="origin-note"><strong>Origin.</strong> {E(card["origin_note"])}</p>
-      <p class="fix"><strong>Suggested fix.</strong> {card["cause"]["fix"]}</p>
+      <p class="fix"><strong>{E(card["cause"].get("fix_label", "Suggested fix"))}.</strong> {card["cause"]["fix"]}</p>
     </section>
     <section class="verify" aria-label="Verification">
       <h4>How we know</h4>
@@ -195,8 +201,15 @@ def file_link(name):
             return f'<a href="{AUDIT_URL}/{cand}"><code>{E(first)}</code></a>' + (f" <code>{E(rest)}</code>" if rest else "")
     return f"<code>{E(name)}</code>"
 
+def anchor(i):
+    """HTML id for a full card: 'OST-F1' stays as is; 'LIVE-1 / LIVE-2' becomes 'LIVE-1--LIVE-2'."""
+    return re.sub(r"\s*/\s*", "--", i.strip())
+
 def slug(i):
     return re.sub(r"[^a-z0-9]+", "-", i.lower()).strip("-")
+
+FIDELITY = (" Live-path simulation: the real audioIO/RtAudio ASIO code built with GCC on Linux and driven by a fake ASIO driver;"
+            " rates are indicative, not Windows-exact.")
 
 def short_html(repos, items):
     out = []
@@ -210,7 +223,7 @@ def short_html(repos, items):
   <h3 id="{slug(r["id"])}-h">{E(r["title"])}</h3>
   <p>{r["text"]}</p>
   {refs}
-  <p class="short-v"><strong>How we know.</strong> {E(r["verify"])} <a href="{notes_url(r["notes"])}">Audit notes</a></p>
+  <p class="short-v"><strong>How we know.</strong> {E(r["verify"])}{FIDELITY if r["id"].startswith("LIVE") else ""} <a href="{notes_url(r["notes"])}">Audit notes</a></p>
 </article>''')
     return "".join(out)
 
@@ -232,7 +245,7 @@ def table_html(rows, short=()):
     out = []
     for r in rows:
         sev, sevc = SEV[r["sev"]]
-        idc = f'<a href="#{r["id"]}">{r["id"]}</a>' if r.get("card") else r["id"]
+        idc = f'<a href="#{anchor(r["id"])}">{E(r["id"])}</a>' if r.get("card") else E(r["id"])
         out.append(f'<tr><td class="t-id">{idc}</td><td><span class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev}</span></td>'
                    f'<td>{E(r["text"])}</td><td>{ORIGIN[r["origin"]]}</td><td><span class="vk-l">{r["status"]}</span></td></tr>')
     if short:
@@ -311,7 +324,8 @@ def interactive_html(card, variants):
     for v in w["variants"]:
         for p in variants[v]["patches"]:
             rows = "".join(f'<span class="pl pl-{k}">{E(t)}</span>' if k in "+-" else f'<span class="pl pl-f">{E(t)}</span>' for k, t in patch_lines(p["file"]))
-            diffs.append(f'<details class="ipatch"><summary>The change in the “{E(v)}” build: <code>report/patches/{E(p["file"])}</code></summary><pre class="ipatch-code"><code>{rows}</code></pre></details>')
+            label = w.get("variant_labels", {}).get(v, v)
+            diffs.append(f'<details class="ipatch"><summary>The change in the “{E(label)}” build: <code>report/patches/{E(p["file"])}</code></summary><pre class="ipatch-code"><code>{rows}</code></pre></details>')
     return f'''<section class="interactive" data-widget="{w["id"]}" data-variants="{" ".join(w["variants"])}" aria-label="Interactive panel">
       <h4>Run it in your browser</h4>
       <p>{w["text"]}</p>
@@ -331,19 +345,30 @@ def diff_html(tests):
 def main():
     args = set(sys.argv[1:])
     if "--export" in args:
-        for c in EXPORT_CMDS:
-            print("export:", " ".join(c)); subprocess.run(c, cwd=HARNESS, check=True)
+        subprocess.run([os.path.join(HERE, "export-all.sh")], check=True)
     y = yaml.safe_load(open(os.path.join(HERE, "findings.yaml")))
     global AUDIT_URL
     AUDIT_URL = y["report"]["repo_url"] + "/audit"
-    extra = sorted(f[:-5] for f in os.listdir(os.path.join(HERE, "cards")) if f.endswith(".yaml") and f[:-5] not in y["cards"])
+    allc = {}
+    for f in sorted(os.listdir(os.path.join(HERE, "cards"))):
+        if f.endswith(".yaml"):
+            c = yaml.safe_load(open(os.path.join(HERE, "cards", f)))
+            allc[c["id"]] = c
+    missing = [cid for cid in y["cards"] if cid not in allc]
+    if missing:
+        print("note: cards listed but not written yet:", ", ".join(missing))
+    extra = [cid for cid in allc if cid not in y["cards"]]
     if extra:
         print("note: cards not in findings.yaml order, appended:", ", ".join(extra))
-    y["cards"] = [yaml.safe_load(open(os.path.join(HERE, "cards", f"{cid}.yaml"))) for cid in y["cards"] + extra]
+    y["cards"] = [allc[cid] for cid in y["cards"] + extra if cid in allc]
+    for extra_short in ("short-live.yaml",):
+        p = os.path.join(HERE, extra_short)
+        if os.path.exists(p):
+            y["short"] = y.get("short", []) + (yaml.safe_load(open(p)) or [])
     for r in y["table"]:
         r["card"] = any(c["id"] == r["id"] for c in y["cards"])
     repos = y["repos"]
-    check_log_ids([c["log"] for c in y["cards"]] + [r["id"] for r in y["table"]])
+    check_log_ids([c["log"] for c in y["cards"]] + [p for r in y["table"] for p in r["id"].split(" / ")])
     tests = test_results()
     variants = load_variants()
     os.makedirs(OUT, exist_ok=True)
@@ -361,7 +386,10 @@ def main():
         data = json.load(open(os.path.join(src, "data.json")))
         upf = os.path.join(EXPORTS, c["asset_dir"], "upstream", "data.json")
         up = json.load(open(upf)) if os.path.exists(upf) else None
-        cards.append(card_html(repos, c, tests, data, up, f"assets/{c['asset_dir']}", variants))
+        try:
+            cards.append(card_html(repos, c, tests, data, up, f"assets/{c['asset_dir']}", variants))
+        except (KeyError, ValueError, IndexError) as e:
+            fail(f"card {c['id']}: {type(e).__name__} {e}")
         manifest["cards"][c["id"]] = {"assets": sorted(os.listdir(dst)), "upstream_export": bool(up)}
     tpl = open(os.path.join(HERE, "templates", "page.html")).read()
     css = fonts_css() + open(os.path.join(HERE, "templates", "style.css")).read()
@@ -377,6 +405,9 @@ def main():
         page = page.replace("{{SHA:" + k + "}}", s).replace("{{URL:" + k + "}}", f'{repos[k]["url"]}/tree/{repos[k]["sha"]}')
     page = re.sub(r"(?<=\d) %", "\u00a0%", page)
     open(os.path.join(OUT, "index.html"), "w").write(page)
+    single = os.path.join(OUT, "index.single.html")
+    if "--single" not in args and os.path.exists(single):
+        os.remove(single)   # never publish a stale single-file copy
     if "--single" in args:
         def inline(m):
             p = os.path.join(OUT, m.group(1))

@@ -1,0 +1,1 @@
+{"variant":"alt-f6","source":"blab-lab/audapter_mex","sha":"169cadffef4c2d82a33939b840245b8a8a9db0de","sizes":"lite","maxPBSize":480000,"maxRecSize":160000,"patches":[{"file":"f6-restore-transdone.patch","sha256":"fe43dcc910cdd2e4a11b70009b5d82743e5895f4f50722df27b3369931fd61c1"}],"bytes":392579}

@@ -32,10 +32,12 @@
     <code>sfmts/fmts</code> ratio equals the command exactly, and an independent LPC estimate on the output audio agrees within measurement error.
     Pitch shifts are accurate to within 2 cents.</p>
   <p>What we did find are mostly <em>silent</em> timing and state problems, and most are inherited from upstream. OST state
-    carries over from one trial to the next (<a href="#OST-F1">OST-F1</a>). Masking noise shorter than the new 10 s buffer is followed by
+    carries over from one trial to the next (<a href="#OST-F1">OST-F1</a>), and the maxIOI timeout keeps the wrong clock (<a href="#OST-F2">OST-F2</a>). Masking noise shorter than the new 10 s buffer is followed by
     silence (<a href="#I-01">I-01</a>). The phase vocoder changes loudness as a pitch perturbation starts (<a href="#PT-5">PT-5</a>).
-    Several array parameters are read past their end when a shorter array is passed. None of these crash or print a warning. Several do show
-    up in data you already log, and each card says where to look.</p>
+    Several array parameters are read past their end when a shorter array is passed (<a href="#FMT-F1">FMT-F1</a>, <a href="#OST-F4">OST-F4</a>). On the live audio path, changing files or
+    parameters while audio runs can crash MATLAB (<a href="#LIVE-1--LIVE-2">LIVE-1 / LIVE-2</a>), and a <code>reset</code> during speech can produce a loud click (<a href="#LIVE-3">LIVE-3</a>).
+    Apart from those crashes, none of these print a warning. Several do show up in data you already log, and each card says where to look.
+    Where a fix is small, the card includes a patch and lets you run the released and patched code side by side in your browser.</p>
 </section>
 
 <section id="scope" class="prose">
@@ -93,8 +95,9 @@
     formant showed the same bias, so the discrepancy was in our measurement. Audapter's applied shift matches its logged shift. Formant checks now use F0 = 120 Hz, where the bias is small.</p>
   <h3>"Identical trials diverge" turned out to be a harness artifact, and led to a real bug</h3>
   <p>Two runs of the same input first gave different formant tracks. The cause: <code>Audapter('runFrame', x)</code> writes its output back into
-    the caller's array <code>x</code> (I-04), so the second run was processing the first run's output. With copied frames, repeated trials are bit-identical and
-    show no leakage in default settings. The same thing can happen to any lab script that reprocesses a stored frame.</p>
+    the array it is given (<a href="#I-04">I-04</a>). Our frame loop passed slices of the stored input, which Octave can share with the original, so the stored input
+    itself was overwritten and the second run processed the first run's output. With copied frames, repeated trials are bit-identical and show no leakage in
+    default settings. In MATLAB the same thing happens to any reprocessing script that passes a stored frame, such as a cell of frames reused for a second condition.</p>
   <h3>Also checked and found correct</h3>
   <ul>
     <li>The formant tracker agrees with an independent LPC estimator within 5 % on /a/, /i/, /u/ and /æ/.</li>
@@ -104,6 +107,40 @@
     <li>The tracker's <code>static last_f[]</code> survives across trials in the code, but an abrupt /i/→/a/ switch between trials showed no observable effect (FMT-F9).</li>
     <li>Audapter compiled to WebAssembly reproduces the native build bit for bit when both use the same maths library; the in-browser panels below rely on that.</li>
   </ul>
+</section>
+
+<section id="live" class="prose">
+  <h2>The live audio path</h2>
+  <p>Most of this report runs Audapter offline, through <code>runFrame</code>. In an experiment, audio arrives through <code>audioIO.cpp</code> and RtAudio
+    from an ASIO driver, on a separate audio thread. To test that path without Windows or a sound card, a separate line of work compiled the real, unmodified
+    <code>audioIO.cpp</code> and RtAudio 3.0.3 (with the Windows ASIO backend, as in <code>audioIO.vcxproj</code>) together with Audapter and the real
+    <code>mexLibrary.cpp</code>. It drove them from a simulated ASIO driver that calls back at real period boundaries, and cross-checked with a real JACK server.
+    Two results establish trust in both the offline method and the default flow:</p>
+  <ul>
+    <li><strong>Live equals offline.</strong> For passthrough, F1 shift with an OST/PCF, phase-vocoder pitch shift and the time-domain shifter,
+      <code>signalIn</code>, <code>signalOut</code>, <code>rms</code>, <code>fmts</code>, <code>sfmts</code>, <code>ost_stat</code> and <code>pitchShiftRatio</code>
+      from the live path are bit-identical to the offline run, once the offline input is delayed by one device buffer (RtAudio calls the callback before it copies
+      the new input). What the participant hears equals the offline output delayed by two device buffers, to within 32-bit integer conversion (5·10<sup>−10</sup>).
+      Everything the offline cards show therefore applies to real sessions.</li>
+    <li><strong>The default flow has no data races.</strong> <code>reset</code> → <code>start</code> → <code>stop</code> → <code>getData</code>, once per trial, ran
+      300 cycles under ThreadSanitizer and 3 000 plain cycles with no race inside Audapter and no hang. The only report is inside RtAudio, where the first period
+      after <code>start</code> can be skipped, which is benign.</li>
+  </ul>
+  <p>The problems appear when parameters, OST/PCF files or <code>reset</code> are changed <em>while audio runs</em> (always-on designs, or a MATLAB call during a
+    trial), and when the device does not deliver what Audapter expects. Those findings have their own cards (LIVE-*). <strong>Fidelity limits:</strong> the ASIO driver is modelled,
+    not real; the build uses GCC on Linux, not MSVC on Windows; thread scheduling is Linux's. Race and burst <em>rates</em> are therefore indicative, not Windows-exact.
+    The mechanisms, and the lines of code they come from, are the same.</p>
+</section>
+
+<section id="wasm" class="prose">
+  <h2>Running Audapter in your browser</h2>
+  <p>Several cards have a “Run it in your browser” panel. It runs the real Audapter C++ core, compiled to WebAssembly from the same pinned commit,
+    on the card's own inputs, once as released and once with a small patch for that finding. The patch is shown next to the panel and is in
+    <code>audit/report/patches/</code>. Each patched build was checked two ways: it is bit-identical to the released build on reference scenarios the
+    patch should not affect, and it removes the finding's effect (<code>audit/report/wasm/check-patches.mjs</code>).</p>
+  <p>The WebAssembly build is bit-identical to a native build that uses the same maths library, and differs from the MATLAB MEX build by at most about
+    3·10<sup>−11</sup> (about −195 dB), which comes from the maths library alone. The browser builds keep 10 s of recording instead of 30 s to save memory; all other buffers have their shipped sizes.
+    Panels load on click (about 0.4 MB per build), work offline and from a saved copy of this page, and need no install.</p>
 </section>
 
 <section id="who" class="prose">
@@ -119,7 +156,8 @@
   <h2>Limitations</h2>
   <ul>
     <li><strong>Octave, not MATLAB.</strong> The MEX API is the same, but copy-on-write and argument passing can differ in corner cases. I-04 behaves the same in MATLAB, by reading of its documented MEX semantics.</li>
-    <li><strong>Offline path only.</strong> The ASIO callback and its threading are not exercised. The DSP code is shared, but timing, buffering and races in the online path are outside what we tested.</li>
+    <li><strong>Mostly the offline path.</strong> Findings and figures use <code>runFrame</code>, which runs the same <code>handleBuffer</code> as the audio callback.
+      The live path (audio thread, RtAudio, ASIO) was tested in simulation, with a modelled ASIO driver; see “The live audio path”.</li>
     <li><strong>GCC on Linux, not MSVC on Windows.</strong> Undefined behaviour, such as the out-of-bounds reads, can produce different garbage on the Windows heap. A sanitizer report means the code is wrong. It does not predict the exact wrong value you will get.</li>
     <li><strong>Synthetic speech.</strong> Our vowels are cleaner than real voices. We set <code>rmsThresh</code> to 0.005 for them. Real-speech fixtures from <code>example_data</code> are a next step.</li>
     <li><strong>Severity is our judgement</strong> of experimental impact, and you know your paradigms better than we do.</li>
@@ -172,26 +210,11 @@
   </table></div>
 </section>
 
-<section id="wasm" class="prose">
-  <h2>Running Audapter in your browser</h2>
-  <p>Several cards have a “Run it in your browser” panel. It runs the real Audapter C++ core, compiled to WebAssembly from the same pinned commit,
-    on the card's own inputs, once as released and once with a small patch for that finding. The patch is shown next to the panel and is in
-    <code>audit/report/patches/</code>. Each patched build was checked two ways: it is bit-identical to the released build on reference scenarios the
-    patch should not affect, and it removes the finding's effect (<code>audit/report/wasm/check-patches.mjs</code>).</p>
-  <p>The WebAssembly build is bit-identical to a native build that uses the same maths library, and differs from the MATLAB MEX build by at most about
-    3·10<sup>−11</sup> (about −195 dB), which comes from the maths library alone. The browser builds keep 10 s of recording instead of 30 s to save memory; all other buffers have their shipped sizes.
-    Panels load on click (about 0.4 MB per build), work offline and from a saved copy of this page, and need no install.</p>
-</section>
 
 <section id="formal" class="reserved">
   <h2>Formal analysis</h2>
   <p><strong>Placeholder, in review.</strong> A separate line of work (<code>audit/formal/</code>) model-checks the ring-buffer index arithmetic and the OST
     state machine and checks the overlap-add gain. Its results will be added here, and as <span class="vk-l">F</span> entries on the cards, once they have been verified.</p>
-</section>
-<section id="live" class="reserved">
-  <h2>The live audio path</h2>
-  <p><strong>Placeholder, in review.</strong> Everything above runs the offline path. A separate line of work (<code>audit/live/</code>) drives the real audio I/O
-    code against a simulated clocked device to test threading and timing on the path an experiment actually uses. Its results will appear here once verified.</p>
 </section>
 <section id="corpus" class="reserved">
   <h2>Real speech</h2>

@@ -25,10 +25,21 @@ effect:
     - ["Second trial after reset: noise stops at", "{trial2_gap_start_s:.2f} s into the trial"]
 sketch: i01
 interactive:
-  status: planned
-  plan: >
-    load a masking-noise file of any length (set <code>datapb</code> from 1 to 10 s) and hear where the noise stops, as released and with the
-    noise wrapping at its loaded length. This needs the full-size WASM build: the small build used elsewhere shrinks the playback buffer, which changes this bug.
+  id: i-01
+  variants: [shipped, fix-i-01]
+  patches: {fix-i-01: [i-01-datapb-loop-length.patch]}
+  needs: {shipped_playback: true}
+  button: "Run a 12 s trial on both builds"
+  inputs: {babble: dev_babble_every3rd_16k.wav, vowels: dev_vowels3_48k.wav}
+  params: {rmsthresh: 0.005, bdetect: 1, btrack: 1, fb2gain: 0.05, fb3gain: 0.05, dscale: 1}
+  text: >
+    This runs a 12 s trial through the real Audapter C++ core compiled to WebAssembly from the pinned commit, once as released
+    and once with the noise looping at the length that was loaded. Both builds keep the shipped 480000-sample playback buffer. Pick
+    the length of the noise file, cut from the bundled babble and loaded as <code>runExperiment.m</code> does it (zero mean, unit RMS).
+    The page ships only every third sample of the babble, the only samples the fb 2–5 loop reads, and rebuilds the 48 kHz buffer
+    from them, so Audapter reads the same values it would read from the full-rate file. The bars come from a noise-only run (fb 2), and Play gives the voice + noise
+    run (fb 3). Both use the 48 kHz output Audapter returns for every frame, which lags <code>signalOut</code> by a few milliseconds. The build used here records only 10 s, so its
+    <code>signalOut</code> would not cover a 12 s trial.
 asset_dir: i-01
 audio:
   - {file: input_vowels.wav, role: input}

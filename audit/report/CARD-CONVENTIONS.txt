@@ -46,13 +46,13 @@ Per card you produce (ID = log id, e.g. OST-F2; slug = lower-case, e.g. ost-f2):
    audit/wasm/testdata don't exercise code near your patch, add a regression case inside your target() that runs a nearby
    configuration the patch must NOT change and assert bit-identity there too (report it in the result strings).
 5. Render: `cd audit/report && CARDS=<ID>[,<ID>...] python3 build.py`, then
-   `node check-render.mjs ~/hobby/.agent-scratch/<you>-shots` and LOOK at card-<id>.png (desktop) and fix collisions/overflow.
+   `node check-render.mjs <a scratch dir outside the repo>` and LOOK at card-<id>.png (desktop) and fix collisions/overflow.
    (Other agents render concurrently; the index may briefly contain only some cards. That's fine.)
 6. Log: append one entry per new or refined result to audit/FINDINGS-LOG.md under "## Session 2", format at the top of the
    file, one `cat >> ... <<'EOF'` per entry, never rewrite the file. Prefix IDs REPORT-n where n is unused (check the log).
    If something does NOT reproduce as the notes claim, log it and say so on the card.
-Rules: repo is ~/hobby/audapter (git); never git commit/push; never modify blab/, upstream/, other/, audit/wasm/, or other
+Rules: work inside the repo (git); never git commit/push; never modify blab/, upstream/, other/, audit/wasm/, or other
 agents' files (build.py, sketchlib.py, panel.js, style.css, findings.yaml belong to the coordinator: if you need a change there,
-say so in your final report). All scripts use repo-relative paths. Bulk temp files go in ~/hobby/.agent-scratch/<you>/, not /tmp.
+say so in your final report). All scripts use repo-relative paths. Bulk temp files go in a scratch dir outside the repo, not /tmp.
 Final report: cards built, what each shows (key numbers), patch verification results, anything that did not reproduce,
 and any build.py/sketchlib/panel.js changes you need.

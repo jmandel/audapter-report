@@ -7,7 +7,8 @@ M = M(use);
 1;
 function [lo, hi] = f0range(m)
   switch m.group
-    case {'singer_F'}, lo = 250; hi = 900;
+    case {'singer_F'}, lo = 150; hi = 600;
+    case {'singer_M'}, lo = 100; hi = 450;
     case {'child', 'teen_F'}, lo = 150; hi = 600;
     otherwise, if m.sex == 'M', lo = 60; hi = 300; else, lo = 100; hi = 500; end
   end
@@ -54,25 +55,29 @@ for m = M
     fprintf(fo, '%s,%s,pvoc%+d,,,,,,,,%d,%d,%.1f,%.2f\n', m.id, m.group, st, nnz(ok), 100*st, median(cen), gdb);
     if st == 0, fprintf(fo, '%s,%s,pvoc_latency_ms,,,,,,,,,,%.1f,\n', m.id, m.group, 1000*L/p.sr); end
   end
-  % --- time-domain pitch shift +1 st from onset (bounds per speaker group). Output: frame-paired F0 cents;
-  %     tracker: Audapter's logged pitchHz vs reference F0 (vocadito expert annotation if present, else Praat ref)
-  p = p0; p.bTimeDomainShift = 1; p.pitchLowerBoundHz = lo; p.pitchUpperBoundHz = hi; p.bCepsLift = 1;
-  p.timeDomainPitchShiftSchedule = [0, 2^(1/12); 100, 2^(1/12)];
-  try
-    d = run_trial(p, x);
-    L = corpus_lag(d.signalIn, d.signalOut, p.sr); so = [d.signalOut(L+1:end); zeros(L, 1)];
-    fout = corpus_f0track(so, p.sr, lo, hi * 1.1); nn = min(numel(fin), numel(fout)); fout = fout(1:nn); fi_ = fin(1:nn);
-    ok = ~isnan(fi_) & ~isnan(fout); cen = median(1200*log2(fout(ok) ./ fi_(ok)));
-    ta = ((1:numel(d.pitchHz))' - 0.5) * p.frameLen / p.sr;
-    if strncmp(m.id, 'vocadito', 8), R = corpus_csv([m.root '/gt/' m.id '.f0.csv']); R(R(:,2) == 0, 2) = NaN; rs = 'expert';
-    else, R = corpus_csv([m.root '/ref/' m.id '.praat.csv']); R = R(:, 1:2); rs = 'praat'; end
-    pr = interp1(ta, d.pitchHz(:), R(:,1), 'nearest', 0); ok2 = pr > 0 & R(:,2) > 0;
-    te = abs(pr(ok2) - R(ok2,2)) ./ R(ok2,2);
-    lr = median(d.shiftedPitchHz(d.pitchHz > 0) ./ d.pitchHz(d.pitchHz > 0));
-    fprintf(fo, '%s,%s,tds+1,,,,,,,,%d,100,%.1f,%.1f\n', m.id, m.group, nnz(ok), cen, 1200*log2(lr));
-    fprintf(fo, '%s,%s,tds_tracker_vs_%s,,,,,%.4f,%.4f,,%d,,,\n', m.id, m.group, rs, median(te), mean(te > 0.2), nnz(ok2));
-  catch e
-    fprintf(fo, '%s,%s,tds+1,ERROR %s\n', m.id, m.group, strrep(e.message, ',', ';'));
+  % --- time-domain pitch shift +1 st from onset (bounds per speaker group), with the default frame settings
+  %     (frameLen 32, nDelay 5) and with the settings of upstream time_domain_shift_demo.m (frameLen 64, nDelay 7).
+  %     Output: frame-paired F0 cents; tracker: Audapter's logged pitchHz vs reference F0
+  %     (vocadito expert annotation if present, else the Praat reference)
+  for fcfg = {'tdsdef', 32, 5; 'tdsdemo', 64, 7}'
+    p = p0; p.frameLen = fcfg{2}; p.nDelay = fcfg{3};
+    p.bTimeDomainShift = 1; p.pitchLowerBoundHz = lo; p.pitchUpperBoundHz = hi; p.bCepsLift = 1;
+    p.timeDomainPitchShiftSchedule = [0, 2^(1/12); 100, 2^(1/12)];
+    try
+      d = run_trial(p, x);
+      L = corpus_lag(d.signalIn, d.signalOut, p.sr); so = [d.signalOut(L+1:end); zeros(L, 1)];
+      fout = corpus_f0track(so, p.sr, lo, hi * 1.1); nn = min(numel(fin), numel(fout)); fout = fout(1:nn); fi_ = fin(1:nn);
+      ok = ~isnan(fi_) & ~isnan(fout); cen = median(1200*log2(fout(ok) ./ fi_(ok)));
+      ta = ((1:numel(d.pitchHz))' - 0.5) * p.frameLen / p.sr - 0.014;
+      if strncmp(m.id, 'vocadito', 8), R = corpus_csv([m.root '/gt/' m.id '.f0.csv']); R(R(:,2) == 0, 2) = NaN; rs = 'expert';
+      else, R = corpus_csv([m.root '/ref/' m.id '.praat.csv']); R = R(:, 1:2); rs = 'praat'; end
+      pr = interp1(ta, d.pitchHz(:), R(:,1), 'nearest', 0); ok2 = pr > 0 & R(:,2) > 0;
+      q = pr(ok2) ./ R(ok2,2);
+      fprintf(fo, '%s,%s,%s+1,,,,,,,,%d,100,%.1f,\n', m.id, m.group, fcfg{1}, nnz(ok), cen);
+      fprintf(fo, '%s,%s,%s_tracker_vs_%s,,,,,%.4f,%.4f,%.4f,%d,,,\n', m.id, m.group, fcfg{1}, rs, median(q), mean(abs(q - 1) < 0.05), mean(abs(q - 2) < 0.15), nnz(ok2));
+    catch e
+      fprintf(fo, '%s,%s,%s+1,ERROR %s\n', m.id, m.group, fcfg{1}, strrep(e.message, ',', ';'));
+    end
   end
 end
 fclose(fo);

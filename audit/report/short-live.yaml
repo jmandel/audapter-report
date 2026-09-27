@@ -1,0 +1,69 @@
+# Short cards from the live-audio-path line (audit/live, fake ASIO driver in docker). Same fields as `short:` in findings.yaml.
+# build.py merges this file into `short`. Fidelity for all four: real mexFunction + audioIO.cpp + RtAudio ASIO code, built with GCC on
+# Linux and driven by a fake ASIO driver (and a JACK dummy server); behaviour is the real code, rates and timings are indicative.
+- id: LIVE-4
+  notes: "live/README.md#live-4"
+  sev: med
+  origin: upstream
+  status: D
+  title: "Audapter('start') reports success when the sound card failed to open"
+  text: >
+    <code>startdev()</code>'s return value is ignored and <code>started</code> is set anyway; RtAudio's error text goes to stdout, which on Windows is
+    not the MATLAB command window. With a driver that lacks 48 kHz, <code>start</code> returned normally, no callback ran, the trial was silent and
+    <code>getData</code> returned 1 × 1 (writing a third, unallocated output, I-11). Same with a JACK server at 44.1 kHz. A driver whose native
+    format is Int24 is rejected at probe time with the misleading "Cannot find device with specified name". The same pattern repeats for the
+    playback and tone actions (lines 450, 476, 504). Simulation with a fake ASIO driver; the code path is the real one.
+  refs:
+    - {repo: blab-mex, path: TransShiftMex/mexLibrary.cpp, lines: [230, 238], hl: [233, 238], expect: "audio_obj.startdev();"}
+    - {repo: blab-mex, path: audioIO/audioIO.cpp, lines: [96, 100], hl: [97, 99], expect: "error.printMessage();"}
+  verify: "Live simulation driver (live/run.sh startfail): fake ASIO driver without 48 kHz: start OK, 0 callbacks, getData 1 × 1; JACK at 44.1 kHz and an Int24 driver as described."
+
+- id: LIVE-5
+  notes: "live/README.md#live-5"
+  sev: med
+  origin: upstream
+  status: D
+  title: "With no ASIO driver installed, the first Audapter call of any kind crashes, even for offline processing"
+  text: >
+    The <code>static audioIO audio_obj</code> inside <code>mexFunction</code> is constructed on the first call, whatever the action. Its constructor
+    catches RtAudio's "no devices found" error, prints it, and then calls <code>audio-&gt;getDeviceCount()</code> on the NULL pointer. On an analysis
+    machine without an audio interface, reprocessing recordings offline with <code>runFrame</code> therefore crashes MATLAB at the first
+    <code>setParam</code> of <code>AudapterIO('init')</code>. Simulation with the fake ASIO driver list empty; the code path is the real one.
+  refs:
+    - {repo: blab-mex, path: audioIO/audioIO.cpp, lines: [21, 27], hl: [25, 27], expect: "int num_devices = audio->getDeviceCount();"}
+    - {repo: blab-mex, path: TransShiftMex/mexLibrary.cpp, lines: [84, 85], hl: [85], expect: "static audioIO audio_obj;"}
+  verify: "Live simulation driver, ASan build (live/run.sh noasio): SEGV in RtAudio::getDeviceCount() ← audioIO::audioIO() audioIO.cpp:27 ← mexFunction mexLibrary.cpp:85, during an offline run."
+
+- id: LIVE-7
+  notes: "live/README.md#live-7"
+  sev: low
+  origin: upstream
+  status: D
+  title: "Missed callbacks are not detected: the recording is spliced silently and the logged time axis falls behind"
+  text: >
+    Audapter logs each callback as the next frame; there is no per-frame timestamp, sample-position check or xrun counter. When the driver
+    drops periods, <code>signalIn</code> is spliced without a marker and <code>data.intervals</code>, OST onsets and perturbation onsets run behind
+    wall-clock time. In the simulation (driver thread at normal priority on one CPU shared with three busy processes) 109 of 5 152 periods were
+    never processed and the logged time axis ended 218 ms behind; an OST onset at 0.328 s was logged at 0.314 s. With a real-time driver thread
+    (as ASIO drivers use) there were none, and Audapter's own callback cost (median 28–114 µs, max 0.66 ms against a 2–4 ms budget) is not
+    the cause, so on a real rig xruns would come from driver, DPC or USB latency. It matters when data are aligned to EEG/MEG/fMRI triggers.
+    Timings are from the simulation and indicative only.
+  refs:
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1904, 1905], hl: [1905], expect: "data_recorder[0][data_counter] = frame_counter * p.frameLen + si + 1;"}
+  verify: "Live simulation driver (live/run.sh timing): 109 missed periods, logged time 218 ms behind hardware time; 0 with SCHED_FIFO."
+
+- id: LIVE-8
+  notes: "live/README.md#live-8"
+  sev: low
+  origin: upstream
+  status: D
+  title: "Live onset/offset ramps saw-tooth at 500 Hz and end on a negative gain"
+  text: >
+    With <code>trialLen</code> and <code>rampLen</code> set (UIRecorder sets <code>trialLen</code>), the ramp gain is computed from
+    <code>n</code>, which online runs over the interleaved stereo buffer (<code>frame_size * nMult</code> samples), so within each 2 ms frame the
+    ramp advances twice as fast and then jumps back. Live, the gain is a 500 Hz sawtooth of ±0.040 around the intended ramp (2 ms / 50 ms) and
+    ends at −0.039 in the last millisecond. Audible only if
+    speech overlaps the first or last <code>rampLen</code> of the trial.
+  refs:
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2292, 2301], hl: [2295, 2300], expect: "(frame_counter - 1) * frame_size + n"}
+  verify: "Live simulation driver (live/run.sh ramp): live gain vs offline gain, max difference 0.040, final live gain −0.039 (results/ramp.txt, results/live_ramp_gain.png)."

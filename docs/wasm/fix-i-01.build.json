@@ -1,0 +1,1 @@
+{"variant":"fix-i-01","source":"blab-lab/audapter_mex","sha":"169cadffef4c2d82a33939b840245b8a8a9db0de","sizes":"lite","maxPBSize":480000,"maxRecSize":160000,"patches":[{"file":"i-01-datapb-loop-length.patch","sha256":"295aedad4723fa34d3db627df826b427486d88a0d2d66e8ed4d7b19250b7657e"}],"bytes":392544}

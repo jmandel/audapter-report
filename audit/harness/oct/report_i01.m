@@ -57,4 +57,15 @@ c = struct('name', {'input_vowels', 'output_fb3_voice_plus_noise', 'output_fb2_b
   'label', {'Input: vowels, one every second', 'What the participant hears: voice + 5 s masking noise (fb 3)', 'Bundled babble, 8.5-11.0 s, noise only (fb 2)'}, ...
   'warn', {'', 'The noise stops abruptly at 5 s and resumes at 10 s.', 'A 16 ms dropout near 9.98 s; listen closely.'});
 r.audio = report_wavgroup(od, p.sr, c);
+% Inputs for the in-browser panel (templates/panels/i-01.js), kept small: (1) the bundled babble after runExperiment's
+% zero-mean / unit-RMS / getMaxPBLen steps, keeping only every downFact-th sample: the fb 2-5 loop advances pbCounter by
+% downFact and reads nothing else, so for loop lengths that are multiples of downFact a 48 kHz datapb rebuilt by
+% repeating each sample downFact times gives Audapter exactly these values. Peak-scaled for 16-bit; the panel restores
+% unit RMS. (2) the three 0.5 s vowels of the input above, at 48 kHz, without the background noise.
+nd = nfull(1:p.downFact:end); audiowrite(fullfile(od, 'dev_babble_every3rd_16k.wav'), nd / (1.001 * max(abs(nd))), p.sr, 'BitsPerSample', 16);
+vv = [];
+for k = 0:2
+  vv = [vv; synth_vowel(fs, 0.5, 190 + 10*k, VV{k+1}, [80 100 150 200], 'onset', 0, 'offset', 0, 'amp', 0.25)];
+end
+audiowrite(fullfile(od, 'dev_vowels3_48k.wav'), vv, fs, 'BitsPerSample', 16);
 report_json(fullfile(od, 'data.json'), r);

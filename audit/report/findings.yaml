@@ -22,18 +22,21 @@ table:
   - {id: OST-F1, sev: high, origin: upstream, status: H, text: "OST state leaks across trials: an offset in trial B is detected 1.2 s late after a longer trial A"}
   - {id: OST-F2, sev: high, origin: upstream, status: H, text: "maxIOI timeout writes the onset of the wrong state; ELAPSED_TIME fires after 2 ms instead of 100 ms, and without an OST reload the timeout drifts 0.2 → 0.4 → 0.6 s"}
   - {id: I-01,   sev: high, origin: blab-amplified, status: H, text: "Masking noise shorter than 10 s is followed by silence until the 10 s buffer wraps"}
+  - {id: LIVE-1 / LIVE-2, sev: high, origin: upstream, status: D, text: "Changing OST/PCF files or DSP parameters while audio runs (always-on designs) crashes MATLAB or reads freed memory"}
   - {id: OST-F4, sev: high, origin: upstream, status: H, text: "PCF with fewer rows than OST states reads past the perturbation arrays; heap contents decide whether to perturb"}
   - {id: FMT-F1, sev: high, origin: blab, status: H, text: "Clamp trajectory setters copy 2048 values whatever length MATLAB passes"}
   - {id: PT-5,   sev: high, origin: upstream, status: H, text: "Phase vocoder plays 3.5 dB loud at 0 st, and the level changes when a pitch shift starts"}
+  - {id: LIVE-3, sev: med, origin: upstream, status: D, text: "reset() while the participant is voicing can emit a clipped burst of +17 dB or more (about 1 in 2000 resets in simulation)"}
+  - {id: LIVE-6, sev: med, origin: upstream, status: D, text: "If the sound card's buffer size differs from Audapter's frame size, the participant hears the raw microphone an octave up, with gaps"}
   - {id: I-04,   sev: med,  origin: upstream, status: H, text: "runFrame writes its output into the caller's input array"}
   - {id: OST-F8, sev: med,  origin: blab, status: H, text: "Blab AND_RATIO rules take the hold from field 5, where the manual puts {}"}
   - {id: I-02,   sev: med,  origin: blab, status: H, text: "fb mode 5 applies dScale twice to the speech-modulated component"}
   - {id: F6,     sev: med,  origin: blab, status: H, text: "Dropout fix re-arms the perturbation on every field re-entry; minVowelLen no longer has any effect"}
-  - {id: I-03,   sev: med,  origin: upstream, status: H, text: "Recorder wraps after 30 s without warning; a 35 s trial returns its last 5.2 s"}
+  - {id: I-03,   sev: med,  origin: upstream, status: H, text: "Recorder wraps after 30 s without warning; a 35 s trial returns only its last 5.0 s"}
 
 
 # Full cards, in report order (cards/<ID>.yaml)
-cards: [OST-F1, I-01, PT-5]
+cards: [OST-F1, OST-F2, I-01, LIVE-1 / LIVE-2, PT-5, OST-F4, FMT-F1, LIVE-3, LIVE-6, I-04, OST-F8, I-02, F6, I-03]
 
 # Short cards: effect, one excerpt at the pinned SHA, how verified. `notes` must name an existing heading.
 short:

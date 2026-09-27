@@ -38,6 +38,14 @@ LIC = {
  'vocadito': ('vocadito (Bittner et al. 2021), Zenodo doi:10.5281/zenodo.5578807', 'CC BY 4.0', 'https://zenodo.org/records/5578807'),
 }
 
+def struct_dict(st):
+    # MATLAB struct (scipy mat_struct) -> dict of its numeric/string fields (nested structs dropped)
+    out = {}
+    for fn in st._fieldnames:
+        v = getattr(st, fn)
+        if isinstance(v, (int, float, str, np.number)) or (isinstance(v, np.ndarray) and v.dtype != object): out[fn] = v
+    return out
+
 def savemat_det(path, d):
     # scipy writes a creation timestamp into the 116-byte MAT header; pin it so rebuilds are byte-identical
     sio.savemat(path, d); b = bytearray(open(path, 'rb').read())
@@ -200,6 +208,7 @@ for fn, cid, sx, content in [('diao1_female.mat', 'blab_diao1_female', 'F', 'Man
     gt = 'gt/%s.audapter_online.mat' % cid
     keep = {k: getattr(m, k) for k in ('fmts', 'sfmts', 'rms', 'ost_stat', 'signalOut') if hasattr(m, k)}
     keep.update(sr=p.sr, downfact=p.downfact, frameLen=p.frameLen, nLPC=p.nLPC, fn1=p.fn1, fn2=p.fn2, rmsThresh=p.rmsThresh)
+    keep['params'] = struct_dict(p)
     savemat_det(os.path.join(OUT, gt), keep)
     add(cid, 'blab', np.asarray(m.signalIn, float), fs, getattr(m.subject, 'name', ''), sx, 'adult', 'adult_' + sx, content,
         'audapter_matlab/example_data/' + fn + ' data.signalIn', gt=gt, gt_type='Audapter online log (fmts,sfmts,rms,ost_stat) from original Windows session',
@@ -210,6 +219,7 @@ m = sio.loadmat(os.path.join(RAW, 'gh/da1_male.mat'), squeeze_me=True, struct_as
 gt = 'gt/blab_da1_male.audapter_online.mat'
 keep = {k: getattr(m, k) for k in ('fmts', 'sfmts', 'rms', 'signalOut') if hasattr(m, k)}
 keep.update(sr=p.sr, downfact=p.downfact, frameLen=p.frameLen, nLPC=p.nLPC, fn1=p.fn1, fn2=p.fn2, rmsThresh=p.rmsThresh)
+keep['params'] = struct_dict(p)
 savemat_det(os.path.join(OUT, gt), keep)
 add('blab_da1_male', 'blab', np.asarray(m.signalIn, float), int(p.sr), getattr(m.subject, 'name', ''), 'M', 'adult', 'adult_M', 'Mandarin syllable (da1), formant-shift trial',
     'audapter_mex/mcode/da1_male.mat data.signalIn', gt=gt, gt_type='Audapter online log (fmts,sfmts,rms) from original session',

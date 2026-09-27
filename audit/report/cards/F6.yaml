@@ -1,0 +1,87 @@
+# Full finding card F6. Rendered by build.py; see PLAN.md section 3 for the fields.
+# Framed as a question to the maintainers: the change is deliberate (blab commit deab341, "Formant dropout fix v1").
+id: F6
+log: F6
+notes: "notes/formant.md#f6"
+headline: "Is this intended? Since the dropout fix, a field perturbation switches on again every time the formants re-enter the field"
+severity: med
+origin: blab-intended
+origin_note: "A deliberate blab change: commit deab34155d09c9c221e2f71aea9b2bbc33dbb71b (\"Formant dropout fix v1\", Nov 2020) commented out the line that ends the perturbation, and commit 8015818 kept it. We ran the same export script on build-upstream (2.1.5): upstream perturbs only the first stretch in the field. Our severity reflects the behaviour change for multi-vowel stimuli and upstream-style configurations, not a judgement that the new behaviour is wrong."
+status: [H]
+effect:
+  setup: >
+    Perturbation-field mode, no OST/PCF: <code>bShift = 1</code>, <code>bDetect = 1</code>, the field is <code>F1Min = 600</code> Hz
+    (F1Max 5000, F2 0–5000, <code>LBk = 0</code>), and inside it F1 is raised 20 % (<code>pertAmp = 0.2</code>, <code>pertPhi = 0</code>, ratio shift).
+    Input 1 is one 1.0 s vowel gliding /a/ → /i/ → /a/ (F1 850 → 310 → 850 Hz, F2 1220 → 2790 → 1220 Hz), so F1 leaves the field and comes back.
+    Input 2 is a steady /a/ (F1 760 Hz) with a 40 ms dip of F1 to 520 Hz halfway through, a stand-in for a brief formant-tracker excursion out of the field.
+    Both run on the blab build and, with the same script and parameters, on upstream 2.1.5.
+  expected: "Upstream 2.1.5 perturbs the first stretch in the field and then stops for the rest of the trial: on the glide only the first /a/ ({up_glide_text}); on input 2 the shift ends at the dip ({up_dip_text}) and does not come back. That second case is the dropout the blab change set out to fix."
+  observed: "Blab perturbs every stretch in the field. On the glide the final /a/ is shifted as well ({re_on:.2f}–{re_off:.2f} s): its F1 is heard at {glide_last_a_F1_out_hz:.0f} Hz instead of {up_last_a_out:.0f} Hz (input {glide_last_a_F1_in_hz:.0f} Hz, independent LPC). On input 2 the shift resumes {dip_resume:.3f} s after the dip, as intended ({dip_after_F1_out_hz:.0f} vs {up_dip_after_out:.0f} Hz after the dip). minVowelLen = {mvl_text} frames: {mvl_same}."
+  matters: >
+    Both behaviours are defensible, but they are different experiments. With the blab MEX, a field perturbation applies to every vowel or
+    stretch of a vowel whose formants fall in the field (later syllables, a return to the target vowel, brief excursions of the tracker)
+    rather than to the first one only. A lab that moved from upstream Audapter, or that designed a multi-syllable stimulus around the old
+    one-shot rule, gets more perturbed speech than it planned, and <code>minVowelLen</code> no longer controls anything. Only field mode
+    is affected: when a PCF is loaded, the PCF decides per OST state and this code path is overridden. We would like to know which
+    behaviour the lab intends, so the code and the documentation can say so.
+  numbers:
+    - ["Shifted stretches, glide, upstream 2.1.5", "{up_glide_text}"]
+    - ["Shifted stretches, glide, blab", "{glide_text}"]
+    - ["Shifted stretches, /a/ with dip, upstream 2.1.5", "{up_dip_text}"]
+    - ["Shifted stretches, /a/ with dip, blab", "{dip_text}"]
+    - ["F1 heard in the final /a/ (0.95–1.05 s): input / upstream / blab", "{glide_last_a_F1_in_hz:.0f} / {up_last_a_out:.0f} / {glide_last_a_F1_out_hz:.0f} Hz"]
+    - ["F1 heard after the dip (0.75–1.0 s): input / upstream / blab", "{dip_after_F1_in_hz:.0f} / {up_dip_after_out:.0f} / {dip_after_F1_out_hz:.0f} Hz"]
+    - ["minVowelLen set to {mvl_text} frames", "{mvl_same}"]
+sketch: f6
+interactive:
+  id: f6
+  variants: [shipped, alt-f6]
+  patches: {alt-f6: [f6-restore-transdone.patch]}
+  needs: {recorder_s: 1.3}
+  button: "Run both inputs on the released build and on the alternative"
+  inputs: {glide: dev_glide_48k.wav, dip: dev_dip_48k.wav}
+  params: {rmsthresh: 0.005, bdetect: 1, btrack: 1, bshift: 1, bratioshift: 1, bmelshift: 0, f1min: 600, f1max: 5000, f2min: 0, f2max: 5000,
+           lbk: 0, lbb: 0, pertf2: {linspace: [0, 5000, 257]}, pertamp: {fill: 0.2, n: 257}, pertphi: {fill: 0, n: 257}}
+  variant_labels: {alt-f6: "alternative: upstream 2.1.5 behaviour"}
+  text: >
+    This runs both inputs through the real Audapter C++ core compiled to WebAssembly from the pinned commit, once as released and once
+    as an <strong>alternative</strong> build that puts back upstream 2.1.5's one-shot rule (the change below; an alternative, not a fix).
+    The alternative reproduces the upstream build's shifted stretches to the frame, and it gives bit-identical output to the released
+    build whenever the formants never leave the field. Which of the two is right is the lab's call.
+asset_dir: f6
+audio:
+  - {file: glide_input.wav, role: input}
+  - {file: glide_output_upstream.wav, role: expected}
+  - {file: glide_output.wav, role: observed}
+  - {file: dip_output_upstream.wav, role: expected}
+  - {file: dip_output.wav, role: observed}
+audio_note: "All clips share one playback gain, so level differences are real. 16 kHz, 16-bit, as recorded by Audapter. Here “expected” means upstream 2.1.5's behaviour with the same script, not a claim about which is correct. Listen to the final /a/ of the glide: upstream leaves it as spoken, blab raises its F1."
+cause:
+  summary: >
+    In field mode, <code>detectTrans()</code> decides each voiced frame whether the formants are in the field. Upstream counted the
+    frames of the current stretch and, when the formants left the field after at least <code>minVowelLen</code> frames, set
+    <code>transDone</code>, which disables detection until the next <code>reset()</code>: one perturbed stretch per trial. Blab commented out
+    that assignment, so <code>transDone</code> is never set; its <code>else</code> branch (which blab also changed to clear
+    <code>transDone</code>) can no longer run, and <code>minVowelLen</code> is read nowhere. Separately, in both builds <code>minvowellen</code> is
+    registered as an int parameter but stored in a double, so setting it writes 4 bytes into the double and upstream's threshold stays at
+    60 frames whatever is set (our sweep: identical output for 5, 60 and 1000).
+  refs:
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2399, 2420], hl: [2409, 2410, 2411, 2418], expect: "CWN removed for dropouts", note: "Blab's detectTrans(): the end-of-stretch rule is commented out, so transDone stays false and the else branch at 2415–2419 is unreachable."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1806, 1812], hl: [1811], expect: "during_trans = (pertCfg.fmtPertAmp[stat] != 0);", note: "With a PCF loaded, the PCF overrides detectTrans(), so only PCF-less field mode is affected."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [152, 152], hl: [152], expect: "addIntParam(\"minvowellen\"", note: "Registered as an int..."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.h, lines: [469, 469], hl: [469], expect: "dtype minVowelLen", note: "...stored as a double. The int setter (Audapter.cpp:1196–1197) writes only the low 4 bytes, and getParam reads them back, so the value looks set."}
+  upstream_refs:
+    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [2234, 2236], expect: "p.transDone=true;"}
+    - {repo: upstream-mex, path: TransShiftMex/Audapter.h, lines: [456, 456], expect: "dtype minVowelLen"}
+  fix_label: "Options"
+  fix: >
+    Not a fix, a choice. If re-arming is intended, delete <code>transDone</code>, <code>minVowelLen</code> and the dead branch, and document that
+    every stretch in the field is perturbed. If upstream's one-shot rule is wanted, <code>report/patches/f6-restore-transdone.patch</code> restores it
+    (4 lines). A middle way is a parameter (e.g. re-arm on or off). In any case make <code>minVowelLen</code> a double parameter or an int field.
+verify:
+  - {kind: H, what: "blab vs upstream differential", name: "t_diff.m", test: "diff upstream/blab: field_reentry"}
+  - {kind: H, what: "report export on both builds", name: "report_f6.m", detail: "blab and upstream builds, glide + dip + minVowelLen sweep"}
+  - {kind: H, what: "first analysis (the t_diff.m scenario, F1 850 → 400 → 850 Hz)", name: "a_reentry.m", detail: "same pattern: blab adds a second shifted stretch after re-entry"}
+  - {kind: H, what: "WASM alternative build", name: "report/wasm/checks/alt-f6.mjs", detail: "alternative = upstream export to the frame; bit-identical to released when the field is never left and on 6 reference scenarios"}
+  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+reproduce: "cd audit/harness && ./run-oct.sh report_f6.m && VARIANT=upstream ./run-oct.sh report_f6.m build-upstream upstream/audapter_matlab && ./run-oct.sh report_f6.m"

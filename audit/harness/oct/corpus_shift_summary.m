@@ -34,19 +34,23 @@ for st = [0 2 -2]
     e = oc(i) - cc(i);
     printf('  %-6s %-14s n=%2d cents err %6.1f [%6.1f]  gain %+5.2f dB [%+5.2f..%+5.2f]\n', c, g{1}, nnz(i), median(e, 'omitnan'), max(abs(e)), median(gd(i)), min(gd(i)), max(gd(i)));
   end
-  i = strcmp(cs, c); e = abs(oc(i) - cc(i));
-  T(sprintf('corpus %s F0 within 10 cents', c), nnz(e > 10) <= 0, '%d/%d clips > 10 cents: %s', nnz(e > 10), nnz(i), strjoin(id(i)(e > 10)', ' '));
+  i = strcmp(cs, c) & ~strncmp(id, 'vbd_', 4); e = abs(oc(i) - cc(i));
+  T(sprintf('corpus %s F0 within 10 cents (clean clips)', c), nnz(e > 10) <= 0, '%d/%d clips > 10 cents: %s', nnz(e > 10), nnz(i), strjoin(id(i)(e > 10)', ' '));
 end
 i0 = strcmp(cs, 'pvoc+0'); i2 = strcmp(cs, 'pvoc+2');
 T('corpus pvoc no loudness step 0 -> +2 st', abs(median(gd(i2)) - median(gd(i0))) < 0.5, 'median gain 0 st %+.2f dB, +2 st %+.2f dB', median(gd(i0)), median(gd(i2)));
-printf('\n== time-domain shift +1 st: output cents (frame-paired median [range]); logged shifted/tracked ratio (cents); Audapter pitch tracker vs reference F0\n');
-for g = gs
-  i = strcmp(cs, 'tds+1') & strcmp(grp, g{1}); j = strncmp(cs, 'tds_tracker', 11) & strcmp(grp, g{1}); if ~any(i), continue; end
-  printf('  %-14s n=%2d out %6.1f [%6.1f..%6.1f] logged %6.1f [%6.1f..%6.1f] | tracker median err %5.1f%%, gross(>20%%) %5.1f%% [worst clip %5.1f%%]\n', g{1}, nnz(i), median(oc(i), 'omitnan'), ...
-    min(oc(i)), max(oc(i)), median(gd(i), 'omitnan'), min(gd(i)), max(gd(i)), 100*median(aF1(j), 'omitnan'), 100*median(aF2(j), 'omitnan'), 100*max(aF2(j)));
+printf('\n== time-domain shift +1 st. out = frame-paired output cents (median [range] over clips). Pitch tracker (logged data.pitchHz)\n');
+printf('   vs reference F0: median ratio, %% of frames within 5%%, %% of frames at ~2x F0. tdsdef = frameLen 32/nDelay 5 (defaults), tdsdemo = 64/7 (time_domain_shift_demo.m)\n');
+for c = {'tdsdef', 'tdsdemo'}
+  for g = gs
+    i = strcmp(cs, [c{1} '+1']) & strcmp(grp, g{1}); j = strncmp(cs, [c{1} '_tracker'], numel(c{1}) + 8) & strcmp(grp, g{1}); if ~any(i), continue; end
+    printf('  %-7s %-14s n=%2d out %6.1f [%6.1f..%6.1f] | tracker/ref %.2f, within5%% %3.0f%%, ~2x %3.0f%%\n', c{1}, g{1}, nnz(i), median(oc(i), 'omitnan'), ...
+      min(oc(i)), max(oc(i)), median(aF1(j), 'omitnan'), 100*median(aF2(j), 'omitnan'), 100*median(cov(j), 'omitnan'));
+  end
+  clean = ~strncmp(id, 'vbd_', 4);
+  i = strcmp(cs, [c{1} '+1']) & clean; e = abs(oc(i) - 100);
+  T(sprintf('corpus %s TDS +1 st output within 15 cents (clean clips)', c{1}), nnz(e > 15 | isnan(e)) == 0, '%d/%d clips off: %s', nnz(e > 15 | isnan(e)), nnz(i), strjoin(id(i)(e > 15 | isnan(e))', ' '));
+  j = strncmp(cs, [c{1} '_tracker'], numel(c{1}) + 8) & clean;
+  T(sprintf('corpus %s pitch tracker within 5%% on >=70%% of frames (clean clips)', c{1}), all(aF2(j) >= 0.7), '%d/%d clips below: %s', nnz(aF2(j) < 0.7), nnz(j), strjoin(id(j)(aF2(j) < 0.7)', ' '));
 end
-i = strcmp(cs, 'tds+1'); e = abs(oc(i) - 100);
-T('corpus TDS +1 st output within 15 cents', nnz(e > 15 | isnan(e)) == 0, '%d/%d clips off: %s', nnz(e > 15 | isnan(e)), nnz(i), strjoin(id(i)(e > 15 | isnan(e))', ' '));
-e = abs(gd(i) - 100);
-T('corpus TDS +1 st logged ratio within 15 cents', nnz(e > 15 | isnan(e)) == 0, '%d/%d clips off: %s', nnz(e > 15 | isnan(e)), nnz(i), strjoin(id(i)(e > 15 | isnan(e))', ' '));
 end

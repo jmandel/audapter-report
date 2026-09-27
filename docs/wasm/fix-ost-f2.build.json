@@ -1,0 +1,1 @@
+{"variant":"fix-ost-f2","source":"blab-lab/audapter_mex","sha":"169cadffef4c2d82a33939b840245b8a8a9db0de","sizes":"lite","maxPBSize":480000,"maxRecSize":160000,"patches":[{"file":"ost-f2-maxioi-onset-index.patch","sha256":"361366573060cb396e1caf336593c06e702799bef26cf614fa9aaa157e0cd2db"}],"bytes":392568}

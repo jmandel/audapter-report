@@ -1,0 +1,23 @@
+diff -u a/Audapter.cpp b/Audapter.cpp
+--- a/Audapter.cpp	2026-09-27 09:59:44.982593303 -0500
++++ b/Audapter.cpp	2026-09-27 09:59:44.996563633 -0500
+@@ -2406,16 +2406,15 @@
+ 			}
+ 			else{
+ 				btransition=false;				
+-				//if (p.transCounter>=p.minVowelLen){	CWN removed for dropouts
+-				//	p.transDone=true;
+-				//}
++				if (p.transCounter>=p.minVowelLen){	/* audit alternative F6: upstream 2.1.5 behaviour (one field entry per trial) */
++					p.transDone=true;
++				}
+ 				p.transCounter=0;
+ 			}			
+ 		}
+ 		else{
+ 			btransition=false;
+ 			p.transCounter=0;
+-			p.transDone = false;	// CWN added for dropouts
+ 		}
+ 	}
+ 	else{

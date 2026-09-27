@@ -48,6 +48,8 @@ for (const v of want) {
     T(`[${v}] ${v} does not`, !r.variantBug, r.variant);
   } else T(`[${v}] has a target check`, false, `add report/wasm/checks/${v}.mjs`);
 }
-fs.writeFileSync(path.join(R, 'wasm', 'check-patches.json'), JSON.stringify(out, null, 1));
+const jf = path.join(R, 'wasm', 'check-patches.json');
+const prev = fs.existsSync(jf) ? JSON.parse(fs.readFileSync(jf)) : {};
+fs.writeFileSync(jf, JSON.stringify({ ...prev, ...out }, null, 1));   // merge: runs for a subset keep the other variants' results
 console.log(fails ? `${fails} FAILED` : 'ALL PASS');
 process.exitCode = fails ? 1 : 0;

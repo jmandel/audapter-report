@@ -1,0 +1,1 @@
+{"variant":"fix-i-02","source":"blab-lab/audapter_mex","sha":"169cadffef4c2d82a33939b840245b8a8a9db0de","sizes":"lite","maxPBSize":480000,"maxRecSize":160000,"patches":[{"file":"i-02-dscale-once.patch","sha256":"5aa9e31390f3e07313dc902654e5352eeb7cfd1f202cb805bdad1561b874c062"}],"bytes":392544}

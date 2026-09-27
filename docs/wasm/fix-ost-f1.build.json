@@ -1,0 +1,1 @@
+{"variant":"fix-ost-f1","source":"blab-lab/audapter_mex","sha":"169cadffef4c2d82a33939b840245b8a8a9db0de","sizes":"lite","maxPBSize":480000,"maxRecSize":160000,"patches":[{"file":"ost-f1-reset-per-trial.patch","sha256":"a6af641d2ced237fd5862fceaa895ceb982613c6b2cf332406f6a4bb85e32ecb"}],"bytes":392654}

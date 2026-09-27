@@ -1,0 +1,74 @@
+# Full finding card LIVE-1 / LIVE-2 (one card). Rendered by build.py; see PLAN.md section 3 for the fields.
+# File name LIVE-1.yaml because the id contains " / " (see the coordinator note in the agent report).
+# Data: live line (audit/live, fake ASIO driver), exported by report/live/export_live.py.
+id: "LIVE-1 / LIVE-2"
+log: LIVE-1
+notes: "live/README.md#live-1"
+headline: "Reloading OST/PCF files or changing some parameters while audio runs (ALWAYS_ON) crashes the audio thread: 23 crashes in about 9 600 reloads in simulation"
+severity: high
+origin: upstream
+origin_note: "Inherited: upstream 2.1.5 frees and re-allocates the same arrays (pcf.cpp:334, ost.cpp:136 there) and rebuilds the same objects in setGetParam (Audapter.cpp:1333, 1354 there), with no lock in either tree. Known from reading both trees; the simulation ran the blab build."
+fidelity: "Simulation, not a Windows rig: the real mexFunction, audioIO.cpp and RtAudio ASIO code, built with GCC on Linux (plain -O2, ASan, TSan), driven by a fake ASIO driver in docker. The race windows are real code; crash rates depend on thread scheduling, the CPU and MATLAB's per-call overhead, so they are indicative, not Windows-exact."
+status: [D]
+effect:
+  setup: >
+    The <code>ALWAYS_ON</code> pattern: <code>runExperiment.m</code> with <code>ALWAYS_ON = 1</code> calls <code>Audapter(1)</code> once, then for every
+    trial loads the OST and PCF files and runs <code>AudapterIO('init')</code> while audio keeps running. A native MATLAB stand-in replays those calls
+    against the real MEX, with a looped vowel at the microphone of the fake ASIO driver: reloads 20 ms or 250 ms apart until the process dies
+    (at most 600 per run), and parameter changes under AddressSanitizer.
+  expected: "The file loads, or the parameter changes, between two callbacks, and the next callback uses the new settings. Or the MEX refuses the call while audio runs."
+  observed: "PCF reloads: {pcf_crashes} crashes in {pcf_reloads} reloads. OST reloads: {ost_crashes} crashes in {ost_reloads} reloads. Individual runs died after {crash_min} to {crash_max} reloads. ASan places the crash in the audio thread, reading the PCF array through a NULL pointer. setParam('pitchshiftratio'), fn1 and pvocFrameLen changes are heap-use-after-free in the callback; the plain build segfaulted for pvocFrameLen."
+  matters: >
+    In MATLAB a crash in the audio thread takes the whole session down mid-experiment, with any data not yet saved.
+    <code>ALWAYS_ON</code> experiments reload both files on every trial, so over a few hundred trials a crash is a real possibility. A use-after-free that does
+    not crash is worse: the callback computes with freed memory and nothing reports it. <code>AudapterIO('init')</code> always sets
+    <code>pitchShiftRatio</code>, which rebuilds the time-domain pitch shifter; with <code>bTimeDomainShift = 1</code> every always-on trial is exposed.
+    The default flow (<code>stop</code> before any change) is not affected: 300 start/stop cycles under ThreadSanitizer were clean.
+    <br><strong>Fidelity.</strong> Simulation, not a Windows rig: the real MEX, <code>audioIO.cpp</code> and RtAudio ASIO code, built with GCC on Linux,
+    driven by a fake ASIO driver in docker. The race windows are the real code; the rates depend on scheduling and MATLAB's call overhead and are indicative only.
+  numbers:
+    - ["PCF reload while running: crashes / reloads", "{pcf_crashes} / {pcf_reloads} (about 1 in {pcf_per})"]
+    - ["OST reload while running: crashes / reloads", "{ost_crashes} / {ost_reloads} (about 1 in {ost_per})"]
+    - ["Reloads before a crash, per run", "{crash_min} to {crash_max}"]
+    - ["ASan, PCF reload", "{asan_pcf_frame}"]
+    - ["TSan, OST reload", "{tsan_ost}"]
+    - ["ASan, setParam('pitchshiftratio')", "heap-use-after-free in {td_read}"]
+    - ["ASan, PCF reload with the phase vocoder on", "heap-use-after-free in {pvoc_frame}"]
+    - ["ThreadSanitizer, all live scenarios", "{tsan_reports} reports, {tsan_pairs} distinct site pairs"]
+sketch: live12
+asset_dir: live-1-live-2
+audio: []
+audio_note: >
+  No audio for this card: the effect is a crashed process or a read of freed memory. What a use-after-free plays depends on the heap
+  contents of one particular run, so any recording would be one arbitrary instance.
+cause:
+  summary: >
+    Nothing serialises the MATLAB thread and the audio callback. Reading a PCF first frees the per-state arrays and sets them to NULL, then
+    parses the file, then allocates new arrays; <code>pertCfg.n</code> keeps the old state count throughout, so a callback in between indexes a
+    NULL pointer. The OST reader does the same with <code>stat0</code>, which <code>osTrack</code> reads on every frame. Several setParams
+    (<code>pitchshiftratio</code>, the formant-tracker settings, <code>pvocFrameLen</code>) and every PCF load in phase-vocoder mode delete and
+    re-create DSP objects that the callback may be using at that moment.
+  refs:
+    - {repo: blab-mex, path: TransShiftMex/pcf.cpp, lines: [332, 340], hl: [334, 335], expect: "pitchShift = NULL;", note: "PERT_CFG::readFromFile frees the arrays first..."}
+    - {repo: blab-mex, path: TransShiftMex/pcf.cpp, lines: [421, 426], hl: [421, 423], expect: "pitchShift = (float *)calloc(n, sizeof(float))", note: "...and allocates the new ones only after parsing the file."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1970, 1973], hl: [1972], expect: "pertCfg.pitchShift[stat]", note: "The callback reads it on every frame while n > 0: the ASan crash site."}
+    - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [140, 144], hl: [142, 143], expect: "stat0 = NULL;", note: "The OST reader frees and NULLs stat0 the same way..."}
+    - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [360, 361], hl: [361], expect: "stat >= stat0[i]", note: "...which osTrack reads every frame: the TSan SEGV site."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1029, 1036], hl: [1035], expect: "bRemakeTimeDomainShifter = true;", note: "Setting pitchshiftratio always marks the time-domain shifter for rebuilding..."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1449, 1455], hl: [1451], expect: "timeDomainShifter.reset(", note: "...and the old object is deleted while the callback may be inside it."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1426, 1431], hl: [1430], expect: "pVocs.clear();", note: "The same for the phase vocoders (pvocFrameLen, pvocHop, nFB); readPertCfg clears them on every PCF load (line 3205)."}
+    - {repo: blab-matlab, path: mcode/runExperiment.m, lines: [851, 859], hl: [851, 859], expect: "AudapterIO('pcf', pcf, [], 0);", note: "ALWAYS_ON: both files are reloaded for every trial while audio runs."}
+  upstream_refs:
+    - {repo: upstream-mex, path: TransShiftMex/pcf.cpp, lines: [334, 334], expect: "free(pitchShift);"}
+    - {repo: upstream-mex, path: TransShiftMex/ost.cpp, lines: [136, 136], expect: "free(stat0);"}
+    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [1354, 1354], expect: "timeDomainShifter.reset("}
+  fix: >
+    Refuse <code>ost</code>, <code>pcf</code> and the object-rebuilding setParams while audio runs (<code>mexErrMsgTxt("stop audio first")</code>), or
+    parse and build into temporaries and swap them in under a lock that the callback also takes (<code>try_lock</code>, skip a frame if busy).
+verify:
+  - {kind: D, what: "live simulation driver, plain -O2 build", name: "live/run.sh crash", detail: "results/crash.txt plus the earlier run kept in live/work/out/crash_*.txt, pooled"}
+  - {kind: D, what: "live simulation driver, ASan build", name: "live/run.sh uaf", detail: "heap-use-after-free for pitchshiftratio, fn1, pvocFrameLen and PCF reload with pvoc"}
+  - {kind: D, what: "ThreadSanitizer inventory", name: "live/run.sh tsan", detail: "SEGV at ost.cpp:361 during OST reload; 195 distinct racing site pairs"}
+  - {kind: D, what: "report export (crash counts, sanitizer lines)", name: "report/live/export_live.py live12"}
+  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+reproduce: "audit/live/run.sh crash uaf tsan && python3 audit/report/live/export_live.py live12"

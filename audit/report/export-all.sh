@@ -1,0 +1,25 @@
+#!/bin/bash
+# Regenerate every report asset from the harness (docker, audapter-octave image) and the live-path results.
+# Run from anywhere: audit/report/export-all.sh   (build.py --export calls it). Order matters where noted.
+set -euo pipefail
+R=$(cd "$(dirname "$0")" && pwd); H=$R/../harness
+cd "$H"
+UP="build-upstream upstream/audapter_matlab"
+run()  { echo "export: $*"; ./run-oct.sh "$@" > /dev/null; }
+runu() { echo "export (upstream): $1"; VARIANT=upstream ./run-oct.sh "$1" $UP > /dev/null; }
+run report_ost_f1.m;  runu report_ost_f1.m
+run report_ost_f2.m;  runu report_ost_f2.m
+run report_i01.m;     runu report_i01.m
+run report_pt5.m
+mkdir -p oct/out/report/ost-f4
+./run-oct.sh report_ost_f4.m build-asan > oct/out/report/ost-f4/asan.log 2>&1 || true   # ASan aborts at the first bad read
+run report_ost_f4.m
+mkdir -p oct/out/report/fmt-f1/asan
+./run-oct.sh report_fmt_f1.m build-asan > oct/out/report/fmt-f1/asan/asan.log 2>&1 || true
+run report_fmt_f1.m;  runu report_fmt_f1.m
+run report_i04.m
+run report_ost_f8.m
+run report_i02.m
+run report_i03.m;     runu report_i03.m
+run report_f6.m;      runu report_f6.m;  run report_f6.m     # blab, upstream, blab again (plays both at one gain)
+if [ -x "$R/live/export.sh" ]; then "$R/live/export.sh"; elif [ -f "$R/live/export_live.py" ]; then python3 "$R/live/export_live.py"; fi

@@ -13,23 +13,131 @@
    ],
    "upstream_export": true
   },
+  "OST-F2": {
+   "assets": [
+    "data.json",
+    "dev_vowel_48k.wav",
+    "input.wav",
+    "output_control.wav",
+    "output_trial1.wav",
+    "output_trial3.wav",
+    "widget-data.js"
+   ],
+   "upstream_export": true
+  },
   "I-01": {
    "assets": [
     "data.json",
+    "dev_babble_every3rd_16k.wav",
+    "dev_vowels3_48k.wav",
     "input_vowels.wav",
     "output_fb2_bundled_babble_zoom.wav",
-    "output_fb3_voice_plus_noise.wav"
+    "output_fb3_voice_plus_noise.wav",
+    "widget-data.js"
    ],
    "upstream_export": true
+  },
+  "LIVE-1 / LIVE-2": {
+   "assets": [
+    "data.json"
+   ],
+   "upstream_export": false
   },
   "PT-5": {
    "assets": [
     "data.json",
+    "dev_vowel_48k.wav",
     "input_vowel.wav",
     "output_bypass.wav",
-    "output_pitch_step.wav"
+    "output_pitch_step.wav",
+    "widget-data.js"
    ],
    "upstream_export": false
+  },
+  "OST-F4": {
+   "assets": [
+    "data.json"
+   ],
+   "upstream_export": false
+  },
+  "FMT-F1": {
+   "assets": [
+    "data.json",
+    "history.json"
+   ],
+   "upstream_export": true
+  },
+  "LIVE-3": {
+   "assets": [
+    "data.json",
+    "input_vowel.wav",
+    "output_reset_burst.wav",
+    "output_reset_no_burst.wav"
+   ],
+   "upstream_export": false
+  },
+  "LIVE-6": {
+   "assets": [
+    "data.json",
+    "input_vowel.wav",
+    "output_buffer_128.wav",
+    "output_matched_buffer.wav"
+   ],
+   "upstream_export": false
+  },
+  "I-04": {
+   "assets": [
+    "cond1_output.wav",
+    "cond2_output_fresh.wav",
+    "cond2_output_reused.wav",
+    "data.json",
+    "input.wav"
+   ],
+   "upstream_export": false
+  },
+  "OST-F8": {
+   "assets": [
+    "data.json",
+    "input_click.wav",
+    "output_braces.wav",
+    "output_click_braces.wav",
+    "output_click_hold.wav"
+   ],
+   "upstream_export": false
+  },
+  "I-02": {
+   "assets": [
+    "data.json",
+    "dev_babble_48k.wav",
+    "dev_input_48k.wav",
+    "input_vowels.wav",
+    "output_fb5_clg15.wav",
+    "output_fb5_clg21.wav",
+    "widget-data.js"
+   ],
+   "upstream_export": false
+  },
+  "F6": {
+   "assets": [
+    "data.json",
+    "dev_dip_48k.wav",
+    "dev_glide_48k.wav",
+    "dip_input.wav",
+    "dip_output.wav",
+    "dip_output_upstream.wav",
+    "glide_input.wav",
+    "glide_output.wav",
+    "glide_output_upstream.wav",
+    "widget-data.js"
+   ],
+   "upstream_export": true
+  },
+  "I-03": {
+   "assets": [
+    "data.json",
+    "output_27_to_35s.wav"
+   ],
+   "upstream_export": true
   }
  }
 }

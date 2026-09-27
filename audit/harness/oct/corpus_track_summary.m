@@ -17,6 +17,11 @@ for g = gs'
     100*wmean(G1(i), n(i)), 100*wmean(G2(i), n(i)), 100*wmed(B1(i), n(i)), 100*wmed(B2(i), n(i)), 100*wmed(L1(i), n(i)), 100*wmed(L2(i), n(i)), ...
     sum(nc(i)), 100*wmed(C1(i), nc(i)), 100*wmed(C2(i), nc(i)), 100*wmean(GC(i), nc(i)));
 end
+for g = gs'
+  i = def & strcmp(S.group, g{1});
+  T(sprintf('corpus track %s: consensus-frame F1/F2 MARE < 5%%, gross < 10%%', g{1}), wmed(C1(i), nc(i)) < 0.05 && wmed(C2(i), nc(i)) < 0.05 && wmean(GC(i), nc(i)) < 0.1, ...
+    'F1 %.1f%% F2 %.1f%% gross %.1f%% (%d frames)', 100*wmed(C1(i), nc(i)), 100*wmed(C2(i), nc(i)), 100*wmean(GC(i), nc(i)), sum(nc(i)));
+end
 printf('\n== by vowel (default params; ARCTIC vowel phones + sustained /a/ /i/)\n');
 vs = unique(S.vowel(~strcmp(S.vowel, 'all')));
 for v = vs'

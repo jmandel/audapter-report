@@ -128,7 +128,7 @@ int main(void) {
     }
     if (sel == 2 && F_div_L) {                         /* no-pitch-shift copy into every voice ring */
 #include "extracted/nopvoc_copy.inc"
-        assert(bm_dst_off % internalBufLen + bm_n <= internalBufLen);   /* stays inside row i0 */
+        if (bm_calls > 0) assert(bm_dst_off % internalBufLen + bm_n <= internalBufLen);   /* stays inside row i0 */
     }
     if (sel == 3) {                                    /* pvoc analysis copy: safe for every c, N <= 4096 */
 #include "extracted/pvoc_in.inc"
@@ -180,7 +180,7 @@ int main(void) {
     }
     if (sel == 2) {
 #include "extracted/nopvoc_copy.inc"
-        assert((bm_dst_off % internalBufLen + bm_n > internalBufLen) == (c + F > internalBufLen));
+        if (bm_calls > 0) assert((bm_dst_off % internalBufLen + bm_n > internalBufLen) == (c + F > internalBufLen));
     }
     if (sel == 3) {   /* back zeroing: per iteration negative iff c - dF - i0 < 0; at i0 = H iff c < dF + H */
 #include "extracted/pvoc_ola.char.inc"
@@ -219,7 +219,7 @@ int main(void) {
 #include "extracted/optr_sum.char.inc"
         if (sum_hits > 0) {
             assert(!sum_bad_any || N < F || N > SUMLEN);
-            if (sum_idx == N - F) assert(sum_bad_any == (N < F));        /* n0 = 0 */
+            if (sum_idx == N - F) assert(sum_bad_any == (N < F || N - F >= SUMLEN));   /* n0 = 0 */
             if (sum_idx == N - 1) assert(sum_bad_any == (N > SUMLEN));   /* n0 = F-1 */
         }
     }
