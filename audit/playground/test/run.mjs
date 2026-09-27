@@ -181,6 +181,39 @@ await page.screenshot({ path: path.join(SHOTS, 'expert-1440-light.png') });
 await page.keyboard.press('Escape');
 await page.click('#tab-explore');
 
+// ---------------- 2c. vowel variability (inward / outward) on a synthetic vowel cloud
+await page.click('#src-synth');
+const cloudRun = async (dir, baseline) => {
+  const before = await page.evaluate(() => PG.state.trials.length);
+  await page.evaluate(({ dir, baseline }) => {
+    PG.editSettings(s => { s.when.mode = 'always'; s.shift.formant.on = true; s.shift.formant.field = 'variability'; s.shift.formant.vari.dir = dir; s.shift.formant.vari.strength = 50; if (baseline) s.shift.formant.vari.centre = 'manual'; }, 'noauto');
+    PG.bus.emit('cloud', { n: 20, sd1: 50, sd2: 110, f1: 610, f2: 1850, f3: 2900, f0: 215, dur: 0.8, baseline, seed: 11 });
+  }, { dir, baseline });
+  await page.waitForFunction(n => PG.state.trials.length >= n && PG_TEST.idle(), before + (baseline ? 40 : 20), { timeout: 180000 });
+  await page.waitForTimeout(300);
+  return page.evaluate(k => {
+    const s = PG.state.settings, TK = PG.Vowel.tokenData(s), v = s.shift.formant.vari, V = PG.S.variField(v), c = TK.centre;
+    let dS = 0, dH = 0, worst = 0;
+    for (const p of TK.pts) { dS += Math.hypot(p.s[0] - c[0], p.s[1] - c[1]); dH += Math.hypot(p.h[0] - c[0], p.h[1] - c[1]); worst = Math.max(worst, Math.hypot(p.h[0] - (c[0] + k * (p.s[0] - c[0])), p.h[1] - (c[1] + k * (p.s[1] - c[1])))); }
+    const Mm = TK.pts.filter(p => p.m); let dM = 0; for (const p of Mm) dM += Math.hypot(p.m[0] - c[0], p.m[1] - c[1]);
+    return { n: TK.pts.length, ratio: dH / dS, measured: Mm.length ? (dM / Mm.length) / (dS / TK.pts.length) : NaN, worst, step: Math.hypot(V.step1, V.step2), centre: c };
+  }, dir === 'in' ? 0.5 : 1.5);
+};
+const vin = await cloudRun('in', true);
+T('vowel variability 50 % inward on a 20-token cloud: heard/spoken dispersion 0.5 ± 0.05 (logged sfmts)', vin.n === 20 && Math.abs(vin.ratio - 0.5) <= 0.05, `ratio ${vin.ratio.toFixed(4)}, measured in the output ${vin.measured.toFixed(3)}, centre ${vin.centre.map(v => v.toFixed(0)).join('/')} Hz`);
+T('inward: each token\'s heard point lies on the line toward the centre within one grid step', vin.worst <= vin.step, `worst ${vin.worst.toFixed(2)} Hz, grid step ${vin.step.toFixed(2)} Hz (diagonal)`);
+await (await page.$('#v-vowel')).screenshot({ path: path.join(SHOTS, 'variability-in-1440-light.png') });
+const vout = await cloudRun('out', false);
+T('vowel variability 50 % outward: heard/spoken dispersion 1.5 ± 0.1', vout.n === 20 && Math.abs(vout.ratio - 1.5) <= 0.1, `ratio ${vout.ratio.toFixed(4)}, measured in the output ${vout.measured.toFixed(3)}`);
+T('outward: each token\'s heard point lies on the line away from the centre within one grid step', vout.worst <= vout.step, `worst ${vout.worst.toFixed(2)} Hz, grid step ${vout.step.toFixed(2)} Hz`);
+await (await page.$('#v-vowel')).screenshot({ path: path.join(SHOTS, 'variability-out-1440-light.png') });
+await page.emulateMedia({ colorScheme: 'dark' }); await page.evaluate(() => PG.bus.emit('theme')); await page.waitForTimeout(300);
+await (await page.$('#v-vowel')).screenshot({ path: path.join(SHOTS, 'variability-out-1440-dark.png') });
+await page.setViewportSize({ width: 390, height: 844 }); await page.waitForTimeout(500);
+await (await page.$('#v-vowel')).screenshot({ path: path.join(SHOTS, 'variability-out-390-dark.png') });
+await page.setViewportSize({ width: 1440, height: 1000 }); await page.emulateMedia({ colorScheme: 'light' }); await page.evaluate(() => PG.bus.emit('theme'));
+await page.evaluate(() => { PG.Vowel.setMode('trial'); PG.setSettings(PG.S.defaultSettings(), 'noauto'); PG.state.selected.clear(); PG.bus.emit('trials'); PG.bus.emit('view', 'spectro'); });
+
 // ---------------- 3. sweep + same-session sequence, memory
 const beforeMB = treeRssMB();
 await page.evaluate(() => { PG.setSettings(PG.S.defaultSettings(), 'noauto'); PG.bus.emit('sweep', { control: PG.controlByPath('shift.formant.f1'), values: [0, 10, 20, 30, 40] }); });

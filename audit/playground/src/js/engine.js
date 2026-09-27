@@ -149,7 +149,7 @@ PG.Engine = (() => {
     const { results } = await run({ variant: s.build || 'lite', trials: [{ input: input.x, settings: s }] });
     const r = results[0]; if (!r) throw new Error('dry run failed');
     const m = PG.S.compile(s).meta;
-    const out = { rms: r.rms[0], rmsP: r.rms[1], slope: r.rms_slope, frameDur: m.frameLen / m.sr, n: r.rms[0].length };
+    const out = { rms: r.rms[0], rmsP: r.rms[1], slope: r.rms_slope, fmts: [r.fmts[0], r.fmts[1]], frameDur: m.frameLen / m.sr, n: r.rms[0].length };
     if (dryCache.size > 20) dryCache.clear();
     dryCache.set(key, out); return out;
   }

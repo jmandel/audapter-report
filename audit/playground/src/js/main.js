@@ -146,6 +146,54 @@
     runSpecs(T.map(t => ({ inputId: t.inputId, settings: S.clone(t.settings), name: `${t.name} in session` })), { kept: true, sequence: true });
   });
 
+  // ---------------- vowel variability: resolve the field centre (median of the input, or of the ticked trials)
+  const med = a => PG.median(Array.from(a).filter(v => v > 0));
+  async function resolveCentre() {
+    const F = st.settings.shift.formant; if (!F.on || F.field !== 'variability') return;
+    let c = null;
+    if (F.vari.centre === 'auto' && st.input) {
+      try { const d = await PG.Engine.dryRun(st.input, st.settings); c = [med(d.fmts[0]), med(d.fmts[1])]; } catch { return; }
+    } else if (F.vari.centre === 'trials') {
+      const T = st.trials.filter(t => st.selected.has(t.id) && t.result);
+      if (!T.length) return;
+      c = [PG.median(T.map(t => med(t.result.fmts[0]))), PG.median(T.map(t => med(t.result.fmts[1])))];
+    }
+    if (!c || !Number.isFinite(c[0]) || !Number.isFinite(c[1])) return;
+    const v = st.settings.shift.formant.vari;
+    if (Math.abs(v.c1 - c[0]) > 0.5 || Math.abs(v.c2 - c[1]) > 0.5) PG.editSettings(x => { x.shift.formant.vari.c1 = Math.round(c[0] * 10) / 10; x.shift.formant.vari.c2 = Math.round(c[1] * 10) / 10; }, 'centre');
+  }
+  PG.bus.on('settings', why => { if (why !== 'centre') resolveCentre(); });
+  PG.bus.on('input', () => resolveCentre());
+  PG.bus.on('selection', () => { if (st.settings.shift.formant.vari.centre === 'trials') resolveCentre(); });
+  PG.resolveCentre = resolveCentre;
+
+  // ---------------- synthetic vowel cloud: N tokens with random F1/F2 around a vowel, optional unshifted baseline pass
+  PG.bus.on('cloud', async o => {
+    const R = PG.DSP.rng(o.seed || (Date.now() & 0xffff)), g = () => { const u = Math.max(R(), 1e-9), v = R(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+    const n = new Set(st.trials.filter(t => t.cloud).map(t => t.cloud)).size + 1, ids = [];
+    for (let k = 0; k < o.n; k++) {
+      const f1 = o.f1 + o.sd1 * g(), f2 = o.f2 + o.sd2 * g();
+      const x = PG.DSP.synthVowel({ dur: o.dur, onset: 0.1, offset: o.dur - 0.1, f0: o.f0 * Math.pow(2, 0.03 * g()), formants: [f1, f2, o.f3, o.f3 + 900], level: -20, seed: k + 1 });
+      const inp = { id: PG.uid(), kind: 'synth', label: `Cloud ${n} token ${k + 1} (F1 ${Math.round(f1)}, F2 ${Math.round(f2)} Hz synthesised)`, x, meta: { synth: { f1, f2 } } };
+      st.inputs.set(inp.id, inp); ids.push(inp.id);
+    }
+    const tag = (arr, phase) => arr.forEach(t => { t.cloud = n; t.tags = [...(t.tags || []), 'cloud ' + n, phase]; PG.Store.saveTrial(t); });
+    if (o.baseline) {
+      const base = S.clone(st.settings); base.shift.formant.on = false; base.when.mode = 'always';
+      const made = await runSpecs(ids.map((id, k) => ({ inputId: id, settings: S.clone(base), name: `C${n} baseline ${k + 1}` })), { kept: true, noCompare: true });
+      if (!made) return;
+      tag(made, 'baseline');
+      const c = [PG.median(made.map(t => med(t.result.fmts[0]))), PG.median(made.map(t => med(t.result.fmts[1])))];
+      PG.editSettings(x => { const v = x.shift.formant.vari; v.c1 = Math.round(c[0] * 10) / 10; v.c2 = Math.round(c[1] * 10) / 10; v.centre = 'manual'; }, 'noauto');
+      PG.toast(`Vowel centre set from the baseline tokens: F1 ${Math.round(c[0])}, F2 ${Math.round(c[1])} Hz.`);
+    }
+    const made = await runSpecs(ids.map((id, k) => ({ inputId: id, settings: S.clone(st.settings), name: `C${n} token ${k + 1}` })), { kept: true, noCompare: true });
+    if (!made) return;
+    tag(made, 'shifted');
+    st.selected.clear(); made.forEach(t => st.selected.add(t.id));
+    PG.Vowel.setMode('tokens'); PG.bus.emit('trials'); PG.bus.emit('view', 'vowel');
+  });
+
   // ---------------- warnings (settings + input context)
   function updateWarnings() {
     const s = st.settings, c = S.compile(s);

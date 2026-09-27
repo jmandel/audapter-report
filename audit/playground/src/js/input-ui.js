@@ -86,7 +86,20 @@ PG.InputUI = (() => {
       num('f0', 'F0', 50, 600, 1, 'Hz'), num('f0End', 'F0 at end', 50, 600, 1, 'Hz'),
       num('dur', 'Length', 0.5, 9, 0.1, 's'), num('level', 'Level', -50, -3, 1, 'dBFS'), num('vib', 'Vibrato', 0, 100, 5, 'cents')),
       h('div.btnrow', {}, h('button.btn.primary', { type: 'button', text: 'Make vowel', on: { click: make } })),
+      cloudBox(),
       h('p.ctl-desc', { text: `Harmonics shaped by four resonances at Peterson & Barney's average formants for ${talker} (1952). Onset at 0.2 s, offset 0.2 s before the end, 30 ms ramps. Pick a vowel on the vowel map to use its formants.` }));
+    function cloudBox() {
+      const c = synth.cloud || (synth.cloud = { n: 20, sd1: 50, sd2: 110, baseline: true });
+      const nn = (k, lab, unit, step) => h('label.syn', {}, h('span', { text: lab }), h('input.num', { type: 'number', step, value: c[k], id: 'cloud-' + k, on: { change: e => { c[k] = +e.target.value; } } }), h('span.unit', { text: unit }));
+      return h('details.cloud', { open: !!synth.cloudOpen, on: { toggle: e => { synth.cloudOpen = e.target.open; } } }, h('summary', { text: 'Vowel cloud: many tokens of this vowel' }),
+        h('p.ctl-desc', { text: 'Makes several short tokens of the vowel above with random F1 and F2 (normal spread), runs each as its own trial with the current settings, ticks them and shows them as tokens on the vowel map. Useful for variability (inward / outward) designs.' }),
+        h('div.syn-grid', {}, nn('n', 'Tokens', '', 1), nn('sd1', 'F1 spread (SD)', 'Hz', 5), nn('sd2', 'F2 spread (SD)', 'Hz', 5)),
+        h('label.tp-opt', {}, h('input', { type: 'checkbox', checked: c.baseline, id: 'cloud-baseline', on: { change: e => { c.baseline = e.target.checked; } } }), ' First run them unshifted and use their median as the vowel centre (a baseline)'),
+        h('div.btnrow', {}, h('button.btn.primary', { type: 'button', id: 'cloud-run', text: 'Make and run the cloud', on: { click: () => {
+          const V = PG.VOWELS[talker], a = V[st.vowel];
+          PG.bus.emit('cloud', { n: Math.max(2, Math.min(100, c.n | 0)), sd1: c.sd1, sd2: c.sd2, f1: a[0], f2: a[1], f3: a[2], f0: st.f0, dur: 0.8, baseline: c.baseline });
+        } } })));
+    }
     function make() {
       const V = PG.VOWELS[talker], a = V[st.vowel], b = st.vowel2 >= 0 ? V[st.vowel2] : null;
       const fm = [a[0], a[1], a[2], a[2] + 900], fe = b ? [b[0], b[1], b[2], b[2] + 900] : null;

@@ -3,7 +3,7 @@
 // input formants (grey), shifted targets (hollow), output formants measured independently (blue). Also the 2-D field painter.
 PG.Vowel = (() => {
   const { h } = PG, S = PG.S, NS = 'http://www.w3.org/2000/svg';
-  let allFrames = false, root, svg, tip, trial = null, paint = false, brush = { d1: 20, d2: 0, radius: 120, erase: false }, liveCells = null, headG = null;
+  let arrowScale = 1, mode = 'trial', allFrames = false, root, svg, tip, trial = null, paint = false, brush = { d1: 20, d2: 0, radius: 120, erase: false }, liveCells = null, headG = null;
   const M = { l: 58, r: 14, t: 14, b: 44 };
   let W = 600, H = 440, R = { f1: [150, 1150], f2: [3400, 500] };
   const x = f2 => M.l + (R.f2[0] - f2) / (R.f2[0] - R.f2[1]) * (W - M.l - M.r);
@@ -17,6 +17,8 @@ PG.Vowel = (() => {
     PG.bus.on('settings', () => { if (root.isConnected && !root.hidden) render(); });
     PG.bus.on('theme', () => root.isConnected && render());
     PG.bus.on('open-painter', () => { paint = true; });
+    const rt = () => { if (mode === 'tokens' && root.isConnected && !root.hidden) render(); };
+    PG.bus.on('selection', rt); PG.bus.on('trials', rt);
     new ResizeObserver(() => { if (root.isConnected && root.clientWidth && Math.abs(root.clientWidth - W) > 4) render(); }).observe(root);
     requestAnimationFrame(tickHead);
   }
@@ -34,6 +36,10 @@ PG.Vowel = (() => {
       if (f2 <= p[0][0]) [, d1, d2] = p[0]; else if (f2 >= p[p.length - 1][0]) [, d1, d2] = p[p.length - 1];
       else for (let k = 0; k < p.length - 1; k++) if (f2 >= p[k][0] && f2 <= p[k + 1][0]) { const u = (f2 - p[k][0]) / (p[k + 1][0] - p[k][0]); d1 = p[k][1] + u * (p[k + 1][1] - p[k][1]); d2 = p[k][2] + u * (p[k + 1][2] - p[k][2]); break; }
     }
+    if (!uniform && F.field === 'variability') {
+      const v = F.vari; if (Math.abs(f1 - v.c1) > v.ext1 || Math.abs(f2 - v.c2) > v.ext2) return null;
+      const t = S.variIntended(v, f1, f2); return [t[0] - f1, t[1] - f2];
+    }
     if (!uniform && F.field === 'painted') {
       const cells = liveCells || F.painted.cells, res = F.painted.res || 4, ci = Math.floor(f1 / S.FMAX * 256 / res), cj = Math.floor(f2 / S.FMAX * 256 / res);
       const c2 = cells.find(q => q[0] === ci && q[1] === cj); if (!c2) return null; d1 = c2[2]; d2 = c2[3];
@@ -50,13 +56,21 @@ PG.Vowel = (() => {
     PG.clear(root);
     const s = PG.state.settings, talker = PG.talkerFor(s.preset), V = PG.VOWELS[talker];
     R = talker === 'children' ? { f1: [200, 1250], f2: [3700, 600] } : talker === 'women' ? { f1: [200, 1150], f2: [3300, 600] } : { f1: [150, 1000], f2: [2800, 500] };
-    const r = trial && trial.result;
+    const TK = mode === 'tokens' ? tokenData(s) : null;
+    const r = TK ? null : trial && trial.result;
+    if (TK && TK.pts.length) {
+      const f1s = TK.pts.flatMap(p => [p.s[0], p.h[0]]), f2s = TK.pts.flatMap(p => [p.s[1], p.h[1]]);
+      R.f1 = [Math.max(80, Math.min(...f1s) - 120), Math.max(...f1s) + 120]; R.f2 = [Math.max(...f2s) + 250, Math.max(200, Math.min(...f2s) - 250)];
+    }
     if (r) {   // widen to fit the data
       const f1s = [...r.fmts[0], ...r.sfmts[0]].filter(v => v > 0), f2s = [...r.fmts[1], ...r.sfmts[1]].filter(v => v > 0);
       if (f1s.length) { R.f1 = [Math.max(80, Math.min(R.f1[0], quant(f1s, 0.05) * 0.9)), Math.max(R.f1[1], Math.min(1400, quant(f1s, 0.95) * 1.08))]; R.f2 = [Math.max(R.f2[0], Math.min(4200, quant(f2s, 0.95) * 1.05)), Math.min(R.f2[1], quant(f2s, 0.05) * 0.92)]; }
     }
     W = Math.max(300, root.clientWidth || 600); H = Math.round(Math.min(560, Math.max(300, W * 0.66)));
-    const legend = h('div.legend-row', {},
+    const modeSeg = h('div.seg', { role: 'radiogroup', 'aria-label': 'Show' }, [['trial', 'One trial'], ['tokens', 'Ticked trials as tokens']].map(([v, t]) =>
+      h('button', { type: 'button', role: 'radio', 'aria-checked': String(mode === v), text: t, on: { click: () => { mode = v; render(); } } })));
+    const legend = TK ? h('div.legend-row', {}, modeSeg, PG.Views.key('indot', 'spoken (fmts, median per token)'), PG.Views.key('exp', 'heard (sfmts)'), PG.Views.key('obsdot', 'measured in the output (LPC, relative to the input)'),
+      PG.Views.key('arrow', 'field'), h('span.muted', { text: 'Ellipses: 1 SD of the tokens.' })) : h('div.legend-row', {}, modeSeg,
       PG.Views.key('in', 'input formants (fmts)'), PG.Views.key('exp', 'shifted targets (sfmts)'), PG.Views.key('obsdot', 'output formants (independent LPC)'),
       PG.Views.key('arrow', 'perturbation field'),
       h('label.tp-opt', {}, h('input', { type: 'checkbox', checked: allFrames, on: { change: e => { allFrames = e.target.checked; render(); } } }), ' all tracked frames (default: the loudest, within 10 dB of the peak)'),
@@ -76,11 +90,105 @@ PG.Vowel = (() => {
     });
     svg.append(bg);
     field(s);
+    if (s.shift.formant.on && s.shift.formant.field === 'variability') centreMark(s);
     if (r) trajectories(r);
+    if (TK) drawTokens(TK);
     headG = el('g', { class: 'vs-head' }); svg.append(headG);
     if (paint && s.shift.formant.field === 'painted') attachPainter(s);
     else hover();
-    if (!r) svg.append(el('text', { x: W / 2, y: H / 2, class: 'vs-empty', 'text-anchor': 'middle' }, document.createTextNode('Run a trial to see its formants here.')));
+    if (!r && !TK) svg.append(el('text', { x: W / 2, y: H / 2, class: 'vs-empty', 'text-anchor': 'middle' }, document.createTextNode('Run a trial to see its formants here.')));
+    if (TK && !TK.pts.length) svg.append(el('text', { x: W / 2, y: H / 2, class: 'vs-empty', 'text-anchor': 'middle' }, document.createTextNode('Tick at least three trials in the list (or make a vowel cloud under Input) to see them as tokens.')));
+    if (arrowScale < 0.999) root.insertBefore(h('p.muted.arrow-note', { text: `Field arrows are drawn at ${Math.round(arrowScale * 100)} % of their true length so they do not overlap; directions are exact.` }), root.querySelector('.vs-wrap'));
+    if (TK && TK.pts.length) root.append(tokenNumbers(TK));
+    if (s.shift.formant.on && s.shift.formant.field === 'variability' && !S.compile(s).meta.needPcf) root.append(stairs(s));
+  }
+  function centreMark(s) {
+    const v = s.shift.formant.vari, g = el('g', { class: 'vs-centre' }), cx = x(v.c2), cy = y(v.c1);
+    g.append(el('path', { d: `M${cx - 8},${cy}L${cx + 8},${cy}M${cx},${cy - 8}L${cx},${cy + 8}`, class: 'vs-cross' }));
+    g.append(el('text', { x: cx + 10, y: cy - 8, class: 'vs-clab' }, document.createTextNode(`centre ${Math.round(v.c1)}, ${Math.round(v.c2)} Hz`)));
+    const r0 = x(v.c2 + v.ext2) , r1 = x(v.c2 - v.ext2);
+    g.append(el('rect', { x: Math.min(r0, r1), y: y(v.c1 - v.ext1), width: Math.abs(r1 - r0), height: Math.abs(y(v.c1 + v.ext1) - y(v.c1 - v.ext1)), class: 'vs-region' }));
+    svg.append(g);
+  }
+  // ---- tokens: one point per ticked trial (median over its shifted frames), with 1 SD dispersion ellipses
+  function tokenData(s) {
+    const T = PG.state.trials.filter(t => PG.state.selected.has(t.id) && t.result);
+    const pts = [];
+    for (const t of T) {
+      const r = t.result, A = r.analysis, lag = ((r.compiled && r.compiled.meta && r.compiled.meta.latencyMs) || 10) / 1000;
+      let idx = []; for (let i = 0; i < r.fmts[0].length; i++) if (r.sfmts[0][i] > 0 && r.fmts[0][i] > 0) idx.push(i);
+      const shifted = idx.length > 0;
+      if (!shifted) for (let i = 0; i < r.fmts[0].length; i++) if (r.fmts[0][i] > 0) idx.push(i);
+      if (idx.length < 5) continue;
+      const md = a => PG.median(a);
+      const sp = [md(idx.map(i => r.fmts[0][i])), md(idx.map(i => r.fmts[1][i]))], he = shifted ? [md(idx.map(i => r.sfmts[0][i])), md(idx.map(i => r.sfmts[1][i]))] : sp.slice();
+      const dd = [[], []];
+      for (const i of idx) { const tt = i / r.frameRate; for (const j of [0, 1]) { const a = A.lpcIn.f[j][Math.round(tt / A.lpcIn.hop)], b = A.lpcOut.f[j][Math.round((tt + lag) / A.lpcOut.hop)]; if (a > 0 && b > 0) dd[j].push(b - a); } }
+      const med2 = a => { const v = a.filter(Number.isFinite).sort((p, q) => p - q); return v.length ? v[v.length >> 1] : NaN; };
+      const me = dd[0].length >= 10 && dd[1].length >= 10 ? [sp[0] + med2(dd[0]), sp[1] + med2(dd[1])] : null;
+      pts.push({ t, s: sp, h: he, m: me });
+    }
+    const F = s.shift.formant, vari = F.on && F.field === 'variability';
+    const mean = k => { const a = pts.map(p => p[k]).filter(Boolean); return a.length ? [a.reduce((q, p) => q + p[0], 0) / a.length, a.reduce((q, p) => q + p[1], 0) / a.length] : null; };
+    const centre = vari ? [F.vari.c1, F.vari.c2] : mean('s');
+    return { pts, centre, vari, mean };
+  }
+  function covEllipse(P) {
+    if (P.length < 3) return null;
+    const n = P.length, m1 = P.reduce((a, p) => a + p[0], 0) / n, m2 = P.reduce((a, p) => a + p[1], 0) / n;
+    let a = 0, b = 0, c = 0; for (const p of P) { a += (p[0] - m1) ** 2; b += (p[0] - m1) * (p[1] - m2); c += (p[1] - m2) ** 2; }
+    a /= n - 1; b /= n - 1; c /= n - 1;
+    const tr = a + c, det = a * c - b * b, l1 = tr / 2 + Math.sqrt(Math.max(0, tr * tr / 4 - det)), l2 = tr / 2 - Math.sqrt(Math.max(0, tr * tr / 4 - det));
+    const th = Math.abs(b) < 1e-12 ? (a >= c ? 0 : Math.PI / 2) : Math.atan2(l1 - a, b);
+    const pts = []; for (let k = 0; k <= 64; k++) { const t = 2 * Math.PI * k / 64, u = Math.sqrt(Math.max(l1, 0)) * Math.cos(t), v = Math.sqrt(Math.max(l2, 0)) * Math.sin(t);
+      pts.push([m1 + u * Math.cos(th) - v * Math.sin(th), m2 + u * Math.sin(th) + v * Math.cos(th)]); }
+    return { pts, area: Math.PI * Math.sqrt(Math.max(0, det)), m: [m1, m2] };
+  }
+  function drawTokens(TK) {
+    const g = el('g', { class: 'vs-tokens' });
+    const ell = (P, cls) => { const e = covEllipse(P); if (e) g.append(el('path', { d: e.pts.map((p, k) => (k ? 'L' : 'M') + x(p[1]).toFixed(1) + ',' + y(p[0]).toFixed(1)).join('') + 'Z', class: cls })); return e; };
+    TK.ellS = ell(TK.pts.map(p => p.s), 'vs-ell-s'); TK.ellH = ell(TK.pts.map(p => p.h), 'vs-ell-h');
+    const ms = TK.pts.filter(p => p.m).map(p => p.m); TK.ellM = ms.length >= 3 ? ell(ms, 'vs-ell-m') : null;
+    pts = [];
+    for (const p of TK.pts) {
+      g.append(el('line', { x1: x(p.s[1]), y1: y(p.s[0]), x2: x(p.h[1]), y2: y(p.h[0]), class: 'vs-tok-line' }));
+      g.append(el('circle', { cx: x(p.s[1]), cy: y(p.s[0]), r: 4.5, class: 'vs-in m' }, el('title', {}, document.createTextNode(`${p.t.name}: spoken F1 ${Math.round(p.s[0])}, F2 ${Math.round(p.s[1])} Hz`))));
+      g.append(el('circle', { cx: x(p.h[1]), cy: y(p.h[0]), r: 5, class: 'vs-tgt' }, el('title', {}, document.createTextNode(`${p.t.name}: heard F1 ${Math.round(p.h[0])}, F2 ${Math.round(p.h[1])} Hz`))));
+      if (p.m) g.append(el('circle', { cx: x(p.m[1]), cy: y(p.m[0]), r: 2.6, class: 'vs-out' }));
+      pts.push({ t: 0, f1: p.s[0], f2: p.s[1], kind: `${p.t.name}, spoken`, px: x(p.s[1]), py: y(p.s[0]) }, { t: 0, f1: p.h[0], f2: p.h[1], kind: `${p.t.name}, heard`, px: x(p.h[1]), py: y(p.h[0]) });
+    }
+    svg.append(g);
+  }
+  function tokenNumbers(TK) {
+    const c = TK.centre, dist = P => P.reduce((a, p) => a + Math.hypot(p[0] - c[0], p[1] - c[1]), 0) / P.length;
+    const S1 = TK.pts.map(p => p.s), Hh = TK.pts.map(p => p.h), Mm = TK.pts.filter(p => p.m).map(p => p.m);
+    const dS = dist(S1), dH = dist(Hh), dM = Mm.length ? dist(Mm) : NaN;
+    const aS = TK.ellS && TK.ellS.area, aH = TK.ellH && TK.ellH.area;
+    const rows = [
+      ['Tokens', `${TK.pts.length} ticked trials, one point each (median over its shifted frames)`],
+      ['Vowel centre', `${Math.round(c[0])}, ${Math.round(c[1])} Hz ${TK.vari ? '(the field\'s centre)' : '(mean of the spoken tokens)'}`],
+      ['Dispersion: mean distance to the centre', `spoken ${dS.toFixed(1)} Hz, heard ${dH.toFixed(1)} Hz${Number.isFinite(dM) ? `, measured ${dM.toFixed(1)} Hz` : ''}`],
+      ['Heard / spoken dispersion', `${(dH / dS).toFixed(3)}${Number.isFinite(dM) ? ` (measured in the output: ${(dM / dS).toFixed(3)})` : ''}`],
+      ['1 SD ellipse area, heard / spoken', aS && aH ? `${(aH / aS).toFixed(3)} (the square of the dispersion ratio for a uniform scaling)` : '–'],
+    ];
+    return h('table.plain.tok-num', {}, h('tbody', {}, rows.map(([a, b]) => h('tr', {}, h('th', { text: a }), h('td', { text: b })))));
+  }
+  // Intended (smooth) vs applied (lower-left cell) shift along F1 through the centre, zoomed to 24 grid steps.
+  function stairs(s) {
+    const v = s.shift.formant.vari, c = S.compile(s), V = S.variField(v), n = 24;
+    const a = v.c1 + v.ext1 * 0.4, stepHz = (v.units === 'mel' ? 700 * (Math.exp((S.hz2mel(a) + V.step1) / 1127.01048) - 1) - a : V.step1), b = a + n * stepHz;
+    const Wd = Math.min(560, Math.max(300, (root.clientWidth || 600) - 20)), Hd = 150, ml = 50, mr = 10, mt = 12, mb = 28;
+    const N = 400, XS = [], I = [], Ap = [];
+    for (let k = 0; k <= N; k++) { const f = a + (b - a) * k / N; XS.push(f); I.push(S.variIntended(v, f, v.c2)[0] - f); const ap = S.apply2D(c.map, f, v.c2); Ap.push(ap ? ap[0] - f : NaN); }
+    const all = [...I, ...Ap].filter(Number.isFinite), lo = Math.min(...all), hi = Math.max(...all), pad = (hi - lo) * 0.15 || 1;
+    const X = f => ml + (f - a) / (b - a) * (Wd - ml - mr), Y = d => mt + (1 - (d - lo + pad) / (hi - lo + 2 * pad)) * (Hd - mt - mb);
+    const g = el('svg', { class: 'vs-stairs', viewBox: `0 0 ${Wd} ${Hd}`, width: Wd, height: Hd, role: 'img', 'aria-label': 'Intended versus applied F1 shift over 24 grid steps' });
+    const line = (arr, cls) => { let d = '', pen = false; arr.forEach((v2, k) => { if (!Number.isFinite(v2)) { pen = false; return; } d += (pen ? 'L' : 'M') + X(XS[k]).toFixed(1) + ',' + Y(v2).toFixed(1); pen = true; }); g.append(el('path', { d, class: cls })); };
+    for (const t of [lo, hi]) { g.append(el('line', { x1: ml, x2: Wd - mr, y1: Y(t), y2: Y(t), class: 'grid' })); g.append(el('text', { x: ml - 4, y: Y(t) + 4, 'text-anchor': 'end' }, document.createTextNode(`${t.toFixed(1)}`))); }
+    line(Ap, 'st-applied'); line(I, 'st-intended');
+    g.append(el('text', { x: ml, y: Hd - 8 }, document.createTextNode(`F1 ${Math.round(a)} → ${Math.round(b)} Hz (F2 at the centre)`)));
+    g.append(el('text', { x: 4, y: 10 }, document.createTextNode('F1 shift, Hz')));
+    return h('figure.stairs', {}, h('figcaption', {}, h('b', { text: 'Stepped, not smooth. ' }), `Zoom on ${n} grid steps (${V.step1.toFixed(1)} ${V.mel ? 'mel' : 'Hz'} each): the intended F1 shift (thin ink) and what Audapter applies (blue steps). Audapter reads the lower-left cell of its 2-D field without interpolating (FMT-F3); each cell holds the shift at its centre.`), g);
   }
   const quant = (a, q) => { const v = [...a].sort((p, q2) => p - q2); return v[Math.min(v.length - 1, Math.floor(q * v.length))]; };
 
@@ -110,10 +218,17 @@ PG.Vowel = (() => {
       }
     }
     const nx = Math.max(6, Math.round((W - M.l - M.r) / 60)), ny = Math.max(5, Math.round((H - M.t - M.b) / 55));
+    const cand = [];
     for (let i = 0; i <= ny; i++) for (let j = 0; j <= nx; j++) {
       const f1 = R.f1[0] + (i + 0.5) / (ny + 1) * (R.f1[1] - R.f1[0]), f2 = R.f2[1] + (j + 0.5) / (nx + 1) * (R.f2[0] - R.f2[1]);
-      const d = fieldAt(s, f1, f2, uniform); if (d) arrow(g, f1, f2, d, 'vs-arrow');
+      const d = fieldAt(s, f1, f2, uniform); if (d) cand.push([f1, f2, d]);
     }
+    // Arrows keep their true direction; if the longest would overrun the arrow grid, all are scaled by one factor (stated).
+    const cell = Math.min((W - M.l - M.r) / (nx + 1), (H - M.t - M.b) / (ny + 1)) * 0.85;
+    const len = ([f1, f2, d]) => Math.hypot(x(f2 + d[1]) - x(f2), y(f1 + d[0]) - y(f1));
+    const mx = cand.reduce((m, c) => Math.max(m, len(c)), 0), sc = mx > cell ? cell / mx : 1;
+    for (const [f1, f2, d] of cand) arrow(g, f1, f2, [d[0] * sc, d[1] * sc], 'vs-arrow');
+    arrowScale = sc;
     svg.append(g);
   }
   let pts = [];
@@ -211,5 +326,5 @@ PG.Vowel = (() => {
     svg.addEventListener('pointermove', e => { if (down) apply(e); });
     svg.addEventListener('pointerup', () => { if (!down) return; down = false; const cells = liveCells; liveCells = null; PG.editSettings(x2 => { x2.shift.formant.painted.cells = cells; }, 'paint'); });
   }
-  return { mount, setTrial, render, setPaint, fieldAt };
+  return { mount, setTrial, render, setPaint, fieldAt, setMode: m => { mode = m; }, tokenData };
 })();

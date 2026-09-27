@@ -61,7 +61,7 @@ PG.SettingsUI = (() => {
     const sweepBtn = c.sweep ? h('button.linkish.sweep', { type: 'button', text: 'Sweep', title: 'Run this setting at several values and compare',
       'aria-expanded': 'false', on: { click: () => toggleSweep() } }) : null;
     let sweepBox = null;
-    const set = v => PG.editSettings(x => { if (c.param) x.listen[c.param] = v; else S.setPath(x, c.path, v); });
+    const set = v => PG.editSettings(x => { if (c.param) x.listen[c.param] = v; else S.setPath(x, c.path, v); if (c.also) c.also(x); });
     let widget, sync;
     const rg = () => PG.controlRange(PG.state.settings, c) || [0, 1, 0.01, ''];
     if (c.kind === 'range' || c.kind === 'number') {

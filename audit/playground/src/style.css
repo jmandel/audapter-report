@@ -396,3 +396,21 @@ dialog.expert { width: min(1200px, 96vw); max-height: 92vh; border: 1px solid va
 dialog.expert::backdrop { background: rgba(0, 0, 0, 0.35); }
 .dlg-head { position: sticky; top: 0; display: flex; justify-content: flex-end; background: var(--paper); padding: 6px 0; z-index: 2; }
 @media (max-width: 860px) { .design-panel { padding: 8px 14px 60px; } .tpl-grid { grid-template-columns: 1fr 1fr; } }
+/* vowel variability: centre, tokens, ellipses, stairs */
+.vs-cross { stroke: var(--ink); stroke-width: 2; }
+svg.vspace .vs-clab { fill: var(--ink); font-size: 12px; }
+.vs-region { fill: none; stroke: var(--rule-2); stroke-width: 1; }
+.vs-ell-s { fill: var(--input); fill-opacity: 0.18; stroke: var(--input); stroke-width: 1.5; }
+.vs-ell-h { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+.vs-ell-m { fill: none; stroke: var(--observed); stroke-width: 1.5; }
+.vs-tok-line { stroke: var(--ink-3); stroke-width: 1; }
+figure.stairs { margin: 12px 0 0; font-size: 0.87rem; color: var(--ink-2); max-width: 600px; }
+svg.vs-stairs { display: block; font-family: var(--serif); background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r); margin-top: 4px; }
+.vs-stairs text { fill: var(--ink-3); font-size: 11px; }
+.vs-stairs .grid { stroke: var(--rule); }
+.st-applied { fill: none; stroke: var(--observed); stroke-width: 2; }
+.st-intended { fill: none; stroke: var(--ink); stroke-width: 1; }
+table.tok-num { margin-top: 10px; }
+details.cloud { margin: 10px 0 4px; border-top: 1px solid var(--rule); padding-top: 8px; }
+details.cloud summary { cursor: pointer; font-weight: 600; }
+svg.vspace .vs-clab { paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }

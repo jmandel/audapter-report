@@ -26,6 +26,20 @@ children, F0 and formant glides, vibrato), a microphone recording (browser proce
 - *Expert: all parameters* (a link, opening a drawer): all 87 parameters parsed from the C++ constructor (name, type,
   help text, source line link), the value actually sent, and validated overrides.
 
+**Vowel variability (inward / outward).** A "Where on the vowel map" option on the formant card: heard = centre +
+k × (spoken − centre), with k = 1 − strength (inward, less variable) or 1 + strength (outward, more variable), an optional
+maximum shift, the centre from the current input's median, the ticked trials' median (a baseline) or typed in, and
+Hz or mel distances. It compiles to Audapter's 2-D field: bShift2D = 1, bRatioShift = 0 (absolute shift), strictly
+increasing pertF1/pertF2 grids over the centre ± a chosen reach (default ±450 Hz F1, ±900 Hz F2: steps 3.5 and 7 Hz),
+pertAmp2D = strength × distance (capped) and pertPhi2D pointing toward or away from the centre, evaluated at each cell's
+centre because Audapter reads the lower-left cell without interpolating (FMT-F3); the field bounds (f1Min … f2Max) are set
+to the grid so formants outside it are not shifted. The vowel map shows the field as arrows with the centre marked, a
+zoom on 24 grid steps comparing the intended (smooth) and applied (stepped) shift, and, for ticked trials, a token view:
+spoken (fmts) and heard (sfmts) medians per token joined by lines, the output measured with the same LPC on input and
+output, 1 SD dispersion ellipses, and the heard/spoken dispersion ratio. "Vowel cloud" under Input, Synthetic vowel
+makes N tokens with random F1/F2 around a vowel, optionally runs them unshifted first to set the centre, then runs them
+with the current settings and shows them as tokens.
+
 **Timing & design tab.** Graphical control of WHEN the perturbation happens.
 - The current input is analysed by a dry run of the real core; its per-frame level (`rms`, `rms_slope`) drives a
   JavaScript port of `OST_TAB::osTrack` (`src/js/ostsim.js`), which finds the "sounds" Audapter's level rules detect
@@ -121,11 +135,16 @@ fed from `audit/corpus/audio/pvqd_LA9003_a.wav`. Results on 2026-09-27, Chromium
   A 2/3/2/2 schedule logs heard/produced F1 = 1, 1, 1.067, 1.133, 1.2, 1.2, 1.2, 1, 1.
   Its output measurement sits on produced in baseline and washout (575 vs 577 Hz) and on the target in ramp and hold
   (605/641/691 vs 615/654/692 Hz), within 4 %.
+- Vowel variability on a 20-token synthetic cloud (baseline pass sets the centre): 50 % inward gives a heard/spoken
+  dispersion of 0.5005 from the logged sfmts (0.467 measured in the output), 50 % outward 1.4996 (1.426); every token's
+  heard point is within 1.8 Hz of the intended point on the line to the centre (grid step 7.9 Hz diagonal). In node the
+  JavaScript port of Audapter's 2-D lookup reproduced sfmts on all 6042 shifted frames of each direction
+  (`audit/scratch/playground/probe10.mjs`).
 - 14 settings variants run (pvoc, time-domain after 0.5 s, loudness window, time warp during the vowel, 150 ms delay,
   speech + 3 s noise, Hz region, F2-dependent field, painted 2-D field, mel units, custom OST/PCF, child preset, low-voice
   preset on the patched build, full-size build).
 - A 5-value F1 sweep logs ratios 1.0/1.1/1.2/1.3/1.4; three trials run as one session; the page also runs from `file://`; no page errors.
-- 28 screenshots at 1440 px and 390 px, light and dark (Explore views, Timing & design, schedule, expert drawer), in `test/shots/` (git-ignored).
+- 32 screenshots at 1440 px and 390 px, light and dark (Explore views, Timing & design, schedule, expert drawer, vowel variability tokens), in `test/shots/` (git-ignored).
 
 ## Memory and latency
 

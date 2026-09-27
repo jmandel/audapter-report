@@ -90,6 +90,59 @@
     return { ost: { rmsSlopeWin: 0.03, rules, maxIOI: [] }, nStates, whatOf, bounds, errors, notes };
   }
 
+  // ---------- vowel variability field (inward / outward): heard = centre + k (spoken - centre), k = 1 -/+ strength.
+  // Compiled to Audapter's 2-D field with absolute units (bRatioShift = 0): sF1 = F1 + amp cos(phi), sF2 = F2 + amp sin(phi)
+  // (Audapter.cpp:1858-1860), pertAmp2D[i][j] with i = F1 grid index, j = F2 grid index (MATLAB column-major i + 257 j).
+  // Audapter reads the lower-left cell without interpolating (FMT-F3), so each cell holds the value at its centre:
+  // the applied shift is piecewise constant, within half a grid step of the intended one per axis.
+  const variCache = { key: '', v: null };
+  const mel2hz = m => 700 * (Math.exp(m / 1127.01048) - 1);
+  function variField(v) {
+    const key = JSON.stringify(v);
+    if (variCache.key === key) return variCache.v;
+    const mel = v.units === 'mel', cv = f => (mel ? hz2mel(f) : f);
+    const c1 = cv(v.c1), c2 = cv(v.c2);
+    const lo1 = cv(Math.max(60, v.c1 - v.ext1)), hi1 = cv(v.c1 + v.ext1), lo2 = cv(Math.max(200, v.c2 - v.ext2)), hi2 = cv(v.c2 + v.ext2);
+    const g1 = Array.from({ length: GRID }, (_, i) => lo1 + (hi1 - lo1) * i / (GRID - 1)), g2 = Array.from({ length: GRID }, (_, j) => lo2 + (hi2 - lo2) * j / (GRID - 1));
+    const st1 = g1[1] - g1[0], st2 = g2[1] - g2[0], k = (v.strength || 0) / 100, sign = v.dir === 'out' ? 1 : -1;
+    const A2 = new Array(GRID * GRID).fill(0), P2 = new Array(GRID * GRID).fill(0);
+    for (let j = 0; j < GRID; j++) for (let i = 0; i < GRID; i++) {
+      const d1 = g1[i] + st1 / 2 - c1, d2 = g2[j] + st2 / 2 - c2, dist = Math.hypot(d1, d2);
+      let amp = k * dist; if (v.maxShift > 0) amp = Math.min(amp, v.maxShift);
+      A2[i + GRID * j] = amp; P2[i + GRID * j] = dist > 0 ? Math.atan2(sign * d2, sign * d1) : 0;
+    }
+    const out = { g1, g2, A2, P2, mel, c1, c2, step1: st1, step2: st2, lo1, hi1, lo2, hi2 };
+    variCache.key = key; variCache.v = out;
+    return out;
+  }
+  // Audapter's 2-D lookup (locateF1/locateF2 binary search, Audapter.cpp:2675-2727, then the lower-left cell) and shift,
+  // for a compiled parameter map. Returns [sF1, sF2] in Hz, or null outside the field bounds.
+  function apply2D(m, f1, f2) {
+    const g1 = m.get('pertf1'), g2 = m.get('pertf2'), A = m.get('pertamp2d'), P = m.get('pertphi2d');
+    const mel = Number([].concat(m.get('bmelshift'))[0]) === 1, ratio = Number([].concat(m.get('bratioshift'))[0]) === 1;
+    const x1 = mel ? hz2mel(f1) : f1, x2 = mel ? hz2mel(f2) : f2;
+    const b = k => Number([].concat(m.get(k))[0]);
+    if (!(x2 >= b('f2min') && x2 <= b('f2max') && x1 >= b('f1min') && x1 <= b('f1max'))) return null;
+    const locate = (g, f) => {
+      let k = 128; for (let n = 0; n < 7; n++) k += (f >= g[k] ? 1 : -1) * (1 << (6 - n));
+      if (f < g[k]) k--;
+      let loc = k + (f - g[k]) / (g[k + 1] - g[k]);
+      if (loc >= GRID - 1) loc = GRID - 1 - 1e-12; if (loc < 0) loc = 0;
+      return Math.floor(loc);
+    };
+    const i = locate(g1, x1), j = locate(g2, x2), amp = A[i + GRID * j], phi = P[i + GRID * j];
+    const s1 = ratio ? x1 * (1 + amp * Math.cos(phi)) : x1 + amp * Math.cos(phi), s2 = ratio ? x2 * (1 + amp * Math.sin(phi)) : x2 + amp * Math.sin(phi);
+    return mel ? [mel2hz(s1), mel2hz(s2)] : [s1, s2];
+  }
+  // The intended (smooth) heard point for the variability field, in Hz.
+  function variIntended(v, f1, f2) {
+    const mel = v.units === 'mel', cv = f => (mel ? hz2mel(f) : f), inv = x => (mel ? mel2hz(x) : x);
+    const c1 = cv(v.c1), c2 = cv(v.c2), x1 = cv(f1), x2 = cv(f2), d1 = x1 - c1, d2 = x2 - c2, dist = Math.hypot(d1, d2);
+    let amp = (v.strength / 100) * dist; if (v.maxShift > 0) amp = Math.min(amp, v.maxShift);
+    const sg = v.dir === 'out' ? 1 : -1, u1 = dist ? sg * d1 / dist : 0, u2 = dist ? sg * d2 / dist : 0;
+    return [inv(x1 + amp * u1), inv(x2 + amp * u2)];
+  }
+
   function defaultSettings() {
     return {
       v: 1, preset: 'female', build: 'lite',
@@ -97,7 +150,8 @@
         formant: { on: true, units: 'pct', f1: 20, f2: 0, field: 'all',
           region: { f1min: 250, f1max: 1000, f2min: 600, f2max: 3000 },
           curve: [[800, 0, 0], [1500, 20, 0], [2500, 0, 0]],
-          painted: { res: 4, cells: [] } },
+          painted: { res: 4, cells: [] },
+          vari: { dir: 'in', strength: 50, maxShift: 0, centre: 'auto', c1: 600, c2: 1700, units: 'hz', ext1: 450, ext2: 900 } },
         pitch: { on: false, method: 'pvoc', semitones: 2, algorithm: 0, lower: null, upper: null, ramp: 0.05 },
         loudness: { on: false, db: 6 },
         timing: { on: false, rate1: 0.5, dur1: 0.1, hold: 0.1, rate2: 2 },
@@ -261,7 +315,7 @@
     const F = s.shift.formant, Pi = s.shift.pitch, L = s.shift.loudness, T = s.shift.timing, D = s.shift.delay, W = s.when;
     const isDesign = W.mode === 'design', cd = isDesign ? compileDesign(s.design) : null;
     const anyW = k => isDesign && s.design.blocks.some(b => b.what && b.what[k]);
-    const fOn = isDesign ? (anyW('f1') || anyW('f2')) : F.on && (F.f1 !== 0 || F.f2 !== 0 || F.field === 'curve' || F.field === 'painted');
+    const fOn = isDesign ? (anyW('f1') || anyW('f2')) : F.on && (F.f1 !== 0 || F.f2 !== 0 || F.field === 'curve' || F.field === 'painted' || F.field === 'variability');
     const pvoc = isDesign ? anyW('st') : Pi.on && Pi.method === 'pvoc', tds = !isDesign && Pi.on && Pi.method === 'tds';
     const timeWhen = W.mode !== 'always';
     // A PCF is needed for anything per-state: level shifts, time warps, pvoc pitch or formant shifts that are not always on.
@@ -311,6 +365,13 @@
         m.set('pertamp', new Array(GRID).fill(0)); m.set('pertphi', new Array(GRID).fill(0));
       } else {
         m.set('pertamp', new Array(GRID).fill(needPcf ? 0 : vec.amp)); m.set('pertphi', new Array(GRID).fill(needPcf ? 0 : vec.phi));
+      }
+      if (!needPcf && F.field === 'variability') {
+        const V = variField(F.vari);
+        m.set('bratioshift', 0); m.set('bmelshift', V.mel ? 1 : 0); m.set('bshift2d', 1);
+        m.set('pertf1', V.g1); m.set('pertf2', V.g2); m.set('pertamp2d', V.A2); m.set('pertphi2d', V.P2);
+        m.set('pertamp', new Array(GRID).fill(0)); m.set('pertphi', new Array(GRID).fill(0));
+        m.set('f1min', V.g1[0]); m.set('f1max', V.g1[GRID - 1]); m.set('f2min', V.g2[0]); m.set('f2max', V.g2[GRID - 1]);
       }
       if (needPcf && F.field !== 'all') notes.push({ where: 'formant', text: 'A PCF is in use (for the timing, loudness or "when" settings), so Audapter takes the formant shift from the PCF row and ignores the field shape: the shift is uniform.' });
     }
@@ -440,6 +501,8 @@
       if (br === 1 && maxAmp > 2) W('formant', 'CORPUS-11', 'warn', `Ratio mode with a perturbation amplitude of ${maxAmp.toFixed(2)} (i.e. ${(maxAmp * 100).toFixed(0)} %): Audapter does not bound the shifted targets, and mel-unit values read as ratios have produced targets of 130 kHz and +24 dB bursts.`);
       if (bm === 1 && br === 0 && maxAmp > 0 && maxAmp < 5) W('formant', 'CORPUS-11', 'info', `Mel mode: the amplitude ${maxAmp.toFixed(2)} is in mel, not a ratio. ${maxAmp.toFixed(2)} mel is a tiny shift.`);
       if (s.shift.formant.field === 'region' && !c.meta.needPcf) W('formant', 'F6', 'info', 'With a restricted field, blab\'s dropout fix re-arms the shift every time the formants re-enter the region, and minVowelLen has no effect (upstream shifted only the first entry).');
+      if (s.shift.formant.field === 'variability' && !c.meta.needPcf) { const V = variField(s.shift.formant.vari), u = V.mel ? 'mel' : 'Hz';
+        W('formant', 'FMT-F3', 'info', `Audapter reads the 2-D field at the lower-left grid cell without interpolating, so the applied shift is piecewise constant: the grid step here is ${V.step1.toFixed(1)} ${u} (F1) × ${V.step2.toFixed(1)} ${u} (F2), and each cell holds the shift at its centre (within half a step of the intended shift). Formants outside ±${s.shift.formant.vari.ext1} Hz (F1) / ±${s.shift.formant.vari.ext2} Hz (F2) around the centre are not shifted.`); }
       if (s.shift.formant.field === 'painted' && !c.meta.needPcf) W('formant', '2D', 'info', 'The 2-D field is looked up at the lower-left grid cell (about 20 Hz steps), not interpolated, and its last row and column are never used.');
     }
     if (g('bclampformants') === 1) W('formant', 'FMT-F1', 'warn', 'Clamping reads 2048 values from clampF1/clampF2 whatever length was passed, and the clamp branch skips the voicing check.');
@@ -498,7 +561,8 @@
       return txt + (extra.length ? ', ' + extra.join(', ') : '');
     }
     if (S.formant.on) {
-      if (S.formant.field === 'painted') parts.push(`painted field (${S.formant.painted.cells.length} cells)`);
+      if (S.formant.field === 'variability') parts.push(`vowel variability ${S.formant.vari.dir === 'in' ? 'inward' : 'outward'} ${S.formant.vari.strength} % (centre ${Math.round(S.formant.vari.c1)}/${Math.round(S.formant.vari.c2)} Hz)`);
+      else if (S.formant.field === 'painted') parts.push(`painted field (${S.formant.painted.cells.length} cells)`);
       else if (S.formant.field === 'curve') parts.push('F2-dependent field');
       else if (S.formant.f1 || S.formant.f2) parts.push([S.formant.f1 ? `F1 ${sgn(S.formant.f1)}${u}` : '', S.formant.f2 ? `F2 ${sgn(S.formant.f2)}${u}` : ''].filter(Boolean).join(', ') + (S.formant.field === 'region' ? ' in region' : ''));
     }
@@ -535,6 +599,8 @@
     if (o.shift.formant.on && o.shift.formant.field !== 'region') delete o.shift.formant.region;
     if (o.shift.formant.on && o.shift.formant.field !== 'curve') delete o.shift.formant.curve;
     if (o.shift.formant.on && o.shift.formant.field !== 'painted') delete o.shift.formant.painted;
+    if (o.shift.formant.on && o.shift.formant.field !== 'variability') delete o.shift.formant.vari;
+    if (o.shift.formant.on && o.shift.formant.field === 'variability') { delete o.shift.formant.f1; delete o.shift.formant.f2; delete o.shift.formant.units; }
     const w = s.when; o.when.mode = w.mode;
     if (w.mode === 'after') o.when.after = w.after;
     if (w.mode === 'window') { o.when.after = w.after; o.when.until = w.until; }
@@ -546,5 +612,5 @@
   }
 
   G.PGS = { PRESETS, OST_MODES, defaultSettings, normalize, clone, getPath, setPath, baseParams, compile, warnings, summarize, diff, flatten, effective,
-    parseOst, serializeOst, ostStateCount, TEMPLATES, defaultDesign, compileDesign, refText, parsePcf, serializePcf, hz2mel, fmtVector, GRID, FMAX };
+    parseOst, serializeOst, ostStateCount, variField, apply2D, variIntended, TEMPLATES, defaultDesign, compileDesign, refText, parsePcf, serializePcf, hz2mel, fmtVector, GRID, FMAX };
 })(typeof self !== 'undefined' ? self : globalThis);

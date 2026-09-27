@@ -3,6 +3,7 @@
 // path: where the value lives in the settings object. Controls under "listen." default to the preset's value.
 (() => {
   const S = PG.S;
+  const vOn = s => s.shift.formant.field === 'variability';
   const fOn = s => s.shift.formant.on, pOn = s => s.shift.pitch.on, tdsOn = s => pOn(s) && s.shift.pitch.method === 'tds';
   const unitRange = { pct: [-50, 50, 1, '%'], hz: [-400, 400, 5, 'Hz'], mel: [-300, 300, 5, 'mel'] };
   const u = s => unitRange[s.shift.formant.units] || unitRange.pct;
@@ -10,19 +11,31 @@
   PG.GROUPS = [
     { id: 'shift', title: 'What gets shifted', blurb: 'Switch on one or more changes to the speech the participant hears.', cards: [
       { id: 'formant', title: 'Formants', on: 'shift.formant.on', blurb: 'Move F1 and F2, the resonances that make vowels sound different.',
-        summary: s => { const f = s.shift.formant, un = u(s)[3]; return f.field === 'painted' ? `painted field, ${f.painted.cells.length} cells` : f.field === 'curve' ? 'depends on F2' : `F1 ${PG.fmt.signed(f.f1, 0)} ${un}, F2 ${PG.fmt.signed(f.f2, 0)} ${un}`; },
+        summary: s => { const f = s.shift.formant, un = u(s)[3]; if (f.field === 'variability') return `variability ${f.vari.dir === 'in' ? 'inward' : 'outward'} ${f.vari.strength} %`; return f.field === 'painted' ? `painted field, ${f.painted.cells.length} cells` : f.field === 'curve' ? 'depends on F2' : `F1 ${PG.fmt.signed(f.f1, 0)} ${un}, F2 ${PG.fmt.signed(f.f2, 0)} ${un}`; },
         controls: [
-          { path: 'shift.formant.units', label: 'Units', kind: 'seg', options: [['pct', '% (ratio)'], ['hz', 'Hz'], ['mel', 'mel']],
+          { path: 'shift.formant.units', label: 'Units', kind: 'seg', show: s => s.shift.formant.field !== 'variability', options: [['pct', '% (ratio)'], ['hz', 'Hz'], ['mel', 'mel']],
             desc: 'Percent multiplies each formant; Hz and mel add a fixed amount. Audapter calls these bRatioShift and bMelShift.' },
           { path: 'shift.formant.f1', label: 'F1 shift', kind: 'range', range: u, sweep: true, show: s => s.shift.formant.field === 'all' || s.shift.formant.field === 'region',
             desc: 'Positive raises F1 (a more open vowel, /ɪ/ towards /ɛ/).' },
           { path: 'shift.formant.f2', label: 'F2 shift', kind: 'range', range: s => { const r = u(s); return [r[0] * (r[3] === '%' ? 1 : 2), r[1] * (r[3] === '%' ? 1 : 2), r[2], r[3]]; }, sweep: true, show: s => s.shift.formant.field === 'all' || s.shift.formant.field === 'region',
             desc: 'Positive raises F2 (more front, /u/ towards /i/).' },
           { path: 'shift.formant.field', label: 'Where on the vowel map', kind: 'select',
-            options: [['all', 'Everywhere'], ['region', 'Only inside an F1–F2 region'], ['curve', 'Varies with F2 (1-D field)'], ['painted', 'Painted on the vowel map (2-D field)']],
+            options: [['all', 'Everywhere'], ['region', 'Only inside an F1–F2 region'], ['curve', 'Varies with F2 (1-D field)'], ['painted', 'Painted on the vowel map (2-D field)'], ['variability', 'Vowel variability: inward / outward (2-D field)']],
             desc: 'Audapter looks the shift up from the current F1/F2. A restricted field only shifts vowels inside it.' },
           { path: 'shift.formant.region', kind: 'region', show: s => s.shift.formant.field === 'region', desc: 'Shift only while F1 and F2 are both inside these bounds (f1Min … f2Max).' },
           { path: 'shift.formant.curve', kind: 'curve', show: s => s.shift.formant.field === 'curve', desc: 'The shift at each F2, interpolated between points (pertAmp/pertPhi over pertF2).' },
+          { path: 'shift.formant.vari.dir', label: 'Direction', kind: 'seg', show: vOn, options: [['in', 'Inward'], ['out', 'Outward']],
+            desc: 'Inward pulls every production toward the vowel centre (the heard vowel varies less); outward pushes it away (varies more).' },
+          { path: 'shift.formant.vari.strength', label: 'Strength', kind: 'range', show: vOn, range: [0, 100, 5, '%'], sweep: true,
+            desc: 'Fraction of the distance to the centre. 50 % inward: heard = centre + 0.5 × (spoken − centre); outward: centre + 1.5 × (spoken − centre).' },
+          { path: 'shift.formant.vari.maxShift', label: 'Maximum shift', kind: 'number', show: vOn, range: [0, 1000, 5, 'Hz'], desc: 'Cap on the size of the shift (in mel when the units are mel). 0 means no cap.' },
+          { path: 'shift.formant.vari.centre', label: 'Vowel centre', kind: 'select', show: vOn, options: [['auto', 'Median of the current input'], ['trials', 'Median of the ticked trials (baseline)'], ['manual', 'Entered by hand']],
+            desc: 'In these designs the centre is usually the median of baseline productions of the same vowel.' },
+          { path: 'shift.formant.vari.c1', label: 'Centre F1', kind: 'number', show: vOn, range: [150, 1200, 1, 'Hz'], also: x => { x.shift.formant.vari.centre = 'manual'; }, desc: 'Typing a value switches the centre to "entered by hand".' },
+          { path: 'shift.formant.vari.c2', label: 'Centre F2', kind: 'number', show: vOn, range: [400, 3500, 1, 'Hz'], also: x => { x.shift.formant.vari.centre = 'manual'; } },
+          { path: 'shift.formant.vari.units', label: 'Space', kind: 'seg', show: vOn, options: [['hz', 'Hz'], ['mel', 'mel']], desc: 'Scale distances in Hz or in mel (bMelShift).' },
+          { path: 'shift.formant.vari.ext1', label: 'Field reach, F1', kind: 'number', show: vOn, range: [50, 1000, 10, '± Hz'], desc: 'The field covers the centre ± this; formants outside are not shifted. Its 257 grid points set the step.' },
+          { path: 'shift.formant.vari.ext2', label: 'Field reach, F2', kind: 'number', show: vOn, range: [100, 2000, 10, '± Hz'] },
           { path: 'shift.formant.painted', kind: 'painter', show: s => s.shift.formant.field === 'painted', desc: 'Paint shift vectors onto the F1–F2 plane (pertAmp2D/pertPhi2D, 257 × 257 cells of 19.5 Hz).' },
         ] },
       { id: 'pitch', title: 'Pitch', on: 'shift.pitch.on', blurb: 'Raise or lower the voice pitch (F0).',
