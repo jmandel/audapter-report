@@ -281,3 +281,17 @@ Methods section: NEG-1, NEG-2, NEG-3, NEG-4, NEG-5 and the tracker check, as in 
 - **Links** to notes, the log and scripts point at the public repository (`report.repo_url`), with the anchors GitHub generates for each heading.
 - **Live path**: the live-path line's verified results (LIVE-1 to LIVE-10) are in; the formal and corpus lines are placeholders until verified.
 - **Publishing**: `audit/publish/stage.sh` copies `prototype/` to `/docs` and runs the public-information gate.
+
+## 14. Figure language: expected vs observed, tied to the audio (Josh, 2026-09-27)
+Applies to every trial/session figure in the next rework.
+- **Two aligned panels per figure, same simplified tiers and scale:** "Expected (what the design should do)" and
+  "Observed (what Audapter did)", side by side on wide screens and stacked on narrow ones. The only visual difference
+  between them should be the difference that is the finding, highlighted in orange with a one-line callout.
+- **Minimal tiers, the same in both panels:** input (word boxes, not a waveform), perturbation on/off per word (filled
+  block with the size, e.g. "F1 +30 %"), and the OST state only if it explains the difference. Time axis: session time,
+  trials end to end, with reset() marked.
+- **Tied to the audio.** Each clip in "Listen" is labelled with the panel and trial it comes from ("Expected, trial 3",
+  "Observed, trial 3"), and playing it draws a playhead on that panel. Per-word measured values (e.g. F1 596 → 800 Hz) sit
+  under the word boxes in both panels and match the clip labels, so what you see is what you hear.
+- **Real experiment settings.** Figures use the settings of the named real experiment (see notes/blab-experiments.md),
+  stated in a one-line caption above the panels.
