@@ -398,3 +398,4 @@ F=26 EXACT sel=2 OK
 F=24 EXACT sel=4 OK
 F=27 PASS sel=6 OK
 F=28 PASS sel=5 OK
+F=25 EXACT sel=2 OK

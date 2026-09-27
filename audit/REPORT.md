@@ -77,7 +77,7 @@ Full details, plus about 20 more low-severity items: `notes/ost-pcf.md` (F1–F1
 ## Recommendations
 1. **Cheap fixes with outsized value**:
    - call `ostTab.reset()` from `Audapter::reset`
-   - ost.cpp:727 `[stat]`→`[j]`
+   - ost.cpp:728 `[stat]`→`[j]`
    - loop playback at the `datapb` length and reset `pbCounter` per trial
    - check PCF rows ≥ OST states at load time
    - copy the `runFrame` input
