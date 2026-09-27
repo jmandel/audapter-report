@@ -270,7 +270,8 @@
     "nanMismatch": 0
    }
   ],
-  "outFirstDiffFrame": 62
+  "outFirstDiffFrame": 62,
+  "withinTolerance": true
  },
  "fmtshift2d": {
   "out": {
@@ -543,7 +544,8 @@
     "nanMismatch": 0
    }
   ],
-  "outFirstDiffFrame": 61
+  "outFirstDiffFrame": 61,
+  "withinTolerance": true
  },
  "passthru": {
   "out": {
@@ -800,7 +802,8 @@
     "nanMismatch": 0
    }
   ],
-  "outFirstDiffFrame": -1
+  "outFirstDiffFrame": -1,
+  "withinTolerance": true
  },
  "pcf": {
   "out": {
@@ -1073,7 +1076,8 @@
     "nanMismatch": 0
    }
   ],
-  "outFirstDiffFrame": 62
+  "outFirstDiffFrame": 62,
+  "withinTolerance": true
  },
  "pvoc": {
   "out": {
@@ -1330,7 +1334,8 @@
     "nanMismatch": 0
    }
   ],
-  "outFirstDiffFrame": 12
+  "outFirstDiffFrame": 12,
+  "withinTolerance": true
  },
  "tdshift": {
   "out": {
@@ -1603,6 +1608,7 @@
     "nanMismatch": 0
    }
   ],
-  "outFirstDiffFrame": -1
+  "outFirstDiffFrame": -1,
+  "withinTolerance": true
  }
 }

@@ -1,6 +1,9 @@
 // Replay native-Octave reference runs (wasm/testdata/<scen>, from harness/oct/wasm_export.m) through the WASM
 // build under node and compare output audio, recorded signals and the data matrix sample by sample.
 // Usage: node wasm/test/equiv.mjs [variant=full] [scen ...]
+// EQUIV_TOL=1: pass within the documented cross-libm tolerance (WASM-2: glibc MEX vs musl/WASM libm) instead of
+// requiring bit-exactness: audio <= 1e-9 abs; data columns <= 1e-5 abs or 1e-9 x column max; the LPC-coefficient
+// columns (uninitialised before the first voiced frame in every build, WASM-1) are excluded.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,7 +32,8 @@ function cmp(a, b) {
 }
 
 const results = {};
-let allExact = true;
+let allExact = true, allTol = true;
+const TOL = process.env.EQUIV_TOL === '1';
 for (const s of scens) {
   const meta = JSON.parse(fs.readFileSync(path.join(TD, s, 'meta.json')));
   const a = await AudapterWasm.create(factory);   // fresh wasm instance (also resets handleBuffer's static locals)
@@ -72,9 +76,14 @@ for (const s of scens) {
   results[s] = r;
   const ex = ['out', 'signalIn', 'signalOut', 'data'].every(k => r[k].exact);
   allExact &&= ex;
+  const lpc0 = 4 + 2 * meta.nTracks + 4, lpc1 = lpc0 + meta.nLPC + 1;      // LPC columns [lpc0, lpc1), as AudapterIO reads them (offS:offS+nLPC)
+  const tolOk = ['out', 'signalIn', 'signalOut'].every(k => r[k].lenA === r[k].lenB && !r[k].nanMismatch && r[k].maxAbs <= 1e-9) &&
+    cols.every(c => (c.col >= lpc0 && c.col < lpc1) || (!c.nanMismatch && (c.maxAbs <= 1e-5 || c.maxAbs <= 1e-9 * c.maxRef)));
+  r.withinTolerance = tolOk; allTol &&= tolOk;
   const fmt = c => c.exact ? 'bit-exact' : `${c.nDiff}/${c.n} differ, max|d|=${c.maxAbs.toExponential(2)} (ref max ${c.maxRef.toExponential(2)})${c.nanMismatch ? ` NaN-mismatch ${c.nanMismatch}` : ''}${c.lenA !== c.lenB ? ` LEN ${c.lenA}!=${c.lenB}` : ''}`;
-  console.log(`${ex ? 'PASS' : 'DIFF'} ${s.padEnd(11)} out: ${fmt(r.out)} | sigIn: ${fmt(r.signalIn)} | sigOut: ${fmt(r.signalOut)} | data: ${fmt(r.data)}`);
+  console.log(`${ex ? 'PASS' : TOL && tolOk ? 'PASS~' : 'DIFF'} ${s.padEnd(11)} out: ${fmt(r.out)} | sigIn: ${fmt(r.signalIn)} | sigOut: ${fmt(r.signalOut)} | data: ${fmt(r.data)}`);
   if (cols.length) console.log(`     data columns differing: ${cols.map(c => `${c.col}(${c.nDiff}, row ${c.firstRow}, ${c.maxAbs.toExponential(1)})`).join(' ')}`);
 }
 fs.writeFileSync(path.join(W, 'test', `equiv-${variant}.json`), JSON.stringify(results, null, 1));
-process.exitCode = allExact ? 0 : 1;
+if (TOL) console.log(allTol ? 'EQUIV: all scenarios within the documented cross-libm tolerance (PASS~ = not bit-exact but within tolerance)' : 'EQUIV: tolerance exceeded');
+process.exitCode = (TOL ? allTol : allExact) ? 0 : 1;

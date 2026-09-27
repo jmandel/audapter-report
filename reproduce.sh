@@ -26,7 +26,7 @@ fi
 if has wasm; then
   step "wasm: native reference exports"; audit/wasm/export.sh
   step "wasm: build variants";           audit/wasm/build.sh
-  step "wasm: equivalence + patches";    (cd audit/wasm && node test/equiv.mjs && node test/patches.mjs)
+  step "wasm: equivalence + patches";    (cd audit/wasm && EQUIV_TOL=1 node test/equiv.mjs full && EQUIV_TOL=1 node test/equiv.mjs lite && node test/patches.mjs)
 fi
 if has formal; then
   step "formal"; (cd audit/formal && ./run.sh)
