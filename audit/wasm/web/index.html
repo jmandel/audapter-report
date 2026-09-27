@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><link rel="icon" href="data:,">
+<title>Audapter in the browser (WASM prototype)</title>
+<style>
+  body { font: 14px/1.45 system-ui, sans-serif; margin: 2rem auto; max-width: 900px; color: #26241f; background: #fbfaf7; }
+  h1 { font-size: 1.3rem; margin-bottom: .2rem; }
+  .sub { color: #6b665c; margin-top: 0; }
+  fieldset { border: 1px solid #e4e1da; border-radius: 6px; margin: 1rem 0; padding: .6rem 1rem; }
+  label { display: inline-block; min-width: 13rem; }
+  input[type=range] { width: 18rem; vertical-align: middle; }
+  button { font: inherit; padding: .3rem .9rem; margin-right: .4rem; }
+  #status, #perf { font-family: ui-monospace, monospace; font-size: 12px; color: #4a463e; }
+  canvas { width: 100%; border: 1px solid #e4e1da; border-radius: 6px; }
+  .key span { display: inline-block; margin-right: 1.2rem; }
+  .sw { display: inline-block; width: .8rem; height: .8rem; border-radius: 2px; vertical-align: -1px; margin-right: .3rem; }
+  .warn { color: #8a3b12; }
+</style>
+</head>
+<body>
+<h1>Audapter (blab TransShiftMex) running as WebAssembly in an AudioWorklet</h1>
+<p class="sub">Microphone &rarr; Audapter formant/pitch perturbation &rarr; headphones. Research prototype. Not a validated
+experimental instrument. <span class="warn">Use closed headphones: speakers will feed back.</span></p>
+
+<p><button id="start">Start microphone</button><button id="stop">Stop</button></p>
+<div id="status">stopped</div>
+
+<fieldset>
+  <legend>Perturbation</legend>
+  <div><label>F1 shift (%) <b id="f1v">0</b></label><input id="f1" type="range" min="-40" max="40" step="1" value="0"></div>
+  <div><label>F2 shift (%) <b id="f2v">0</b></label><input id="f2" type="range" min="-40" max="40" step="1" value="0"></div>
+  <div><label>Pitch shift (semitones) <b id="pitchv">0</b></label><input id="pitch" type="range" min="-6" max="6" step="0.5" value="0"></div>
+  <div><label><input id="bypass" type="checkbox"> Bypass (dry mic, same buffering latency)</label></div>
+  <div><label>RMS threshold (tracking gate)</label><input id="rms" type="number" min="0" max="0.2" step="0.001" value="0.01"></div>
+</fieldset>
+
+<canvas id="tracks" width="880" height="300"></canvas>
+<div class="key"><span><i class="sw" style="background:#9aa7b8"></i>tracked F1/F2 (input)</span>
+<span><i class="sw" style="background:#c2410c"></i>shifted F1 target</span><span><i class="sw" style="background:#1d4ed8"></i>shifted F2 target</span></div>
+<div id="perf"></div>
+
+<p><button id="dl">Download input/output WAV (L = mic, R = processed)</button><button id="dlcsv">Download formant tracks CSV</button></p>
+<script type="module" src="./demo.mjs"></script>
+</body>
+</html>

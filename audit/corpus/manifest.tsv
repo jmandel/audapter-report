@@ -1,0 +1,81 @@
+id	path	sex	age	group	source	gt_file	content
+arctic_awb_a0030	audio/arctic_awb_a0030.wav	M	adult	adult_M	arctic	gt/arctic_awb_a0030.phones.csv;gt/arctic_awb_a0030.pm.csv	I had faith in them.
+arctic_bdl_a0005	audio/arctic_bdl_a0005.wav	M	adult	adult_M	arctic	gt/arctic_bdl_a0005.phones.csv;gt/arctic_bdl_a0005.pm.csv	Will we ever forget it.
+arctic_bdl_a0018	audio/arctic_bdl_a0018.wav	M	adult	adult_M	arctic	gt/arctic_bdl_a0018.phones.csv;gt/arctic_bdl_a0018.pm.csv	There was a change now.
+arctic_bdl_a0030	audio/arctic_bdl_a0030.wav	M	adult	adult_M	arctic	gt/arctic_bdl_a0030.phones.csv;gt/arctic_bdl_a0030.pm.csv	I had faith in them.
+arctic_bdl_a0036	audio/arctic_bdl_a0036.wav	M	adult	adult_M	arctic	gt/arctic_bdl_a0036.phones.csv;gt/arctic_bdl_a0036.pm.csv	She turned in at the hotel.
+arctic_clb_a0005	audio/arctic_clb_a0005.wav	F	adult	adult_F	arctic	gt/arctic_clb_a0005.phones.csv;gt/arctic_clb_a0005.pm.csv	Will we ever forget it.
+arctic_clb_a0018	audio/arctic_clb_a0018.wav	F	adult	adult_F	arctic	gt/arctic_clb_a0018.phones.csv;gt/arctic_clb_a0018.pm.csv	There was a change now.
+arctic_clb_a0030	audio/arctic_clb_a0030.wav	F	adult	adult_F	arctic	gt/arctic_clb_a0030.phones.csv;gt/arctic_clb_a0030.pm.csv	I had faith in them.
+arctic_clb_a0036	audio/arctic_clb_a0036.wav	F	adult	adult_F	arctic	gt/arctic_clb_a0036.phones.csv;gt/arctic_clb_a0036.pm.csv	She turned in at the hotel.
+arctic_jmk_a0030	audio/arctic_jmk_a0030.wav	M	adult	adult_M	arctic	gt/arctic_jmk_a0030.phones.csv;gt/arctic_jmk_a0030.pm.csv	I had faith in them.
+arctic_ksp_a0030	audio/arctic_ksp_a0030.wav	M	adult	adult_M	arctic	gt/arctic_ksp_a0030.phones.csv;gt/arctic_ksp_a0030.pm.csv	I had faith in them.
+arctic_rms_a0005	audio/arctic_rms_a0005.wav	M	adult	adult_M	arctic	gt/arctic_rms_a0005.phones.csv;gt/arctic_rms_a0005.pm.csv	Will we ever forget it.
+arctic_rms_a0018	audio/arctic_rms_a0018.wav	M	adult	adult_M	arctic	gt/arctic_rms_a0018.phones.csv;gt/arctic_rms_a0018.pm.csv	There was a change now.
+arctic_rms_a0030	audio/arctic_rms_a0030.wav	M	adult	adult_M	arctic	gt/arctic_rms_a0030.phones.csv;gt/arctic_rms_a0030.pm.csv	I had faith in them.
+arctic_rms_a0036	audio/arctic_rms_a0036.wav	M	adult	adult_M	arctic	gt/arctic_rms_a0036.phones.csv;gt/arctic_rms_a0036.pm.csv	She turned in at the hotel.
+arctic_slt_a0005	audio/arctic_slt_a0005.wav	F	adult	adult_F	arctic	gt/arctic_slt_a0005.phones.csv;gt/arctic_slt_a0005.pm.csv	Will we ever forget it.
+arctic_slt_a0018	audio/arctic_slt_a0018.wav	F	adult	adult_F	arctic	gt/arctic_slt_a0018.phones.csv;gt/arctic_slt_a0018.pm.csv	There was a change now.
+arctic_slt_a0030	audio/arctic_slt_a0030.wav	F	adult	adult_F	arctic	gt/arctic_slt_a0030.phones.csv;gt/arctic_slt_a0030.pm.csv	I had faith in them.
+arctic_slt_a0036	audio/arctic_slt_a0036.wav	F	adult	adult_F	arctic	gt/arctic_slt_a0036.phones.csv;gt/arctic_slt_a0036.pm.csv	She turned in at the hotel.
+so762_0093_103	audio/so762_0093_103.wav	F	6	child	so762		TWO NINE SIX FOUR
+so762_0112_180	audio/so762_0112_180.wav	F	6	child	so762		IT'S NOT FISH
+so762_0092_81	audio/so762_0092_81.wav	F	6	child	so762		IT ALICE OWNED
+so762_0049_64	audio/so762_0049_64.wav	F	7	child	so762		NINE NINE EIGHT FIVE
+so762_0094_123	audio/so762_0094_123.wav	M	6	child	so762		TWO NINE NINE TWO
+so762_0114_222	audio/so762_0114_222.wav	M	6	child	so762		EIGHT SEVEN SIX SIX
+so762_0003_0	audio/so762_0003_0.wav	M	6	child	so762		MARK IS GOING TO SEE ELEPHANT
+so762_0111_163	audio/so762_0111_163.wav	M	6	child	so762		ONE SEVEN
+libri_84-121123-0000	audio/libri_84-121123-0000.wav	F	adult	adult_F	libri		GO DO YOU HEAR
+libri_1988-24833-0010	audio/libri_1988-24833-0010.wav	F	adult	adult_F	libri		SO HE CARES HUH
+libri_8297-275154-0022	audio/libri_8297-275154-0022.wav	M	adult	adult_M	libri		YOU CAN'T DO IT
+libri_5338-284437-0014	audio/libri_5338-284437-0014.wav	F	adult	adult_F	libri		ARE YOU A GIANT
+libri_2078-142845-0026	audio/libri_2078-142845-0026.wav	M	adult	adult_M	libri		TO MAKE DRY TOAST
+libri_2803-154320-0006	audio/libri_2803-154320-0006.wav	M	adult	adult_M	libri		WHAT THEN MY LORD
+vbd_p257_387_bus2.5	audio/vbd_p257_387_bus2.5.wav	F	adult	adult_F	vbd	gt/vbd_p257_387.clean.wav	So I did.
+vbd_p232_234_psquare2.5	audio/vbd_p232_234_psquare2.5.wav	M	adult	adult_M	vbd	gt/vbd_p232_234.clean.wav	But she was.
+vbd_p257_110_cafe2.5	audio/vbd_p257_110_cafe2.5.wav	F	adult	adult_F	vbd	gt/vbd_p257_110.clean.wav	It is normal.
+vbd_p257_315_living2.5	audio/vbd_p257_315_living2.5.wav	F	adult	adult_F	vbd	gt/vbd_p257_315.clean.wav	I am so upset.
+vbd_p232_100_office2.5	audio/vbd_p232_100_office2.5.wav	M	adult	adult_M	vbd	gt/vbd_p232_100.clean.wav	It was mayhem.
+vbd_p232_113_cafe2.5	audio/vbd_p232_113_cafe2.5.wav	M	adult	adult_M	vbd	gt/vbd_p232_113.clean.wav	It's not fair.
+vbd_p257_037_office7.5	audio/vbd_p257_037_office7.5.wav	F	adult	adult_F	vbd	gt/vbd_p257_037.clean.wav	It was ugly.
+vbd_p232_039_office7.5	audio/vbd_p232_039_office7.5.wav	M	adult	adult_M	vbd	gt/vbd_p232_039.clean.wav	I was scared.
+pvqd_LA9003_a	audio/pvqd_LA9003_a.wav	F	27	adult_F	pvqd		sustained /a/ (CAPE-V)
+pvqd_LA9003_i	audio/pvqd_LA9003_i.wav	F	27	adult_F	pvqd		sustained /i/ (CAPE-V)
+pvqd_SJ7001_a	audio/pvqd_SJ7001_a.wav	F	21	adult_F	pvqd		sustained /a/ (CAPE-V)
+pvqd_SJ7001_i	audio/pvqd_SJ7001_i.wav	F	21	adult_F	pvqd		sustained /i/ (CAPE-V)
+pvqd_SJ2001_a	audio/pvqd_SJ2001_a.wav	F	69	adult_F	pvqd		sustained /a/ (CAPE-V)
+pvqd_SJ2001_i	audio/pvqd_SJ2001_i.wav	F	69	adult_F	pvqd		sustained /i/ (CAPE-V)
+pvqd_PT101_a	audio/pvqd_PT101_a.wav	F	14	teen_F	pvqd		sustained /a/ (CAPE-V)
+pvqd_PT101_i	audio/pvqd_PT101_i.wav	F	14	teen_F	pvqd		sustained /i/ (CAPE-V)
+pvqd_NYU1015_a	audio/pvqd_NYU1015_a.wav	F	52	adult_F	pvqd		sustained /a/ (CAPE-V)
+pvqd_NYU1015_i	audio/pvqd_NYU1015_i.wav	F	52	adult_F	pvqd		sustained /i/ (CAPE-V)
+pvqd_LA9015_a	audio/pvqd_LA9015_a.wav	M	24	adult_M	pvqd		sustained /a/ (CAPE-V)
+pvqd_LA9015_i	audio/pvqd_LA9015_i.wav	M	24	adult_M	pvqd		sustained /i/ (CAPE-V)
+pvqd_LA9022_a	audio/pvqd_LA9022_a.wav	M	25	adult_M	pvqd		sustained /a/ (CAPE-V)
+pvqd_LA9022_i	audio/pvqd_LA9022_i.wav	M	25	adult_M	pvqd		sustained /i/ (CAPE-V)
+pvqd_SJ2009_a	audio/pvqd_SJ2009_a.wav	M	21	adult_M	pvqd		sustained /a/ (CAPE-V)
+pvqd_SJ2009_i	audio/pvqd_SJ2009_i.wav	M	21	adult_M	pvqd		sustained /i/ (CAPE-V)
+pvqd_PT128_a	audio/pvqd_PT128_a.wav	M	35	adult_M	pvqd		sustained /a/ (CAPE-V)
+pvqd_NYU1017_a	audio/pvqd_NYU1017_a.wav	M	68	adult_M	pvqd		sustained /a/ (CAPE-V)
+pvqd_NYU1017_i	audio/pvqd_NYU1017_i.wav	M	68	adult_M	pvqd		sustained /i/ (CAPE-V)
+vocalset_f2_long_straight_a	audio/vocalset_f2_long_straight_a.wav	F	adult	singer_F	vocalset		sung sustained /a/ (long tone, straight)
+vocalset_f2_long_straight_i	audio/vocalset_f2_long_straight_i.wav	F	adult	singer_F	vocalset		sung sustained /i/ (long tone, straight)
+vocalset_f9_long_straight_a	audio/vocalset_f9_long_straight_a.wav	F	adult	singer_F	vocalset		sung sustained /a/ (long tone, straight)
+vocalset_f9_long_straight_i	audio/vocalset_f9_long_straight_i.wav	F	adult	singer_F	vocalset		sung sustained /i/ (long tone, straight)
+vocalset_m2_long_straight_a	audio/vocalset_m2_long_straight_a.wav	M	adult	singer_M	vocalset		sung sustained /a/ (long tone, straight)
+vocalset_m2_long_straight_i	audio/vocalset_m2_long_straight_i.wav	M	adult	singer_M	vocalset		sung sustained /i/ (long tone, straight)
+blab_diao1_female	audio/blab_diao1_female.wav	F	adult	adult_F	blab	gt/blab_diao1_female.audapter_online.mat	Mandarin syllable (diao1), formant-shift trial
+blab_trial_1_2	audio/blab_trial_1_2.wav	M	adult	adult_M	blab	gt/blab_trial_1_2.audapter_online.mat	"The steady bat gave birth to pups" (rhythm study trial)
+blab_da1_male	audio/blab_da1_male.wav	M	adult	adult_M	blab	gt/blab_da1_male.audapter_online.mat	Mandarin syllable (da1), formant-shift trial
+kearney_eee_female	audio/kearney_eee_female.wav	F	adult	adult_F	kearney		sustained /i/
+kearney_eee_male	audio/kearney_eee_male.wav	M	adult	adult_M	kearney		sustained /i/
+freespeech_dipper_cwn	audio/freespeech_dipper_cwn.wav	unknown	adult	adult_unknown	freespeech		dipper
+freespeech_tipper_cwn	audio/freespeech_tipper_cwn.wav	unknown	adult	adult_unknown	freespeech		tipper
+praat_heed	audio/praat_heed.wav	unknown	adult	adult_unknown	praat		hVd word "heed"
+praat_hid	audio/praat_hid.wav	unknown	adult	adult_unknown	praat		hVd word "hid"
+praat_hood	audio/praat_hood.wav	unknown	adult	adult_unknown	praat		hVd word "hood"
+praat_hud	audio/praat_hud.wav	unknown	adult	adult_unknown	praat		hVd word "hud"
+vocadito_2	audio/vocadito_2.wav	unknown	adult	singer_unknown	vocadito	gt/vocadito_2.f0.csv	sung phrase (Spanish), avg MIDI pitch 65
+vocadito_4	audio/vocadito_4.wav	unknown	adult	singer_unknown	vocadito	gt/vocadito_4.f0.csv	sung phrase (Catalan/Valencian), avg MIDI pitch 47
+vocadito_10	audio/vocadito_10.wav	unknown	adult	singer_unknown	vocadito	gt/vocadito_10.f0.csv	sung phrase (English), avg MIDI pitch 49

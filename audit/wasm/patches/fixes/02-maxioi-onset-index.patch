@@ -1,0 +1,12 @@
+diff -ru a/ost.cpp b/ost.cpp
+--- a/ost.cpp	2026-09-27 09:14:35.771716106 -0500
++++ b/ost.cpp	2026-09-27 09:14:35.785779961 -0500
+@@ -725,7 +725,7 @@
+ 			if ((stat >= maxIOICfg.stat0[i]) && (stat < maxIOICfg.stat1[i])) {
+ 				if ((frame_counter - statOnsetIndices[maxIOICfg.stat0[i]]) * frameDur > maxIOICfg.maxInterval[i]) {
+ 					for (j = stat + 1; j <= maxIOICfg.stat1[i]; j++) {
+-						statOnsetIndices[stat] = frame_counter;
++						statOnsetIndices[j] = frame_counter;	/* audit fix OST-F2: was [stat] */
+ 					}
+ 
+ 					stat_out = maxIOICfg.stat1[i];

@@ -1,0 +1,255 @@
+{
+ "chromium": "150.0.7871.124",
+ "info": {
+  "type": "ready",
+  "frameSize": 96,
+  "prefill": 64,
+  "sampleRate": 48000,
+  "memMB": 163.4375,
+  "sizeofAudapter": 141039184,
+  "hasPerformance": false,
+  "hasTextDecoder": false,
+  "baseLatency": 0.0026666666666666666,
+  "outputLatency": 0,
+  "ctxRate": 48000,
+  "track": {
+   "autoGainControl": false,
+   "channelCount": 2,
+   "deviceId": "default",
+   "echoCancellation": false,
+   "groupId": "311e8779c162b0181a048e82b4cca58f38bbb19904b885d841e0c8205cf0ee43",
+   "latency": 0.01,
+   "noiseSuppression": false,
+   "sampleRate": 44100,
+   "sampleSize": 16,
+   "voiceIsolation": false
+  }
+ },
+ "underruns": 0,
+ "frames": 3540,
+ "nDiff": 0,
+ "maxd": 0,
+ "rowDiff": 0,
+ "captureXcorrSnr": [
+  {
+   "t": 1,
+   "lag": 48445,
+   "r": 0.9999544048202623
+  },
+  {
+   "t": 1.735,
+   "lag": 83725,
+   "r": 0.9999942214353087
+  },
+  {
+   "t": 2.47,
+   "lag": 109405,
+   "r": 0.9999690616082005
+  },
+  {
+   "t": 3.205,
+   "lag": 13678,
+   "r": 0.9997876808174107
+  },
+  {
+   "t": 3.94,
+   "lag": 45358,
+   "r": 0.9999579579230756
+  },
+  {
+   "t": 4.675,
+   "lag": 75838,
+   "r": 0.9999615667866852
+  },
+  {
+   "t": 5.41,
+   "lag": 115918,
+   "r": 0.9999690300421316
+  },
+  {
+   "t": 6.145,
+   "lag": 19791,
+   "r": 0.9997878464091238
+  }
+ ],
+ "worklet": {
+  "meanUs": 62.5748502994012,
+  "p99Us": 1000,
+  "maxUs": 1000
+ },
+ "f1ShiftMedian": 1.2,
+ "bench": [
+  {
+   "scen": "passthru",
+   "frameSize": 96,
+   "fs": 48000,
+   "frameMs": 2,
+   "frames": 15000,
+   "meanUs": 32.152999528249104,
+   "p50Us": 30.00020980834961,
+   "p99Us": 85.00003814697266,
+   "p999Us": 119.99988555908203,
+   "maxUs": 359.9996566772461,
+   "loadPct": 1.6076499764124552,
+   "overBudget": 0,
+   "resetMs": [
+    11.609999656677246,
+    11.740000247955322
+   ],
+   "memMB": 307
+  },
+  {
+   "scen": "fmtshift",
+   "frameSize": 96,
+   "fs": 48000,
+   "frameMs": 2,
+   "frames": 15000,
+   "meanUs": 30.70400021870931,
+   "p50Us": 30.00020980834961,
+   "p99Us": 50.00019073486328,
+   "p999Us": 74.99980926513672,
+   "maxUs": 639.9998664855957,
+   "loadPct": 1.5352000109354655,
+   "overBudget": 0,
+   "resetMs": [
+    11.829999923706055,
+    12.019999980926514
+   ],
+   "memMB": 307
+  },
+  {
+   "scen": "fmtshift2d",
+   "frameSize": 96,
+   "fs": 48000,
+   "frameMs": 2,
+   "frames": 15000,
+   "meanUs": 30.892333507537842,
+   "p50Us": 30.00020980834961,
+   "p99Us": 50.00019073486328,
+   "p999Us": 65.00005722045898,
+   "maxUs": 165.00043869018555,
+   "loadPct": 1.5446166753768922,
+   "overBudget": 0,
+   "resetMs": [
+    11.875,
+    11.220000267028809
+   ],
+   "memMB": 307
+  },
+  {
+   "scen": "pvoc",
+   "frameSize": 96,
+   "fs": 48000,
+   "frameMs": 2,
+   "frames": 15000,
+   "meanUs": 42.099666372934976,
+   "p50Us": 39.999961853027344,
+   "p99Us": 79.99992370605469,
+   "p999Us": 99.99990463256836,
+   "maxUs": 160.00032424926758,
+   "loadPct": 2.104983318646749,
+   "overBudget": 0,
+   "resetMs": [
+    15.295000076293945,
+    18.68000030517578
+   ],
+   "memMB": 307
+  },
+  {
+   "scen": "tdshift",
+   "frameSize": 192,
+   "fs": 48000,
+   "frameMs": 4,
+   "frames": 7500,
+   "meanUs": 116.68200073242188,
+   "p50Us": 120.00036239624023,
+   "p99Us": 180.00030517578125,
+   "p999Us": 235.0001335144043,
+   "maxUs": 1150.0000953674316,
+   "loadPct": 2.917050018310547,
+   "overBudget": 0,
+   "resetMs": [
+    11.410000324249268,
+    11.524999618530273
+   ],
+   "memMB": 307
+  }
+ ],
+ "log": [
+  {
+   "frame": 1,
+   "op": "set",
+   "name": "pertamp",
+   "v": 0
+  },
+  {
+   "frame": 1,
+   "op": "set",
+   "name": "pertphi",
+   "v": 0
+  },
+  {
+   "frame": 1,
+   "op": "set",
+   "name": "bpitchshift",
+   "v": 0
+  },
+  {
+   "frame": 1,
+   "op": "bypass",
+   "v": false
+  },
+  {
+   "frame": 762,
+   "op": "set",
+   "name": "pertamp",
+   "v": 0.2
+  },
+  {
+   "frame": 762,
+   "op": "set",
+   "name": "pertphi",
+   "v": 0
+  },
+  {
+   "frame": 1761,
+   "op": "set",
+   "name": "pertamp",
+   "v": 0
+  },
+  {
+   "frame": 1761,
+   "op": "set",
+   "name": "pertphi",
+   "v": 0
+  },
+  {
+   "frame": 1761,
+   "op": "set",
+   "name": "bpitchshift",
+   "v": 1
+  },
+  {
+   "frame": 1761,
+   "op": "set",
+   "name": "pitchshiftratio",
+   "v": 1.122462048309373
+  },
+  {
+   "frame": 2765,
+   "op": "bypass",
+   "v": true
+  },
+  {
+   "frame": 3009,
+   "op": "bypass",
+   "v": false
+  },
+  {
+   "frame": 3009,
+   "op": "set",
+   "name": "bpitchshift",
+   "v": 0
+  }
+ ]
+}

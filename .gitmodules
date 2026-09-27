@@ -1,0 +1,21 @@
+[submodule "blab/audapter_mex"]
+	path = blab/audapter_mex
+	url = https://github.com/blab-lab/audapter_mex
+[submodule "blab/audapter_matlab"]
+	path = blab/audapter_matlab
+	url = https://github.com/blab-lab/audapter_matlab
+[submodule "upstream/audapter_mex"]
+	path = upstream/audapter_mex
+	url = https://github.com/shanqing-cai/audapter_mex
+[submodule "upstream/audapter_matlab"]
+	path = upstream/audapter_matlab
+	url = https://github.com/shanqing-cai/audapter_matlab
+[submodule "other/guenther_audapter_mex"]
+	path = other/guenther_audapter_mex
+	url = https://github.com/GuentherLab/audapter_mex
+[submodule "other/guenther_audapter_matlab"]
+	path = other/guenther_audapter_matlab
+	url = https://github.com/GuentherLab/audapter_matlab
+[submodule "other/beamscource_32kHz"]
+	path = other/beamscource_32kHz
+	url = https://github.com/beamscource/Audapter_32kHz_version

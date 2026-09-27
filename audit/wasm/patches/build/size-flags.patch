@@ -1,0 +1,42 @@
+diff -ru a/Audapter.h b/Audapter.h
+--- a/Audapter.h	2026-09-27 09:14:35.726091600 -0500
++++ b/Audapter.h	2026-09-27 09:14:35.741653773 -0500
+@@ -51,6 +51,18 @@
+ 
+ typedef double dtype;
+ 
++/* Compile-time buffer sizes (web/WASM build). Defaults are the shipped values. Recorders hold
++   maxRecSize/sr seconds (30 s at 16 kHz) and wrap after that; the Audapter object is ~266 MB with defaults. */
++#ifndef AUDAPTER_MAX_REC_SIZE
++#define AUDAPTER_MAX_REC_SIZE 480000
++#endif
++#ifndef AUDAPTER_MAX_DATA_SIZE
++#define AUDAPTER_MAX_DATA_SIZE 480000
++#endif
++#ifndef AUDAPTER_MAX_DELAY_FRAMES
++#define AUDAPTER_MAX_DELAY_FRAMES 600
++#endif
++
+ #define M_PI       3.14159265358979323846
+ 
+ /* Utility inline functions */
+@@ -162,8 +174,8 @@
+ 
+ 	/* Data recorder */
+ 	static const int maxDataVec = 2 * maxNTracks + 10 + maxNLPC + 5;
+-	static const int maxRecSize = 480000;
+-    static const int maxDataSize = 480000;
++	static const int maxRecSize = AUDAPTER_MAX_REC_SIZE;
++    static const int maxDataSize = AUDAPTER_MAX_DATA_SIZE;
+ 	
+ 	/* Perturbation field */
+ 	static const int pfNPoints = 257;	/* Number of points in the perturbation field */
+@@ -180,7 +192,7 @@
+ 	static const int maxToneSeqRecLen = 480000;	/* Maximum length (samples) of the tone sequence waveform */
+ 
+ 	/* Global delay */
+-	static const int maxDelayFrames = 600;	/* Maximum global delay (in frames) */
++	static const int maxDelayFrames = AUDAPTER_MAX_DELAY_FRAMES;	/* Maximum global delay (in frames) */
+ 	static const int maxNVoices = 4;			/* Maximum number of blended voices */
+ 	
+ 	static const int internalBufLen = maxFrameLen * downSampFact_default * maxDelayFrames;

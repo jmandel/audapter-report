@@ -1,0 +1,4 @@
+# energy segments: 20 ms RMS > (max -30 dB), gaps < 100 ms merged
+onset,offset
+0.275,0.380
+0.575,1.985

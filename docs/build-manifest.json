@@ -1,0 +1,35 @@
+{
+ "cards": {
+  "OST-F1": {
+   "assets": [
+    "data.json",
+    "dev_trialA_48k.wav",
+    "dev_trialB_48k.wav",
+    "trialA_input.wav",
+    "trialB_input.wav",
+    "trialB_output_after_A.wav",
+    "trialB_output_fresh.wav",
+    "widget-data.js"
+   ],
+   "upstream_export": true
+  },
+  "I-01": {
+   "assets": [
+    "data.json",
+    "input_vowels.wav",
+    "output_fb2_bundled_babble_zoom.wav",
+    "output_fb3_voice_plus_noise.wav"
+   ],
+   "upstream_export": true
+  },
+  "PT-5": {
+   "assets": [
+    "data.json",
+    "input_vowel.wav",
+    "output_bypass.wav",
+    "output_pitch_step.wav"
+   ],
+   "upstream_export": false
+  }
+ }
+}

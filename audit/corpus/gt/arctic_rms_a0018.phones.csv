@@ -1,0 +1,19 @@
+# CMU ARCTIC autolabelled (EHMM forced alignment) phone segments
+start,end,phone
+0.000,0.11,pau
+0.110,0.18,dh
+0.180,0.235,eh
+0.235,0.3,r
+0.300,0.38,w
+0.380,0.41,aa
+0.410,0.48,z
+0.480,0.54,ax
+0.540,0.59,ssil
+0.590,0.71,ch
+0.710,0.89,ey
+0.890,0.975,n
+0.975,1.075,jh
+1.075,1.1,ssil
+1.100,1.17,n
+1.170,1.405,aw
+1.405,1.575,pau

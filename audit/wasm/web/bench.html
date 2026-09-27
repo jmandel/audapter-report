@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><link rel="icon" href="data:,"><title>Audapter WASM benchmark</title>
+<pre id="out">running...</pre>
+<script type="module">
+import { benchScenario, fmtRow } from './bench-core.mjs';
+const q = new URLSearchParams(location.search);
+const variant = q.get('variant') || 'full', seconds = Number(q.get('seconds') || 30);
+const scens = (q.get('scens') || 'passthru,fmtshift,fmtshift2d,pvoc,tdshift').split(',');
+const factory = (await import(`../dist/audapter-${variant}.mjs`)).default;
+const load = async s => ({ meta: await (await fetch(`../testdata/${s}/meta.json`)).json(),
+  input: new Float64Array(await (await fetch(`../testdata/${s}/in.f64`)).arrayBuffer()) });
+const res = [];
+const out = document.getElementById('out');
+out.textContent = `${navigator.userAgent}\ncrossOriginIsolated=${crossOriginIsolated}\n`;
+for (const s of scens) { const r = await benchScenario(factory, load, s, { seconds }); res.push(r); out.textContent += fmtRow(r) + '\n'; }
+window.benchResults = res;
+</script>

@@ -1,0 +1,207 @@
+# Structured finding data for the HTML report. build.py renders this; nothing in index.html is hand-edited.
+# Every `log:` id must exist in ../FINDINGS-LOG.md (build.py checks). Every code ref is excerpted from the
+# pinned SHA with `git show`, and its `expect:` text must appear in the excerpt (guards against line drift).
+
+report:
+  title: "Audapter, blab-lab fork: what a headless audit found"
+  date: "2026-09-27"
+  targets:
+    - {repo: blab-mex, label: "blab-lab/audapter_mex"}
+    - {repo: blab-matlab, label: "blab-lab/audapter_matlab"}
+    - {repo: upstream-mex, label: "shanqing-cai/audapter_mex 2.1.5 (baseline)"}
+
+repos:
+  blab-mex:     {url: "https://github.com/blab-lab/audapter_mex",     sha: "169cadffef4c2d82a33939b840245b8a8a9db0de", local: "~/hobby/audapter/blab/audapter_mex"}
+  blab-matlab:  {url: "https://github.com/blab-lab/audapter_matlab",  sha: "e1695f146a0ecc3014ffe34b2b3cbc578edcd4b2", local: "~/hobby/audapter/blab/audapter_matlab"}
+  upstream-mex: {url: "https://github.com/shanqing-cai/audapter_mex", sha: "f547196483fd2e68ef33f8a6fa7ed532eefd5af5", local: "~/hobby/audapter/upstream/audapter_mex"}
+
+# Compact table: every finding gets a row; `card: true` rows link to a full card below.
+table:
+  - {id: OST-F1, sev: high, origin: upstream, status: H, card: true,  text: "OST state leaks across trials: an offset in trial B is detected 1.2 s late after a longer trial A"}
+  - {id: OST-F2, sev: high, origin: upstream, status: H, text: "maxIOI timeout writes the onset of the wrong state; ELAPSED_TIME fires after 2 ms instead of 100 ms, and without an OST reload the timeout drifts 0.2 → 0.4 → 0.6 s"}
+  - {id: I-01,   sev: high, origin: blab-amplified, status: H, card: true, text: "Masking noise shorter than 10 s is followed by silence until the 10 s buffer wraps"}
+  - {id: OST-F4, sev: high, origin: upstream, status: H, text: "PCF with fewer rows than OST states reads past the perturbation arrays; heap contents decide whether to perturb"}
+  - {id: FMT-F1, sev: high, origin: blab, status: H, text: "Clamp trajectory setters copy 2048 values whatever length MATLAB passes"}
+  - {id: PT-5,   sev: high, origin: upstream, status: H, card: true, text: "Phase vocoder plays 3.5 dB loud at 0 st, and the level changes when a pitch shift starts"}
+  - {id: I-04,   sev: med,  origin: upstream, status: H, text: "runFrame writes its output into the caller's input array"}
+  - {id: OST-F8, sev: med,  origin: blab, status: H, text: "Blab AND_RATIO rules take the hold from field 5, where the manual puts {}"}
+  - {id: I-02,   sev: med,  origin: blab, status: H, text: "fb mode 5 applies dScale twice to the speech-modulated component"}
+  - {id: F6,     sev: med,  origin: blab, status: H, text: "Dropout fix re-arms the perturbation on every field re-entry; minVowelLen no longer has any effect"}
+  - {id: I-03,   sev: med,  origin: upstream, status: H, text: "Recorder wraps after 30 s without warning; a 35 s trial returns its last 5.2 s"}
+
+cards:
+  - id: OST-F1
+    log: OST-F1
+    notes: "notes/ost-pcf.md#f1"
+    headline: "After a long trial, the next trial's speech offset is detected 1.2 s late"
+    severity: high
+    origin: upstream
+    origin_note: "Present unchanged in upstream 2.1.5 (same output on build-upstream). Blab's new INTENSITY_RATIO_ABOVE_THRESH_WITH_RMS_FLOOR rule does not update lastStatEnd either, so OST files that use it are also affected."
+    status: [H, D]
+    effect:
+      setup: >
+        OST: <code>0 ELAPSED_TIME 0.1</code> → <code>1 INTENSITY_FALL 0.01 0.02</code> → <code>2 OST_END</code>.
+        PCF: F1 +30 % in state 1 only, i.e. the perturbation should last until the offset of the first word.
+        Trial B has two vowels (0.04–0.40 s and 0.60–1.30 s). We ran it once as the first trial of the session,
+        then again right after trial A, a single vowel ending at 1.60 s. The same MEX session was used throughout,
+        with <code>Audapter('reset')</code> between trials, as in an experiment loop.
+      expected: "State 2 begins shortly after the first word ends ({state2_B_fresh_s:.2f} s here, including RMS smoothing). The second word is not perturbed."
+      observed: "After trial A, state 2 begins at {state2_B_after_A_s:.2f} s, just after trial A's own transition ({state2_A_s:.2f} s). State 1 lasts {overrun:.2f} s too long, and the second word is heard with F1 raised: {word2_F1_in_hz:.0f} → {word2_F1_out_after_A_hz:.0f} Hz, logged sF1/F1 = {logged_ratio:.2f}."
+      matters: >
+        The first trial of a session behaves correctly, so pilot runs look fine. On later trials, any perturbation,
+        time warp or state-based segmentation that depends on an INTENSITY_FALL after a rule that does not set
+        <code>lastStatEnd</code> can be late by up to the length of the previous trial. The logged <code>ost_stat</code>
+        shows the late transition too, so the data are internally consistent with what was played. That
+        consistency is why nothing looks wrong afterwards.
+      numbers:
+        - ["State 2 onset, first trial of the session", "{state2_B_fresh_s:.3f} s"]
+        - ["State 2 onset, same input after trial A", "{state2_B_after_A_s:.3f} s"]
+        - ["Trial A's own state 2 onset", "{state2_A_s:.3f} s"]
+        - ["Word-2 F1 heard (independent LPC): input / first trial / after A", "{word2_F1_in_hz:.0f} / {word2_F1_out_fresh_hz:.0f} / {word2_F1_out_after_A_hz:.0f} Hz"]
+    sketch: ost_f1
+    interactive:
+      id: ost-f1
+      patch: ost-f1-reset.patch
+      text: >
+        This runs the same three trials through the real Audapter C++ core compiled to WebAssembly from the pinned commit,
+        once as released and once with a one-line fix. It uses the same inputs and parameters as the harness run.
+        In our checks both builds reproduce the harness timings to the frame.
+    asset_dir: ost-f1
+    audio:
+      - {file: trialB_input.wav, role: input}
+      - {file: trialB_output_fresh.wav, role: expected}
+      - {file: trialB_output_after_A.wav, role: observed}
+    cause:
+      summary: >
+        <code>OST_TAB::reset()</code> exists and clears <code>lastStatEnd</code>, but nothing calls it.
+        <code>Audapter::reset()</code> sets <code>stat = 0</code> and restarts <code>data_counter</code>, but the OST table keeps
+        the previous trial's <code>lastStatEnd</code>. INTENSITY_FALL fires only once
+        <code>data_counter - lastStatEnd</code> exceeds the minimum duration, so in trial B it has to wait until the frame count passes where trial A's fall happened.
+      refs:
+        - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [97, 101], hl: [99], expect: "lastStatEnd = 0", note: "The reset that would fix it. There are no callers in blab or upstream (grep: no ostTab.reset)."}
+        - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [648, 652], hl: [651], expect: "stat = 0;", note: "Audapter::reset() resets the OST state index but not the OST table."}
+        - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [546, 550], hl: [546], expect: "(data_counter - lastStatEnd) > minDurN", note: "INTENSITY_FALL compares this trial's frame counter with the stale lastStatEnd."}
+      upstream_refs:
+        - {repo: upstream-mex, path: TransShiftMex/ost.cpp, lines: [91, 95], expect: "lastStatEnd = 0"}
+        - {repo: upstream-mex, path: TransShiftMex/ost.cpp, lines: [478, 478], expect: "lastStatEnd) > minDurN"}
+      fix: "Call <code>ostTab.reset()</code> from <code>Audapter::reset()</code>, and have it also clear <code>statOnsetIndices</code>. One line plus one loop."
+    verify:
+      - {kind: H, what: "harness test", name: "t_ost.m", test: "OST F1: trial B (after A) offset detected"}
+      - {kind: H, what: "report export (vowels, audible)", name: "report_ost_f1.m", detail: "blab and upstream builds give identical onsets"}
+      - {kind: D, what: "standalone driver of ost.cpp", name: "scratch/ost-pcf/t/drv.cpp fall_leak", detail: "offset at frame 200 fired at frame 815"}
+      - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+    reproduce: "cd audit/harness && ./run-oct.sh t_ost.m"
+
+  - id: I-01
+    log: I-01
+    notes: "notes/interface.md#i-01"
+    headline: "A 5 s masking-noise file plays as 5 s of noise, then 5 s of silence"
+    severity: high
+    origin: blab-amplified
+    origin_note: "Wrapping at the buffer size rather than the noise length is upstream behaviour. Upstream's buffer was 230400 samples (4.8 s), and the MATLAB callers truncate noise to that length, so any file of 4.8 s or more looped without a gap. Blab commit 3c90a3a raised the buffer to 480000 (10 s), and from then on a shorter file leaves a silent stretch."
+    status: [H]
+    effect:
+      setup: >
+        fb = 3 (voice + noise). The masking noise is loaded the way <code>runExperiment.m</code> does it (mtbabble48k.wav, zero mean,
+        unit RMS, truncated to <code>getMaxPBLen</code>), but only its first 5 s are used, as with a lab's own shorter noise file.
+        Input: a 0.5 s vowel every second for 12 s.
+      expected: "Noise throughout the trial: the 5 s file loops without a break."
+      observed: "Noise from 0 to 5.00 s, then none from 5.00 to 10.00 s, then noise again. During the gap the participant hears their own voice unmasked. The full bundled babble file (479230 samples) drops out for 16 ms at 9.98 s."
+      matters: >
+        Masking-noise and fb 4/5 conditions deliver no masking for part of the trial, with no error. <code>Audapter('reset')</code>
+        does not reset the playback position, so the gap falls somewhere different in each trial. In our two-trial check
+        it began 1.0 s into the second trial. <code>signalOut</code> does contain the gap, so affected sessions can be found afterwards.
+      numbers:
+        - ["getMaxPBLen (blab / upstream 2.1.5)", "{maxPBLen} / {up_maxPBLen} samples"]
+        - ["Noise gap(s) in a 12 s trial, blab", "{gaps_text}"]
+        - ["Noise gap(s), same script on upstream 2.1.5", "{up_gaps_text}"]
+        - ["Second trial after reset: noise stops at", "{trial2_gap_start_s:.2f} s into the trial"]
+    sketch: i01
+    interactive:
+      status: planned
+      plan: >
+        load a masking-noise file of any length (set <code>datapb</code> from 1 to 10 s) and hear where the noise stops, as released and with the
+        noise wrapping at its loaded length. This needs the full-size WASM build: the small build used elsewhere shrinks the playback buffer, which changes this bug.
+    asset_dir: i-01
+    audio:
+      - {file: input_vowels.wav, role: input}
+      - {file: output_fb3_voice_plus_noise.wav, role: observed}
+      - {file: output_fb2_bundled_babble_zoom.wav, role: observed, offset: 8.5}
+    cause:
+      summary: >
+        The fb 2–5 loop advances <code>pbCounter</code> and wraps it at the compile-time <code>maxPBSize</code>, not at the length
+        that was loaded. Setting <code>datapb</code> zero-fills the rest of the buffer, so the pointer runs through zeros
+        until it wraps. <code>pbCounter</code> is reset only when <code>datapb</code> is set, not in <code>reset()</code>.
+      refs:
+        - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2202, 2204], hl: [2203], expect: "pbCounter >= maxPBSize", note: "The wrap uses the buffer capacity."}
+        - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1216, 1219], hl: [1217, 1218], expect: "Zero out the remaining part", note: "Loading a shorter datapb fills the rest of the buffer with zeros."}
+        - {repo: blab-mex, path: TransShiftMex/Audapter.h, lines: [176, 176], hl: [176], expect: "maxPBSize = 480000", note: "Blab's value; upstream has 230400 (Audapter.h:169)."}
+        - {repo: blab-matlab, path: mcode/runExperiment.m, lines: [325, 330], hl: [325], expect: "getMaxPBLen", note: "Callers truncate to the maximum but never pass the actual length to the playback loop."}
+      upstream_refs:
+        - {repo: upstream-mex, path: TransShiftMex/Audapter.h, lines: [169, 169], expect: "maxPBSize = 230400"}
+        - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [2029, 2030], expect: "pbCounter -= maxPBSize"}
+      fix: "Store the loaded length when <code>datapb</code> is set and wrap at that length. Reset <code>pbCounter</code> in <code>reset()</code>, or make that optional for continuous-noise designs."
+    verify:
+      - {kind: H, what: "interface check", name: "scratch/interface/t_iface.m T1", detail: "fb 2: mean |out| 0.100 for 0–4.9 s, 0.000 for 5.1–9.9 s"}
+      - {kind: H, what: "report export", name: "report_i01.m", detail: "blab and upstream builds; upstream shows no gap"}
+      - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+    reproduce: "cd audit/harness && ./run-oct.sh report_i01.m"
+
+  - id: PT-5
+    log: PT-5
+    notes: "notes/pitch-time.md#pt-5"
+    headline: "With the phase vocoder on, output is 3.5 dB louder, and the level changes when the pitch shift starts"
+    severity: high
+    origin: upstream
+    origin_note: "Identical in upstream 2.1.5: the blab/upstream differential is bit-exact for pvoc_pitch_up2 and pcf_pitch."
+    status: [H, D]
+    effect:
+      setup: >
+        <code>bPitchShift = 1</code>. The OST enters state 1 at 0.6 s, and the PCF asks for 0 st in state 0 and +2 st in state 1: a typical
+        pitch-perturbation onset. Input: a sustained synthetic /a/ at F0 120 Hz (the same signal as <code>t_pitch.m</code>). Reference: the same input
+        with <code>bPitchShift = 0</code>.
+      expected: "Output level equal to the input level throughout; F0 steps up by 200 cents at 0.6 s."
+      observed: "The F0 step is accurate ({f0_cents:.0f} cents). Before the onset the output is {gain_before_db:+.1f} dB louder than the input. After the onset the level drops and fluctuates from one 20 ms block to the next. With a constant ratio the level at +2 st depends on F0 and vowel: from {sweep_min:.1f} to {sweep_max:.1f} dB below the 0 st level in our sweep."
+      matters: >
+        Any pitch-perturbation design that compares shifted with unshifted feedback also changes loudness at the same moment,
+        and speakers adjust their own voice to the loudness of their feedback. The size of the change depends on the speaker's
+        F0 and the vowel, so it varies between participants and conditions. The +3.5 dB offset also means pitch-shift sessions run louder than
+        a calibration made with <code>bPitchShift = 0</code>. The switch meant to fix this, <code>bPvocAmpNorm</code>, can't be turned on.
+      numbers:
+        - ["Level re input before onset (0 st)", "{gain_before_db:+.2f} dB"]
+        - ["Level re input after onset (+2 st), mean of 20 ms blocks", "{gain_after_db:+.2f} dB"]
+        - ["Reference, bPitchShift = 0", "{gain_bypass_db:+.2f} dB"]
+        - ["Setting bPvocAmpNorm / bpvocmpnorm", "{ampnorm_text}"]
+    sketch: pt5
+    interactive:
+      status: planned
+      plan: >
+        move the pitch step (0 to ±3 st) and its onset time and hear the loudness change on the bundled vowel, or on your own voice through the microphone
+        when the page is served over https. Compare with a build whose overlap-add is normalised.
+    asset_dir: pt-5
+    audio:
+      - {file: input_vowel.wav, role: input}
+      - {file: output_bypass.wav, role: expected}
+      - {file: output_pitch_step.wav, role: observed}
+    cause:
+      summary: >
+        Analysis and synthesis both use a Hann window with hop = L/4. Overlap-adding Hann² at that hop sums to 1.5, and the synthesis scaling
+        does not divide this out, so the output is 1.5 × the input (+3.52 dB) even at ratio 1. With a shift, each bin is mapped and resynthesised
+        with fresh phase (<code>sumPhase</code> starts at 0 for every bin), so the level then depends on the signal's harmonics and on the moment the
+        shift begins. The normalisation option is registered under a misspelt name, so the setter never matches it.
+      refs:
+        - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [218, 220], hl: [219], expect: "X_magn[i] = 2.0", note: "Analysis magnitude."}
+        - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [465, 467], hl: [467], expect: "osamp / 2.0", note: "Synthesis scaling: 2·w/(osamp/2) with osamp = 4 leaves the Hann² overlap sum of 1.5 in the output."}
+        - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [138, 138], hl: [138], expect: "bpvocmpnorm", note: "Registered as \"bpvocmpnorm\" (missing a)..."}
+        - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [877, 878], hl: [877], expect: "bpvocampnorm", note: "...but the setter matches \"bpvocampnorm\", so both spellings are rejected. If it were reachable, it would divide by an always-zero ms_in (Audapter.cpp:1978)."}
+      upstream_refs:
+        - {repo: upstream-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [467, 467], expect: "osamp / 2.0"}
+        - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [137, 137], expect: "bpvocmpnorm"}
+      fix: "Divide the overlap-add by the Hann² sum (1.5 at hop = L/4), then decide whether to normalise level after a shift (running RMS match) and fix the parameter name. Add a level assertion to the pitch-shift tests."
+    verify:
+      - {kind: H, what: "harness test", name: "t_pitch.m", test: "pvoc: unity gain at 0 st"}
+      - {kind: H, what: "harness test", name: "t_pitch.m", test: "pvoc: no loudness step 0 -> +2 st"}
+      - {kind: H, what: "report export + F0/vowel sweep", name: "report_pt5.m"}
+      - {kind: D, what: "standalone pvoc driver", name: "scratch/pitch-time/pv_test.cpp", detail: "gain 1.500 at 0 st on pure tones"}
+      - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+    reproduce: "cd audit/harness && ./run-oct.sh t_pitch.m"

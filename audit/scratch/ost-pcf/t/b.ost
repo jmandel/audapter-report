@@ -1,0 +1,4 @@
+rmsSlopeWin = 0.03
+n = 2
+0 INTENSITY_RISE_HOLD 0.02 0.05 {}
+2 OST_END NaN NaN {}

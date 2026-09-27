@@ -1,0 +1,33 @@
+diff -ru a/Audapter.cpp b/Audapter.cpp
+--- a/Audapter.cpp	2026-09-27 09:14:35.749918220 -0500
++++ b/Audapter.cpp	2026-09-27 09:14:35.764242137 -0500
+@@ -649,6 +649,7 @@
+ 	
+ 	//SC(2012/10/19): OST online sentence tracking
+ 	stat = 0;
++	ostTab.reset();	/* audit fix OST-F1: OST_TAB::reset() was never called */
+ 	
+ 	duringTimeWarp = false;
+ 	duringTimeWarp_prev = false;
+diff -ru a/ost.cpp b/ost.cpp
+--- a/ost.cpp	2026-09-27 09:14:35.750089494 -0500
++++ b/ost.cpp	2026-09-27 09:14:35.763908805 -0500
+@@ -33,6 +33,8 @@
+ 	maxIOICfg.stat1 = NULL;
+ 
+ 	stretchCnt = 0;
++	lastStatEnd = 0;	/* audit fix OST-F1: was never initialised */
++	stretchSpanAccum = 0.0;
+ 
+ 	/* Create map for OST modes */
+ 	ostModeMap[string("OST_END")] = OST_END;
+@@ -98,6 +100,9 @@
+ 	stretchCnt = 0;
+ 	lastStatEnd = 0;
+ 	stretchSpanAccum = 0.0;
++	/* audit fix OST-F1: state onset frames must not carry over from the previous trial */
++	if (statOnsetIndices)
++		memset(statOnsetIndices, 0, n * 4 * sizeof(int));	/* 4 = maxStatesPerLine in readFromFile */
+ }
+ 
+ 

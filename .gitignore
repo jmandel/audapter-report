@@ -1,0 +1,42 @@
+# ---- never commit: license-restricted third-party data ----
+**/restricted/
+# ---- build outputs (regenerate with the build scripts) ----
+audit/harness/build-*/
+audit/harness/logs/
+audit/harness/oct/out/
+audit/live/build/
+audit/live/work/
+audit/wasm/build/
+audit/wasm/dist/
+audit/wasm/lib/
+audit/wasm/testdata/
+audit/report/build/
+audit/report/prototype/
+audit/publish/site/
+*.mex
+*.o
+*.npy
+node_modules/
+.venv/
+__pycache__/
+.lake/
+# ---- scratch: keep only small source/evidence files ----
+audit/scratch/**
+!audit/scratch/**/
+!audit/scratch/**/*.m
+!audit/scratch/**/*.cpp
+!audit/scratch/**/*.h
+!audit/scratch/**/*.c
+!audit/scratch/**/*.py
+!audit/scratch/**/*.sh
+!audit/scratch/**/*.mjs
+!audit/scratch/**/*.js
+!audit/scratch/**/*.md
+!audit/scratch/**/*.lean
+!audit/scratch/**/*.ost
+!audit/scratch/**/*.pcf
+# re-exclude (must come after the scratch whitelist above)
+**/node_modules/**
+**/.venv/**
+**/restricted/**
+**/site-packages/**

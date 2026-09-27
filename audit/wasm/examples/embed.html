@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:,">
+<title>Audapter WASM: embedding example (buggy vs patched)</title>
+<style>body{font:14px/1.45 system-ui,sans-serif;max-width:820px;margin:2rem auto;color:#26241f}
+table{border-collapse:collapse}td,th{border:1px solid #ddd;padding:.25rem .6rem;text-align:left}
+code{background:#f3f1ec;padding:0 .2rem}</style></head>
+<body>
+<h1>Audapter core in the page: buggy vs patched</h1>
+<p>Works from <code>file://</code>: the two classic scripts inline the WebAssembly. Each variant is one wasm instance
+(~150 MB), created once and reused across trials.</p>
+<table id="t"><tr><th>check</th><th>blab as shipped (lite)</th><th>patched</th></tr></table>
+<p>I-01 masking-noise playback (fb = 2, 5 s of noise loaded, 12 s trial):
+<button id="p-lite">play shipped</button> <button id="p-patched">play patched</button></p>
+<!-- 1. load the library (each script registers one variant on globalThis.Audapter) -->
+<script src="../lib/audapter-lite.js"></script>
+<script src="../lib/audapter-patched.js"></script>
+<script>
+(async () => {
+  const P = { rmsThresh: 0.005, bDetect: 1, bTrack: 1 };
+  const IOI = 'rmsSlopeWin = 0.030000\n\nn = 3\n0 INTENSITY_RISE_HOLD 0.02 0.02 {}\n2 ELAPSED_TIME 0.1 NaN {}\n3 OST_END NaN NaN {}\n\nn = 1\n0 0.2 2\n';
+  const noise = (n, amp) => Float32Array.from({ length: n }, () => amp * (Math.random() * 2 - 1));
+  const first = (d, s) => d.ost_stat.findIndex(v => v >= s) / d.frameRate;
+  const rows = { 'OST-F2: maxIOI timeout, 3 trials (expect 0.200 s each)': {}, 'I-01: mean |output| 5-10 s (expect ~0.04, i.e. noise present)': {} };
+  const audio = {};
+  for (const v of ['lite', 'patched']) {
+    const a = await Audapter.create(v);                       // 2. one instance per variant
+    a.init('female', P); a.loadOst(IOI);                      // 3. blab defaults + overrides, OST from a string
+    const t = [];
+    for (let k = 0; k < 3; k++) t.push(first(a.runTrial({ input: noise(48000, 1e-4) }), 2).toFixed(3));  // reset between trials
+    rows['OST-F2: maxIOI timeout, 3 trials (expect 0.200 s each)'][v] = t.join(' / ') + ' s';
+    a.init('female', { ...P, fb: 2, datapb: noise(240000, 0.1) });
+    const r = a.runTrial({ input: new Float32Array(12 * 48000) });
+    let s = 0; for (let i = 5.1 * 48000 | 0; i < 9.9 * 48000; i++) s += Math.abs(r.output[i]);
+    rows['I-01: mean |output| 5-10 s (expect ~0.04, i.e. noise present)'][v] = (s / (4.8 * 48000)).toFixed(3);
+    audio[v] = r.output;
+  }
+  const tb = document.getElementById('t');
+  for (const [k, v] of Object.entries(rows)) tb.insertAdjacentHTML('beforeend', `<tr><td>${k}</td><td>${v.lite}</td><td>${v.patched}</td></tr>`);
+  for (const v of ['lite', 'patched']) document.getElementById('p-' + v).onclick = () => {
+    const ctx = new AudioContext({ sampleRate: 48000 }), b = ctx.createBuffer(1, audio[v].length, 48000);
+    b.copyToChannel(Float32Array.from(audio[v]), 0); const src = ctx.createBufferSource(); src.buffer = b; src.connect(ctx.destination); src.start();
+  };
+  window.embedResults = rows;
+})().catch(e => { document.body.insertAdjacentHTML('beforeend', `<pre>${e.stack}</pre>`); window.embedResults = { error: String(e) }; });
+</script>
+</body></html>

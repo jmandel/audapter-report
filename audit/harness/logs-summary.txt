@@ -1,0 +1,55 @@
+[t_track] PASS  track /a/ F1 vs indep LPC                     true 850 audapter 837 indep 838
+[t_track] PASS  track /a/ F2 vs indep LPC                     true 1220 audapter 1245 indep 1244
+[t_track] PASS  track /i/ F1 vs indep LPC                     true 310 audapter 386 indep 384
+[t_track] PASS  track /i/ F2 vs indep LPC                     true 2790 audapter 2752 indep 2748
+[t_track] PASS  track /u/ F1 vs indep LPC                     true 370 audapter 436 indep 424
+[t_track] PASS  track /u/ F2 vs indep LPC                     true 950 audapter 967 indep 941
+[t_track] PASS  track /ae/ F1 vs indep LPC                    true 860 audapter 838 indep 836
+[t_track] PASS  track /ae/ F2 vs indep LPC                    true 2050 audapter 2095 indep 2082
+[t_repeat] PASS  repeat: identical signalOut                   max|diff| 0
+[t_repeat] PASS  repeat: identical fmts                        max|diff| 0 Hz
+[t_repeat] PASS  leak: /a/ after /i/ == /a/ first (fmts)       first diverging frame , max diff 0.0 Hz
+[t_repeat] PASS  leak: /a/ after /i/ == /a/ first (out)        max|diff| 0
+[t_inplace] FAIL  runFrame leaves input variable untouched      max|change| 0.0297
+[t_fmt_shift] PASS  1D field F1 +20% (logged)                     expect [1.2 1] logged [1.2 1] (249 frames)
+[t_fmt_shift] PASS  1D field F1 +20% (audio)                      expect [1.2 1] audio [1.17 0.991]
+[t_fmt_shift] PASS  1D field F2 +20% (logged)                     expect [1 1.2] logged [1 1.2] (249 frames)
+[t_fmt_shift] PASS  1D field F2 +20% (audio)                      expect [1 1.2] audio [1 1.19]
+[t_fmt_shift] PASS  1D field F1 -20% (logged)                     expect [0.8 1] logged [0.8 1] (249 frames)
+[t_fmt_shift] PASS  1D field F1 -20% (audio)                      expect [0.8 1] audio [0.793 1]
+[t_fmt_shift] PASS  2D field F1 +20% (logged)                     expect [1.2 1] logged [1.2 1] (249 frames)
+[t_fmt_shift] PASS  2D field F1 +20% (audio)                      expect [1.2 1] audio [1.17 0.991]
+[t_fmt_shift] PASS  2D field F2 +20% (logged)                     expect [1 1.2] logged [1 1.2] (249 frames)
+[t_fmt_shift] PASS  2D field F2 +20% (audio)                      expect [1 1.2] audio [1 1.19]
+[t_fmt_shift] PASS  PCF F1 +20% (logged)                          expect [1.2 1] logged [1.2 1] (249 frames)
+[t_fmt_shift] PASS  PCF F1 +20% (audio)                           expect [1.2 1] audio [1.17 0.991]
+[t_ost] PASS  OST F1: trial A offset detected               burst ends 1.60 s, state 2 at 1.656 s
+[t_ost] FAIL  OST F1: trial B (after A) offset detected     burst ends 0.40 s, state 2 at 1.678 s
+[t_ost] PASS  OST F2: maxIOI trial 1 timeout at 0.2 s       state 2 at 0.202 s
+[t_ost] FAIL  OST F2: maxIOI trial 1 ELAPSED 0.1 s in state 2 state 2 held 0.002 s
+[t_ost] PASS  OST F2: maxIOI trial 2 timeout at 0.2 s       state 2 at 0.202 s
+[t_ost] FAIL  OST F2: maxIOI trial 2 ELAPSED 0.1 s in state 2 state 2 held 0.002 s
+[t_ost] PASS  OST F2: maxIOI trial 3 timeout at 0.2 s       state 2 at 0.202 s
+[t_ost] FAIL  OST F2: maxIOI trial 3 ELAPSED 0.1 s in state 2 state 2 held 0.002 s
+[t_ost] PASS  OST F2: no-reload trial 1 timeout at 0.2 s    state 2 at 0.202 s
+[t_ost] FAIL  OST F2: no-reload trial 2 timeout at 0.2 s    state 2 at 0.404 s
+[t_ost] FAIL  OST F2: no-reload trial 3 timeout at 0.2 s    state 2 at 0.606 s
+[t_ost] FAIL  OST F8: AND_RATIO field-4 hold (50 ms) honoured onset 0.200; with {}: 0.226 s, with field5=0.05: 0.274 s
+[t_pitch] PASS  pvoc +0 st: F0 accuracy                       cents err -0.0
+[t_pitch] PASS  pvoc +2 st: F0 accuracy                       cents err -0.7
+[t_pitch] PASS  pvoc -2 st: F0 accuracy                       cents err 1.6
+[t_pitch] FAIL  pvoc: unity gain at 0 st                      gain 3.52 dB
+[t_pitch] FAIL  pvoc: no loudness step 0 -> +2 st             step -3.15 dB
+[t_diff] PASS  diff upstream/blab: passthrough               
+[t_diff] PASS  diff upstream/blab: field_F1up                
+[t_diff] PASS  diff upstream/blab: field_reentry             expected to differ (dropout fix: re-perturbs on field re-entry)
+[t_diff] PASS  diff upstream/blab: pcf_example               
+[t_diff] PASS  diff upstream/blab: pvoc_pitch_up2            
+[t_diff] PASS  diff upstream/blab: pcf_pitch                 
+[t_diff] PASS  diff upstream/blab: daf_100ms                 
+--- sanitizer scenarios (build-asan)
+SANITIZER  [pcf_short] src/Audapter.cpp:2124:100: runtime error: index 1728000 out of bounds for type 'double [1728000]' SUMMARY: AddressSanitizer: heap-buffer-overflow src/Audapter.cpp:1811 in Audapter::handleBuffer(double*, double*, int, bool) 
+SANITIZER  [clamp_short] SUMMARY: AddressSanitizer: heap-buffer-overflow src/Audapter.cpp:1214 in Audapter::setGetParam(bool, char const*, void*, int, bool, int*) 
+SANITIZER  [pert_short] SUMMARY: AddressSanitizer: heap-buffer-overflow src/Audapter.cpp:1214 in Audapter::setGetParam(bool, char const*, void*, int, bool, int*) 
+SANITIZER  [long] src/Audapter.cpp:2124:100: runtime error: index 1728000 out of bounds for type 'double [1728000]' 
+SANITIZER  [pitch] src/Audapter.cpp:2124:100: runtime error: index 1728000 out of bounds for type 'double [1728000]' 
