@@ -42,10 +42,15 @@ MD
 # ---- public-information gate ----
 fail=0
 chk() { if grep -rIl -i -E "$1" "$S" >/dev/null 2>&1; then echo "GATE FAIL ($2):"; grep -rIl -i -E "$1" "$S" | sed 's/^/  /'; fail=1; fi; }
-# Names that must never be published (e.g. private repositories seen during the audit) live in an untracked
-# local file, so the gate itself does not publish them. Missing file = gate still runs the other checks.
-PRIV="$A/publish/private-patterns.local"
-[[ -s "$PRIV" ]] && chk "$(paste -sd'|' "$PRIV")" 'private names listed in publish/private-patterns.local' || echo "note: no publish/private-patterns.local; private-name check skipped"
+# Private repositories: links to them are never published. Their bare names are blocked too, except experiment names
+# Josh approved for citation (listed in the untracked publish/private-allowed.local). Both lists are untracked, so the
+# gate itself doesn't publish them.
+PRIV="$A/publish/private-patterns.local"; ALLOW="$A/publish/private-allowed.local"
+if [[ -s "$PRIV" ]]; then
+  chk "github\.com/[^/ ]+/($(paste -sd'|' "$PRIV"))([^A-Za-z0-9_-]|$)" 'links to private repositories'
+  BLOCK=$(grep -v -x -F -f <( [[ -s "$ALLOW" ]] && cat "$ALLOW" || echo '__none__') "$PRIV" | paste -sd'|')
+  [[ -n "$BLOCK" ]] && chk "(^|[^A-Za-z0-9_-])($BLOCK)([^A-Za-z0-9_-]|$)" 'private names not approved for citation (publish/private-allowed.local)'
+else echo "note: no publish/private-patterns.local; private-name check skipped"; fi
 chk '/home/[a-vx-z]|/home/w[a-df-z]|~/hobby|\.agent-scratch|jmandel/hobby' 'local filesystem paths (Emscripten /home/web_user is allowed)'
 chk 'claude-(opus|sonnet|haiku|fable)|opus [0-9]|sonnet [0-9]' 'model identifiers'
 chk 'gho_|ghp_|github_pat_|sk-ant-' 'tokens'

@@ -42,3 +42,6 @@ audit/scratch/**
 **/site-packages/**
 !audit/scratch/wasm/package.json
 audit/publish/private-patterns.local
+audit/private/
+other/blab-private/
+audit/publish/private-allowed.local
