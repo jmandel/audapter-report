@@ -22,13 +22,18 @@ PG.InputUI = (() => {
       document.head.append(s); s.onload = () => s.remove();
     });
   }
-  async function loadClip(id) {
+  const clipInputs = new Map();
+  async function loadClipInput(id) {
+    if (clipInputs.has(id) && PG.state.inputs.has(clipInputs.get(id).id)) return clipInputs.get(id);
     const meta = PG.CLIPS.find(c => c.id === id);
     const { b64 } = await loadClipScript(id);
     const bin = atob(b64), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
     const d = await PG.Audio.decode(u8.buffer);
-    set({ kind: 'clip', clipId: id, label: `${meta.label} (${groupLabel(meta)}, ${meta.id})`, x: d.x, meta: { source: meta.source, license: meta.license, url: meta.url } });
+    const inp = { id: PG.uid(), kind: 'clip', clipId: id, label: `${meta.label} (${groupLabel(meta)}, ${meta.id})`, x: d.x, meta: { source: meta.source, license: meta.license, url: meta.url } };
+    PG.state.inputs.set(inp.id, inp); clipInputs.set(id, inp);
+    return inp;
   }
+  async function loadClip(id) { set(await loadClipInput(id)); }
   const groupLabel = c => ({ adult_F: 'woman', adult_M: 'man', child: `child, ${c.age}`, teen_F: `girl, ${c.age}`, singer_F: 'female singer', singer_M: 'male singer', singer_unknown: 'singer' }[c.group] || c.group);
 
   function set(inp) {
@@ -123,5 +128,5 @@ PG.InputUI = (() => {
     body.append(h('div.src-row', {}, h('label.btn', { for: 'file-in', text: 'Choose a WAV or FLAC file' }), f),
       h('p.ctl-desc', { text: 'Mono or stereo (mixed to mono). Files not at 48 kHz are resampled by the browser; 48 kHz WAVs are read sample-exact. The file stays in this browser.' }));
   }
-  return { mount, set, loadClip, render, makeSynth: () => { if (!synth.make) { src = 'synth'; render(); } synth.make(); } };
+  return { mount, set, loadClip, loadClipInput, render, makeSynth: () => { if (!synth.make) { src = 'synth'; render(); } synth.make(); } };
 })();

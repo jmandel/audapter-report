@@ -50,8 +50,13 @@ PG.Engine = (() => {
   function dropSpares(except) { for (const k of Object.keys(spares)) if (k !== except) { spares[k].w.terminate(); delete spares[k]; } }
 
   // Run trials. opts: {variant, trials:[{input, settings}], sequence, clearAbsent, onProgress(i, frac), onResult(i, result)}
+  let running = false;
   async function run(opts) {
-    if (active) throw new Error('a run is already in progress');
+    if (running) throw new Error('a run is already in progress');
+    running = true;
+    try { return await run1(opts); } finally { running = false; }
+  }
+  async function run1(opts) {
     const { variant, trials, sequence } = opts;
     if (stats.mode === 'main') return runMain(opts);
     dropSpares(variant);
@@ -133,7 +138,22 @@ PG.Engine = (() => {
       analysisWorker.postMessage({ type: 'analyse', id, trials: items.map(t => ({ input: t.input, result: { signalIn: t.result.signalIn, signalOut: t.result.signalOut, output: t.result.output } })) });
     });
   }
-  return { run, cancel, analyse, stats, prewarm, busy: () => !!active, loadScript };
+  // Dry run for the timing designer: Audapter's own per-frame level (rms_s, rms_p, slope) on this input, no OST/PCF.
+  const dryCache = new Map();
+  async function dryRun(input, settings) {
+    const s = PG.S.normalize(PG.S.clone(settings));
+    s.when.mode = 'always'; for (const k of Object.keys(s.shift)) s.shift[k].on = false; s.hear.fb = 1;
+    const key = input.id + '|' + JSON.stringify([s.preset, s.listen, s.raw, s.build]);
+    if (dryCache.has(key)) return dryCache.get(key);
+    while (running) await new Promise(r => setTimeout(r, 120));
+    const { results } = await run({ variant: s.build || 'lite', trials: [{ input: input.x, settings: s }] });
+    const r = results[0]; if (!r) throw new Error('dry run failed');
+    const m = PG.S.compile(s).meta;
+    const out = { rms: r.rms[0], rmsP: r.rms[1], slope: r.rms_slope, frameDur: m.frameLen / m.sr, n: r.rms[0].length };
+    if (dryCache.size > 20) dryCache.clear();
+    dryCache.set(key, out); return out;
+  }
+  return { run, cancel, analyse, stats, prewarm, dryRun, busy: () => running, loadScript };
 })();
 
 PG.analyseMain = (inp48, r) => {

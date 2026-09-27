@@ -19,12 +19,37 @@ children, F0 and formant glides, vibrato), a microphone recording (browser proce
   child (nLPC 11, CORPUS-3), and "low voice, upstream demo" (frameLen 64, nDelay 7, as `time_domain_shift_demo.m`).
 - *What gets shifted*: formants (% / Hz / mel; everywhere, in an F1–F2 region, varying with F2 as a 1-D field, or a 2-D
   field painted on the vowel map), pitch (phase vocoder or time domain), loudness, timing (phase-vocoder time warp) and delay (DAF).
-- *When*: always, after a delay, in a time window, during the vowel (speech-triggered OST), or a custom OST/PCF.
+- *When*: always, after a delay, in a time window, during the vowel (speech-triggered OST), as drawn on the
+  **Timing & design** tab (below), or a custom OST/PCF.
 - *How Audapter listens*: nLPC, frame length, nDelay (with the resulting delay and analysis window), thresholds, priors, smoothing, liftering.
 - *What the participant hears*: feedback mode 0–5, generated masking noise, output gain.
-- *Parameters tab*: all 87 parameters parsed from the C++ constructor (name, type, help text, source line link), the
-  value actually sent, validated overrides; and the OST/PCF editor (state diagram, rules with plain-language
-  descriptions, maxIOI timeouts, PCF table per state, text import/export of `.ost`/`.pcf`).
+- *Expert: all parameters* (a link, opening a drawer): all 87 parameters parsed from the C++ constructor (name, type,
+  help text, source line link), the value actually sent, and validated overrides.
+
+**Timing & design tab.** Graphical control of WHEN the perturbation happens.
+- The current input is analysed by a dry run of the real core; its per-frame level (`rms`, `rms_slope`) drives a
+  JavaScript port of `OST_TAB::osTrack` (`src/js/ostsim.js`), which finds the "sounds" Audapter's level rules detect
+  (onset: level above a start level for a hold time; end: 10 ms below an end level; levels fitted to each input,
+  12 and 18 dB below its peak, or set by hand).
+- The design is a set of blocks on a timeline, each anchored to the trial start, a sound's start or end (plus an offset),
+  or a duration, and each carrying what changes (F1/F2 in the Explore units, pitch in semitones via the phase vocoder,
+  level in dB). Edges are draggable and snap to detected events; double-click adds a block; a plain block list edits the same.
+- One-click designs with 1–3 plain controls: whole utterance, sudden step after voice onset (delay, random extra delay
+  drawn per trial and stored with it), during the vowel, Nth word/syllable, brief pulse, step then return.
+- The design compiles to a linear OST (INTENSITY_RISE_HOLD, INTENSITY_FALL, ELAPSED_TIME, OST_END) and a PCF.
+  Every "sound ends" rule follows a "sound starts" rule in the same trial, so nothing depends on the previous trial
+  (OST-F1); no maxIOI (OST-F2) or AND_RATIO rules (OST-F8). Designs Audapter's forward-only rules cannot express
+  (timing from the trial start after an event, an event that has already gone by, blocks after one that never ends,
+  starts earlier than the onset hold) are refused with a plain explanation.
+- A "Predicted" row replays the compiled OST on the input before running, with an orange band where it differs from
+  the drawn block; after a run a "Last run" row shows the logged on-states and the frames where sfmts ≠ fmts.
+- "Show generated OST/PCF (advanced)" holds the raw files, import/export and the rule/PCF table editor for custom files.
+- *Across trials: experiment schedule*: baseline / ramp (growing to the full value) / hold / washout counts, optional catch
+  trials, one input or a cycle of chosen clips, fresh per trial or one session. It creates and runs the trials and plots,
+  per trial, the produced value (Audapter's tracking of the input), the heard target (sfmts) and the value measured in the output. The output
+  value is the produced value times the median per-frame ratio of the same independent estimator (LPC for formants, YIN for F0)
+  on output and input over the same voiced frames of the perturbation window, the output read one processing delay later, so
+  the estimator's bias cancels; with fewer than 20 paired frames or an implausible ratio the dot is hidden and the reason shown.
 - *Inline warnings from the audit's findings* where they apply: PCF shorter than the OST (OST-F4), INTENSITY_FALL after
   rules that never set "last state end" (OST-F1, stronger in a same-session run), maxIOI (OST-F2), AND_RATIO hold in
   field 5 (OST-F8), pitch range below the analysis window (CORPUS-8, also from the input's measured F0), pvocFrameLen /
@@ -90,11 +115,17 @@ fed from `audit/corpus/audio/pvqd_LA9003_a.wav`. Results on 2026-09-27, Chromium
 - Records 3 s through the UI and runs F1 +20 %: logged sF1/F1 = 1.200000 on all 1281 shifted frames (range 1.200000–1.200000).
 - The page's output equals the batch API (`lib/audapter-lite.js`, `runTrial`, fresh instance, same setParam list) run in node
   on the same recorded input: 0 of 144 000 samples differ; fmts and sfmts identical on all 1500 frames.
+- Timing & design: each of the six templates on "I had faith in them." (arctic_slt_a0030) and a two-block design: the
+  predicted OST state equals the logged ost_stat on every frame (0 of 738 differ), and sfmts ≠ fmts only inside the
+  predicted on-time, on all tracked frames there. Dragging the block start onto sound 2 snaps it to "sound 2 starts".
+  A 2/3/2/2 schedule logs heard/produced F1 = 1, 1, 1.067, 1.133, 1.2, 1.2, 1.2, 1, 1.
+  Its output measurement sits on produced in baseline and washout (575 vs 577 Hz) and on the target in ramp and hold
+  (605/641/691 vs 615/654/692 Hz), within 4 %.
 - 14 settings variants run (pvoc, time-domain after 0.5 s, loudness window, time warp during the vowel, 150 ms delay,
   speech + 3 s noise, Hz region, F2-dependent field, painted 2-D field, mel units, custom OST/PCF, child preset, low-voice
   preset on the patched build, full-size build).
 - A 5-value F1 sweep logs ratios 1.0/1.1/1.2/1.3/1.4; three trials run as one session; the page also runs from `file://`; no page errors.
-- 20 screenshots at 1440 px and 390 px, light and dark, in `test/shots/` (git-ignored).
+- 28 screenshots at 1440 px and 390 px, light and dark (Explore views, Timing & design, schedule, expert drawer), in `test/shots/` (git-ignored).
 
 ## Memory and latency
 

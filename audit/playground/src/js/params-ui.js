@@ -53,7 +53,16 @@ PG.ParamsUI = (() => {
     return `[${v.length} values${mn === mx ? `, all ${+mn.toPrecision(6)}` : `, ${+mn.toPrecision(4)} … ${+mx.toPrecision(4)}`}]`;
   };
 
-  function mount(el) { root = el; PG.bus.on('settings', () => { if (root.isConnected && !root.closest('[hidden]')) render(); }); PG.bus.on('tab', t => { if (t === 'params') render(); }); }
+  function mount(el) { root = el; }
+  // Expert drawer: the full parameter table in a modal dialog.
+  let dlg = null;
+  function openExpert() {
+    dlg = document.getElementById('expert');
+    const fill = () => { PG.clear(dlg); dlg.append(h('div.dlg-head', {}, h('button.btn', { type: 'button', text: 'Close', on: { click: () => dlg.close() } })), paramTable()); };
+    fill();
+    if (!dlg.dataset.bound) { dlg.dataset.bound = '1'; PG.bus.on('settings', () => { if (dlg.open) { const sc = dlg.scrollTop, f = document.activeElement && document.activeElement.id; fill(); dlg.scrollTop = sc; if (f) { const e = document.getElementById(f); if (e) e.focus(); } } }); }
+    if (!dlg.open) dlg.showModal();
+  }
 
   function render() {
     if (!root) return;
@@ -215,5 +224,5 @@ PG.ParamsUI = (() => {
     }
     return h('div.tscroll.ost-dwrap', {}, svg);
   }
-  return { mount, render };
+  return { mount, render, openExpert, ostEditor, paramTable };
 })();

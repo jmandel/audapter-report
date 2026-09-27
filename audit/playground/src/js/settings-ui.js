@@ -28,6 +28,7 @@ PG.SettingsUI = (() => {
   function group(g, s) {
     const sec = h('section.grp', { id: 'grp-' + g.id, 'aria-labelledby': 'gt-' + g.id },
       h('h2.grp-title', { id: 'gt-' + g.id, text: g.title }), h('p.grp-blurb', { text: g.blurb }));
+    if (g.id === 'shift') { const ban = h('p.derived'); ban.append('A timeline design is in use: when and how much to shift come from its blocks. The switches below still set units and the time-domain / phase-vocoder choice. ', h('button.linkish', { type: 'button', text: 'Open Timing & design', on: { click: () => PG.bus.emit('tab', 'design') } })); sec.append(ban); rows.push({ sync(s) { ban.hidden = s.when.mode !== 'design'; } }); }
     if (g.cards) for (const cd of g.cards) sec.append(card(cd, s));
     if (g.controls) { const body = h('div.ctl-list'); for (const c of g.controls) body.append(control(c, s)); sec.append(body); }
     sec.append(h('div.warns', { 'data-where': g.id }));
@@ -51,6 +52,7 @@ PG.SettingsUI = (() => {
   function control(c, s) {
     if (c.kind === 'derived') return derived();
     if (c.kind === 'ostlink') return ostlink(c);
+    if (c.kind === 'designlink') { const p = h('p.derived'); rows.push({ sync(s) { p.textContent = 'Timeline: ' + S.summarize(s) + '. '; p.append(h('button.linkish', { type: 'button', text: 'Open Timing & design', on: { click: () => PG.bus.emit('tab', 'design') } })); } }); return p; }
     const id = 'c-' + (c.path || '').replace(/\./g, '-');
     const desc = h('p.ctl-desc', { id: id + '-d', text: c.desc || '' });
     const unit = h('span.unit');
@@ -155,7 +157,7 @@ PG.SettingsUI = (() => {
     const pre = h('pre.ost-preview'), btn = h('button.btn', { type: 'button', on: { click: () => {
       const s = PG.state.settings;
       if (s.when.mode !== 'custom') { const c = S.compile(s); PG.editSettings(x => { x.when.mode = 'custom'; x.when.ost = c.ost || ''; x.when.pcf = c.pcf || ''; }); }
-      PG.bus.emit('tab', 'params'); setTimeout(() => { const t = document.getElementById('ost-editor'); if (t) t.scrollIntoView(); }, 50);
+      PG.bus.emit('tab', 'design'); setTimeout(() => { const d = document.querySelector('.dz-adv'); if (d) { d.open = true; d.scrollIntoView(); } }, 80);
     } } });
     const el = h('div.ostlink', {}, h('details', {}, h('summary', { text: 'The OST and PCF this generates' }), pre), btn);
     rows.push({ sync(s) {
@@ -186,7 +188,8 @@ PG.SettingsUI = (() => {
           if (!l) return PG.toast('These settings are too large for a link (a painted field). Use Save settings.', 'error');
           history.replaceState(null, '', l); try { await navigator.clipboard.writeText(l); PG.toast('Link copied.'); } catch { PG.toast('Link is in the address bar.'); }
         } } }),
-        h('button.btn', { type: 'button', text: 'Reset', on: { click: () => PG.setSettings(PG.S.defaultSettings(), 'load') } })));
+        h('button.btn', { type: 'button', text: 'Reset', on: { click: () => PG.setSettings(PG.S.defaultSettings(), 'load') } })),
+      h('p.expert-link', {}, h('button.linkish', { type: 'button', text: 'Expert: all 87 Audapter parameters', on: { click: () => PG.ParamsUI.openExpert() } })));
   }
 
   function refresh() { const s = PG.state.settings; for (const r of rows) r.sync(s); PG.bus.emit('settings-rendered'); }

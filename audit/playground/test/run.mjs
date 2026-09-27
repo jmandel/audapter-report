@@ -117,6 +117,70 @@ for (const [name, fn] of Object.entries(variants)) {
   T(`runs: ${name}`, r.ok, r.ok ? `${r.variant}, ${r.n} frames, ${r.shifted} shifted, OST states ${r.states}, ${r.ms.toFixed(0)} ms` : 'no result');
 }
 
+// ---------------- 2b. Timing & design: every template on a bundled sentence; predicted vs logged on-times
+await page.evaluate(() => PG.InputUI.loadClip('arctic_slt_a0030'));
+await page.waitForFunction(() => PG.state.input && PG.state.input.clipId === 'arctic_slt_a0030');
+await page.evaluate(() => PG.setSettings(PG.S.defaultSettings(), 'noauto'));
+await page.click('#tab-design');
+const designReady = () => page.waitForFunction(() => PG.DesignUI.state().dry && PG_TEST.idle() && document.querySelector('.dz-timeline .tiers'), null, { timeout: 60000 });
+await designReady();
+const tplNames = await page.evaluate(() => Object.entries(PG.S.TEMPLATES).map(([k, t]) => [k, t.label]));
+for (const [key, label] of tplNames) {
+  await page.click(`button.tpl:has-text("${label}")`);
+  await page.waitForTimeout(200); await designReady();
+  const tid = await page.evaluate(() => PG_TEST.runAndWait(true));
+  await designReady();
+  const r = await page.evaluate(id => ({ chk: PG_TEST.designCheck(id), summary: PG.trial(id).summary, sounds: PG.DesignUI.sounds().map(z => [+z.on.toFixed(3), +z.off.toFixed(3)]) }), tid);
+  const c = r.chk;
+  const ok = c && c.stateMis === 0 && c.onMis === 0 && c.shiftOutside === 0 && c.shiftIn === c.trackedIn && (key === 'nth' || c.predOn > 0);
+  T(`template "${label}": predicted on-times equal the logged ones`, ok,
+    c ? `${r.summary}; predicted spans ${JSON.stringify(c.spans)}; ${c.stateMis} of ${c.n} frames differ in OST state, ${c.onMis} in on/off; formants shifted on ${c.shiftIn} of the ${c.trackedIn} tracked frames inside, ${c.shiftOutside} outside` : 'no prediction');
+  if (key === 'step') await page.screenshot({ path: path.join(SHOTS, 'design-1440-light.png'), fullPage: false });
+}
+// drag the start edge of the "sudden step" block onto sound 2's onset: it must snap to that event
+await page.click('button.tpl:has-text("Sudden step after voice onset")'); await designReady();
+const geo = await page.evaluate(() => {
+  const cv = document.querySelectorAll('.dz-timeline canvas.tier-c')[2], r = cv.getBoundingClientRect(), z = PG.Tiers.zoom;
+  const snd = PG.DesignUI.sounds(), iv = PG.DesignUI.intended(snd, z.dur)[0];
+  const X = t => r.left + (t - z.t0) / (z.t1 - z.t0) * r.width;
+  return { y: r.top + r.height / 2, from: X(iv.a), to: X(snd[1].on + 0.01), on2: snd[1].on };
+});
+await page.mouse.move(geo.from, geo.y); await page.mouse.down(); await page.mouse.move((geo.from + geo.to) / 2, geo.y, { steps: 4 }); await page.mouse.move(geo.to, geo.y, { steps: 4 }); await page.mouse.up();
+await page.waitForTimeout(300); await designReady();
+const dragged = await page.evaluate(() => PG.state.settings.design.blocks[0].start);
+T('dragging the block start onto sound 2 snaps it to "sound 2 starts"', dragged.ev === 'on' && dragged.k === 2, JSON.stringify(dragged) + `, sound 2 onset ${geo.on2.toFixed(3)} s`);
+await page.screenshot({ path: path.join(SHOTS, 'design-dragged-1440-light.png') });
+// a hand-made two-block design (step, then a larger step later) through the block editor model
+const two = await page.evaluate(async () => {
+  PG.editSettings(s => { s.when.mode = 'design'; s.design.template = 'custom'; s.design.blocks = [
+    { start: { ev: 'on', k: 1, ms: 100 }, end: { ev: 'dur', k: 1, ms: 200 }, what: { f1: 10, f2: 0, st: 0, db: 0 } },
+    { start: { ev: 'off', k: 1, ms: 0 }, end: { ev: 'off', k: 2, ms: 0 }, what: { f1: 0, f2: -15, st: 1, db: 3 } }]; }, 'noauto');
+  await new Promise(r => setTimeout(r, 300)); while (!PG_TEST.idle()) await new Promise(r => setTimeout(r, 100));
+  const id = await PG_TEST.runAndWait(true); while (!PG_TEST.idle()) await new Promise(r => setTimeout(r, 100));
+  return PG_TEST.designCheck(id);
+});
+T('two-block design (F1 step, then F2, pitch and level in sound 2): predicted equals logged', two && two.stateMis === 0 && two.onMis === 0 && two.shiftOutside === 0, JSON.stringify(two && { spans: two.spans, stateMis: two.stateMis, onMis: two.onMis, shiftOutside: two.shiftOutside }));
+// schedule: 2 baseline, 3 ramp, 2 hold, 2 washout with "sudden step after voice onset"
+await page.click('button.tpl:has-text("Sudden step after voice onset")'); await designReady();
+await page.fill('input[aria-label="Block 1 F1"]', '20'); await page.dispatchEvent('input[aria-label="Block 1 F1"]', 'change'); await designReady();
+for (const [k, v] of [['base', 2], ['ramp', 3], ['hold', 2], ['wash', 2], ['catchPct', 0]]) { await page.fill('#sch-' + k, String(v)); await page.dispatchEvent('#sch-' + k, 'change'); }
+await page.click('#sch-run');
+await page.waitForFunction(() => PG.state.trials.filter(t => t.sched).length >= 9 && PG_TEST.idle(), null, { timeout: 120000 });
+const sch = await page.evaluate(() => PG.state.trials.filter(t => t.sched).sort((a, b) => a.sched.n - b.sched.n).map(t => { const m = PG.DesignUI.trialMeasure(t); return [t.sched.phase, +t.sched.factor.toFixed(3), +(m.heard / m.prod).toFixed(4)]; }));
+const want = [0, 0, 1 / 3, 2 / 3, 1, 1, 1, 0, 0].map(f => +(1 + 0.2 * f).toFixed(4));
+const schMeas = await page.evaluate(() => PG.state.trials.filter(t => t.sched).sort((a, b) => a.sched.n - b.sched.n).map(t => { const m = PG.DesignUI.trialMeasure(t); return { phase: t.sched.phase, prod: m.prod, heard: m.heard, meas: m.meas, pairs: m.pairs }; }));
+const measOk = schMeas.every(m => Number.isFinite(m.meas) && Math.abs(m.meas / m.heard - 1) < 0.04);
+T('schedule plot: output measured with the same LPC on input and output sits on produced (baseline, washout) and near the target (ramp, hold), within 4 %', measOk,
+  schMeas.map(m => `${m.phase} ${m.prod.toFixed(0)}/${m.heard.toFixed(0)}/${Number.isFinite(m.meas) ? m.meas.toFixed(0) : '–'} (${m.pairs})`).join(', ') + ' (produced/target/measured Hz, paired frames)');
+T('schedule 2 baseline / 3 ramp / 2 hold / 2 washout: heard F1 / produced F1 per trial', sch.length === 9 && sch.every((x, i) => Math.abs(x[2] - want[i]) < 2e-3), JSON.stringify(sch));
+await page.evaluate(() => document.getElementById('schedule').scrollIntoView());
+await page.screenshot({ path: path.join(SHOTS, 'schedule-1440-light.png') });
+await page.click('#panel-design button.linkish:has-text("Expert: all 87")');
+await page.waitForTimeout(300);
+await page.screenshot({ path: path.join(SHOTS, 'expert-1440-light.png') });
+await page.keyboard.press('Escape');
+await page.click('#tab-explore');
+
 // ---------------- 3. sweep + same-session sequence, memory
 const beforeMB = treeRssMB();
 await page.evaluate(() => { PG.setSettings(PG.S.defaultSettings(), 'noauto'); PG.bus.emit('sweep', { control: PG.controlByPath('shift.formant.f1'), values: [0, 10, 20, 30, 40] }); });
@@ -162,9 +226,12 @@ async function shots(width, scheme) {
     else await p.screenshot({ path: path.join(SHOTS, `${v}-${tag}.png`) });
   }
   if (width < 600) { await p.click('#vt-spectro'); await p.screenshot({ path: path.join(SHOTS, `top-${tag}.png`) }); }
-  await p.evaluate(() => PG.editSettings(s => { s.when.mode = 'vowel'; s.when.onDelay = 0.1; s.shift.loudness.on = true; }, 'noauto'));
-  await p.click('#tab-params'); await p.waitForTimeout(300);
-  await p.screenshot({ path: path.join(SHOTS, `params-${tag}.png`) });
+  await p.click('#tab-design');
+  await p.waitForFunction(() => PG.DesignUI.state().dry && PG_TEST.idle() && document.querySelector('.dz-timeline .tiers'), null, { timeout: 60000 });
+  await p.waitForTimeout(300);
+  await p.screenshot({ path: path.join(SHOTS, `design-top-${tag}.png`) });
+  await p.evaluate(() => document.querySelector('.dz-timeline').scrollIntoView());
+  await p.screenshot({ path: path.join(SHOTS, `design-timeline-${tag}.png`) });
   await p.context().close();
 }
 for (const w of [1440, 390]) for (const sc of ['light', 'dark']) await shots(w, sc);

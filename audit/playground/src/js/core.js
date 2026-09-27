@@ -23,7 +23,7 @@ PG.h = function h(tag, attrs, ...kids) {
 PG.h.svgTags = new Set(['g', 'path', 'line', 'rect', 'circle', 'text', 'polyline', 'polygon', 'title', 'desc', 'defs', 'marker', 'tspan', 'clipPath', 'use']);
 PG.$ = (s, r = document) => r.querySelector(s);
 PG.$$ = (s, r = document) => [...r.querySelectorAll(s)];
-PG.clear = el => { while (el.firstChild) el.removeChild(el.firstChild); return el; };
+PG.clear = el => { el.replaceChildren(); return el; };
 
 PG.bus = (() => {
   const m = new Map();

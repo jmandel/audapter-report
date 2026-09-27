@@ -22,6 +22,74 @@
       note: 'Male defaults with frameLen 64 and nDelay 7, as upstream time_domain_shift_demo.m. A longer analysis window, so pitch below ~180 Hz is tracked (CORPUS-8), at 14 ms more delay.' },
   };
 
+  // ---------- timeline design (the "Timing & design" tab): blocks anchored to events Audapter's level rules can detect
+  // ref: {ev: 't0'|'on'|'off'|'dur'|'none', k: sound number (1-based), ms: offset after the event}
+  function defaultDesign() {
+    return { template: 'step', tpl: { delay: 200, jitter: 0, start: 20, n: 2, at: 300, dur: 150, hold: 500 },
+      detect: { auto: true, onDb: -12, offDb: -18, onThresh: 0.02, onHold: 0.02, offThresh: 0.01, offMin: 0.02 },
+      blocks: [{ start: { ev: 'on', k: 1, ms: 200 }, end: { ev: 'none', k: 1, ms: 0 }, what: { f1: 20, f2: 0, st: 0, db: 0 } }] };
+  }
+  const TEMPLATES = {
+    whole: { label: 'Whole utterance', blurb: 'On for the whole trial.', controls: [],
+      blocks: t => [{ start: { ev: 't0', k: 1, ms: 0 }, end: { ev: 'none', k: 1, ms: 0 } }] },
+    step: { label: 'Sudden step after voice onset', blurb: 'Turns on a fixed time after the voice starts and stays on.', controls: [['delay', 'Delay after voice onset', 'ms', 20, 2000, 10], ['jitter', 'Random extra delay, up to', 'ms', 0, 1000, 10]],
+      blocks: t => [{ start: { ev: 'on', k: 1, ms: t.delay }, end: { ev: 'none', k: 1, ms: 0 } }] },
+    vowel: { label: 'During the vowel only', blurb: 'From voice onset to the end of the first sound.', controls: [['start', 'Start after voice onset', 'ms', 20, 1000, 10]],
+      blocks: t => [{ start: { ev: 'on', k: 1, ms: t.start }, end: { ev: 'off', k: 1, ms: 0 } }] },
+    nth: { label: 'Nth word or syllable', blurb: 'Only during one sound, as Audapter\'s level rules count them.', controls: [['n', 'Sound number', '', 1, 20, 1]],
+      blocks: t => [{ start: { ev: 'on', k: Math.max(1, t.n | 0), ms: 20 }, end: { ev: 'off', k: Math.max(1, t.n | 0), ms: 0 } }] },
+    pulse: { label: 'Brief pulse', blurb: 'A short perturbation some time after voice onset.', controls: [['at', 'Starts after voice onset', 'ms', 20, 3000, 10], ['dur', 'Lasts', 'ms', 10, 1000, 10]],
+      blocks: t => [{ start: { ev: 'on', k: 1, ms: t.at }, end: { ev: 'dur', k: 1, ms: t.dur } }] },
+    stepback: { label: 'Step, then return', blurb: 'On after voice onset, then back to normal while the voice continues.', controls: [['delay', 'Delay after voice onset', 'ms', 20, 2000, 10], ['hold', 'Stays on for', 'ms', 50, 5000, 10]],
+      blocks: t => [{ start: { ev: 'on', k: 1, ms: t.delay }, end: { ev: 'dur', k: 1, ms: t.hold } }] },
+  };
+  const refText = (r, isEnd) => r.ev === 't0' ? (r.ms ? `${r.ms} ms into the trial` : 'the trial start') : r.ev === 'none' ? 'the end of the trial'
+    : r.ev === 'dur' ? `${r.ms} ms later` : `${r.ms ? r.ms + ' ms after ' : ''}sound ${r.k} ${r.ev === 'on' ? 'starts' : 'ends'}`;
+
+  // Compile blocks to a linear OST chain. Every "sound ends" rule (INTENSITY_FALL) comes after the matching "sound starts"
+  // rule (INTENSITY_RISE_HOLD), which sets Audapter's lastStatEnd within the trial, so no rule depends on the previous
+  // trial (OST-F1); no maxIOI (OST-F2) and no AND_RATIO rules (OST-F8) are used.
+  function compileDesign(d) {
+    const det = d.detect, rules = [], bounds = [], errors = [], notes = [];
+    let s = 0, next = { ev: 'on', k: 1 }, known = true, abs = 0;
+    const evIdx = r => (r.k - 1) * 2 + (r.ev === 'off' ? 1 : 0), nextIdx = () => evIdx(next);
+    const add = (mode, p1, p2, span) => { rules.push({ stat: s, mode, p1, p2, p3: null }); s += span; };
+    function to(ref, label, startState) {
+      if (ref.ev === 'none') return null;
+      if (ref.ev === 't0') {
+        if (!known) { errors.push(`${label}: Audapter can only time from the trial start while nothing else has been detected yet. Anchor it to a sound instead.`); return s; }
+        const dt = ref.ms / 1000 - abs;
+        if (dt < 0) { errors.push(`${label}: it comes before the previous boundary.`); return s; }
+        if (dt > 0) add('ELAPSED_TIME', dt, NaN, 1);
+        abs = ref.ms / 1000; return s;
+      }
+      if (ref.ev === 'dur') { if (ref.ms > 0) add('ELAPSED_TIME', ref.ms / 1000, NaN, 1); abs += ref.ms / 1000; return s; }
+      const target = evIdx(ref);
+      if (target < nextIdx()) { errors.push(`${label}: sound ${ref.k} ${ref.ev === 'on' ? 'start' : 'end'} has already gone by at this point of the design; Audapter's rules only move forward.`); return s; }
+      while (nextIdx() <= target) {
+        if (next.ev === 'on') { add('INTENSITY_RISE_HOLD', det.onThresh, det.onHold, 2); next = { ev: 'off', k: next.k }; }
+        else { add('INTENSITY_FALL', det.offThresh, det.offMin, 1); next = { ev: 'on', k: next.k + 1 }; }
+      }
+      known = false;
+      let extra = ref.ms / 1000 - (ref.ev === 'on' ? det.onHold : 0);
+      if (extra < -1e-9) { notes.push(`${label}: Audapter confirms a voice onset only after the ${Math.round(det.onHold * 1000)} ms hold, so the earliest start is onset + ${Math.round(det.onHold * 1000)} ms.`); extra = 0; }
+      if (extra > 1e-9) add('ELAPSED_TIME', extra, NaN, 1);
+      return s;
+    }
+    d.blocks.forEach((b, i) => {
+      const a = to(b.start, `Block ${i + 1} start`);
+      if (a === null) { errors.push(`Block ${i + 1} needs a start.`); return; }
+      if (b.end.ev === 'dur' && !(b.end.ms > 0)) errors.push(`Block ${i + 1} has no duration.`);
+      const e = to(b.end, `Block ${i + 1} end`);
+      bounds.push({ block: i, start: a, end: e === null ? Infinity : e });
+      if (e === null && i < d.blocks.length - 1) errors.push(`Block ${i + 1} lasts to the end of the trial, so later blocks can never start.`);
+    });
+    rules.push({ stat: s, mode: 'OST_END', p1: NaN, p2: NaN, p3: null });
+    const nStates = s + 1, whatOf = [];
+    for (let k = 0; k < nStates; k++) { const b = bounds.find(x => k >= x.start && k < x.end); whatOf.push(b ? { block: b.block, ...d.blocks[b.block].what } : null); }
+    return { ost: { rmsSlopeWin: 0.03, rules, maxIOI: [] }, nStates, whatOf, bounds, errors, notes };
+  }
+
   function defaultSettings() {
     return {
       v: 1, preset: 'female', build: 'lite',
@@ -36,6 +104,7 @@
         delay: { on: false, ms: 100 },
       },
       when: { mode: 'always', after: 0.3, until: 1.0, onThresh: 0.02, onHold: 0.02, offThresh: 0.01, offHold: 0.02, onDelay: 0, ost: '', pcf: '' },
+      design: defaultDesign(),
       listen: {},
       hear: { fb: 1, noise: { type: 'pink', seconds: 10, level: -20, gain: 1 }, gainDb: 0 },
       raw: {},
@@ -190,11 +259,18 @@
     const s = normalize(settings), m = baseParams(s), notes = [];
     const sr = num(m, 'srate'), frameLen = num(m, 'framelen'), nDelay = num(m, 'ndelay');
     const F = s.shift.formant, Pi = s.shift.pitch, L = s.shift.loudness, T = s.shift.timing, D = s.shift.delay, W = s.when;
-    const fOn = F.on && (F.f1 !== 0 || F.f2 !== 0 || F.field === 'curve' || F.field === 'painted');
-    const pvoc = Pi.on && Pi.method === 'pvoc', tds = Pi.on && Pi.method === 'tds';
+    const isDesign = W.mode === 'design', cd = isDesign ? compileDesign(s.design) : null;
+    const anyW = k => isDesign && s.design.blocks.some(b => b.what && b.what[k]);
+    const fOn = isDesign ? (anyW('f1') || anyW('f2')) : F.on && (F.f1 !== 0 || F.f2 !== 0 || F.field === 'curve' || F.field === 'painted');
+    const pvoc = isDesign ? anyW('st') : Pi.on && Pi.method === 'pvoc', tds = !isDesign && Pi.on && Pi.method === 'tds';
     const timeWhen = W.mode !== 'always';
     // A PCF is needed for anything per-state: level shifts, time warps, pvoc pitch or formant shifts that are not always on.
-    const needPcf = W.mode === 'custom' || (L.on && L.db !== 0) || T.on || (timeWhen && (fOn || pvoc));
+    const needPcf = isDesign || W.mode === 'custom' || (L.on && L.db !== 0) || (T.on && !isDesign) || (timeWhen && (fOn || pvoc));
+    if (isDesign) {
+      if (Pi.on && Pi.method === 'tds' && anyW('st')) notes.push({ where: 'when', text: 'Time-domain pitch shifting follows its own schedule, not OST states, so a timeline design shifts pitch with the phase vocoder.' });
+      if (T.on) notes.push({ where: 'when', text: 'The time-warp card is not used by a timeline design.' });
+      if (F.on && F.field !== 'all') notes.push({ where: 'when', text: 'A timeline design uses a PCF, so the formant shift is uniform (the field shape is not used).' });
+    }
     const vec = fmtVector(F), mel = F.units === 'mel';
 
     // formant shift
@@ -240,7 +316,7 @@
     }
 
     // pitch
-    if (pvoc || T.on) {
+    if (pvoc || (T.on && !isDesign)) {
       m.set('bpitchshift', 1); m.set('btimedomainshift', 0);
       m.set('pitchshiftratio', pvoc && !needPcf ? Math.pow(2, Pi.semitones / 12) : 1);
     }
@@ -280,6 +356,14 @@
     // when: OST + PCF
     let ost = null, pcf = null, perturbStates = [];
     if (W.mode === 'custom') { ost = W.ost || ''; pcf = W.pcf || ''; }
+    else if (isDesign) {
+      ost = serializeOst(cd.ost);
+      pcf = serializePcf({ warps: [], rows: cd.whatOf.map(w => { if (!w) return { pitch: 0, db: 0, amp: 0, phi: 0 };
+        const v = fmtVector({ units: F.units, f1: w.f1 || 0, f2: w.f2 || 0 }); return { pitch: w.st || 0, db: w.db || 0, amp: (w.f1 || w.f2) ? v.amp : 0, phi: (w.f1 || w.f2) ? v.phi : 0 }; }) });
+      perturbStates = cd.whatOf.map((w, k) => (w ? k : -1)).filter(k => k >= 0);
+      for (const e of cd.errors) notes.push({ where: 'design', level: 'error', text: e });
+      for (const e of cd.notes) notes.push({ where: 'design', text: e });
+    }
     else if (needPcf) {
       const R = [];
       if (W.mode === 'always') { perturbStates = [0]; }
@@ -316,7 +400,7 @@
     const g = k => num(m, k);
     const meta = { sr, frameLen: g('framelen'), nDelay: g('ndelay'), downFact: g('downfact'), nLPC: g('nlpc'), rmsThr: g('rmsthr'),
       latencyMs: 1000 * g('ndelay') * g('framelen') / g('srate'), windowMs: 1000 * (g('framelen') + 2 * (g('ndelay') - 1) * g('framelen')) / g('srate'),
-      perturbStates, needPcf, pvoc: g('bpitchshift') === 1, tds: g('btimedomainshift') === 1 };
+      perturbStates, design: cd, needPcf, pvoc: g('bpitchshift') === 1, tds: g('btimedomainshift') === 1 };
     return { list, ost, pcf, notes, meta, map: m };
   }
 
@@ -325,6 +409,7 @@
     const s = normalize(settings), out = [], m = c.map, g = k => num(m, k);
     const W = (where, id, level, text) => out.push({ where, id, level, text });
     const frameLen = g('framelen'), nDelay = g('ndelay'), sr = g('srate');
+    for (const n of c.notes || []) W(n.where === 'design' ? 'design' : n.where, null, n.level || 'info', n.text);
     // hard errors Audapter itself raises
     if (2 * (nDelay - 1) * frameLen > 960) W('listen', null, 'error', `2 × (nDelay − 1) × frameLen = ${2 * (nDelay - 1) * frameLen} exceeds Audapter's maxFrameLen 960: Audapter refuses to run.`);
     if (g('btimedomainshift') === 1 && g('bpitchshift') === 1) W('pitch', null, 'error', 'bPitchShift and bTimeDomainShift are mutually exclusive: Audapter refuses to run.');
@@ -402,6 +487,16 @@
   function summarize(settings) {
     const s = normalize(settings), S = s.shift, parts = [];
     const u = S.formant.units === 'pct' ? ' %' : S.formant.units === 'hz' ? ' Hz' : ' mel';
+    if (s.when.mode === 'design') {
+      const B = s.design.blocks, w = b => [b.what.f1 ? `F1 ${sgn(b.what.f1)}${u}` : '', b.what.f2 ? `F2 ${sgn(b.what.f2)}${u}` : '', b.what.st ? `pitch ${sgn(b.what.st)} st` : '', b.what.db ? `level ${sgn(b.what.db)} dB` : ''].filter(Boolean).join(', ') || 'nothing';
+      const tl = TEMPLATES[s.design.template];
+      const txt = B.length === 1 ? `${w(B[0])} from ${refText(B[0].start)} to ${refText(B[0].end, true)}` : `${B.length} blocks: ` + B.map(w).join('; ');
+      const extra = [];
+      if (S.delay.on) extra.push(`delay ${S.delay.ms} ms`);
+      if (s.hear.fb !== 1) extra.push(`fb ${s.hear.fb}`);
+      if (s.design.jitterApplied !== undefined) extra.push(`jitter +${s.design.jitterApplied} ms`);
+      return txt + (extra.length ? ', ' + extra.join(', ') : '');
+    }
     if (S.formant.on) {
       if (S.formant.field === 'painted') parts.push(`painted field (${S.formant.painted.cells.length} cells)`);
       else if (S.formant.field === 'curve') parts.push('F2-dependent field');
@@ -445,10 +540,11 @@
     if (w.mode === 'window') { o.when.after = w.after; o.when.until = w.until; }
     if (w.mode === 'vowel') Object.assign(o.when, { onThresh: w.onThresh, onHold: w.onHold, offThresh: w.offThresh, offHold: w.offHold, onDelay: w.onDelay });
     if (w.mode === 'custom') Object.assign(o.when, { ost: w.ost, pcf: w.pcf });
+    if (w.mode === 'design') { o.when.design = { blocks: s.design.blocks, detect: s.design.detect }; for (const k of ['formant', 'pitch', 'loudness', 'timing']) o.shift[k] = { on: false }; if (s.shift.formant.units !== 'pct') o.shift.formant = { units: s.shift.formant.units }; }
     if (s.hear.fb >= 2) o.hear.noise = s.hear.noise;
     return o;
   }
 
   G.PGS = { PRESETS, OST_MODES, defaultSettings, normalize, clone, getPath, setPath, baseParams, compile, warnings, summarize, diff, flatten, effective,
-    parseOst, serializeOst, ostStateCount, parsePcf, serializePcf, hz2mel, fmtVector, GRID, FMAX };
+    parseOst, serializeOst, ostStateCount, TEMPLATES, defaultDesign, compileDesign, refText, parsePcf, serializePcf, hz2mel, fmtVector, GRID, FMAX };
 })(typeof self !== 'undefined' ? self : globalThis);

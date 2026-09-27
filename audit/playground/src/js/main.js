@@ -13,7 +13,7 @@
   // ---------------- layout
   function layout() {
     const app = $('#app');
-    const tabs = [['explore', 'Explore'], ['params', 'Parameters and OST/PCF'], ['about', 'About']];
+    const tabs = [['explore', 'Explore'], ['design', 'Timing & design'], ['about', 'About']];
     const nav = $('#tabs');
     for (const [k, t] of tabs) nav.append(h('button', { type: 'button', role: 'tab', id: 'tab-' + k, 'aria-controls': 'panel-' + k, 'aria-selected': String(k === 'explore'), text: t, on: { click: () => PG.bus.emit('tab', k) } }));
     $('#theme-btn').addEventListener('click', () => PG.theme.toggle());
@@ -24,7 +24,7 @@
     PG.SettingsUI.mount($('#settings'));
     PG.InputUI.mount($('#input-panel'));
     PG.TrialsUI.mount($('#trials'));
-    PG.ParamsUI.mount($('#panel-params'));
+    PG.DesignUI.mount($('#panel-design'));
     PG.Compare.mount($('#v-compare'));
     PG.Vowel.mount($('#v-vowel'));
     runBar(); PG.Transport.mount($('#transport')); viewTabs();
@@ -61,7 +61,17 @@
     return runSpecs([{ inputId: st.input.id, settings: S.clone(st.settings) }], { kept });
   }
   // specs: [{inputId, settings, name?}]
-  async function runSpecs(specs, { kept = true, sequence = false, clearAbsent = false, sweep = null } = {}) {
+  // A timeline design's random extra delay is drawn once per trial and stored in that trial's settings (reproducible).
+  function resolveJitter(s) {
+    const d = s.design;
+    if (s.when.mode === 'design' && d && d.jitterMs > 0 && d.blocks[0]) {
+      const j = Math.round(Math.random() * d.jitterMs / 10) * 10;
+      d.blocks[0].start.ms += j; d.jitterApplied = j; d.jitterMs = 0;
+    }
+    return s;
+  }
+  async function runSpecs(specs, { kept = true, sequence = false, clearAbsent = false, sweep = null, noCompare = false } = {}) {
+    specs.forEach(sp => resolveJitter(sp.settings));
     const errs = PG.S.warnings(specs[0].settings, S.compile(specs[0].settings), {}).filter(w => w.level === 'error');
     if (errs.length) { PG.bus.emit('run-state', { running: false, text: 'Not run: ' + errs[0].text }); return; }
     if (PG.Engine.busy()) { if (!kept && !sequence && !sweep) { pending = true; return; } PG.toast('A run is in progress; press Stop first or wait.'); return; }
@@ -75,7 +85,7 @@
       const res = await PG.Engine.run({ variant, sequence, clearAbsent,
         trials: specs.map(s => ({ input: st.inputs.get(s.inputId).x, settings: s.settings })),
         onProgress: (i, f) => PG.bus.emit('run-state', { running: true, frac: (i + f) / specs.length }),
-        onResult: (i, r) => { made.push(addTrial(specs[i], r, { kept, seq: seq && { ...seq, index: i }, sweep })); },
+        onResult: (i, r) => { made.push(addTrial(specs[i], r, { kept, seq: seq && { ...seq, index: i }, sweep })); PG.bus.emit('run-state', { running: true, text: `Running ${label}: ${made.length} of ${specs.length} done…` }); },
         onError: (i, m) => { PG.toast(`Trial ${i + 1} failed: ${m}`, 'error'); },
       });
       const ms = performance.now() - t0, last = made[made.length - 1];
@@ -86,16 +96,17 @@
       if (e.hang) for (let i = made.length; i < specs.length; i++) addFailed(specs[i], e.message, seq && { ...seq, index: i });
     } finally {
       st.running = false;
-      if (made.length > 1 || sequence) { made.forEach(t => st.selected.add(t.id)); if (sequence) PG.Compare.setLayout('timeline'); PG.bus.emit('trials'); PG.bus.emit('view', 'compare'); }
+      if (!noCompare && (made.length > 1 || sequence)) { made.forEach(t => st.selected.add(t.id)); if (sequence) PG.Compare.setLayout('timeline'); PG.bus.emit('trials'); PG.bus.emit('view', 'compare'); }
       if (pending) { pending = false; schedule(); }
     }
     return made;
   }
+  PG.runSpecs = runSpecs;
   function addTrial(spec, r, { kept, seq, sweep }) {
     // an automatic run replaces the previous draft
     if (!kept) { const i = st.trials.findIndex(t => !t.kept && !t.seq); if (i >= 0) { st.selected.delete(st.trials[i].id); st.trials.splice(i, 1); } }
     const inp = st.inputs.get(spec.inputId);
-    const t = { id: PG.uid(), name: spec.name || nextName(sweep ? `(${sweep})` : ''), created: Date.now(), kept, tags: sweep ? ['sweep'] : [], notes: '', inputId: spec.inputId, inputLen: inp.x.length,
+    const t = { id: PG.uid(), name: spec.name || nextName(sweep ? `(${sweep})` : ''), created: Date.now(), kept, tags: sweep ? ['sweep'] : spec.sched ? ['schedule', spec.sched.phase] : [], notes: '', sched: spec.sched || null, inputId: spec.inputId, inputLen: inp.x.length,
       settings: spec.settings, summary: S.summarize(spec.settings), variant: spec.settings.build || 'lite', seq, result: r };
     st.trials.push(t); st.currentId = t.id;
     if (kept) PG.Store.saveTrial(t);
@@ -262,6 +273,21 @@
       return { name: t.name, settings: t.settings, compiled: S.compile(t.settings).list.map(([k, v]) => [k, Array.isArray(v) ? Array.from(v) : v]), ost: S.compile(t.settings).ost, pcf: S.compile(t.settings).pcf,
         input: Array.from(inp.x), output: Array.from(r.output), fmts: r.fmts.map(a => Array.from(a)), sfmts: r.sfmts.map(a => Array.from(a)), ost_stat: Array.from(r.ost_stat), info: r.info }; },
     stats: () => PG.Engine.stats,
+    // design check: predicted (OST replay on the dry run) vs logged on-frames for the current trial
+    designCheck: id => {
+      const t = PG.trial(id), r = t.result, P = new Set(r.compiled.meta.perturbStates);
+      const pred = PG.DesignUI.predict(); if (!pred) return null;
+      const n = Math.min(pred.states.length, r.ost_stat.length);
+      let stateMis = 0, predOn = 0, logOn = 0, onMis = 0, shiftOutside = 0, shiftIn = 0, trackedIn = 0;
+      for (let i = 0; i < n; i++) {
+        const a = P.has(pred.states[i]), b = P.has(r.ost_stat[i]);
+        if (pred.states[i] !== r.ost_stat[i]) stateMis++; if (a) predOn++; if (b) logOn++; if (a !== b) onMis++;
+        const sh = r.sfmts[0][i] > 0 && (Math.abs(r.sfmts[0][i] - r.fmts[0][i]) > 0.5 || Math.abs(r.sfmts[1][i] - r.fmts[1][i]) > 0.5);
+        if (sh && !a) shiftOutside++; if (sh && a) shiftIn++; if (a && r.fmts[0][i] > 0) trackedIn++;
+      }
+      const spans = pred.spans.map(sp => sp.map(([x, y]) => [+x.toFixed(3), +y.toFixed(3)]));
+      return { n, stateMis, predOn, logOn, onMis, shiftOutside, shiftIn, trackedIn, spans, frameDur: r.compiled.meta.frameLen / r.compiled.meta.sr };
+    },
     setAutoRun: on => { st.autoRun = on; const c = $('#auto-run'); if (c) c.checked = on; },
   };
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', start) : start();

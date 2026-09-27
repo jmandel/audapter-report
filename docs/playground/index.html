@@ -41,7 +41,8 @@
     <aside id="trials" class="trials-col" aria-label="Trials"></aside>
   </div>
 
-  <div id="panel-params" class="params-panel" role="tabpanel" aria-labelledby="tab-params" hidden></div>
+  <div id="panel-design" class="design-panel" role="tabpanel" aria-labelledby="tab-design" hidden></div>
+  <dialog id="expert" class="expert" aria-labelledby="pt-title"></dialog>
 
   <div id="panel-about" class="about" role="tabpanel" aria-labelledby="tab-about" hidden>
     <div class="prose">
@@ -50,7 +51,7 @@
         (the blab-lab fork, TransShiftMex at commit 169cadf) compiled to WebAssembly, the same build the
         <a href="../">audit report</a> uses. The WebAssembly build reproduces the native build bit for bit when both use the same maths library, and differs from the Octave MEX by about 1e-10.</p>
       <p>Every setting ends up as the calls MATLAB would make: <code>setParam</code> for each parameter in <code>AudapterIO('init')</code> order, starting
-        from the recorded blab defaults, plus the OST and PCF texts. The Parameters tab shows exactly what is sent.</p>
+        from the recorded blab defaults, plus the OST and PCF texts. The expert parameter table (a link at the bottom of the settings) shows exactly what is sent.</p>
       <h2>Record, then process</h2>
       <p>This is not real-time feedback. The page records (or loads) the whole utterance first, then runs Audapter over it frame by frame,
         exactly as <code>Audapter('runFrame')</code> does offline. That is the same processing as the live ASIO callback, without the

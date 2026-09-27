@@ -37,6 +37,7 @@ PG.Tiers = (() => {
       const lab = compact ? null : h('div.tier-lab', {}, h('div.tl-name', { text: t.label }), t.sub ? h('div.tl-sub', { text: t.sub }) : null, t.key ? t.key() : null);
       const row = h('div.tier', { style: { height: t.height + 'px', minHeight: compact ? '' : '40px' } }, lab, cv);
       rowsEl.append(row);
+      if (t.attach) setTimeout(() => t.attach(cv, { tOf: px => zoom.t0 + px / Math.max(1, cv.clientWidth) * (zoom.t1 - zoom.t0), xOf: tt => (tt - zoom.t0) / (zoom.t1 - zoom.t0) * cv.clientWidth, redraw: () => api.draw() }), 0);
       return { ...t, cv, row };
     });
     const W = () => Math.max(50, rowsEl.clientWidth - LW);
