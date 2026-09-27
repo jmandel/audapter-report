@@ -21,3 +21,11 @@ paths, model ids, tokens, emails, file sizes). Push only on GATE PASS.
   - verify every committed corpus clip's license in audit/corpus/manifest allows redistribution
   - replace remaining the repo root paths in the live/, formal/, wasm/, corpus scripts and notes with repo-relative ones
   - rerun `./reproduce.sh` from a fresh `git clone --recurse-submodules` to prove it works elsewhere
+
+## Published (2026-09-27)
+- Repo: https://github.com/jmandel/audapter-report (public). Site: https://joshuamandel.com/audapter-report/
+  (GitHub Pages from main:/docs, HTTPS enforced). The live index.html was verified byte-identical to docs/index.html.
+- Before the first push, local history was rewritten to remove names of private repositories that had appeared in an early
+  version of stage.sh's gate. Those names now live only in the untracked publish/private-patterns.local.
+- To update: rebuild (`./reproduce.sh report publish`, or `python3 audit/report/build.py --single && audit/publish/stage.sh`),
+  commit, push. Pages redeploys automatically.
