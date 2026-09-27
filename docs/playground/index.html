@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audapter Playground</title>
+<meta name="description" content="Try Audapter's formant, pitch, timing and loudness perturbations on speech in the browser, with the real blab-lab core compiled to WebAssembly.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<a class="skip" href="#results">Skip to results</a>
+<header class="top">
+  <div class="brand">
+    <h1>Audapter Playground</h1>
+    <p class="dek">Shift formants, pitch, timing and loudness in recorded speech with the real Audapter core, then listen and look at what changed.</p>
+  </div>
+  <nav id="tabs" class="tabs" role="tablist" aria-label="Sections"></nav>
+  <div class="top-tools">
+    <span id="mem" class="muted"></span>
+    <button id="theme-btn" class="linkish" type="button">Light / dark</button>
+  </div>
+</header>
+
+<main id="app">
+  <div id="panel-explore" class="explore" role="tabpanel" aria-labelledby="tab-explore">
+    <aside id="settings" class="settings-col" aria-label="Settings"></aside>
+    <section id="results" class="results-col" aria-label="Input and results">
+      <div id="input-panel" class="input-panel"></div>
+      <div id="runbar" class="runbar"></div>
+      <div id="run-warns" class="warns"></div>
+      <div class="sticky-tools">
+        <div id="transport" class="transport" aria-label="Playback"></div>
+        <div id="viewtabs" class="viewtabs" role="tablist" aria-label="Views"></div>
+      </div>
+      <div id="v-tiers" class="view"></div>
+      <div id="v-vowel" class="view" hidden></div>
+      <div id="v-compare" class="view" hidden></div>
+      <div id="numbers" class="numbers"></div>
+    </section>
+    <aside id="trials" class="trials-col" aria-label="Trials"></aside>
+  </div>
+
+  <div id="panel-params" class="params-panel" role="tabpanel" aria-labelledby="tab-params" hidden></div>
+
+  <div id="panel-about" class="about" role="tabpanel" aria-labelledby="tab-about" hidden>
+    <div class="prose">
+      <h2>What this is</h2>
+      <p>Audapter is the real-time speech perturbation software used in auditory-feedback research. This page runs its C++ core
+        (the blab-lab fork, TransShiftMex at commit 169cadf) compiled to WebAssembly, the same build the
+        <a href="../">audit report</a> uses. The WebAssembly build reproduces the native build bit for bit when both use the same maths library, and differs from the Octave MEX by about 1e-10.</p>
+      <p>Every setting ends up as the calls MATLAB would make: <code>setParam</code> for each parameter in <code>AudapterIO('init')</code> order, starting
+        from the recorded blab defaults, plus the OST and PCF texts. The Parameters tab shows exactly what is sent.</p>
+      <h2>Record, then process</h2>
+      <p>This is not real-time feedback. The page records (or loads) the whole utterance first, then runs Audapter over it frame by frame,
+        exactly as <code>Audapter('runFrame')</code> does offline. That is the same processing as the live ASIO callback, without the
+        live path's timing. Audapter's own processing delay is shown under "How Audapter listens"; a browser's microphone-to-headphone
+        round trip is typically 60–115 ms, against about 20–40 ms for native Audapter with ASIO, so a browser is not a substitute for
+        a lab rig when latency matters.</p>
+      <h2>Fresh or one session</h2>
+      <p>By default every trial runs in a fresh Audapter instance, so trials are independent and reproducible, like starting MATLAB anew each time.
+        "Run ticked as one session" runs several trials in order in one instance, as a MATLAB experiment would; state that Audapter
+        fails to reset between trials then carries over (for example OST-F1 and COORD-1 in the report). The Compare tab's session timeline shows such runs end to end.</p>
+      <h2>Memory</h2>
+      <p>One Audapter instance needs about 160 MB of WebAssembly memory (310 MB for the full-size build, whose recorders hold 30 s).
+        Each fresh trial runs in a Web Worker that is terminated afterwards, so at most one instance is alive at a time.
+        The shipped and patched builds keep 10 s recorders; use the full-size build for longer trials.</p>
+      <h2>What the views show</h2>
+      <ul>
+        <li><b>Grey</b> is the input: what was spoken, and estimates made from it.</li>
+        <li><b>Hollow ink</b> is what was intended: Audapter's shifted targets (<code>sfmts</code>, <code>shiftedPitchHz</code>) and the configured time window.</li>
+        <li><b>Blue</b> is what Audapter logged or did (<code>fmts</code>, <code>pitchHz</code>, OST state, output), and measurements made on the output audio.</li>
+        <li><b>Orange</b> marks a discrepancy: logged pitch that is not the voice's F0, clipping.</li>
+      </ul>
+      <p>The independent estimates (YIN for F0, LPC for formants) are rough reference measurements computed in this page. LPC formant estimates are biased at high F0,
+        so a small mismatch with the targets is not by itself a sign that Audapter misbehaved.</p>
+      <h2>Credits and licences</h2>
+      <p>Page code: Apache-2.0. Audapter core: Apache-2.0 (audapter_mex). Speech clips from CMU ARCTIC (CMU licence), LibriSpeech, speechocean762,
+        VoiceBank-DEMAND, the Perceptual Voice Qualities Database, VocalSet and vocadito (CC BY 4.0); see <a href="clips/ATTRIBUTION.md">clips/ATTRIBUTION.md</a>.
+        Vowel averages: Peterson &amp; Barney (1952). Typeface: Charis SIL (OFL). Author: Claude (Anthropic), at the request of Josh Mandel.</p>
+    </div>
+  </div>
+</main>
+<div id="toasts" class="toasts"></div>
+<noscript><p class="noscript">The playground needs JavaScript and WebAssembly.</p></noscript>
+<script src="js/app.js"></script>
+</body>
+</html>

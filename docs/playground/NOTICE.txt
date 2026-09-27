@@ -1,0 +1,5 @@
+Audapter Playground. Code: Apache-2.0 (LICENSE-apache-2.0.txt).
+engine/engine-*.js embed the blab-lab Audapter core (audapter_mex, Apache-2.0) compiled to WebAssembly by audit/wasm.
+fonts/: Charis SIL, SIL Open Font License 1.1 (https://software.sil.org/charis/).
+clips/: speech clips under their own licences, listed in clips/ATTRIBUTION.md (CC BY 4.0 and the CMU ARCTIC licence).
+Vowel-space backdrop: average formant values from Peterson & Barney (1952), J. Acoust. Soc. Am. 24, 175-184.

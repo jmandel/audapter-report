@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
 import { serve } from '../../playground/test/serve.mjs';
-const require = createRequire('/home/jmandel/hobby/audapter/audit/scratch/wasm/package.json');
+const require = createRequire(new URL('../wasm/package.json', import.meta.url));
 const { chromium } = require('playwright-core');
 const port = 8800 + Math.floor(Math.random() * 100);
 const srv = await serve(port);

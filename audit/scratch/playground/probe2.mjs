@@ -1,5 +1,5 @@
 import fs from 'node:fs'; import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url); const ROOT = '/home/jmandel/hobby/audapter/audit';
+const require = createRequire(import.meta.url); const ROOT = new URL('../..', import.meta.url).pathname.replace(/\/$/, '');
 globalThis.self = globalThis;
 globalThis.AUD_DEFAULTS = new Function(fs.readFileSync(ROOT + '/wasm/web/audapter-defaults.mjs', 'utf8').replace(/^export default /m, 'return '))();
 for (const f of ['dsp.js', 'settings-core.js']) (0, eval)(fs.readFileSync(ROOT + '/playground/src/shared/' + f, 'utf8'));
