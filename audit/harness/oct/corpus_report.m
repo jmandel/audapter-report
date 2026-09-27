@@ -26,6 +26,7 @@ pp = @(m) ifelse_p(m, PM, PFe);
 
 %% ---------------------------------------------------------------- OST-F1: cross-trial state leak
 if want('ost-f1') && ~UP
+  Audapter('ost', '', 0); Audapter('pcf', '', 0);   % each section starts clean: a loaded OST/PCF persists across init (COORD-1)
   od = rdir('ost-f1');
   F = '/h/oct/out/corpus_rep_fall.ost'; fid = fopen(F, 'w');
   fprintf(fid, 'rmsSlopeWin = 0.030000\n\nn = 3\n0 ELAPSED_TIME 0.1 NaN {}\n1 INTENSITY_FALL 0.01 0.02 {}\n2 OST_END NaN NaN {}\n\nn = 0\n'); fclose(fid);
@@ -60,6 +61,7 @@ end
 
 %% ---------------------------------------------------------------- OST-F2: maxIOI drift without reload
 if want('ost-f2') && ~UP
+  Audapter('ost', '', 0); Audapter('pcf', '', 0);   % each section starts clean: a loaded OST/PCF persists across init (COORD-1)
   od = rdir('ost-f2');
   F = '/h/oct/out/corpus_rep_ioi.ost'; fid = fopen(F, 'w');
   fprintf(fid, 'rmsSlopeWin = 0.030000\n\nn = 3\n0 INTENSITY_RISE_HOLD 0.02 0.02 {}\n2 ELAPSED_TIME 0.1 NaN {}\n3 OST_END NaN NaN {}\n\nn = 1\n0 0.2 2\n'); fclose(fid);
@@ -84,6 +86,7 @@ end
 
 %% ---------------------------------------------------------------- PT-5: pvoc loudness offset and step
 if want('pt-5') && ~UP
+  Audapter('ost', '', 0); Audapter('pcf', '', 0);   % each section starts clean: a loaded OST/PCF persists across init (COORD-1)
   od = rdir('pt-5');
   % (a) steady gains 0 / +2 / -2 st per clip, from corpus_shift.csv (run corpus_shift.m first)
   G = struct();
@@ -132,6 +135,7 @@ end
 
 %% ---------------------------------------------------------------- formant shifting (real vowels): audio + numbers
 if want('fmt-shift') && ~UP
+  Audapter('ost', '', 0); Audapter('pcf', '', 0);   % each section starts clean: a loaded OST/PCF persists across init (COORD-1)
   od = rdir('fmt-shift'); ids = {'pvqd_LA9015_a', 'pvqd_SJ2001_i', 'arctic_slt_a0030', 'so762_0049_64'}; W = [];
   for k = 1:numel(ids)
     m = clip(M, ids{k}); x = corpus_wav(m); p = pp(m); g = linspace(0, 5000, 257);
@@ -146,6 +150,7 @@ end
 
 %% ---------------------------------------------------------------- F6: dropout fix on real multi-syllable speech
 if want('f6')
+  Audapter('ost', '', 0); Audapter('pcf', '', 0);   % each section starts clean: a loaded OST/PCF persists across init (COORD-1)
   od = rdir('f6'); ids = {'arctic_bdl_a0030', 'arctic_slt_a0005', 'praat_hid', 'libri_2078-142845-0026'};
   R = struct('clip', {}, 'shifted_frames', {}, 'first_s', {}, 'last_s', {}, 'segments', {});
   W = [];
@@ -171,6 +176,7 @@ end
 
 %% ---------------------------------------------------------------- I-01: masking-noise gap with real speech input
 if want('i-01') && ~UP
+  Audapter('ost', '', 0); Audapter('pcf', '', 0);   % each section starts clean: a loaded OST/PCF persists across init (COORD-1)
   od = rdir('i-01'); p = PFe; fs = 48000; N = p.frameLen * p.downFact;
   [mb, fsm] = audioread('/a/blab/audapter_matlab/mcode/mtbabble48k.wav'); mb = mb - mean(mb); mb = mb / rms(mb); noise5 = mb(1:5*fsm);
   x = []; for id = {'arctic_bdl_a0005', 'arctic_slt_a0018', 'libri_84-121123-0000', 'arctic_rms_a0036', 'so762_0003_0', 'libri_2078-142845-0026'}
@@ -191,6 +197,7 @@ end
 
 %% ---------------------------------------------------------------- OST-F8: AND_RATIO hold on real fricative onsets
 if want('ost-f8') && ~UP
+  Audapter('ost', '', 0); Audapter('pcf', '', 0);   % each section starts clean: a loaded OST/PCF persists across init (COORD-1)
   od = rdir('ost-f8'); RMS_THR = 0.01; RATIO_THR = 1.5;
   ost = @(f5) sprintf('rmsSlopeWin = 0.030000\n\nn = 2\n0 INTENSITY_AND_RATIO_ABOVE_THRESH %g %g %s\n2 OST_END NaN NaN {}\n\nn = 0\n', RMS_THR, RATIO_THR, f5);
   FH = '/h/oct/out/corpus_rep_ar_hold.ost'; FB = '/h/oct/out/corpus_rep_ar_braces.ost';
@@ -210,6 +217,7 @@ end
 
 %% ---------------------------------------------------------------- I-02: fb 5 speech/playback mix with real speech
 if want('i-02') && ~UP
+  Audapter('ost', '', 0); Audapter('pcf', '', 0);   % each section starts clean: a loaded OST/PCF persists across init (COORD-1)
   od = rdir('i-02'); p = PFe; fs = 48000; N = p.frameLen * p.downFact;
   clg0 = calcClosedLoopGain(); DS = [1, 10.^(([15 21] - clg0) / 20)];
   [mb, fsm] = audioread('/a/blab/audapter_matlab/mcode/mtbabble48k.wav'); mb = mb - mean(mb); mb = mb / rms(mb); pb = 0.03 * mb(1:round(4.5*fsm));
