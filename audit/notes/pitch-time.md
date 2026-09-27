@@ -5,7 +5,7 @@ Reviewer scope: `time_domain_shifter.cpp/.h`, `phase_vocoder.cpp/.h`, `pvocWarpA
 timeDomainPitchShiftAlgorithm / pvocFrameLen / pvocHop / pvocWarp / delayFrames / output ring buffer /
 down/up-sampling filters). All line numbers are blab `origin/master` unless noted.
 
-Scratch tests (all reproducible) live in `~/hobby/audapter/audit/scratch/pitch-time/`:
+Scratch tests (all reproducible) live in `audit/scratch/pitch-time/`:
 - `pv_test.cpp`, `pv_test2.cpp`, `pv_warp.cpp`: standalone PhaseVocoder + Audapter-style OLA (g++, stub mex.h)
 - `tds_test.cpp`, `tds_test2.cpp`, `tds_peaks.cpp`: standalone TimeDomainShifter
 - `*.m`: end-to-end runs through the real MEX via `audit/harness/run-oct.sh /a/audit/scratch/pitch-time/<x>.m`

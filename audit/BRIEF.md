@@ -3,18 +3,18 @@
 Target: blab-lab fork of Audapter (real-time speech formant/pitch/timing perturbation for
 speech motor-control research; runs as a MATLAB MEX on Windows with ASIO audio).
 
-- C++ source (READ ONLY): ~/hobby/audapter/blab/audapter_mex/TransShiftMex/
-- MATLAB side (READ ONLY): ~/hobby/audapter/blab/audapter_matlab/mcode/
-- Original upstream for diffing: ~/hobby/audapter/upstream/audapter_mex, upstream/audapter_matlab
+- C++ source (READ ONLY): blab/audapter_mex/TransShiftMex/
+- MATLAB side (READ ONLY): blab/audapter_matlab/mcode/
+- Original upstream for diffing: upstream/audapter_mex, upstream/audapter_matlab
   (in blab clones: `git diff upstream/master origin/master` shows blab-only changes; blab
   changes are the highest-priority review target since they have had the least scrutiny)
 - Manual: https://sites.bu.edu/guentherlab/files/2022/09/AudapterManual_2.1.5.pdf and
-  ~/hobby/audapter/blab/audapter_mex/doc/
+  blab/audapter_mex/doc/
 
 Rules:
-- Do NOT modify anything under ~/hobby/audapter/blab, upstream, or other. Do not git commit/push anywhere.
-- Scratch files go in ~/hobby/audapter/audit/scratch/<your-area>/ (not /tmp).
-- Write your findings to ~/hobby/audapter/audit/notes/<your-area>.md.
+- Do NOT modify anything under blab, upstream, or other. Do not git commit/push anywhere.
+- Scratch files go in audit/scratch/<your-area>/ (not /tmp).
+- Write your findings to audit/notes/<your-area>.md.
 
 What matters: this code drives perturbation experiments whose results get published. The worst
 bugs are SILENT ones: wrong perturbation magnitude/direction, wrong timing of perturbation onset,
@@ -38,11 +38,11 @@ Also include a short "Ideas" section: robustness/test/refactor ideas worth doing
 Be precise and skeptical; do not pad. Verify line numbers.
 
 ## Session 2 additions (applies to all agents)
-- Findings log: ~/hobby/audapter/audit/FINDINGS-LOG.md. For every new finding, negative result or
+- Findings log: audit/FINDINGS-LOG.md. For every new finding, negative result or
   retraction, APPEND one entry under "## Session 2" using the entry format at the top of that file.
   Use a single `cat >> FINDINGS-LOG.md <<'EOF'` per entry, never rewrite the file. Prefix IDs with your area
   (FORMAL-n, WASM-n, ...). Give permalinks with the pinned SHAs listed there.
-- Existing harness: ~/hobby/audapter/audit/harness (README.md there). Report: ~/hobby/audapter/audit/REPORT.md.
+- Existing harness: audit/harness (README.md there). Report: audit/REPORT.md.
   You may ADD scripts under harness/oct/ (prefix them with your area) but do not change existing
   harness files; propose such changes in your notes instead.
 - Docker is available (images: audapter-octave). You may pull or build other images, but keep total new

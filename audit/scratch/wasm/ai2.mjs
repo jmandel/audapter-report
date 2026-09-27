@@ -1,7 +1,7 @@
 import fs from 'node:fs';
-import { AudapterWasm } from '/home/jmandel/hobby/audapter/audit/wasm/web/audapter-api.mjs';
-const factory = (await import('/home/jmandel/hobby/audapter/audit/wasm/dist/audapter-full.mjs')).default;
-const s = process.argv[2] || 'tdshift', TD = '/home/jmandel/hobby/audapter/audit/wasm/testdata/' + s;
+import { AudapterWasm } from '../../wasm/web/audapter-api.mjs';
+const factory = (await import('../../wasm/dist/audapter-full.mjs')).default;
+const s = process.argv[2] || 'tdshift', TD = new URL('../../wasm/testdata/', import.meta.url).pathname + s;
 const meta = JSON.parse(fs.readFileSync(TD + '/meta.json'));
 const f64 = f => { const b = fs.readFileSync(f); return new Float64Array(b.buffer, b.byteOffset, b.byteLength / 8); };
 const ref = f64(TD + '/data.f64'), R = meta.dataRows;

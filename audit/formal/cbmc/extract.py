@@ -18,7 +18,7 @@ Four mechanical transforms may be applied (each is listed in the README):
 """
 import hashlib, os, re, sys
 
-SRC = os.path.expanduser('~/hobby/audapter/blab/audapter_mex/TransShiftMex/Audapter.cpp')
+SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'blab', 'audapter_mex', 'TransShiftMex', 'Audapter.cpp')
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'extracted')
 
 # name: (first line, last line, sha256 of the verbatim text, loop vars to make nondet, fixes)

@@ -16,7 +16,7 @@ A native C++ "MATLAB stand-in" calls `mexFunction` through a small fake MEX API.
 call sequences of the lab's own scripts, with `AudapterIO('init', p)` replayed from a trace
 recorded by the real `AudapterIO.m`.
 
-All paths are relative to `~/hobby/audapter/audit/live/`. Blab line numbers are at
+All paths are relative to `audit/live/`. Blab line numbers are at
 `blab-lab/audapter_mex@169cadf`.
 
 ## Summary for the lab

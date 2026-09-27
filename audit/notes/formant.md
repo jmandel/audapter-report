@@ -286,4 +286,4 @@ Verified OK (no finding):
   document it as nearest-lower-cell and make MATLAB-side analysis tools match.
 - Run the harness under ASan/UBSan: F1, F2 and F7 are directly detectable (heap overflow,
   float-cast-overflow).
-- Scratch: ~/hobby/audapter/audit/scratch/formant/loc.cpp (standalone locateF check).
+- Scratch: audit/scratch/formant/loc.cpp (standalone locateF check).

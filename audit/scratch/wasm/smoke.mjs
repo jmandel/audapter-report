@@ -1,5 +1,5 @@
-import createAudapter from '/home/jmandel/hobby/audapter/audit/wasm/dist/audapter-full.mjs';
-import { AudapterWasm } from '/home/jmandel/hobby/audapter/audit/wasm/web/audapter-api.mjs';
+import createAudapter from '../../wasm/dist/audapter-full.mjs';
+import { AudapterWasm } from '../../wasm/web/audapter-api.mjs';
 const t0 = performance.now();
 const a = await AudapterWasm.create(createAudapter);
 console.log('create ms', performance.now() - t0, 'sizeof', a.sizeofAudapter(), 'mem', a.memoryBytes());

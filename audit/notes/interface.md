@@ -6,10 +6,10 @@ getSignal/getData and the recorders, datapb playback, tone-sequence generator, f
 MATLAB side (AudapterIO.m, getAudapterDefaultParams.m, getAudapterParamSet.m, genRandScript.m,
 play_audio.m, check_file.m).
 
-Line numbers refer to the blab tree (~/hobby/audapter/blab/...). "Blab-only" was checked against
+Line numbers refer to the blab tree (blab/...). "Blab-only" was checked against
 `upstream/`.
 
-Confirmation scripts: ~/hobby/audapter/audit/scratch/interface/t_iface.m and t_wrap.m, run through
+Confirmation scripts: audit/scratch/interface/t_iface.m and t_wrap.m, run through
 `harness/run-oct.sh /a/audit/scratch/interface/<file>.m`. Tests marked **[harness-confirmed]**
 were run on the Octave build of the blab MEX.
 

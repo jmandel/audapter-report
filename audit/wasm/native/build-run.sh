@@ -1,9 +1,9 @@
 #!/bin/bash
 # Build native/replay.cpp against the same prepped sources + C API as the WASM build, with glibc (audapter-octave
 # image, g++) and musl (alpine, g++), replay every testdata scenario, and write results for test/cmpdirs.mjs.
-# Usage: native/build-run.sh  -> ~/hobby/audapter/audit/scratch/wasm/native-{glibc,musl}/<scen>/
+# Usage: native/build-run.sh  -> audit/scratch/wasm/native-{glibc,musl}/<scen>/
 set -e
-W=$(cd "$(dirname "$0")/.." && pwd); H=$W/../harness; S=~/hobby/audapter/audit/scratch/wasm
+W=$(cd "$(dirname "$0")/.." && pwd); H=$W/../harness; S=$W/../scratch/wasm
 [ -d "$W/build/full/src" ] || { echo "run wasm/build.sh full first (prepped sources)" >&2; exit 1; }
 for s in $(ls "$W/testdata"); do node "$W/test/cmds2txt.mjs" "$W/testdata/$s/meta.json" "$W/testdata/$s/cmds.txt"; done
 CXX_FLAGS="-O2 -std=gnu++14 -fpermissive -w -I/w/compat -I/h/compat -I/w/build/full/src -include cmath -include cstring -include cstdlib -include cstdio -include limits -include stdexcept"

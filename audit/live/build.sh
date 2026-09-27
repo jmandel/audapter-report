@@ -9,7 +9,7 @@
 # Usage: ./build.sh [variant ...]    (default: all)
 set -e
 cd "$(dirname "$0")"
-LIVE=$PWD; AUD=$(cd ../..; pwd)            # ~/hobby/audapter
+LIVE=$PWD; AUD=$(cd ../..; pwd)            # repo root
 VARIANTS=${@:-asio asio-tsan asio-asan jack}
 docker image inspect audapter-live >/dev/null 2>&1 || docker build -t audapter-live docker
 

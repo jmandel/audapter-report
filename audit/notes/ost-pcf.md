@@ -12,7 +12,7 @@ no blab change to the OST/PCF call sites apart from the taimComp clamp condition
 Several findings were confirmed by running a standalone driver. It compiles the real `ost.cpp`/`pcf.cpp`/`utils.cpp`
 with a stub `mex.h` (with `-include cmath -include cstdlib`; `ost.cpp` does not include `<cmath>`) and calls
 `OST_TAB::osTrack` frame by frame with synthetic RMS/ratio/slope values:
-`~/hobby/audapter/audit/scratch/ost-pcf/t/{drv.cpp,drvp.cpp}` (run `./drvplain <case>`, `./drvp <case>`; ASan build = `./drv`).
+`audit/scratch/ost-pcf/t/{drv.cpp,drvp.cpp}` (run `./drvplain <case>`, `./drvp <case>`; ASan build = `./drv`).
 The driver calls the loop the way Audapter does: `stat=0` and counters reset per trial, and `OST_TAB::reset()`
 is never called between trials, which is what Audapter does (see F1).
 

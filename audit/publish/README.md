@@ -13,11 +13,11 @@ paths, model ids, tokens, emails, file sizes). Push only on GATE PASS.
   The report's current "lite" build also shrinks the playback buffer, which moves the I-01 loop point.
 - Fold in the formal, live-path and corpus results once they have been verified.
 - Methods byline/note per report/PLAN.md §12 item 1; confirm what Josh reviewed.
-- Repo = ~/hobby/audapter (git, local only so far). Sources are submodules pinned to the audited SHAs; the site is in /docs
+- Repo = the repo root (git, local only so far). Sources are submodules pinned to the audited SHAs; the site is in /docs
   (GitHub Pages: deploy from branch main, folder /docs). Create the remote with
   `gh repo create jmandel/audapter-report --public --source . --push`, then enable Pages on /docs.
 - Before pushing:
   - choose a license for audit/ and docs/ (README says TBD)
   - verify every committed corpus clip's license in audit/corpus/manifest allows redistribution
-  - replace remaining ~/hobby/audapter paths in the live/, formal/, wasm/, corpus scripts and notes with repo-relative ones
+  - replace remaining the repo root paths in the live/, formal/, wasm/, corpus scripts and notes with repo-relative ones
   - rerun `./reproduce.sh` from a fresh `git clone --recurse-submodules` to prove it works elsewhere
