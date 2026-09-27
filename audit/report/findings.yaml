@@ -22,21 +22,24 @@ table:
   - {id: OST-F1, sev: high, origin: upstream, status: H F, text: "OST state leaks across trials: an offset in trial B is detected 1.2 s late after a longer trial A"}
   - {id: OST-F2, sev: high, origin: upstream, status: H F, text: "maxIOI timeout writes the onset of the wrong state; ELAPSED_TIME fires after 2 ms instead of 100 ms, and without an OST reload the timeout drifts 0.2 → 0.4 → 0.6 s"}
   - {id: I-01,   sev: high, origin: blab-amplified, status: H, text: "Masking noise shorter than 10 s is followed by silence until the 10 s buffer wraps"}
+  - {id: CORPUS-10, sev: high, origin: upstream, status: H, text: "After a frameLen/nDelay change, runFrame can hang forever at 100 % CPU (found on real speech); live, this freezes the audio callback"}
   - {id: LIVE-1 / LIVE-2, sev: high, origin: upstream, status: D, text: "Changing OST/PCF files or DSP parameters while audio runs (always-on designs) crashes MATLAB or reads freed memory"}
   - {id: OST-F4, sev: high, origin: upstream, status: H, text: "PCF with fewer rows than OST states reads past the perturbation arrays; heap contents decide whether to perturb"}
   - {id: FMT-F1, sev: high, origin: blab, status: H, text: "Clamp trajectory setters copy 2048 values whatever length MATLAB passes"}
+  - {id: CORPUS-8, sev: high, origin: upstream, status: H, text: "With the default frame settings the logged pitch is wrong below about 140 Hz (typical adult men): 90 Hz logs as about 229 Hz"}
   - {id: PT-5,   sev: high, origin: upstream, status: H F, text: "Phase vocoder plays 3.5 dB loud at 0 st, and the level changes when a pitch shift starts"}
-  - {id: LIVE-3, sev: med, origin: upstream, status: D, text: "reset() while the participant is voicing can emit a clipped burst of +17 dB or more (about 1 in 2000 resets in simulation)"}
+  - {id: LIVE-3, sev: med, origin: upstream, status: D, text: "reset() while the participant is voicing can emit a clipped burst, +17 to +61 dB so far (about 1 in 1000–2000 resets during voicing, in simulation)"}
   - {id: LIVE-6, sev: med, origin: upstream, status: D, text: "If the sound card's buffer size differs from Audapter's frame size, the participant hears the raw microphone an octave up, with gaps"}
+  - {id: CORPUS-11, sev: med, origin: upstream, status: H, text: "Shifted formant targets are unbounded: old mel-unit parameters under today's ratio default give targets up to 130 kHz and +24 dB clipped output"}
   - {id: I-04,   sev: med,  origin: upstream, status: H, text: "runFrame writes its output into the caller's input array"}
-  - {id: OST-F8, sev: med,  origin: blab, status: H, text: "Blab AND_RATIO rules take the hold from field 5, where the manual puts {}"}
   - {id: I-02,   sev: med,  origin: blab, status: H, text: "fb mode 5 applies dScale twice to the speech-modulated component"}
   - {id: F6,     sev: med,  origin: blab, status: H, text: "Dropout fix re-arms the perturbation on every field re-entry; minVowelLen no longer has any effect"}
   - {id: I-03,   sev: med,  origin: upstream, status: H, text: "Recorder wraps after 30 s without warning; a 35 s trial returns only its last 5.0 s"}
+  - {id: OST-F8, sev: low,  origin: blab, status: H, text: "Blab AND_RATIO rules take the hold from field 5, where the manual puts {}; clear on synthetic input, not clean on real /sh/ onsets"}
 
 
 # Full cards, in report order (cards/<ID>.yaml)
-cards: [OST-F1, OST-F2, I-01, LIVE-1 / LIVE-2, PT-5, OST-F4, FMT-F1, LIVE-3, LIVE-6, I-04, OST-F8, I-02, F6, I-03]
+cards: [OST-F1, OST-F2, I-01, CORPUS-10, LIVE-1 / LIVE-2, CORPUS-8, PT-5, OST-F4, FMT-F1, LIVE-3, LIVE-6, CORPUS-11, I-04, I-02, F6, I-03, OST-F8]
 
 # Short cards: effect, one excerpt at the pinned SHA, how verified. `notes` must name an existing heading.
 short:
@@ -182,6 +185,45 @@ short:
     refs:
       - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [758, 770], hl: [765, 768], expect: "ns == string(\"ndelay\")"}
     verify: "By reading."
+
+  - id: CORPUS-3
+    notes: "notes/corpus.md#corpus-3"
+    sev: med
+    origin: upstream
+    status: H
+    title: "There is no preset for young children: the female preset underestimates their F2 by about 12 %"
+    text: >
+      On 8 recordings of 6–7-year-olds (speechocean762, F0 217–315 Hz) the female preset (<code>nLPC 15</code>) tracked F2 11.9 % low on average, with gross errors
+      on 18 % of frames where Praat and an independent LPC agree (worst clip −22 %). With <code>nLPC 11</code> the error was 1.7–2.0 %. The 10–12-year-olds in the
+      Hillenbrand data are fine. A field or shift indexed by F2 is then applied at the wrong place in the vowel space for young children.
+    refs:
+      - {repo: blab-matlab, path: mcode/getAudapterDefaultParams.m, lines: [3, 12], hl: [4, 8], expect: "p.nLPC          = 15;"}
+    verify: "Harness on real speech (harness/oct/corpus_track.m, nLPC sweep); reference = frames where Praat and an independent LPC agree, not hand measurements."
+  - id: CORPUS-4
+    notes: "notes/corpus.md#corpus-4"
+    sev: low
+    origin: upstream
+    status: H
+    title: "The male preset can report F3 as F2 for a whole vowel"
+    text: >
+      On a sustained /a/ from the Perceptual Voice Qualities Database (F1 632, F2 about 1000 Hz), the male preset (<code>nLPC 17</code>) logged F2 at 2494 Hz on every frame;
+      <code>nLPC 15</code> tracked it correctly. It happened on 1 of 4 male /a/ tokens. Any F2-indexed field or F2 shift is then computed from F3.
+    refs:
+      - {repo: blab-matlab, path: mcode/getAudapterDefaultParams.m, lines: [3, 4], hl: [4], expect: "p.nLPC          = 17;"}
+    verify: "Harness on real speech (harness/oct/corpus_track.m)."
+  - id: CORPUS-7
+    notes: "notes/corpus.md#corpus-7"
+    sev: low
+    origin: upstream
+    status: H
+    title: "With pitch shifting on, low frequencies are boosted beyond the +3.5 dB offset: +7 dB at 30 Hz"
+    text: >
+      At 0 st the phase vocoder adds +3.52 dB from 150 Hz up (PT-5), but more below: +3.6 dB at 100 Hz, +4.0 at 80, +5.7 at 50 and +7.0 dB at 30 Hz. Real bus noise in a
+      VoiceBank-DEMAND recording gained +7.4 dB against +3.6 dB for the speech, so low-frequency room noise is about 4 dB louder relative to the voice at the ear.
+      Consistent with the formal result that content below the first FFT bin gets 5/2 (FORMAL-7).
+    refs:
+      - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [218, 220], hl: [219], expect: "X_magn[i] = 2.0"}
+    verify: "Harness (harness/oct/corpus_pvoc_lf.m): sine sweep and a real noisy recording."
 
 # Other findings: one row each (low severity or narrow conditions). loc = file:line at the pinned blab SHA.
 compact:

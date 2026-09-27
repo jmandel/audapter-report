@@ -67,3 +67,9 @@ def sketch(d, up):
 
 def derive(d, up):
     return {"dsA": d["dScale"][1], "dsB": d["dScale"][2], "clgA": d["closedLoopGain_db"][0], "clgB": d["closedLoopGain_db"][1]}
+
+
+def derive_real(rd):
+    c = rd["dScale_conditions"]; ref = c[0]["speech_minus_playback_db"]
+    return {"d_lo": c[1]["speech_minus_playback_db"] - ref, "d_hi": c[2]["speech_minus_playback_db"] - ref,
+            "ds_lo": c[1]["dScale"], "ds_hi": c[2]["dScale"]}

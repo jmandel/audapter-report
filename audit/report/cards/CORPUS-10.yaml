@@ -1,0 +1,47 @@
+# Full finding card CORPUS-10 (found on real speech; figure only).
+id: CORPUS-10
+log: CORPUS-10
+notes: "notes/corpus.md#corpus-10"
+headline: "After a change of frameLen or nDelay, runFrame can hang forever at 100 % CPU; live, that freezes the audio callback and MATLAB"
+severity: high
+origin: upstream
+origin_note: "The missing iteration cap in hqr_roots and the missing tracker rebuild are both in upstream 2.1.5 (same lines). Found on a real sung clip from the corpus; reproduced here from a fresh checkout."
+status: [H]
+effect:
+  setup: >
+    A real sung phrase (vocadito_4, F0 about 120 Hz) with the time-domain pitch shifter. One trial at the default <code>frameLen 32 / nDelay 5</code>,
+    then, in the same MATLAB/Audapter session, <code>AudapterIO('init')</code> with <code>frameLen 64 / nDelay 7</code> (the settings of upstream's
+    <code>time_domain_shift_demo.m</code>) and the same clip again. Control: the second configuration in a fresh session.
+  expected: "The second trial processes the clip like the fresh session does: all {frames_fresh} frames in {t_fresh:.2f} s."
+  observed: "The first runFrame call of the second trial never returns. No frame completed; the process ran at {cpu_min:.0f}–{cpu_max:.0f} % CPU for {hang_s:.0f} s until we killed it (the coordinator's re-run: no progress for 240 s)."
+  matters: >
+    In an experiment this is a frozen audio callback and a frozen MATLAB, in the middle of a session, triggered by a parameter change that looks harmless
+    (switching frame settings between blocks or between a pitch and a formant condition). There is no error to catch. Three other clips survived the same switch,
+    so it depends on the audio as well as on the sequence; a fresh session is fine. <strong>Workaround until fixed:</strong> after changing frameLen, nDelay or nWin, force the
+    formant tracker to be rebuilt, e.g. by changing <code>nLPC</code> or <code>bCepsLift</code> in a throw-away <code>AudapterIO('init')</code> and then restoring it,
+    or restart the MEX (<code>clear Audapter</code>) between configurations.
+  numbers:
+    - ["Frames completed, fresh session / after the switch", "{frames_fresh} / {frames_hung}"]
+    - ["CPU while hung", "{cpu_min:.1f}–{cpu_max:.1f} %"]
+    - ["Time until killed", "{hang_s:.0f} s (240 s in the coordinator's re-run)"]
+sketch: corpus10
+asset_dir: corpus-10
+audio: []
+audio_note: "No recordings for this card: the effect is that no audio comes out at all, and the process has to be killed."
+cause:
+  summary: >
+    <code>hqr_roots</code> finds the LPC polynomial's roots with the QR iteration from Numerical Recipes, but without its <code>its == 30</code> exit ("too many iterations").
+    With NaN coefficients the convergence test never succeeds, so the loop runs forever. The NaNs come from a stale formant tracker: setting <code>framelen</code>,
+    <code>ndelay</code> or <code>nwin</code> does not mark the tracker for rebuilding (I-09), so after the switch it analyses the new buffers with the old window length.
+  refs:
+    - {repo: blab-mex, path: TransShiftMex/lpc_formant.cpp, lines: [427, 429], hl: [428], expect: "its=0;", note: "The per-root iteration counter is reset..."}
+    - {repo: blab-mex, path: TransShiftMex/lpc_formant.cpp, lines: [476, 489], hl: [476, 489], expect: "its == 10 || its == 20", note: "...used only for the exceptional shifts at 10 and 20, and incremented, but never checked against a maximum. Numerical Recipes returns an error at its == 30."}
+    - {repo: blab-mex, path: TransShiftMex/lpc_formant.cpp, lines: [956, 958], hl: [958], expect: "hqr_roots(lpcAi", note: "Called on every voiced frame with the coefficients from getAi, which are not checked for NaN."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [758, 767], hl: [758, 765], expect: "ns == string(\"ndelay\")", note: "framelen and ndelay rebuild the phase vocoder and time-domain shifter, but not the formant tracker."}
+  upstream_refs:
+    - {repo: upstream-mex, path: TransShiftMex/lpc_formant.cpp, lines: [476, 476], expect: "its == 10 || its == 20"}
+  fix: "Cap the iterations (return an error at its == 30, as the original algorithm does) and skip the frame; check the LPC coefficients with isfinite before root finding; rebuild the formant tracker when framelen, ndelay or nwin change."
+verify:
+  - {kind: H, what: "hang reproduction on real speech", name: "harness/oct/corpus_tdshang.m", detail: "SCEN=vocadito_4 VARIANT=after32"}
+  - {kind: H, what: "report export with timing and CPU samples", name: "harness/oct/report_corpus10.sh", detail: "kills the container after a set time without progress; the fresh-session control completes"}
+reproduce: "cd audit/harness && oct/report_corpus10.sh 60"

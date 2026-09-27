@@ -5,6 +5,7 @@
     "data.json",
     "dev_trialA_48k.wav",
     "dev_trialB_48k.wav",
+    "real",
     "trialA_input.wav",
     "trialB_input.wav",
     "trialB_output_after_A.wav",
@@ -21,6 +22,7 @@
     "output_control.wav",
     "output_trial1.wav",
     "output_trial3.wav",
+    "real",
     "widget-data.js"
    ],
    "upstream_export": true
@@ -33,13 +35,34 @@
     "input_vowels.wav",
     "output_fb2_bundled_babble_zoom.wav",
     "output_fb3_voice_plus_noise.wav",
+    "real",
     "widget-data.js"
    ],
    "upstream_export": true
   },
+  "CORPUS-10": {
+   "assets": [
+    "after32.log",
+    "after32.log.cpu",
+    "after32.log.kill",
+    "data.json",
+    "fresh.log",
+    "fresh.log.cpu"
+   ],
+   "upstream_export": false
+  },
   "LIVE-1 / LIVE-2": {
    "assets": [
     "data.json"
+   ],
+   "upstream_export": false
+  },
+  "CORPUS-8": {
+   "assets": [
+    "data.json",
+    "data_32.json",
+    "data_64.json",
+    "real"
    ],
    "upstream_export": false
   },
@@ -50,6 +73,7 @@
     "input_vowel.wav",
     "output_bypass.wav",
     "output_pitch_step.wav",
+    "real",
     "widget-data.js"
    ],
    "upstream_export": false
@@ -85,6 +109,15 @@
    ],
    "upstream_export": false
   },
+  "CORPUS-11": {
+   "assets": [
+    "data.json",
+    "input.wav",
+    "output_mel.wav",
+    "output_ratio.wav"
+   ],
+   "upstream_export": false
+  },
   "I-04": {
    "assets": [
     "cond1_output.wav",
@@ -92,16 +125,6 @@
     "cond2_output_reused.wav",
     "data.json",
     "input.wav"
-   ],
-   "upstream_export": false
-  },
-  "OST-F8": {
-   "assets": [
-    "data.json",
-    "input_click.wav",
-    "output_braces.wav",
-    "output_click_braces.wav",
-    "output_click_hold.wav"
    ],
    "upstream_export": false
   },
@@ -113,6 +136,7 @@
     "input_vowels.wav",
     "output_fb5_clg15.wav",
     "output_fb5_clg21.wav",
+    "real",
     "widget-data.js"
    ],
    "upstream_export": false
@@ -128,6 +152,7 @@
     "glide_input.wav",
     "glide_output.wav",
     "glide_output_upstream.wav",
+    "real",
     "widget-data.js"
    ],
    "upstream_export": true
@@ -138,6 +163,17 @@
     "output_27_to_35s.wav"
    ],
    "upstream_export": true
+  },
+  "OST-F8": {
+   "assets": [
+    "data.json",
+    "input_click.wav",
+    "output_braces.wav",
+    "output_click_braces.wav",
+    "output_click_hold.wav",
+    "real"
+   ],
+   "upstream_export": false
   }
  }
 }

@@ -3,8 +3,8 @@
 id: OST-F8
 log: OST-F8
 notes: "notes/ost-pcf.md#f8"
-headline: "With the documented {} in field 5, blab's INTENSITY_AND_RATIO rules have no hold: state 2 starts 48 ms early, and a 20 ms click can trigger it"
-severity: med
+headline: "With the documented {} in field 5, blab's INTENSITY_AND_RATIO rules silently lose their hold; on a synthetic fricative state 2 starts 48 ms early, while on real /sh/ onsets the effect depends on the thresholds"
+severity: low
 origin: blab
 origin_note: >
   Blab-only. Modes 40 and 45 (INTENSITY_AND_RATIO_ABOVE/BELOW_THRESH), the prm3 column and the removal of the check that field 5 is {}
@@ -64,3 +64,10 @@ verify:
   - {kind: H, what: "report export (fricative + click, audible)", name: "report_ost_f8.m", detail: "blab build only; upstream rejects the mode"}
   - {kind: D, what: "standalone driver of ost.cpp", name: "scratch/ost-pcf/t/drv.cpp hold", detail: "field 5 = 0.05: 25 frames; {}: 1 frame"}
 reproduce: "cd audit/harness && ./run-oct.sh report_ost_f8.m"
+real:
+  dir: ost-f8
+  text: >
+    <strong>This finding does not cleanly reproduce on real fricatives with the card's thresholds.</strong> On {n_fric} real sentences starting with /sh/ (ARCTIC),
+    the rule with the 50 ms hold fired in {n_hold} of {n_fric} and the <code>{{}}</code> version in {n_brace} of {n_fric}, {lag_lo:.0f}–{lag_hi:.0f} ms after the /sh/ began.
+    The parsing behaviour is certain (it is in the code, and the synthetic test shows it); how much it matters for a lab's own OST depends on thresholds tuned to
+    its speakers, which we could not reproduce here.

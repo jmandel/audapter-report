@@ -37,3 +37,10 @@ def derive(d, up):
             "held_ms": [1000 * h for h in d["held_s"]], "held1_ms": 1000 * d["held_s"][0], "held_ctrl_ms": 1000 * (d["ctrl_state3_s"] - d["ctrl_state2_s"]),
             "s2_1": d["state2_s"][0], "s2_2": d["state2_s"][1], "s2_3": d["state2_s"][2],
             "on_1": d["shift_on_s"][0], "on_2": d["shift_on_s"][1], "on_3": d["shift_on_s"][2]}
+
+
+def derive_real(rd):
+    nr = [t for t in rd["trials"] if t["mode"] == "no_reload"]
+    rl = [t for t in rd["trials"] if t["mode"] == "reload"]
+    return {"nr_list": " / ".join(f'{t["state2_s"]:.3f}' for t in nr), "rl_s": rl[0]["state2_s"], "n_tr": len(nr),
+            "held_ms": max(t["held_s"] for t in rd["trials"]) * 1000}

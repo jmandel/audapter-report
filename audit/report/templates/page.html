@@ -26,7 +26,7 @@
 <main class="wrap">
 <section id="brief" class="prose">
   <h2>In brief</h2>
-  <p>Most of what an experiment depends on works as intended. On the six configurations we compared (passthrough, formant shift with a 1D field and with a PCF,
+  <p>Most of what an experiment depends on works as intended, on synthetic signals and on 80 real recordings. On the six configurations we compared (passthrough, formant shift with a 1D field and with a PCF,
     phase-vocoder pitch shift, PCF pitch shift, 100 ms DAF), the blab core produces output that is bit-for-bit identical to upstream 2.1.5.
     The one difference we found is the intended formant-dropout fix. Formant shifts deliver what they log: for ±20 % shifts, the logged
     <code>sfmts/fmts</code> ratio equals the command exactly, and an independent LPC estimate on the output audio agrees within measurement error.
@@ -55,7 +55,7 @@
 <section id="method" class="method">
   <h2>How we ran Audapter without MATLAB or a sound card</h2>
   <ol class="chain">
-    <li><h3>Synthetic input</h3><p>Klatt-style cascade vowels with known formants and F0, noise, and the lab's own <code>mtbabble48k.wav</code>, generated at the 48 kHz device rate.</p></li>
+    <li><h3>Synthetic and real input</h3><p>Klatt-style cascade vowels with known formants and F0, noise, the lab's own <code>mtbabble48k.wav</code>, and 80 real recordings from open corpora, all at the 48 kHz device rate.</p></li>
     <li><h3>The lab's MATLAB code, unmodified</h3><p><code>getAudapterDefaultParams.m</code> and <code>AudapterIO('init')</code> configure the MEX exactly as in an experiment, running in GNU Octave.</p></li>
     <li><h3>The real C++ core</h3><p>Compiled as a MEX with Octave's <code>mkoctfile</code> in Docker, with portability patches only. Each 3 × 32-sample frame goes through <code>Audapter('runFrame')</code>, which calls the same <code>handleBuffer</code> as the ASIO callback.</p></li>
     <li><h3>What Audapter logged</h3><p><code>AudapterIO('getData')</code>: <code>signalIn</code>, <code>signalOut</code>, <code>fmts</code>, <code>sfmts</code>, <code>ost_stat</code>, <code>rms</code>.</p></li>
@@ -107,6 +107,38 @@
     <li>The tracker's <code>static last_f[]</code> survives across trials in the code, but an abrupt /i/→/a/ switch between trials showed no observable effect (FMT-F9).</li>
     <li>Audapter compiled to WebAssembly reproduces the native build bit for bit when both use the same maths library; the in-browser panels below rely on that.</li>
   </ul>
+</section>
+
+<section id="realspeech" class="prose">
+  <h2>Checked on real speech</h2>
+  <p>Synthetic vowels make effects easy to see, but experiments run on real voices. Every main finding was therefore re-run on <strong>80 real recordings</strong>
+    (197 s in total) from openly licensed corpora: adult men and women, children aged 6–7, singers, dysphonic voices, sentences in real background noise, and the three
+    real Audapter session recordings shipped with Audapter. All 80 clips may be redistributed, and a script re-fetches every original from pinned URLs and rebuilds the
+    set byte for byte (<code>audit/corpus/</code>). Cards covered by this work have an “On real speech” section with the real-speech numbers and, where useful, a real input/output
+    pair; the sources are credited at the end of the report.</p>
+  <h3>What real speech confirmed</h3>
+  <ul>
+    <li><strong>The formant tracker is accurate.</strong> Against the hand-corrected formants of Hillenbrand et al. (1995), 576 vowels from men, women, boys and girls, the median
+      error was 1.9–2.0 % for F1 and 1.3–1.7 % for F2 with the default presets. (That data set may not be redistributed, so only the numbers appear here.)</li>
+    <li><strong>Formant shifts deliver what they log.</strong> On 78 clips and three shift patterns, the logged <code>sfmts/fmts</code> equalled the command exactly, and the shift
+      measured in the output audio was within a median 2–3 % of the command.</li>
+    <li><strong>Blab matches upstream.</strong> On the 80 clips, the blab core is bit-identical to upstream 2.1.5 in 7 of 8 scenarios (tracking, 1D field, PCF formant, phase vocoder,
+      PCF pitch, time-domain shift, delayed feedback); the eighth is the intended dropout change (<a href="#F6">F6</a>).</li>
+    <li><strong>No new memory errors.</strong> AddressSanitizer and UBSan over 480 clip-scenarios found only the known out-of-bounds read of H2.</li>
+    <li><strong>Old sessions replay.</strong> The three 2008–2013 Audapter session recordings, replayed with their original parameters, reproduce the formant tracks logged online
+      within 0.2–0.4 % (1–4 Hz).</li>
+  </ul>
+  <h3>What real speech changed</h3>
+  <ul>
+    <li><a href="#OST-F1">OST-F1</a> reproduces in 4 of 6 real trial pairs, but the example OST shipped with Audapter does <em>not</em> leak.</li>
+    <li><a href="#PT-5">PT-5</a>: the loudness step at a real pitch-shift onset is 1.2–7.3 dB, larger on average than on the synthetic vowel.</li>
+    <li><a href="#OST-F8">OST-F8</a> does not cleanly reproduce on real fricative onsets; the card is softened accordingly.</li>
+    <li><a href="#F6">F6</a>: across the corpus, blab perturbs about twice as many frames as upstream, differing on 61 of 80 clips.</li>
+    <li>Three new findings came from real speech: the <a href="#CORPUS-10">runFrame hang</a>, the <a href="#CORPUS-8">pitch tracker on low voices</a> and the
+      <a href="#CORPUS-11">unbounded formant target</a>, plus three short ones.</li>
+  </ul>
+  <p><strong>Coverage gap.</strong> No voice in the set is above about 350 Hz F0 (no high child or soprano voices), and none of the redistributable clips has hand-measured
+    formants; high-pitched voices remain untested.</p>
 </section>
 
 <section id="live" class="prose">
@@ -201,7 +233,7 @@
     <li><strong>Mostly the offline path.</strong> Findings and figures use <code>runFrame</code>, which runs the same <code>handleBuffer</code> as the audio callback.
       The live path (audio thread, RtAudio, ASIO) was tested in simulation, with a modelled ASIO driver; see “The live audio path”.</li>
     <li><strong>GCC on Linux, not MSVC on Windows.</strong> Undefined behaviour, such as the out-of-bounds reads, can produce different garbage on the Windows heap. A sanitizer report means the code is wrong. It does not predict the exact wrong value you will get.</li>
-    <li><strong>Synthetic speech.</strong> Our vowels are cleaner than real voices. We set <code>rmsThresh</code> to 0.005 for them. Real-speech fixtures from <code>example_data</code> are a next step.</li>
+    <li><strong>Real speech, but not every voice.</strong> Findings were checked on 80 real recordings as well as synthetic signals, but no voice above about 350 Hz F0 was available, and the tests use recordings, not a live talker hearing the feedback.</li>
     <li><strong>Severity is our judgement</strong> of experimental impact, and you know your paradigms better than we do.</li>
   </ul>
 </section>
@@ -253,10 +285,25 @@
 </section>
 
 
-<section id="corpus" class="reserved">
-  <h2>Real speech</h2>
-  <p><strong>Placeholder, in review.</strong> Our inputs are synthetic. A separate line of work (<code>audit/corpus/</code>) repeats key tests on openly licensed
-    recordings of real speech. Its results will appear here once verified.</p>
+
+<section id="credits" class="prose">
+  <h2>Corpus credits</h2>
+  <p>Real recordings used in this report, their sources and licences. Every clip was cut, converted to mono 48 kHz and, where heard in the report, processed by Audapter:
+    these are modified versions of the originals.</p>
+  <ul class="credits">
+    <li>CMU ARCTIC databases, J. Kominek and A. W. Black (2003), <a href="http://festvox.org/cmu_arctic/">festvox.org/cmu_arctic</a>. © 2003 Carnegie Mellon University,
+      used under the CMU ARCTIC licence (<a href="assets/licenses/CMU_ARCTIC_COPYING.txt">full notice</a>).</li>
+    <li>LibriSpeech, V. Panayotov et al. (2015), <a href="https://www.openslr.org/12/">OpenSLR 12</a>, CC BY 4.0.</li>
+    <li>speechocean762, J. Zhang et al. (2021), <a href="https://www.openslr.org/101/">OpenSLR 101</a>, CC BY 4.0.</li>
+    <li>Noisy speech database (VoiceBank-DEMAND), C. Valentini-Botinhao (2017), <a href="https://doi.org/10.7488/ds/2117">doi:10.7488/ds/2117</a>, CC BY 4.0.</li>
+    <li>Perceptual Voice Qualities Database, P. Walden (2022), <a href="https://doi.org/10.17632/9dz247gnyb.4">doi:10.17632/9dz247gnyb.4</a>, CC BY 4.0.</li>
+    <li>VocalSet, J. Wilkins et al. (2018), <a href="https://doi.org/10.5281/zenodo.1442513">doi:10.5281/zenodo.1442513</a>, CC BY 4.0.</li>
+    <li>vocadito, R. Bittner et al. (2021), <a href="https://doi.org/10.5281/zenodo.5578807">doi:10.5281/zenodo.5578807</a>, CC BY 4.0.</li>
+    <li>Audapter example trials (<code>example_data</code>, <code>mcode</code>), © 2006–2021 Audapter Authors, MIT / Apache-2.0; E. Kearney's audapter_matlab fork (MIT);
+      C. Niziolek's free-speech templates (MIT).</li>
+    <li>Hillenbrand et al. (1995) vowel measurements: used for numbers only, not distributed. Four hVd words from the Praat source tree were used in the analysis only;
+      their audio is not part of this report.</li>
+  </ul>
 </section>
 
 <section id="repro" class="prose">

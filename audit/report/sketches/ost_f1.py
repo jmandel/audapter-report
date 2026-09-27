@@ -29,3 +29,13 @@ def derive(d, up):
     r = [a / b for a, b, t in zip(d["sF1_B_after_A"], d["F1_B"], d["t"]) if 0.75 <= t <= 1.15 and b > 0]
     v["logged_ratio"] = sum(r) / len(r)
     return v
+
+
+def derive_real(rd):
+    P = rd["pairs"]
+    ch = [p for p in P if p["fall_fresh_s"] != p["fall_afterA_s"]]
+    late = sorted(p["fall_afterA_s"] - p["fall_fresh_s"] for p in ch if p["fall_afterA_s"] is not None and p["fall_fresh_s"] is not None)
+    never = sum(1 for p in ch if p["fall_afterA_s"] is None)
+    p2 = P[1]
+    return {"n_pairs": len(P), "n_changed": len(ch), "late_list": ", ".join(f"{x:.2f}" for x in late), "n_never": never,
+            "p2_fresh": p2["fall_fresh_s"], "p2_after": p2["fall_afterA_s"], "p2_shift": p2["shifted_s_afterA"]}

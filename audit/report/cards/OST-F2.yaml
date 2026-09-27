@@ -81,3 +81,9 @@ verify:
   - {kind: F, what: "Lean 4 proof, theorem trial_independent", name: "formal/lean/Ost.lean", detail: "with [j] plus the existing OST_TAB::reset(), trials are independent of their history; clearing statOnsetIndices is not needed, because with [j] every onset read touches only states entered in the current trial (FORMAL-8)"}
   - {kind: F, what: "Lean 4 counterexamples", name: "formal/lean/OstCex.lean", detail: "reset without [j]: identical silent trials time out at frame 11, 22, 33 (ce2_bug_drift), and ELAPSED_TIME after the jump fires 1 frame after entry instead of 6 (ce2_bug_trial1); [j] without reset: an offset is missed (ce1_leak)"}
 reproduce: "cd audit/harness && ./run-oct.sh t_ost.m"
+real:
+  dir: ost-f2
+  text: >
+    On five quiet real speakers in a row (ARCTIC, LibriSpeech and speechocean762 clips at a low level, so the onset rule is slow), with the OST loaded once,
+    the maxIOI timeout fired at {nr_list} s on trials 1 to {n_tr}; with the OST reloaded before each trial it fired at {rl_s:.3f} s every time.
+    ELAPSED_TIME 0.1 s held state 2 for {held_ms:.0f} ms on every trial. Real speech reproduces the synthetic result exactly.

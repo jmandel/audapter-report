@@ -45,3 +45,11 @@ def derive(d, up):
             "up_dip_after_out": up["dip_after_F1_out_hz"] if up else float("nan"),
             "mvl_text": " / ".join(str(v) for v in d["mvl_values"]),
             "mvl_same": "identical output on both builds" if d["mvl_all_identical"] and up and up["mvl_all_identical"] else "differs"}
+
+
+def derive_real(rd):
+    s = rd["corpus_sweep"]
+    b = [c for c in rd["clips"] if c["clip"] == "arctic_bdl_a0030"][0]
+    return {"n": s["clips"], "n_diff": s["clips_differing"], "fr_up": s["shifted_frames_upstream"], "fr_blab": s["shifted_frames_blab"],
+            "ratio": s["shifted_frames_blab"] / s["shifted_frames_upstream"], "n_seg": len(b["segments"]),
+            "seg_total": sum(e - a for a, e in b["segments"]), "last_s": b["last_s"]}

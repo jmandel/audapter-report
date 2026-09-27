@@ -60,3 +60,15 @@ def derive(d, up):
     steps = [r["gain2_db"] - r["gain0_db"] for r in d["sweep"]]
     return {"f0_cents": 1200 * math.log2(d["f0_after"] / d["f0_in"]), "sweep_min": -max(steps), "sweep_max": -min(steps),
             "ampnorm_text": "; ".join(f'{a["name"]}: {a["result"].replace("Audapter: ", "")}' for a in d["ampnorm"])}
+
+
+def derive_real(rd):
+    import statistics as st
+    clean = [c for c in rd["steady"]["per_clip"] if not c["id"].startswith("vbd_")]
+    grp = lambda pre: [c["gp2"] - c["g0"] for c in clean if c["group"].startswith(pre)]
+    h = [s["heard_step_db"] for s in rd["in_utterance"]]
+    S = rd["steady"]
+    return {"n_clean": len(clean), "g0_lo": S["gain0_db_range"][0], "g0_hi": S["gain0_db_range"][1],
+            "st_lo": -S["step_0_to_up2_db_range"][1], "st_hi": -S["step_0_to_up2_db_range"][0],
+            "med_m": -st.median(grp("adult_M")), "med_f": -st.median(grp("adult_F")), "med_c": -st.median(grp("child")),
+            "n_utt": len(h), "on_lo": -max(h), "on_hi": -min(h), "on_med": -st.median(h)}

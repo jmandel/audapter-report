@@ -84,3 +84,14 @@ verify:
   - {kind: H, what: "first analysis (the t_diff.m scenario, F1 850 → 400 → 850 Hz)", name: "a_reentry.m", detail: "same pattern: blab adds a second shifted stretch after re-entry"}
   - {kind: H, what: "WASM alternative build", name: "report/wasm/checks/alt-f6.mjs", detail: "alternative = upstream export to the frame; bit-identical to released when the field is never left and on 6 reference scenarios"}
 reproduce: "cd audit/harness && ./run-oct.sh report_f6.m && VARIANT=upstream ./run-oct.sh report_f6.m build-upstream upstream/audapter_matlab && ./run-oct.sh report_f6.m"
+real:
+  dir: f6
+  data: blab_data.json
+  text: >
+    Across the {n} real clips of the corpus, with a restricted field (F1 350–900 Hz, F2 900–2600 Hz, F1 +20 %), blab perturbed {fr_blab} frames against upstream's {fr_up}
+    ({ratio:.1f}×), and the two builds differed on {n_diff} of {n} clips. On the sentence below, upstream shifts one stretch (0.08–0.38 s); blab shifts {n_seg}
+    stretches totalling {seg_total:.2f} s, the last ending at {last_s:.2f} s, in later words. Whether that is wanted depends on the experiment.
+  clips:
+    - {file: blab_input.wav, role: input, label: "Input, \"I had faith in them.\"", sources: [arctic_bdl_a0030]}
+    - {file: upstream_output.wav, role: expected, label: "upstream 2.1.5 output (one stretch shifted)", sources: [arctic_bdl_a0030]}
+    - {file: blab_output.wav, role: observed, label: "blab output (seven stretches shifted)", sources: [arctic_bdl_a0030]}

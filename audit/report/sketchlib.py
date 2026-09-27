@@ -60,8 +60,9 @@ class Sketch:
         y = self.y; self.label(y, 18, text, sub); self.frame(y, h)
         sy = lambda v: y + h - 4 - (min(max(v, lo), hi) - lo) / (hi - lo) * (h - 8)
         for g in grid:
+            g, lab = g if isinstance(g, tuple) else (g, f"{g:g}{unit}")
             self.parts.append(f'<line class="sk-grid" x1="{X0}" x2="{X1}" y1="{sy(g):.1f}" y2="{sy(g):.1f}"/>'
-                              f'<text class="sk-tick" x="{X0+4}" y="{sy(g)-3:.1f}">{g:g}{unit}</text>')
+                              f'<text class="sk-tick" x="{X0+4}" y="{sy(g)-3:.1f}">{lab}</text>')
         for t, v, kind in series:
             segs, cur = [], []
             for tt, vv in zip(t, v):

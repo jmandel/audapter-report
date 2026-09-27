@@ -100,6 +100,12 @@ def code_block(repos, ref, compact=False):
             f'<p class="code-note">{ref.get("note", "")}</p></figure>')
 
 def card_html(repos, card, tests, data, up, asset_rel, variants):
+    if data.get("no_event"):   # e.g. a live run that produced no burst: say so instead of drawing a figure
+        sev, sevc = SEV[card["severity"]]
+        return (f'<article class="card" id="{anchor(card["id"])}"><aside class="rail"><p class="fid">{E(card["id"])}</p>'
+                f'<p class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev} severity</p></aside><div class="main">'
+                f'<h3>{E(card["headline"])}</h3><p>{E(data["no_event"])}</p><p>{card["cause"]["summary"]}</p>'
+                f'<p class="repro"><span>Reproduce</span> <code>{E(card["reproduce"])}</code></p></div></article>')
     mod = importlib.import_module("sketches." + card["sketch"])
     v = dict(data)
     if hasattr(mod, "derive"):
@@ -155,6 +161,7 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
       <p>Source: <a href="{asset_rel}/data.json">data.json</a>, written by the export script from the harness run.</p></details>
     </figure>
     {listen}
+    {real_html(card)}
     {interactive_html(card, variants)}
     <section class="cause" aria-label="Cause">
       <h4>Cause</h4>
@@ -181,6 +188,63 @@ def notes_check(ref):
         heads = [re.sub(r"[^a-z0-9]+", "", h.split(".")[0].lower()) for h in re.findall(r"^### (.+)$", open(p).read(), re.M)]
         if re.sub(r"[^a-z0-9]+", "", anchor.lower()) not in heads and f'name="{anchor}"' not in open(p).read():
             fail(f"notes heading {ref} not found")
+
+_MANIFEST = None
+def manifest():
+    global _MANIFEST
+    if _MANIFEST is None:
+        import csv
+        _MANIFEST = {r["id"]: r for r in csv.DictReader(open(os.path.join(AUDIT, "corpus", "manifest.csv")))}
+    return _MANIFEST
+
+def clip_credit(ids):
+    """Source and licence line for published real clips; refuses restricted or unclear-provenance sources."""
+    groups, cmu = {}, False
+    for i in ids:
+        m = manifest().get(i)
+        if m is None:
+            fail(f"real clip {i} not in corpus/manifest.csv")
+        if i.startswith(("praat_", "hillenbrand")) or "GPL" in m["license"]:
+            fail(f"real clip {i}: source not approved for report audio ({m['license']})")
+        cmu = cmu or "CMU" in m["license"]
+        groups.setdefault((m["source"].split(",")[0], m["license"].split(" (")[0]), []).append(m["orig_file"].split("/")[-1])
+    note = "; ".join(f'{E(s)}: {", ".join(E(f) for f in fs)} ({E(l)})' for (s, l), fs in groups.items())
+    note = "Source: " + note + ". Cut, mono 48 kHz, processed by Audapter (modified)."
+    if cmu:
+        note += ' CMU ARCTIC © 2003 Carnegie Mellon University (<a href="assets/licenses/CMU_ARCTIC_COPYING.txt">licence notice</a>).'
+    return note
+
+def real_html(card, variants_unused=None):
+    r = card.get("real")
+    if not r:
+        return ""
+    src = os.path.join(EXPORTS, r["dir"], "real")
+    rd = json.load(open(os.path.normpath(os.path.join(EXPORTS, r["dir"], "real", r.get("data", "data.json")))) if not r.get("data", "").startswith("../")
+                   else open(os.path.join(EXPORTS, r["dir"], r["data"][3:])))
+    mod = importlib.import_module("sketches." + card["sketch"])
+    v = dict(rd)
+    if hasattr(mod, "derive_real"):
+        v.update(mod.derive_real(rd))
+    dst = os.path.join(OUT, "assets", card["asset_dir"], "real"); os.makedirs(dst, exist_ok=True)
+    clips = []
+    for c in r.get("clips", []):
+        shutil.copy2(os.path.join(src, c["file"]), dst)
+        warn = f'<p class="warn"><span aria-hidden="true">!</span> {E(c["warn"])}</p>' if c.get("warn") else ""
+        clips.append(f'<li class="clip role-{c["role"]}"><span class="swatch" aria-hidden="true"></span><div>'
+                     f'<p class="clip-l" data-file="real/{c["file"]}"><strong>{ROLE[c["role"]]}.</strong> {E(c["label"])}</p>'
+                     f'<audio controls preload="none" src="assets/{card["asset_dir"]}/real/{c["file"]}"></audio>{warn}'
+                     f'<p class="credit">{clip_credit(c["sources"])}</p></div></li>')
+    nums = "".join(f"<tr><th scope=row>{E(k)}</th><td>{E(t.format(**v))}</td></tr>" for k, t in r.get("numbers", []))
+    fig = ""
+    if hasattr(mod, "sketch_real"):
+        fig = f'<figure class="fig">{mod.sketch_real(rd)}</figure>'
+    return f'''<section class="real" aria-label="Real speech">
+      <h4>On real speech</h4>
+      <p>{r["text"].format(**v)}</p>
+      {fig}
+      {"<table class='plain realnums'>" + nums + "</table>" if nums else ""}
+      {"<ul class='clips'>" + "".join(clips) + "</ul><p class='norm'>" + E(r.get("audio_note", "The clips in this section share one playback gain. Real recordings from the audit's open corpus (audit/corpus); full credits at the end of the report.")) + "</p>" if clips else ""}
+    </section>'''
 
 def notes_url(ref):
     """GitHub URL for a notes reference 'notes/x.md#f1', with the anchor GitHub generates for that heading."""
@@ -408,6 +472,8 @@ def main():
         page = page.replace("{{SHA:" + k + "}}", s).replace("{{URL:" + k + "}}", f'{repos[k]["url"]}/tree/{repos[k]["sha"]}')
     page = re.sub(r"(?<=\d) %", "\u00a0%", page)
     open(os.path.join(OUT, "index.html"), "w").write(page)
+    lic = os.path.join(OUT, "assets", "licenses"); os.makedirs(lic, exist_ok=True)
+    shutil.copy2(os.path.join(AUDIT, "corpus", "licenses", "CMU_ARCTIC_COPYING.txt"), lic)
     single = os.path.join(OUT, "index.single.html")
     if "--single" not in args and os.path.exists(single):
         os.remove(single)   # never publish a stale single-file copy

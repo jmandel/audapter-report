@@ -69,3 +69,8 @@ verify:
   - {kind: H, what: "report export (heard output, two closedLoopGain settings)", name: "report_i02.m"}
   - {kind: H, what: "patched WASM build vs shipped", name: "report/wasm/checks/fix-i-02.mjs", detail: "node audit/report/wasm/check-patches.mjs fix-i-02"}
 reproduce: "cd audit/harness && ./run-oct.sh report_i02.m"
+real:
+  dir: i-02
+  text: >
+    With real speech driving fb 5, the balance between the speech-modulated and the playback component moved by {d_lo:+.1f} dB at dScale {ds_lo:.3f} and by
+    {d_hi:+.1f} dB at dScale {ds_hi:.3f} relative to dScale 1, i.e. by 20·log10(dScale), as the code predicts.

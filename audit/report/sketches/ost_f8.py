@@ -32,3 +32,11 @@ def derive(d, up):
     return {"early_ms": d["hold_delay_ms"] - d["braces_delay_ms"], "click_ms": 1000 * d["click_dur"],
             "click_lead_s": d["s_on"] - d["click_braces_state2_s"], "hold_ms": 1000 * d["hold_s"],
             "hold_frames_ms": 1000 * d["hold_frames"] * d["frame_s"], "braces_frames_ms": 1000 * d["braces_frames"] * d["frame_s"]}
+
+
+def derive_real(rd):
+    C = [c for c in rd["clips"] if c["fricative_onset_s"] is not None]
+    fired = [c for c in C if c["state2_braces_s"] is not None]
+    d = [(c["state2_braces_s"] - c["fricative_onset_s"]) * 1000 for c in fired]
+    return {"n_fric": len(C), "n_brace": len(fired), "n_hold": sum(1 for c in C if c["state2_hold50ms_s"] is not None),
+            "lag_lo": min(d) if d else 0, "lag_hi": max(d) if d else 0}

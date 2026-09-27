@@ -45,3 +45,7 @@ def derive(d, up):
     fmt = lambda g: ", ".join(f"{a:.2f}–{b:.2f} s" for a, b in g) if g else "none"
     return {"gaps_text": fmt(d["gaps"]), "up_maxPBLen": up["maxPBLen"] if up else "?",
             "up_gaps_text": fmt(up["gaps"]) if up else "not run"}
+
+
+def derive_real(rd):
+    return {}

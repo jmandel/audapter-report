@@ -3,7 +3,7 @@
 id: LIVE-3
 log: LIVE-3
 notes: "live/README.md#live-3"
-headline: "reset() while the participant is voicing can send a clipped burst, 17 dB above the loudest speech sample, to the headphones"
+headline: "reset() while the participant is voicing can send a clipped burst to the headphones: +17 to +61 dB above the loudest speech sample so far"
 severity: med
 origin: upstream
 origin_note: "Inherited: upstream 2.1.5 has the same unlocked reset() and the same resampling-filter reset (Audapter.cpp:506 there). Known from reading both trees; the simulation ran the blab build only."
@@ -17,7 +17,7 @@ effect:
     calls <code>reset</code> about every 62 ms (a 50 ms pause after each ~12 ms call) for 120 s. The fake driver uses float64 samples so that
     true peaks above full scale can be measured. The clips are cut from that run at the 48 kHz device rate.
   expected: "reset() clears Audapter's buffers, so the output drops out for a few ms and then resumes at the usual level. The race-free control (the same resets done between offline runFrame calls) never exceeds {control_peak:.3f}, the normal peak."
-  observed: "{n_resets} resets, {n_resets_voiced} of them during voicing. After one of them the output jumped to {burst_peak:.2f} × digital full scale, {burst_peak_db_re_normal:+.1f} dB above the loudest normal output sample, for {burst_ms:.1f} ms; {clipped_samples} samples lie beyond full scale and a DAC clips them. The other resets during voicing produced only the {dropout_ms_median:.0f} ms dropout."
+  observed: "{n_resets} resets, {n_resets_voiced} of them during voicing. After one of them the output jumped to {burst_peak:.2f} × digital full scale, {burst_peak_db_re_normal:+.1f} dB above the loudest normal output sample, for {burst_ms:.1f} ms; {clipped_samples} samples lie beyond full scale and a DAC clips them. The other resets during voicing produced only the {dropout_ms_median:.0f} ms dropout. Across three independent runs so far the bursts measured +17.0 dB; +42.9 and +48.8 dB; and +61.1 dB re the loudest normal sample, at a consistent rate of about 1 in 1000–2000 resets during voicing: the rate is stable, the size is not."
   matters: >
     A sudden full-scale click in the headphones is unpleasant, can startle the participant, and at the raised playback levels of feedback
     experiments it is uncomfortably loud. It lands at a trial start, when the participant may already be speaking. No error or warning is raised.
@@ -65,7 +65,7 @@ cause:
     Put one mutex around every MEX action that touches Audapter state; the callback <code>try_lock</code>s it and outputs silence (or the
     previous frame) when it is busy. Alternatively, have <code>reset</code> set a flag that the callback acts on at the next frame boundary.
 verify:
-  - {kind: D, what: "live simulation driver (fake ASIO, float64 samples)", name: "live/run.sh burst", detail: "1 burst in 1945 resets; race-free control max 0.171"}
+  - {kind: D, what: "live simulation driver (fake ASIO, float64 samples)", name: "live/run.sh burst", detail: "1 burst in 1945 resets in the run shown; independent reproductions: 2 in 1901 (+42.9, +48.8 dB) and 1 in 1955 (+61.1 dB); race-free control max 0.171"}
   - {kind: D, what: "live simulation driver", name: "live/run.sh resetcheck", detail: "1 of 1000 always-on trial starts with a zeroed first data row"}
   - {kind: D, what: "ThreadSanitizer inventory", name: "live/run.sh tsan", detail: "356 reports, 195 distinct site pairs; reset ↔ IIR_Filter::filter among them"}
   - {kind: D, what: "report export (burst, dropouts, comparison reset, clips)", name: "report/live/export_live.py live3", detail: "checks its excerpt against results/reset_race_burst.wav"}

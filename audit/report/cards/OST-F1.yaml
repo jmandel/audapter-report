@@ -67,3 +67,16 @@ verify:
   - {kind: F, what: "Lean 4 proof, theorem trial_independent", name: "formal/lean/Ost.lean", detail: "with maxIOI writing [j] and ostTab.reset() at trial start, every trial after any history behaves exactly like a trial on a freshly loaded OST, for every well-formed table and every input (FORMAL-8)"}
   - {kind: F, what: "Lean 4 counterexamples", name: "formal/lean/OstCex.lean", detail: "each fix alone is not enough: [j] without the reset still loses trial B's offset after a 60-frame trial A (ce1_leak); the reset without [j] still lets a maxIOI timeout drift 11 → 22 → 33 frames (ce2_bug_drift)"}
 reproduce: "cd audit/harness && ./run-oct.sh t_ost.m"
+real:
+  dir: ost-f1
+  text: >
+    We repeated the card's OST and PCF on {n_pairs} pairs of real recordings (a longer utterance as trial A, a shorter one as trial B) from the audit's open corpus.
+    In {n_changed} of {n_pairs} pairs, trial B's INTENSITY_FALL moved because trial A came first: {late_list} s late, or never ({n_never}×). In the pair below,
+    the fall came at {p2_after:.2f} s instead of {p2_fresh:.2f} s, and F1 +30 % was applied for {p2_shift:.2f} s only because of trial A (0 s when fresh).
+    Two pairs were unaffected. <strong>Real speech also narrows the finding:</strong> the example OST shipped with Audapter (<code>example_data/ost</code>:
+    RISE_HOLD → FALL → ELAPSED) showed <em>no</em> leak in 6 of 6 pairs, because its FALL follows a rule that updates <code>lastStatEnd</code> in the same trial.
+    The leak needs an INTENSITY_FALL that follows a rule which does not set it, such as ELAPSED_TIME.
+  clips:
+    - {file: trialB_input.wav, role: input, label: "Trial B input, \"so he cares huh\"", sources: [libri_1988-24833-0010]}
+    - {file: trialB_output_fresh.wav, role: expected, label: "Trial B output, first trial of the session", sources: [libri_1988-24833-0010]}
+    - {file: trialB_output_after_A.wav, role: observed, label: "Trial B output right after trial A (\"Will we ever forget it.\")", sources: [libri_1988-24833-0010, arctic_bdl_a0005]}

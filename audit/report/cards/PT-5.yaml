@@ -72,3 +72,13 @@ verify:
   - {kind: F, what: "exact algebra on the Hann window", name: "formal/ola/ola_exact.py", detail: "the 0 st overlap-add gain is exactly 3/2 (+3.52 dB) for every hop ratio pvocFrameLen/pvocHop of 3 or more, independent of frame length, hop and sample rate; the unity fix is a factor 2/3 at phase_vocoder.cpp:467 (FORMAL-7)"}
   - {kind: F, what: "the real phase_vocoder.cpp, measured", name: "formal/ola/pv_gain.cpp", detail: "1.5000 at hop ratios 4 and 8; content below the first bin gets 5/2; at hop ratio 2 the gain swings between 1 and 2 at the hop rate"}
 reproduce: "cd audit/harness && ./run-oct.sh t_pitch.m"
+real:
+  dir: pt-5
+  text: >
+    On {n_clean} clean real clips (men, women, children and singers), the level at 0 st is {g0_lo:+.2f} to {g0_hi:+.2f} dB, the same constant offset as on the synthetic vowel.
+    The steady level at +2 st is {st_lo:.1f} to {st_hi:.1f} dB below the 0 st level (group medians: men {med_m:.1f}, women {med_f:.1f}, children {med_c:.1f} dB).
+    With the example OST and <code>pitch_pert.pcf</code> switching to +2 st mid-utterance, the loudness step heard at the onset was {on_lo:.1f} to {on_hi:.1f} dB
+    (median {on_med:.1f} dB, {n_utt} clips): a real, speaker-dependent step, somewhat larger than on the synthetic vowel.
+  clips:
+    - {file: pcf_pitch_input.wav, role: input, label: "Input, \"Will we ever forget it.\"", sources: [arctic_bdl_a0005]}
+    - {file: pcf_pitch_output.wav, role: observed, label: "Output: +2 st from the end of word 1 (example OST and pitch_pert.pcf)", sources: [arctic_bdl_a0005]}

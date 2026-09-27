@@ -16,6 +16,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 AUDIT = os.path.dirname(os.path.dirname(HERE))
 LIVE = os.path.join(AUDIT, "live")
 RES, WIN, WOUT = (os.path.join(LIVE, d) for d in ("results", "work/in", "work/out"))
+# LIVE_DIR=<dir with results/ work/> reads another checkout's live run (e.g. a reproduction), for testing only
+if os.environ.get("LIVE_DIR"):
+    RES, WIN, WOUT = (os.path.join(os.environ["LIVE_DIR"], d) for d in ("results", "work/in", "work/out"))
 EXP = os.path.join(AUDIT, "harness", "oct", "out", "report")
 FS, BUF = 48000, 96
 
@@ -94,7 +97,11 @@ def live3():
     e = blockmax(x, BUF); nb = len(e)
     ev = np.where(e > 2 * refpk)[0]
     groups = np.split(ev, np.where(np.diff(ev) > 5)[0] + 1) if len(ev) else []
-    assert len(groups) >= 1
+    if not groups:
+        # no burst in this run: record the counts and say so (the card renders a short note instead of the figure)
+        dump(d, {"no_event": f"This run ({n_ops} resets in {secs:.0f} s while a vowel played) produced no burst above twice the normal peak.",
+                 "n_resets": n_ops, "run_s": secs, "n_bursts": 0, "ref_peak": refpk, "control_peak": ctrl})
+        return
     gi = int(np.argmax([e[g].max() for g in groups])); g = groups[gi]
     ipk = int(np.argmax(np.abs(x)))
     # every reset that lands during voicing zeroes the output buffers: a run of near-silent 2 ms blocks while the
@@ -107,8 +114,15 @@ def live3():
     drops = np.split(low, np.where(np.diff(low) > 1)[0] + 1)
     drops = [q for q in drops if len(q)]
     dstart = np.array([q[0] for q in drops]); dlen = np.array([len(q) for q in drops])
-    # the dropout that precedes the burst = the racing reset
-    pre = dstart[dstart <= g[0]]; k_race = int(pre.max()); assert g[0] - k_race <= 6
+    # Locate the racing reset. The driver does not time-stamp its reset calls (it logs only their durations and the
+    # callbacks' start/duration, which do not mark resets), so use the output: every reset during voicing zeroes the
+    # buffers, i.e. a near-silent dropout. Take the nearest dropout start up to 60 blocks (120 ms, more than one 50 ms
+    # reset period) before the burst onset; if the burst shape hides the dropout, anchor on the burst onset instead.
+    pre = dstart[(dstart <= g[0]) & (dstart >= g[0] - 60)]
+    if len(pre):
+        k_race = int(pre.max()); located = "nearest output dropout before the burst"
+    else:
+        k_race = max(int(g[0]) - 1, 0); located = "burst onset (no dropout found before it)"
     t_reset = k_race * BUF                       # sample index where the output first falls silent
     burst_blocks = [q for q in drops]  # noqa
     # expected: another reset that landed at (nearly) the same point of the looped vowel and did not race badly
@@ -117,25 +131,30 @@ def live3():
     dist = [min(abs(ph(c) - ph(t_reset)), L - abs(ph(c) - ph(t_reset))) for c in cand]
     t_match = cand[int(np.argmin(dist))]; match_off = int(ph(t_match) - ph(t_reset))
     # true-peak / duration numbers
-    w0, w1 = t_reset - 5 * BUF, t_reset + 20 * BUF
+    gs = int(g[0]) * BUF                          # burst onset (sample)
+    w0, w1 = min(t_reset, gs) - 5 * BUF, int(g[-1]) * BUF + 20 * BUF
     seg = x[w0:w1]
     above = np.where(np.abs(seg) > refpk)[0]
     ab2 = np.where(np.abs(seg) > 2 * refpk)[0]
     clipped = int(np.sum(np.abs(seg) > 1.0))
     peak = float(np.abs(x).max())
     # verify against the live line's own excerpt (results/reset_race_burst.wav, float32, clipped as a DAC would)
-    fs_r, rw = wf.read(need(os.path.join(RES, "reset_race_burst.wav")))
-    a0 = max(0, ipk - 24000)
-    assert np.max(np.abs(rw.astype(float) - np.clip(x[a0:a0 + len(rw)], -1, 1))) < 1e-6, "results wav != work/out run"
+    rwp = os.path.join(RES, "reset_race_burst.wav"); excerpt_ok = None
+    if os.path.exists(rwp):
+        fs_r, rw = wf.read(rwp)
+        a0 = max(0, ipk - 24000)
+        excerpt_ok = bool(np.max(np.abs(rw.astype(float) - np.clip(x[a0:a0 + len(rw)], -1, 1))) < 1e-6)
+        print("results/reset_race_burst.wav matches this run:", excerpt_ok)
     # envelopes, 1 ms blocks, t = 0 at the reset (output falls silent), -60 .. +80 ms
-    E0, E1, eb = -0.060, 0.080, 48
+    E0, E1, eb = -0.060, max(0.080, (gs - t_reset) / FS + 0.030), 48
     def env(sig, t0):
         a = t0 + int(E0 * FS); n = int((E1 - E0) * FS) // eb
         return blockmax(sig[a:a + n * eb], eb)
     env_obs = env(x, t_reset); env_exp = env(x, t_match)
     env_in = blockmax(m[(np.arange(t_reset + int(E0 * FS), t_reset + int(E0 * FS) + len(env_obs) * eb)) % L], eb)
     # waveform inset: -4 .. +14 ms around the reset, every sample (clipped as the DAC plays it)
-    I0, I1 = -0.004, 0.014
+    I0 = (gs - t_reset) / FS - 0.004 if gs - t_reset > 10 * BUF else -0.004
+    I1 = I0 + 0.018
     ia, ib = t_reset + int(I0 * FS), t_reset + int(I1 * FS)
     wave_obs = np.clip(x[ia:ib], -1, 1); wave_exp = x[t_match + int(I0 * FS):t_match + int(I1 * FS)]
     # audio: 1.0 s around the reset
@@ -148,7 +167,7 @@ def live3():
         {"name": "input_vowel", "x": clip_in, "label": "Input: the looped vowel at the microphone around the reset"},
         {"name": "output_reset_no_burst", "x": clip_exp, "label": "Output around another reset at the same point of the vowel (no burst)"},
         {"name": "output_reset_burst", "x": clip_obs, "label": "Output around the reset that raced the callback (clipped at full scale, as a DAC plays it)",
-         "warn": "loud click: the burst is played at -1 dBFS here, 17 dB above the speech; turn the volume down first"}], gain=g)
+         "warn": f"loud click: the burst is played at -1 dBFS here, {20*np.log10(min(peak, 1.0) / max(np.abs(clip_exp).max(), 1e-9)):.0f} dB above the speech; turn the volume down first"}], gain=g)
     rc = txt("resetcheck.txt")
     rcm = re.search(r"(\d+) resets while running: first logged frame != 1 in (\d+); non-contiguous frame clock in (\d+)", rc)
     ts = txt("tsan.txt")
@@ -157,7 +176,7 @@ def live3():
         "source": "audit/live run.sh burst (fake ASIO driver, float64 samples, buffer 96, reset every 50 ms while a looped vowel with F1 +20 % plays)",
         "fs": FS, "buf": BUF, "n_resets": n_ops, "run_s": secs, "reset_op_ms_median": op_med,
         "n_resets_voiced": len(drops), "dropout_ms_median": float(np.median(dlen)) * BUF / FS * 1000,
-        "n_bursts": len(groups), "ref_peak": refpk, "control_peak": ctrl,
+        "n_bursts": len(groups), "ref_peak": refpk, "control_peak": ctrl, "reset_located_by": located, "excerpt_matches_results_wav": excerpt_ok,
         "burst_peak": peak, "burst_peak_db_re_normal": 20 * np.log10(peak / refpk), "burst_peak_dbfs": 20 * np.log10(peak),
         "burst_ms_above_normal": (above[-1] - above[0] + 1) / FS * 1000, "burst_ms_above_2x": (ab2[-1] - ab2[0] + 1) / FS * 1000,
         "clipped_samples": clipped, "clipped_ms": clipped / FS * 1000,
