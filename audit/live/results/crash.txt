@@ -1,0 +1,23 @@
+--- pcf reload while running, 20 ms apart
+run 1: CRASH after 29 reloads
+run 2: CRASH after 1842 reloads
+run 3: CRASH after 792 reloads
+run 4: CRASH after 93 reloads
+--- pcf reload while running, 250 ms apart
+run 1: survived 600 reloads
+run 2: survived 600 reloads
+run 3: survived 600 reloads
+--- ost reload while running, 20 ms apart
+run 1: CRASH after 130 reloads
+run 2: CRASH after 15 reloads
+run 3: CRASH after 100 reloads
+run 4: CRASH after 59 reloads
+--- ost reload while running, 250 ms apart
+run 1: CRASH after 15 reloads
+run 2: CRASH after 533 reloads
+run 3: CRASH after 1 reloads
+==1==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000000 (pc 0x55b96860d542 bp 0x7fbd127904c0 sp 0x7fbd12786000 T1)
+    #0 0x55b96860d542 in Audapter::handleBuffer(double*, double*, int, bool) build/src/Audapter.cpp:1972
+    #1 0x55b968617779 in audapterCallback(char*, int, void*) build/src/Audapter.cpp:75
+    #2 0x55b9686f6652 in RtApiAsio::callbackEvent(long) build/src-io/RtAudio.cpp:5562
+    #0 0x7fbd16333ae1 in pthread_create ../../../../src/libsanitizer/asan/asan_interceptors.cpp:245

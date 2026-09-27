@@ -15,8 +15,9 @@
       speech without MATLAB or a sound card, and checked what a participant would hear against what Audapter logs. Each finding below comes with the audio,
       the exact lines of code and a command that reproduces it.</p>
     <dl class="pins">
+      <div><dt>By</dt><dd>Claude (Anthropic), at the request of Josh Mandel</dd></div>
       <div><dt>Reviewed</dt><dd><a href="{{URL:blab-mex}}">blab-lab/audapter_mex @{{SHA:blab-mex}}</a> and <a href="{{URL:blab-matlab}}">blab-lab/audapter_matlab @{{SHA:blab-matlab}}</a></dd></div>
-      <div><dt>Draft of</dt><dd>{{DATE}}, for the blab-lab maintainers</dd></div>
+      <div><dt>Date</dt><dd>{{DATE}}</dd></div>
       <div><dt>Compared with</dt><dd><a href="{{URL:upstream-mex}}">shanqing-cai/audapter_mex 2.1.5 @{{SHA:upstream-mex}}</a></dd></div>
     </dl>
   </div>
@@ -100,7 +101,18 @@
     <li>Phase-vocoder pitch shift is accurate to within 2 cents at ±2 st.</li>
     <li>The 2D-field MATLAB → C packing has no row/column-major mix-up, and the <code>getData</code> column layout matches between C++ and <code>AudapterIO</code>.</li>
     <li>Blab already includes the Kearney/GuentherLab time-domain pitch-shift fix, via blab PR #6.</li>
+    <li>The tracker's <code>static last_f[]</code> survives across trials in the code, but an abrupt /i/→/a/ switch between trials showed no observable effect (FMT-F9).</li>
+    <li>Audapter compiled to WebAssembly reproduces the native build bit for bit when both use the same maths library; the in-browser panels below rely on that.</li>
   </ul>
+</section>
+
+<section id="who" class="prose">
+  <h2>Who did this and how</h2>
+  <p>This audit was carried out by Claude, an AI model made by Anthropic, working with a team of AI sub-agents, at the request of
+    Josh Mandel. The agents read the code, built the harness, ran every test and wrote this report. We say this plainly so you can weigh it:
+    nothing here asks to be taken on trust. Every finding links the exact lines at a pinned commit, shows the recording or data it rests on, and gives a
+    one-line command that reproduces it from the public repositories. Where something was only read and not executed, the card says so (<span class="vk-l">R</span>).
+    Josh Mandel commissioned the work and decided what to publish; he did not independently re-derive each finding.</p>
 </section>
 
 <section id="limits" class="prose">
@@ -136,7 +148,7 @@
 
 <section id="findings">
   <h2>Findings at a glance</h2>
-  <p class="prose">Ranked by experimental impact. Rows with a linked ID have a full card below. In this draft, only three findings have cards.</p>
+  <p class="prose">Ranked by experimental impact. The first group has full cards with figures, audio and code; the second group has short cards. A further table of low-severity findings follows the cards.</p>
   <div class="tscroll"><table class="findings">
     <thead><tr><th scope="col">ID</th><th scope="col">Severity</th><th scope="col">Finding</th><th scope="col">Origin</th><th scope="col">Verified</th></tr></thead>
     <tbody>{{TABLE}}</tbody>
@@ -145,13 +157,46 @@
 
 {{CARDS}}
 
+<section id="short" class="short-sec">
+  <h2>Further findings</h2>
+  <p class="lead">Each of these affects some configurations, but more narrowly. Each gets its cause at the pinned commit and how it was verified.</p>
+  {{SHORT}}
+</section>
+
+<section id="other" class="other-sec">
+  <h2>Other findings</h2>
+  <p class="lead">Low severity or narrow conditions. Details and test ideas for every row are in the audit notes.</p>
+  <div class="tscroll"><table class="findings compact">
+    <thead><tr><th scope="col">ID</th><th scope="col">Severity</th><th scope="col">Finding</th><th scope="col">Origin</th><th scope="col">Verified</th><th scope="col">Where</th></tr></thead>
+    <tbody>{{COMPACT}}</tbody>
+  </table></div>
+</section>
+
+<section id="wasm" class="prose">
+  <h2>Running Audapter in your browser</h2>
+  <p>Several cards have a “Run it in your browser” panel. It runs the real Audapter C++ core, compiled to WebAssembly from the same pinned commit,
+    on the card's own inputs, once as released and once with a small patch for that finding. The patch is shown next to the panel and is in
+    <code>audit/report/patches/</code>. Each patched build was checked two ways: it is bit-identical to the released build on reference scenarios the
+    patch should not affect, and it removes the finding's effect (<code>audit/report/wasm/check-patches.mjs</code>).</p>
+  <p>The WebAssembly build is bit-identical to a native build that uses the same maths library, and differs from the MATLAB MEX build by at most about
+    3·10<sup>−11</sup> (about −195 dB), which comes from the maths library alone. The browser builds keep 10 s of recording instead of 30 s to save memory; all other buffers have their shipped sizes.
+    Panels load on click (about 0.4 MB per build), work offline and from a saved copy of this page, and need no install.</p>
+</section>
+
 <section id="formal" class="reserved">
   <h2>Formal analysis</h2>
-  <p>Reserved for the formal-methods line of work (<code>audit/formal/</code>): model checks of the OST state machine and bounds proofs for the parameter setters. Its results will appear here and as <span class="vk-l">F</span> entries on the cards.</p>
+  <p><strong>Placeholder, in review.</strong> A separate line of work (<code>audit/formal/</code>) model-checks the ring-buffer index arithmetic and the OST
+    state machine and checks the overlap-add gain. Its results will be added here, and as <span class="vk-l">F</span> entries on the cards, once they have been verified.</p>
 </section>
-<section id="wasm" class="reserved">
-  <h2>Audapter in the browser</h2>
-  <p>Reserved for the WebAssembly build (<code>audit/wasm/</code>). If it holds up, the cards will be able to run the real C++ core live on your own voice or on the example inputs.</p>
+<section id="live" class="reserved">
+  <h2>The live audio path</h2>
+  <p><strong>Placeholder, in review.</strong> Everything above runs the offline path. A separate line of work (<code>audit/live/</code>) drives the real audio I/O
+    code against a simulated clocked device to test threading and timing on the path an experiment actually uses. Its results will appear here once verified.</p>
+</section>
+<section id="corpus" class="reserved">
+  <h2>Real speech</h2>
+  <p><strong>Placeholder, in review.</strong> Our inputs are synthetic. A separate line of work (<code>audit/corpus/</code>) repeats key tests on openly licensed
+    recordings of real speech. Its results will appear here once verified.</p>
 </section>
 
 <section id="repro" class="prose">
@@ -160,7 +205,7 @@
     (a FAIL there is a confirmed bug), and <code>python3 ../report/build.py --export</code> regenerates every figure, clip and number in this report from fresh runs.</p>
 </section>
 </main>
-<footer class="wrap foot"><p>Draft prototype, generated by <code>report/build.py</code> from <code>findings.yaml</code>. Figures and audio come from harness runs, not from illustrations.</p><p>Report text, figures and audio © 2026 Josh Mandel, licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Code, including the WebAssembly builds of Audapter, is licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a>. See <a href="LICENSE.md">LICENSE.md</a>.</p></footer>
+<footer class="wrap foot"><p>Generated by <code>audit/report/build.py</code> from <code>findings.yaml</code> and <code>cards/</code>. Figures and audio come from harness runs, not from illustrations.</p><p>Report text, figures and audio © 2026 Josh Mandel, licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Code, including the WebAssembly builds of Audapter, is licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a>. See <a href="LICENSE.md">LICENSE.md</a>.</p></footer>
 <script>{{JS}}</script>
 </body>
 </html>

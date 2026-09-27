@@ -1,0 +1,16 @@
+--- a/phase_vocoder.cpp	2026-09-27 09:56:11.964090723 -0500
++++ b/phase_vocoder.cpp	2026-09-27 09:56:11.980822230 -0500
+@@ -463,8 +463,12 @@
+ 	//}
+ 
+ 	/* Scaling */
++	/* audit fix PT-5: Hann analysis x Hann synthesis overlap-added at hop = L/osamp sums to 3*osamp/8, so with the
++	   2/(osamp/2) factor below the output is 1.5 x the input (+3.52 dB) for any osamp >= 4. Divide it out in pitch-shift
++	   mode. The time-warp modes scale by 0.5 above (gain 0.75) and are left unchanged. */
++	const dtype olaGain = (mode == PITCH_SHIFT_ONLY) ? 1.5 : 1.0;
+ 	for (int i = 0; i < pvocFrameLen; ++i)
+-		ftBuf2[2 * i] = 2 * ftBuf2[2 * i] * hWin[i] / (osamp / 2.0);
++		ftBuf2[2 * i] = 2 * ftBuf2[2 * i] * hWin[i] / (osamp / 2.0) / olaGain;
+ 
+ 	///* Accumulate to output buffer */
+ 	//for (int i = 0; i < pvocFrameLen; ++i){

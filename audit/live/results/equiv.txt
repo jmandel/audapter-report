@@ -6,19 +6,19 @@ signalIn: live lags offline by 0 samples @16k (0.00 frames), corr 1.000000; max|
   data.sfmts            max|live-offline| = 0
   data.ost_stat         max|live-offline| = 0
   data.pitchShiftRatio  max|live-offline| = 0
-  data (all 39 columns) max|diff| = 2.51e-312   [column 0 'intervals' is frame-time]
+  data (all 39 columns) max|diff| = 4.34e-312   [column 0 'intervals' is frame-time]
 heard (hw L) vs offline runFrame output: lag 96 dev samples (2.00 ms), corr 1.000000, max|diff| 5.39e-10, rms diff 2.77e-10
   right channel max|R| = 0.159  (stereoMode default 1 => L==R: max|L-R| 0)
   data columns that differ: [np.int64(16)]
 === f1up (fake ASIO, Int32LSB, buffer 96)
-live rows 32096  offline rows 27232  (frame 96 dev samples, 32 internal)
+live rows 32064  offline rows 27232  (frame 96 dev samples, 32 internal)
 signalIn: live lags offline by 0 samples @16k (0.00 frames), corr 1.000000; max|diff| in 0, out 0
   data.rms              max|live-offline| = 0
   data.fmts             max|live-offline| = 0
   data.sfmts            max|live-offline| = 0
   data.ost_stat         max|live-offline| = 0
   data.pitchShiftRatio  max|live-offline| = 0
-  data (all 39 columns) max|diff| = 1.78e-312   [column 0 'intervals' is frame-time]
+  data (all 39 columns) max|diff| = 1.83e-312   [column 0 'intervals' is frame-time]
 heard (hw L) vs offline runFrame output: lag 96 dev samples (2.00 ms), corr 1.000000, max|diff| 5.34e-10, rms diff 2.8e-10
   right channel max|R| = 0.171  (stereoMode default 1 => L==R: max|L-R| 0)
   data columns that differ: [np.int64(16), np.int64(18), np.int64(19), np.int64(24), np.int64(25), np.int64(26), np.int64(27)]
@@ -30,26 +30,32 @@ signalIn: live lags offline by 0 samples @16k (0.00 frames), corr 1.000000; max|
   data.sfmts            max|live-offline| = 0
   data.ost_stat         max|live-offline| = 0
   data.pitchShiftRatio  max|live-offline| = 0
-  data (all 39 columns) max|diff| = 4.34e-312   [column 0 'intervals' is frame-time]
+  data (all 39 columns) max|diff| = 8.54e-313   [column 0 'intervals' is frame-time]
 heard (hw L) vs offline runFrame output: lag 96 dev samples (2.00 ms), corr 1.000000, max|diff| 5.64e-10, rms diff 2.79e-10
   right channel max|R| = 0.23  (stereoMode default 1 => L==R: max|L-R| 0)
   data columns that differ: [np.int64(16)]
 === td1st (fake ASIO, Int32LSB, buffer 192)
-live rows 32128  offline rows 27264  (frame 192 dev samples, 64 internal)
+live rows 32064  offline rows 27264  (frame 192 dev samples, 64 internal)
 signalIn: live lags offline by 0 samples @16k (0.00 frames), corr 1.000000; max|diff| in 0, out 0
   data.rms              max|live-offline| = 0
   data.fmts             max|live-offline| = 0
   data.sfmts            max|live-offline| = 0
   data.ost_stat         max|live-offline| = 0
   data.pitchShiftRatio  max|live-offline| = 0
-  data (all 39 columns) max|diff| = 3.94e-312   [column 0 'intervals' is frame-time]
+  data (all 39 columns) max|diff| = 4.1e-312   [column 0 'intervals' is frame-time]
 heard (hw L) vs offline runFrame output: lag 192 dev samples (4.00 ms), corr 1.000000, max|diff| 5.41e-10, rms diff 2.75e-10
   right channel max|R| = 0.174  (stereoMode default 1 => L==R: max|L-R| 0)
   data columns that differ: [np.int64(16)]
 === base (JACK dummy driver, period 96, float32 ports)
 MATCH lead=2
-Traceback (most recent call last):
-  File "/live/analysis/compare_live_offline.py", line 6, in <module>
-    nT, nLPC = (int(sys.argv[3]), int(sys.argv[4])) if len(sys.argv) > 4 else (4, 15)
-                ~~~^^^^^^^^^^^^^
-ValueError: invalid literal for int() with base 10: 'k'
+live rows 32000  offline rows 27264  (frame 96 dev samples, 32 internal)
+signalIn: live lags offline by 0 samples @16k (0.00 frames), corr 1.000000; max|diff| in 0, out 0
+  data.rms              max|live-offline| = 0
+  data.fmts             max|live-offline| = 0
+  data.sfmts            max|live-offline| = 0
+  data.ost_stat         max|live-offline| = 0
+  data.pitchShiftRatio  max|live-offline| = 0
+  data (all 39 columns) max|diff| = 3.2e-312   [column 0 'intervals' is frame-time]
+heard (hw L) vs offline runFrame output: lag 0 dev samples (0.00 ms), corr 1.000000, max|diff| 7.45e-09, rms diff 9.94e-10
+  right channel max|R| = 0.159  (stereoMode default 1 => L==R: max|L-R| 0)
+  data columns that differ: [np.int64(16)]

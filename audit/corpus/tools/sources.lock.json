@@ -1,0 +1,1072 @@
+{
+ "arctic/COPYING": {
+  "bytes": 2285,
+  "kind": "http",
+  "select": null,
+  "sha256": "469adc0262e10d84fb9658fa6181c883586415b5692f6bfbc2fde65dfc63f5c5",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/COPYING"
+ },
+ "arctic/awb_a0030.lab": {
+  "bytes": 210,
+  "kind": "http",
+  "select": null,
+  "sha256": "a83f3afc4f8c8d4fb99007a2c88dadbfb1f7c06811ec92d418cfe3da3b1680db",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_awb_arctic/lab/arctic_a0030.lab"
+ },
+ "arctic/awb_a0030.pm": {
+  "bytes": 3199,
+  "kind": "http",
+  "select": null,
+  "sha256": "78d68449197e0eedbcaa955d32c143c98becbd92cf713c3b559be3698f43575f",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_awb_arctic/pm/arctic_a0030.pm"
+ },
+ "arctic/awb_a0030.wav": {
+  "bytes": 96044,
+  "kind": "http",
+  "select": null,
+  "sha256": "b3cb0ee2abe1e8c2eac74d46434c5d99cfb32f36853fb5773fd64465c7f9d7ff",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_awb_arctic/wav/arctic_a0030.wav"
+ },
+ "arctic/bdl_a0005.lab": {
+  "bytes": 270,
+  "kind": "http",
+  "select": null,
+  "sha256": "a570ac7c4524a1f76ca29a3ae7a874e9248fb094bbb961215852f1ceca0db07f",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/lab/arctic_a0005.lab"
+ },
+ "arctic/bdl_a0005.pm": {
+  "bytes": 2085,
+  "kind": "http",
+  "select": null,
+  "sha256": "e2b6b54b813f5ad9717a4de88ee11fe5f8430debe3919bd433a7ee58eb476c84",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/pm/arctic_a0005.pm"
+ },
+ "arctic/bdl_a0005.wav": {
+  "bytes": 41486,
+  "kind": "http",
+  "select": null,
+  "sha256": "b654e28a68b0f49d40f715744f99f4bba338b1f66e61b58e428588e886d8fa1f",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0005.wav"
+ },
+ "arctic/bdl_a0018.lab": {
+  "bytes": 241,
+  "kind": "http",
+  "select": null,
+  "sha256": "522ea41c6ea0493f9b216228e805c2d1e9e1941e978f72a8f61bfdfe7f2d4d7e",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/lab/arctic_a0018.lab"
+ },
+ "arctic/bdl_a0018.pm": {
+  "bytes": 2137,
+  "kind": "http",
+  "select": null,
+  "sha256": "90f67c8c40be82caf3060d3c2a2ffbc6dafbf81c2e4dcc1b6e363eb1151f7f7a",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/pm/arctic_a0018.pm"
+ },
+ "arctic/bdl_a0018.wav": {
+  "bytes": 45326,
+  "kind": "http",
+  "select": null,
+  "sha256": "c643486a6f278738b31eadc08809d9250299510f4e4a5ddab5af6da2b954fe07",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0018.wav"
+ },
+ "arctic/bdl_a0030.lab": {
+  "bytes": 226,
+  "kind": "http",
+  "select": null,
+  "sha256": "894074fcab0edda702bcc2e82dc2b182834ec54538619b168e44a7bbc4e7e068",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/lab/arctic_a0030.lab"
+ },
+ "arctic/bdl_a0030.pm": {
+  "bytes": 1890,
+  "kind": "http",
+  "select": null,
+  "sha256": "999dbb929bf4be421aa6a93572b1906a6c6d6dc984ae7c145091b325308cf476",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/pm/arctic_a0030.pm"
+ },
+ "arctic/bdl_a0030.wav": {
+  "bytes": 41164,
+  "kind": "http",
+  "select": null,
+  "sha256": "f77587d100edcd21b6083c4d3bf77e2e4d62b2bb5d45bbe37c0176f86ef71f0a",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0030.wav"
+ },
+ "arctic/bdl_a0036.lab": {
+  "bytes": 303,
+  "kind": "http",
+  "select": null,
+  "sha256": "8b76e520f6739f86776b30cf8aeb391bab41411716e8b22cb2c9017bc277dc4c",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/lab/arctic_a0036.lab"
+ },
+ "arctic/bdl_a0036.pm": {
+  "bytes": 2527,
+  "kind": "http",
+  "select": null,
+  "sha256": "4618a75964bc43c23bac2a2aaec9c79b4db72cfb9e2ab31961957d6fbc2c141f",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/pm/arctic_a0036.pm"
+ },
+ "arctic/bdl_a0036.wav": {
+  "bytes": 53326,
+  "kind": "http",
+  "select": null,
+  "sha256": "579b1f0d4dce59f849c1b1924e26df6287d34ab227adc9eaa4aa9966286e5b77",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0036.wav"
+ },
+ "arctic/clb_a0005.lab": {
+  "bytes": 251,
+  "kind": "http",
+  "select": null,
+  "sha256": "6c432fb609058f0354d28dc699beac42b6025a489062ada9f74c0162c791dd51",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/lab/arctic_a0005.lab"
+ },
+ "arctic/clb_a0005.pm": {
+  "bytes": 4360,
+  "kind": "http",
+  "select": null,
+  "sha256": "aa57aa0ac375a07c8a2b377203e4c28403750a5556aea071cda5516ba5f1873e",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/pm/arctic_a0005.pm"
+ },
+ "arctic/clb_a0005.wav": {
+  "bytes": 58124,
+  "kind": "http",
+  "select": null,
+  "sha256": "9ee3ec38d5096b65ad4e90f9ac81f5ea7015a5e5cf46560c30de1940f42a1004",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/wav/arctic_a0005.wav"
+ },
+ "arctic/clb_a0018.lab": {
+  "bytes": 224,
+  "kind": "http",
+  "select": null,
+  "sha256": "e8870bccf28e720a1146d1d1ec94dedeaa5e8ae419acd8be8d107ae842caceb3",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/lab/arctic_a0018.lab"
+ },
+ "arctic/clb_a0018.pm": {
+  "bytes": 4451,
+  "kind": "http",
+  "select": null,
+  "sha256": "66a266297d22be156d0bcad8c947a3a21ff7b3f5232e99843218817d2bd1523c",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/pm/arctic_a0018.pm"
+ },
+ "arctic/clb_a0018.wav": {
+  "bytes": 58764,
+  "kind": "http",
+  "select": null,
+  "sha256": "121dfc36af0f6eb8a41d2117787d5d92a9c2965b1a388e3c3c701e8c45585056",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/wav/arctic_a0018.wav"
+ },
+ "arctic/clb_a0030.lab": {
+  "bytes": 210,
+  "kind": "http",
+  "select": null,
+  "sha256": "4eb829d94b0bc6eb4be472db57b346ea5e737693b8cc7a374a4231c74a9c5f70",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/lab/arctic_a0030.lab"
+ },
+ "arctic/clb_a0030.pm": {
+  "bytes": 4061,
+  "kind": "http",
+  "select": null,
+  "sha256": "02e8703494c32145c89b80fb103d39f9943132ae24adbb796231ce38c5b576f9",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/pm/arctic_a0030.pm"
+ },
+ "arctic/clb_a0030.wav": {
+  "bytes": 55564,
+  "kind": "http",
+  "select": null,
+  "sha256": "966fbe553597f4aad7f2a3dfadb68a0ef93c9d6d812391caa8e605586d0d9bc6",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/wav/arctic_a0030.wav"
+ },
+ "arctic/clb_a0036.lab": {
+  "bytes": 282,
+  "kind": "http",
+  "select": null,
+  "sha256": "eb6c49e5d37c8f8cdb67409c88d921c7164be850f03c28ecd24d2c6278bcead8",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/lab/arctic_a0036.lab"
+ },
+ "arctic/clb_a0036.pm": {
+  "bytes": 5283,
+  "kind": "http",
+  "select": null,
+  "sha256": "7a53d639e91addfbcd264c0d128620fa06e716ccd0e550606fec20fb418c602c",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/pm/arctic_a0036.pm"
+ },
+ "arctic/clb_a0036.wav": {
+  "bytes": 69004,
+  "kind": "http",
+  "select": null,
+  "sha256": "e61d583103b680113514f117954598ec06b9c05a4f652ca9dea97dc5f4c2e479",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/wav/arctic_a0036.wav"
+ },
+ "arctic/jmk_a0030.lab": {
+  "bytes": 210,
+  "kind": "http",
+  "select": null,
+  "sha256": "15eec3aa722831447504045c6d782b1b5607a9e81216c57ce8029ebeec312a21",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_jmk_arctic/lab/arctic_a0030.lab"
+ },
+ "arctic/jmk_a0030.pm": {
+  "bytes": 2267,
+  "kind": "http",
+  "select": null,
+  "sha256": "a93b60d7c719b7421a4e1745b64f174ebf3db1b524d623f6c05873ef5f3c1397",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_jmk_arctic/pm/arctic_a0030.pm"
+ },
+ "arctic/jmk_a0030.wav": {
+  "bytes": 51726,
+  "kind": "http",
+  "select": null,
+  "sha256": "c3cce41246676b5acbfb22386cef888ce78483479f3b7fe363196eee83df9a31",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_jmk_arctic/wav/arctic_a0030.wav"
+ },
+ "arctic/ksp_a0030.lab": {
+  "bytes": 188,
+  "kind": "http",
+  "select": null,
+  "sha256": "ffa3acd0918ae541b1d1c4f1857750be4a489308675bf84adcc50f687b431be0",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_ksp_arctic/lab/arctic_a0030.lab"
+ },
+ "arctic/ksp_a0030.pm": {
+  "bytes": 2358,
+  "kind": "http",
+  "select": null,
+  "sha256": "b9df979eb178a402b2f0ae386ff7678a62ef37dd20dc839c17bb8e11bb922f86",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_ksp_arctic/pm/arctic_a0030.pm"
+ },
+ "arctic/ksp_a0030.wav": {
+  "bytes": 49486,
+  "kind": "http",
+  "select": null,
+  "sha256": "8fc049272e1e2caabd3949d30e043746cc5cff7fc4b842976cf6db2b329e9617",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_ksp_arctic/wav/arctic_a0030.wav"
+ },
+ "arctic/rms_a0005.lab": {
+  "bytes": 221,
+  "kind": "http",
+  "select": null,
+  "sha256": "3deaa93eea0cbf69d2fa140e16802648310f1b13e99db543bf94f482605f9a7b",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/lab/arctic_a0005.lab"
+ },
+ "arctic/rms_a0005.pm": {
+  "bytes": 1916,
+  "kind": "http",
+  "select": null,
+  "sha256": "c9daa3141e3295fee19d6f59d9a616558599121495f9195f9842637a85ecbb92",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/pm/arctic_a0005.pm"
+ },
+ "arctic/rms_a0005.wav": {
+  "bytes": 45324,
+  "kind": "http",
+  "select": null,
+  "sha256": "3b6d28a4eb6b0feb56fb0f4f6eaca1e714d69119a824918c716620912ce011ea",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/wav/arctic_a0005.wav"
+ },
+ "arctic/rms_a0018.lab": {
+  "bytes": 210,
+  "kind": "http",
+  "select": null,
+  "sha256": "d5807d1750caf5bed13d9d5cc9ceb916565a15630da72ca894c54b44b84dbf33",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/lab/arctic_a0018.lab"
+ },
+ "arctic/rms_a0018.pm": {
+  "bytes": 2046,
+  "kind": "http",
+  "select": null,
+  "sha256": "e844ed764f4676b7d2c9a3252248c401bcf21d4d319b08ec1b99b97dfb9392a0",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/pm/arctic_a0018.pm"
+ },
+ "arctic/rms_a0018.wav": {
+  "bytes": 50764,
+  "kind": "http",
+  "select": null,
+  "sha256": "25ac50cddc43d2815d875a9e589d816b2c682f111f86abde8a68aac0425714b7",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/wav/arctic_a0018.wav"
+ },
+ "arctic/rms_a0030.lab": {
+  "bytes": 172,
+  "kind": "http",
+  "select": null,
+  "sha256": "0291cc3f53d55506186164391f98aa2d110dfad4b13b0763baa90d0827cecd23",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/lab/arctic_a0030.lab"
+ },
+ "arctic/rms_a0030.pm": {
+  "bytes": 1942,
+  "kind": "http",
+  "select": null,
+  "sha256": "e4dc7a538630de5293be1e239c1673612158f2a37ddea46003a43bcc6eaa8a15",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/pm/arctic_a0030.pm"
+ },
+ "arctic/rms_a0030.wav": {
+  "bytes": 48844,
+  "kind": "http",
+  "select": null,
+  "sha256": "52870162afad8bed2f35f9e1c1787825c1fa50d735e3c897046dbf4df06473f6",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/wav/arctic_a0030.wav"
+ },
+ "arctic/rms_a0036.lab": {
+  "bytes": 251,
+  "kind": "http",
+  "select": null,
+  "sha256": "c7889a146ed00e364f86e7a788f36a11e6c176953db8833c1254f25d48c39905",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/lab/arctic_a0036.lab"
+ },
+ "arctic/rms_a0036.pm": {
+  "bytes": 2579,
+  "kind": "http",
+  "select": null,
+  "sha256": "789189e9f2ed9b46af4d19f96857013044319df818c9fd371e2cb6a1c53faeb7",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/pm/arctic_a0036.pm"
+ },
+ "arctic/rms_a0036.wav": {
+  "bytes": 61644,
+  "kind": "http",
+  "select": null,
+  "sha256": "d0dbbc99d8e427a6980d937385a7bfb515a56c8c8d6040ab46e9cff6b69bd83f",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/wav/arctic_a0036.wav"
+ },
+ "arctic/slt_a0005.lab": {
+  "bytes": 267,
+  "kind": "http",
+  "select": null,
+  "sha256": "886a4c6f61a7328d9886f5de5ca636c98a1204f9a4368559b6f3b36d3f79b37a",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/lab/arctic_a0005.lab"
+ },
+ "arctic/slt_a0005.pm": {
+  "bytes": 3557,
+  "kind": "http",
+  "select": null,
+  "sha256": "fdda396e293c85e83dc0c737b7668e169c8488e2f10191dd2cadbf4917b1caea",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/pm/arctic_a0005.pm"
+ },
+ "arctic/slt_a0005.wav": {
+  "bytes": 47566,
+  "kind": "http",
+  "select": null,
+  "sha256": "f93c823f955875d2389ae0f731a95128afb1ee096df7614e063e8b4b5695801d",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0005.wav"
+ },
+ "arctic/slt_a0018.lab": {
+  "bytes": 224,
+  "kind": "http",
+  "select": null,
+  "sha256": "099dad6bd0cfb65e8a737a096358139e0baaf5c25b7ff86149bac1a0c36411d8",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/lab/arctic_a0018.lab"
+ },
+ "arctic/slt_a0018.pm": {
+  "bytes": 3689,
+  "kind": "http",
+  "select": null,
+  "sha256": "14ca9fe91aa3d4a16abdbfb95213076b1ec813ebd8a49f3451ed91a553da2da7",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/pm/arctic_a0018.pm"
+ },
+ "arctic/slt_a0018.wav": {
+  "bytes": 51406,
+  "kind": "http",
+  "select": null,
+  "sha256": "fd4eafdcb7de7f8d72e04666e1376e1cabf68739f6132fa719378b4f1e5fa4f9",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0018.wav"
+ },
+ "arctic/slt_a0030.lab": {
+  "bytes": 226,
+  "kind": "http",
+  "select": null,
+  "sha256": "0cb348379b6cd1c719cc4b94a3d3f66986d2ba0da0fcb4745c9f282742bc55a3",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/lab/arctic_a0030.lab"
+ },
+ "arctic/slt_a0030.pm": {
+  "bytes": 3667,
+  "kind": "http",
+  "select": null,
+  "sha256": "d58d6a68779f35ad837d389e10e2fe77bd639fda7436e3840e88e8656a038cfa",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/pm/arctic_a0030.pm"
+ },
+ "arctic/slt_a0030.wav": {
+  "bytes": 47246,
+  "kind": "http",
+  "select": null,
+  "sha256": "b7dced6cdcbfc286f8424014dfc857d0c27d2ef269f0172b078d8818333bd55d",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0030.wav"
+ },
+ "arctic/slt_a0036.lab": {
+  "bytes": 282,
+  "kind": "http",
+  "select": null,
+  "sha256": "91d251f1562b7877b675a8bc605b63a10854230395de70961289f686b2cf8c62",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/lab/arctic_a0036.lab"
+ },
+ "arctic/slt_a0036.pm": {
+  "bytes": 4481,
+  "kind": "http",
+  "select": null,
+  "sha256": "dde769f3b395d474f68b5d5985debe6686e15d555fb675656ab8623198bea778",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/pm/arctic_a0036.pm"
+ },
+ "arctic/slt_a0036.wav": {
+  "bytes": 57806,
+  "kind": "http",
+  "select": null,
+  "sha256": "1d08306b7b26131d150a55f0ca5c584712c1da573979499450e60c86927e5b8a",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0036.wav"
+ },
+ "arctic/txt.done.data": {
+  "bytes": 76958,
+  "kind": "http",
+  "select": null,
+  "sha256": "b4fea7527e547facb103615cf9a57f49886032fc65155ce8a3d6cf7bf2972437",
+  "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/etc/txt.done.data"
+ },
+ "blab/diao1_female.mat": {
+  "bytes": 615546,
+  "kind": "http",
+  "select": null,
+  "sha256": "0ce36597ece4aa52c2fe4a2fe3cd5c7bc90018826de6ac7f60c0c280f6eaf69c",
+  "url": "https://raw.githubusercontent.com/shanqing-cai/audapter_matlab/0398701a40ff9a0a5bebf2ab0a4ddf28b02ea961/example_data/diao1_female.mat"
+ },
+ "blab/trial-1-2.mat": {
+  "bytes": 1105899,
+  "kind": "http",
+  "select": null,
+  "sha256": "616605a4973114fab0705b526d9e4e106b349e989f325763dec8d9a6e66f53d3",
+  "url": "https://raw.githubusercontent.com/shanqing-cai/audapter_matlab/0398701a40ff9a0a5bebf2ab0a4ddf28b02ea961/example_data/trial-1-2.mat"
+ },
+ "gh/da1_male.mat": {
+  "bytes": 625393,
+  "kind": "http",
+  "select": null,
+  "sha256": "ad9dc89e5bfedbbf1f306d1073dc834f1740408a2f1ba5e8877652dd7f293d9c",
+  "url": "https://raw.githubusercontent.com/shanqing-cai/audapter_mex/f547196483fd2e68ef33f8a6fa7ed532eefd5af5/mcode/da1_male.mat"
+ },
+ "gh/dipper_cwn.wav": {
+  "bytes": 87812,
+  "kind": "http",
+  "select": null,
+  "sha256": "98245c177fb31fcdb21d38f8f176af1e2d43b8ffbadd42497276d9df404b53ed",
+  "url": "https://raw.githubusercontent.com/carrien/free-speech/ec961b7a04a79199217f4973effda9157afcdf9d/templates/dipper_cwn.wav"
+ },
+ "gh/praat_heed.wav": {
+  "bytes": 16016,
+  "kind": "http",
+  "select": null,
+  "sha256": "12c663bf829bc824c7661f2084008688553fb31f7f9423d5a99ffb37ec5da022",
+  "url": "https://raw.githubusercontent.com/praat/praat/b753a09ba0f4c2385735f08dacd2086088094d69/test/fon%20ExperimentMFC/Sounds/heed.wav"
+ },
+ "gh/praat_hid.wav": {
+  "bytes": 14866,
+  "kind": "http",
+  "select": null,
+  "sha256": "5f88801f0ee195bd94f617f486ecc8382761d902fd522966b69a055d5fdef955",
+  "url": "https://raw.githubusercontent.com/praat/praat/b753a09ba0f4c2385735f08dacd2086088094d69/test/fon%20ExperimentMFC/Sounds/hid.wav"
+ },
+ "gh/praat_hood.wav": {
+  "bytes": 23258,
+  "kind": "http",
+  "select": null,
+  "sha256": "fdf8dbcfed99d20102e09c6b9bb8a464723e1e69aa74139bfc4a724d2d6424a9",
+  "url": "https://raw.githubusercontent.com/praat/praat/b753a09ba0f4c2385735f08dacd2086088094d69/test/fon%20ExperimentMFC/Sounds/hood.wav"
+ },
+ "gh/praat_hud.wav": {
+  "bytes": 21716,
+  "kind": "http",
+  "select": null,
+  "sha256": "0879687b15cc630aa5a6eb26d8d8957473c51fde7c44bf5d933f3df4846bfcf8",
+  "url": "https://raw.githubusercontent.com/praat/praat/b753a09ba0f4c2385735f08dacd2086088094d69/test/fon%20ExperimentMFC/Sounds/hud.wav"
+ },
+ "gh/sustained-eee-female.wav": {
+  "bytes": 1005612,
+  "kind": "http",
+  "select": null,
+  "sha256": "7b09746ad012db58edde33f456453f039e61e3c8eea562be4daf3ee0251f7272",
+  "url": "https://raw.githubusercontent.com/elainekearney/audapter_matlab/7e59a9286168421648e37e551c6515c96adc9874/mcode/audio/sustained-eee-female.wav"
+ },
+ "gh/sustained-eee-male.wav": {
+  "bytes": 854060,
+  "kind": "http",
+  "select": null,
+  "sha256": "c7dcbbd8725c181eb2cacb83464ecc1b28b60cd33d8e3159fc88b25774d0669c",
+  "url": "https://raw.githubusercontent.com/elainekearney/audapter_matlab/7e59a9286168421648e37e551c6515c96adc9874/mcode/audio/sustained-eee-male.wav"
+ },
+ "gh/tipper_cwn.wav": {
+  "bytes": 84996,
+  "kind": "http",
+  "select": null,
+  "sha256": "0dcb0ac89926bfa68cbd7ef77e42d76dfabad65dafddee45be54a8dc89f76e49",
+  "url": "https://raw.githubusercontent.com/carrien/free-speech/ec961b7a04a79199217f4973effda9157afcdf9d/templates/tipper_cwn.wav"
+ },
+ "libri/1988-24833-0010.flac": {
+  "bytes": 45827,
+  "kind": "parquet",
+  "select": {
+   "key": [
+    "id",
+    "1988-24833-0010"
+   ]
+  },
+  "sha256": "7b2bc917f17d147055634971e6a657c6f9e23e7dc04f0be3a5326dcf63a30ac4",
+  "url": "https://huggingface.co/datasets/openslr/librispeech_asr/resolve/71cacbfb7e2354c4226d01e70d77d5fca3d04ba1/all/validation.clean/0000.parquet"
+ },
+ "libri/2078-142845-0026.flac": {
+  "bytes": 51482,
+  "kind": "parquet",
+  "select": {
+   "key": [
+    "id",
+    "2078-142845-0026"
+   ]
+  },
+  "sha256": "1945339221586afca73303eaf096aa743481918d2628df0abe42cffc64c2ce4a",
+  "url": "https://huggingface.co/datasets/openslr/librispeech_asr/resolve/71cacbfb7e2354c4226d01e70d77d5fca3d04ba1/all/validation.clean/0000.parquet"
+ },
+ "libri/2803-154320-0006.flac": {
+  "bytes": 37646,
+  "kind": "parquet",
+  "select": {
+   "key": [
+    "id",
+    "2803-154320-0006"
+   ]
+  },
+  "sha256": "b9b0fad2b999ed8c303ae3978ac50a0259e18b170695a3cbfb79421425956424",
+  "url": "https://huggingface.co/datasets/openslr/librispeech_asr/resolve/71cacbfb7e2354c4226d01e70d77d5fca3d04ba1/all/validation.clean/0000.parquet"
+ },
+ "libri/5338-284437-0014.flac": {
+  "bytes": 34273,
+  "kind": "parquet",
+  "select": {
+   "key": [
+    "id",
+    "5338-284437-0014"
+   ]
+  },
+  "sha256": "0622ec8ba40a435919f69a93681d7f8ea36129f559da26e7b6ebc343fdf9ce55",
+  "url": "https://huggingface.co/datasets/openslr/librispeech_asr/resolve/71cacbfb7e2354c4226d01e70d77d5fca3d04ba1/all/validation.clean/0000.parquet"
+ },
+ "libri/8297-275154-0022.flac": {
+  "bytes": 33580,
+  "kind": "parquet",
+  "select": {
+   "key": [
+    "id",
+    "8297-275154-0022"
+   ]
+  },
+  "sha256": "fd19bcd7d2fb17a247cbb337ea68ee8e98abf83f70a01627ec22603cf46087dc",
+  "url": "https://huggingface.co/datasets/openslr/librispeech_asr/resolve/71cacbfb7e2354c4226d01e70d77d5fca3d04ba1/all/validation.clean/0000.parquet"
+ },
+ "libri/84-121123-0000.flac": {
+  "bytes": 33046,
+  "kind": "parquet",
+  "select": {
+   "key": [
+    "id",
+    "84-121123-0000"
+   ]
+  },
+  "sha256": "4c0f9a693f6a2f56e877dec64b26deb56d77648a138ccbac7bcc95c35e74e995",
+  "url": "https://huggingface.co/datasets/openslr/librispeech_asr/resolve/71cacbfb7e2354c4226d01e70d77d5fca3d04ba1/all/validation.clean/0000.parquet"
+ },
+ "pvqd/LA9003.wav": {
+  "bytes": 2372562,
+  "kind": "http",
+  "select": null,
+  "sha256": "a971a7f76b4261fda54b5165236f15cba3ca1b3cc65e62b91a79ad7d26ff1950",
+  "url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/e4c1b413-ca9e-4329-b999-e6eaadaab0fe/file_downloaded"
+ },
+ "pvqd/LA9015.wav": {
+  "bytes": 2681596,
+  "kind": "http",
+  "select": null,
+  "sha256": "b21c1e8810e3e4e028cb93d4305a939064ef33794ad9ec1702d3e8c3946146fb",
+  "url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/b068deb9-8b35-4d87-8f73-4dac621fc1d9/file_downloaded"
+ },
+ "pvqd/LA9022.wav": {
+  "bytes": 1945496,
+  "kind": "http",
+  "select": null,
+  "sha256": "b7bdd103d88c6e5ee1385c3b626f552aff64a1fe19968731f8ebd62dc6daf081",
+  "url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/edc27cd9-adb8-4f33-973e-43b2c8225229/file_downloaded"
+ },
+ "pvqd/NYU1015.wav": {
+  "bytes": 2824884,
+  "kind": "http",
+  "select": null,
+  "sha256": "a41e74ccb25b4eae5c07fbe3e0c481e4cd86dd5c40a2178b61ec913a330410c2",
+  "url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/944ca8d8-a7f7-4fa9-9076-1eb6af4b94a8/file_downloaded"
+ },
+ "pvqd/NYU1017.wav": {
+  "bytes": 2326860,
+  "kind": "http",
+  "select": null,
+  "sha256": "a46ac68b943119578a3aa059b152ade892203ed49a755dce4bfe1aff0d59178f",
+  "url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/655452fc-c57e-4279-b662-bbd1cdab059b/file_downloaded"
+ },
+ "pvqd/PT101.wav": {
+  "bytes": 842660,
+  "kind": "http",
+  "select": null,
+  "sha256": "4c3c625511d2e4cff2b236388b208bfdfb1692fd980e3136afdec3ea892ae5f3",
+  "url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/a3015414-1113-4c1a-82ec-1ec264386ffe/file_downloaded"
+ },
+ "pvqd/PT128.wav": {
+  "bytes": 543110,
+  "kind": "http",
+  "select": null,
+  "sha256": "5b73c29b81352c856193ba1fd2d956839c8d5f21e894916967da93b6b146ff49",
+  "url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/2317c6ad-e368-4dfa-acbb-b8ffefc4f528/file_downloaded"
+ },
+ "pvqd/SJ2001.wav": {
+  "bytes": 2246918,
+  "kind": "http",
+  "select": null,
+  "sha256": "c07c49d6253de4b0b14201de6eb16a7498cc7c67fc219a6c0c9ec1363222d5b3",
+  "url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/75ff97e4-1a82-4f2e-a32e-2604107dd5de/file_downloaded"
+ },
+ "pvqd/SJ2009.wav": {
+  "bytes": 2297142,
+  "kind": "http",
+  "select": null,
+  "sha256": "b80a165d7af6c74835c6bb2df9aae7f1949cc90ee76cb899a6eaaa565224f0e3",
+  "url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/8811de72-e633-40b1-b8b2-059478483fa6/file_downloaded"
+ },
+ "pvqd/SJ7001.wav": {
+  "bytes": 2870662,
+  "kind": "http",
+  "select": null,
+  "sha256": "f81b58f4556e9c7e2b719e6b8f646a80a7c212d8f142135cebf146d81d2d0603",
+  "url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/b58a5b9f-4401-4060-a818-cd62326bfd8a/file_downloaded"
+ },
+ "so762/so762_0003_0.wav": {
+  "bytes": 107564,
+  "kind": "parquet",
+  "select": {
+   "check": {
+    "speaker": "0003"
+   },
+   "row": 0
+  },
+  "sha256": "02cf77504d9523c05edf7f777b742c5580f59d8c028e16b7b07b1d7184007579",
+  "url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
+ },
+ "so762/so762_0049_64.wav": {
+  "bytes": 100588,
+  "kind": "parquet",
+  "select": {
+   "check": {
+    "speaker": "0049"
+   },
+   "row": 64
+  },
+  "sha256": "dcc816b554da0cb5622707d809e44788d31416ff5b548ef36120dde20e5e9b83",
+  "url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
+ },
+ "so762/so762_0092_81.wav": {
+  "bytes": 102444,
+  "kind": "parquet",
+  "select": {
+   "check": {
+    "speaker": "0092"
+   },
+   "row": 81
+  },
+  "sha256": "903b10a6b7bcc0302009f77745033765968117de1b34860f0de795fc9218c099",
+  "url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
+ },
+ "so762/so762_0093_103.wav": {
+  "bytes": 86764,
+  "kind": "parquet",
+  "select": {
+   "check": {
+    "speaker": "0093"
+   },
+   "row": 103
+  },
+  "sha256": "fcaf091787ffa55f2272e4a0353d55a351d82702753bf4dec3a071ac74ad9a0e",
+  "url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
+ },
+ "so762/so762_0094_123.wav": {
+  "bytes": 100044,
+  "kind": "parquet",
+  "select": {
+   "check": {
+    "speaker": "0094"
+   },
+   "row": 123
+  },
+  "sha256": "df85957195ee47ad2c6bf5a5b7e929a36fc9ad67663a50bf8c515cbe6a7b6df8",
+  "url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
+ },
+ "so762/so762_0111_163.wav": {
+  "bytes": 66124,
+  "kind": "parquet",
+  "select": {
+   "check": {
+    "speaker": "0111"
+   },
+   "row": 163
+  },
+  "sha256": "c5b9d5657ab10cd44035cd8c814777f52a4f5108fbb1bed49b6151509661ab08",
+  "url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
+ },
+ "so762/so762_0112_180.wav": {
+  "bytes": 73420,
+  "kind": "parquet",
+  "select": {
+   "check": {
+    "speaker": "0112"
+   },
+   "row": 180
+  },
+  "sha256": "b85e95febbe5bb03a8b0774c48a6f40699bdbe2864bb09401d2ea641ce93385c",
+  "url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
+ },
+ "so762/so762_0114_222.wav": {
+  "bytes": 68204,
+  "kind": "parquet",
+  "select": {
+   "check": {
+    "speaker": "0114"
+   },
+   "row": 222
+  },
+  "sha256": "e99ff62ffec8d9ec1bc906c93147c03bb5aa30d1b2729fc33f31f9a77bd5ab89",
+  "url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
+ },
+ "vbd/clean/p232_039.wav": {
+  "bytes": 186284,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p232_039.wav"
+  },
+  "sha256": "8e70cbe0fdde2b8135ca2a3a7388537ee52f716467ab9578873ba503169c4f03",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/dec213d3-bf57-4777-9663-c24bdce92d5e/content"
+ },
+ "vbd/clean/p232_100.wav": {
+  "bytes": 153640,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p232_100.wav"
+  },
+  "sha256": "a6d695d7ed4139329c28fd1c071d61958fd910f5476a5950547e360bc8ef2964",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/dec213d3-bf57-4777-9663-c24bdce92d5e/content"
+ },
+ "vbd/clean/p232_113.wav": {
+  "bytes": 131336,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p232_113.wav"
+  },
+  "sha256": "e9c3092c7253243cbb1e77c8fb99a3e02a585e9ba237f6e76312f75738f855a7",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/dec213d3-bf57-4777-9663-c24bdce92d5e/content"
+ },
+ "vbd/clean/p232_234.wav": {
+  "bytes": 153388,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p232_234.wav"
+  },
+  "sha256": "58e2b424ca870eb59328d2ec7a17319056c6a5d56fd4587d8910d11d78bba0d1",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/dec213d3-bf57-4777-9663-c24bdce92d5e/content"
+ },
+ "vbd/clean/p257_037.wav": {
+  "bytes": 139732,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p257_037.wav"
+  },
+  "sha256": "271f156077a677a09118617612ecfd2a09e347140c022901af1095327fa67fd8",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/dec213d3-bf57-4777-9663-c24bdce92d5e/content"
+ },
+ "vbd/clean/p257_110.wav": {
+  "bytes": 153202,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p257_110.wav"
+  },
+  "sha256": "38411524398d4cadf7251f6dc0bf99df52d0f70352a062520cb1e4a383bc6ba3",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/dec213d3-bf57-4777-9663-c24bdce92d5e/content"
+ },
+ "vbd/clean/p257_315.wav": {
+  "bytes": 160188,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p257_315.wav"
+  },
+  "sha256": "b42a0f6876ce0f03b54d4cccf1bbc58e54a1df1250fe55cbf2dbe16470d5da91",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/dec213d3-bf57-4777-9663-c24bdce92d5e/content"
+ },
+ "vbd/clean/p257_387.wav": {
+  "bytes": 137684,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p257_387.wav"
+  },
+  "sha256": "6c193f21b109c6c6cc4b20c0174a54406d1c9762964368be7466a7b0763ae72a",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/dec213d3-bf57-4777-9663-c24bdce92d5e/content"
+ },
+ "vbd/log_testset.txt": {
+  "bytes": 23242,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "log_testset.txt"
+  },
+  "sha256": "6cb8dc69aac3473bbe8709357411fc9a63c8c1d273938893129300df647d67c0",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/11185dc8-9cf1-405b-b858-35bd6a04aedd/content"
+ },
+ "vbd/noisy/p232_039.wav": {
+  "bytes": 186284,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p232_039.wav"
+  },
+  "sha256": "c1a0aa476eaecbe0e0e0d824083a8ad19f832f9f03c0dfd72528588a8efaecee",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content"
+ },
+ "vbd/noisy/p232_100.wav": {
+  "bytes": 153640,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p232_100.wav"
+  },
+  "sha256": "8ff36ebfd77b4c82826ce6309db96156c0f783ca1ab99f271973c6d3c9e2046b",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content"
+ },
+ "vbd/noisy/p232_113.wav": {
+  "bytes": 131336,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p232_113.wav"
+  },
+  "sha256": "c31c7bccf6130afa9edf6e62f25a5c4a0e69f91dee7624b0fca367128246ad86",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content"
+ },
+ "vbd/noisy/p232_234.wav": {
+  "bytes": 153388,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p232_234.wav"
+  },
+  "sha256": "71afa43bb9399038c8c1ab7669ec00b2ed88055b65d7ed043cda8275787bf6f5",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content"
+ },
+ "vbd/noisy/p257_037.wav": {
+  "bytes": 139732,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p257_037.wav"
+  },
+  "sha256": "fd31fa0664cc10fb3a592d36672a511ae4eb65e88237d2b5aa865ef0c6eb120b",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content"
+ },
+ "vbd/noisy/p257_110.wav": {
+  "bytes": 153202,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p257_110.wav"
+  },
+  "sha256": "603e3881586b7286e3bdd0914d5b4a3ae7abd55b19b0e3a57d661cccd1fc96fa",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content"
+ },
+ "vbd/noisy/p257_315.wav": {
+  "bytes": 160188,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p257_315.wav"
+  },
+  "sha256": "d4fe016d400f0fac606cafa89ae27a7b3d4ae58c522cead64e63e8b98ee07725",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content"
+ },
+ "vbd/noisy/p257_387.wav": {
+  "bytes": 137684,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p257_387.wav"
+  },
+  "sha256": "375bcbd8bf9664c83400a95917ec4f6c655039149a41de060e87c07fcfa8698a",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content"
+ },
+ "vbd/testset_txt/p232_039.txt": {
+  "bytes": 14,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p232_039.txt"
+  },
+  "sha256": "13024858e336bef41ee1f3ffd45ad07b5b8f27d359c095053d9171d76947132c",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/09e12592-879e-4749-bf6d-e34cf0d1ddf6/content"
+ },
+ "vbd/testset_txt/p232_100.txt": {
+  "bytes": 15,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p232_100.txt"
+  },
+  "sha256": "41b17b40425a194e2cd34096bdef548aa702cdedad071483e1239827bd5a0146",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/09e12592-879e-4749-bf6d-e34cf0d1ddf6/content"
+ },
+ "vbd/testset_txt/p232_113.txt": {
+  "bytes": 15,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p232_113.txt"
+  },
+  "sha256": "5fddc31f00d123476aae4cbea50e2c92b9b50be4abc9755a1ebbbc1e4a296466",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/09e12592-879e-4749-bf6d-e34cf0d1ddf6/content"
+ },
+ "vbd/testset_txt/p232_234.txt": {
+  "bytes": 13,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p232_234.txt"
+  },
+  "sha256": "8d428a6b32310ad7e8b7377a5498e807c416a7617d89a4b3fab306954cd5ab2a",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/09e12592-879e-4749-bf6d-e34cf0d1ddf6/content"
+ },
+ "vbd/testset_txt/p257_037.txt": {
+  "bytes": 13,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p257_037.txt"
+  },
+  "sha256": "3301633961075f28760dfcc6b4847ad4b9169276fae8b0fd7769a3c773506fa4",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/09e12592-879e-4749-bf6d-e34cf0d1ddf6/content"
+ },
+ "vbd/testset_txt/p257_110.txt": {
+  "bytes": 14,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p257_110.txt"
+  },
+  "sha256": "ca05eaf64e05d66c565a593c860abc9d5a1c1a2387690a3af084c0fb5f1cb83e",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/09e12592-879e-4749-bf6d-e34cf0d1ddf6/content"
+ },
+ "vbd/testset_txt/p257_315.txt": {
+  "bytes": 15,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p257_315.txt"
+  },
+  "sha256": "4088eb27a30535f4d5bfd0f5db284abd990ab37e700b31213ba427c0c670c08e",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/09e12592-879e-4749-bf6d-e34cf0d1ddf6/content"
+ },
+ "vbd/testset_txt/p257_387.txt": {
+  "bytes": 10,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "/p257_387.txt"
+  },
+  "sha256": "0224bbb88acd4c876cacc5c4de1e9a225acc13b4b1aae3458dddeb48c8b5f8a1",
+  "url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/09e12592-879e-4749-bf6d-e34cf0d1ddf6/content"
+ },
+ "vocadito/vocadito_10.wav": {
+  "bytes": 802472,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "Audio/vocadito_10.wav"
+  },
+  "sha256": "0978bde1c130ae26a9cfcd90012f12fdaf9877bbe45cf21c5237ba7ac9b8703b",
+  "url": "https://zenodo.org/api/records/5578807/files/vocadito.zip/content"
+ },
+ "vocadito/vocadito_10_f0.csv": {
+  "bytes": 41129,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "F0/vocadito_10_f0.csv"
+  },
+  "sha256": "b62573c234fe091acdc7f7ac75259df12d5a8b2bd89f5b803bfc0f433c085e96",
+  "url": "https://zenodo.org/api/records/5578807/files/vocadito.zip/content"
+ },
+ "vocadito/vocadito_2.wav": {
+  "bytes": 3105390,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "Audio/vocadito_2.wav"
+  },
+  "sha256": "8dcc99c3b08a9a5800b793e3d65cccfb4464961f15cf8ccde25bd4c8b853d519",
+  "url": "https://zenodo.org/api/records/5578807/files/vocadito.zip/content"
+ },
+ "vocadito/vocadito_2_f0.csv": {
+  "bytes": 160224,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "F0/vocadito_2_f0.csv"
+  },
+  "sha256": "4d515029c036312e8d04545470c3d5dc5db3132dec54813624faee7d84cd6363",
+  "url": "https://zenodo.org/api/records/5578807/files/vocadito.zip/content"
+ },
+ "vocadito/vocadito_4.wav": {
+  "bytes": 1627864,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "Audio/vocadito_4.wav"
+  },
+  "sha256": "fc07b202eb609c975d1549be5320db116a49be1bd1fc6904e70e31cd7e44ec23",
+  "url": "https://zenodo.org/api/records/5578807/files/vocadito.zip/content"
+ },
+ "vocadito/vocadito_4_f0.csv": {
+  "bytes": 84197,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "F0/vocadito_4_f0.csv"
+  },
+  "sha256": "fb0a5b73a66edc0bac5aaec64f82eccd95d5a54781b354ab9020056803cf3d08",
+  "url": "https://zenodo.org/api/records/5578807/files/vocadito.zip/content"
+ },
+ "vocadito/vocadito_metadata.csv": {
+  "bytes": 765,
+  "kind": "zipmember",
+  "select": {
+   "suffix": "vocadito_metadata.csv"
+  },
+  "sha256": "22266a2deb232e6783cc5ebfbba5e4c7639d7c614e9e248e780a0bee8678a41c",
+  "url": "https://zenodo.org/api/records/5578807/files/vocadito.zip/content"
+ },
+ "vocalset/f2_long_straight_a.wav": {
+  "bytes": 1055986,
+  "kind": "zipmember",
+  "select": {
+   "member": "FULL/female2/long_tones/straight/f2_long_straight_a.wav"
+  },
+  "sha256": "2ec3b7655fc7e9500d74fb21fc9c38c35153fd8bd548bfe654f10f2dd7b0ef2e",
+  "url": "https://zenodo.org/api/records/1442513/files/VocalSet11.zip/content"
+ },
+ "vocalset/f2_long_straight_i.wav": {
+  "bytes": 952608,
+  "kind": "zipmember",
+  "select": {
+   "member": "FULL/female2/long_tones/straight/f2_long_straight_i.wav"
+  },
+  "sha256": "612cbb3f4be21177c9687d5cc8a33f9815141f3865cc3a88124ee241dabbd0d8",
+  "url": "https://zenodo.org/api/records/1442513/files/VocalSet11.zip/content"
+ },
+ "vocalset/f9_long_straight_a.wav": {
+  "bytes": 618748,
+  "kind": "zipmember",
+  "select": {
+   "member": "FULL/female9/long_tones/straight/f9_long_straight_a.wav"
+  },
+  "sha256": "e6d393abeb0d6473b5b425b0b5c7b2d4f47647ea2d7772d811f34088329d6f03",
+  "url": "https://zenodo.org/api/records/1442513/files/VocalSet11.zip/content"
+ },
+ "vocalset/f9_long_straight_i.wav": {
+  "bytes": 681006,
+  "kind": "zipmember",
+  "select": {
+   "member": "FULL/female9/long_tones/straight/f9_long_straight_i.wav"
+  },
+  "sha256": "791237895763d807ca662a960f1d4bf8139eee1c699f9066fb7fc0707f08b96f",
+  "url": "https://zenodo.org/api/records/1442513/files/VocalSet11.zip/content"
+ },
+ "vocalset/m2_long_straight_a.wav": {
+  "bytes": 760274,
+  "kind": "zipmember",
+  "select": {
+   "member": "FULL/male2/long_tones/straight/m2_long_straight_a.wav"
+  },
+  "sha256": "d82342655730126bfe78d0f351714a0bab8438bb23a4a4dccd6426633eb3610e",
+  "url": "https://zenodo.org/api/records/1442513/files/VocalSet11.zip/content"
+ },
+ "vocalset/m2_long_straight_i.wav": {
+  "bytes": 805234,
+  "kind": "zipmember",
+  "select": {
+   "member": "FULL/male2/long_tones/straight/m2_long_straight_i.wav"
+  },
+  "sha256": "6df61ec7415355514af516cdd363be6c9722405e695801020f0fce0efbf9c63b",
+  "url": "https://zenodo.org/api/records/1442513/files/VocalSet11.zip/content"
+ }
+}

@@ -1,0 +1,26 @@
+hammer op=reset: 162 iterations in 10.0 s without crashing; callbacks 5005; op duration median 11.50 ms max 14.64 ms
+[mex] WARNING: mexFunction wrote plhs[2] with nlhs=2 (out of bounds in MATLAB)
+hammer op=getdata: 188 iterations in 10.0 s without crashing; callbacks 4999; op duration median 3.12 ms max 7.86 ms
+hammer op=init: 198 iterations in 10.0 s without crashing; callbacks 5000; op duration median 0.46 ms max 0.60 ms
+run                           buf    ncb  med us  p99 us   p99.9   max us  budget  xruns  >50%
+cost_base                      96   5151    28.0    74.5    86.1    103.3    2000      1     0
+cost_f1up                      96   5151    30.6    77.2    90.7    662.1    2000      1     0
+cost_pvoc2st                   96   5151    44.4   120.7   144.6    152.0    2000      0     0
+cost_td1st                    192   2576   113.9   233.7   307.2    404.0    4000      0     0
+ham_reset                      96   5005    36.3    77.8    95.7    104.2    2000      1     0
+ham_getdata                    96   4999    34.8    77.2    95.5    105.5    2000      2     0
+ham_init                       96   5000    42.5    79.5   101.6    186.0    2000      2     0
+--- 1 CPU shared with 3 busy processes, driver thread at normal priority:
+xrun_hog3: 5043 callbacks over 5152 hardware periods -> 109 periods never processed (107 xrun events, largest 3 periods = 6.0 ms)
+  callback wake-up lateness: median 0.056 ms, p99 2.67 ms, max 6.50 ms; callback cost max 2871 us
+  logged time axis vs hardware time: behind by 218.0 ms at the end (max 218.0 ms)
+  OST state increases at logged t = 0.314, 0.334 s;  hardware t = 0.328, 0.348 s
+--- same, driver thread SCHED_FIFO 80 (like an ASIO driver thread):
+xrun_hog3_rt: 5153 callbacks over 5153 hardware periods -> 0 periods never processed (0 xrun events, largest 0 periods = 0.0 ms)
+  callback wake-up lateness: median 0.004 ms, p99 0.01 ms, max 0.03 ms; callback cost max 53 us
+  logged time axis vs hardware time: behind by 0.0 ms at the end (max 0.0 ms)
+  OST state increases at logged t = 0.328, 0.348 s;  hardware t = 0.328, 0.348 s
+--- JACK dummy server under the same load (server clock stretches instead of dropping audio):
+live: wall 13.70 s, callbacks 5358, getData rows 164832, plhs overflow 0
+[jackd] 3317 server-side XRun messages (timer lateness of the dummy driver)
+xruns 3084

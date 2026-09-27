@@ -17,13 +17,16 @@ async function open(opts) {
   return page;
 }
 const p = await open({ viewport: { width: 1280, height: 900 } });
-await p.click('.interactive[data-widget="ost-f1"] button.run');
-await p.waitForFunction(() => /Ran 3 trials|Could not/.test(document.querySelector('.interactive .istatus').textContent), null, { timeout: 60000 });
-console.log('widget:', await p.textContent('.interactive .istatus'));
-console.log('rows:', (await p.$$eval('.irow .ival', e => e.map(x => x.textContent))).join(' | '));
-await (await p.$('#OST-F1')).screenshot({ path: path.join(OUT, 'card-ost-f1.png') });
-await (await p.$('#I-01')).screenshot({ path: path.join(OUT, 'card-i-01.png') });
-await (await p.$('#PT-5')).screenshot({ path: path.join(OUT, 'card-pt-5.png') });
+// run every live panel, one after another
+for (const id of await p.$$eval('.interactive[data-widget]', e => e.map(x => x.dataset.widget))) {
+  const sel = `.interactive[data-widget="${id}"]`;
+  await p.click(`${sel} button.run`);
+  await p.waitForFunction(s => /Ran in|Could not/.test(document.querySelector(s + ' .istatus').textContent), sel, { timeout: 120000 });
+  console.log(`panel ${id}:`, await p.textContent(`${sel} .istatus`));
+  console.log('   ', (await p.$$eval(`${sel} .irow`, e => e.map(x => x.querySelector('.ilab').textContent + ': ' + x.querySelector('.ival').textContent))).join(' | '));
+}
+for (const id of await p.$$eval('article.card', e => e.map(x => x.id)))
+  await (await p.$(`article.card[id="${id}"]`)).screenshot({ path: path.join(OUT, `card-${id.toLowerCase()}.png`) });
 await p.screenshot({ path: path.join(OUT, 'top.png') });
 await (await p.$('#method')).screenshot({ path: path.join(OUT, 'method.png') });
 await p.pdf({ path: path.join(OUT, 'print.pdf') }).catch(e => console.log('pdf:', e.message));

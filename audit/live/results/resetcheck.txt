@@ -1,0 +1,3 @@
+resetcheck: 1000 resets while running: first logged frame != 1 in 1; non-contiguous frame clock in 1; data/signal length mismatch >1 frame in 0
+  data.intervals(1) = 0 : 1 trials
+  data.intervals(1) = 1 : 999 trials

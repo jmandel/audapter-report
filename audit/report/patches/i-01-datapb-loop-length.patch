@@ -1,0 +1,41 @@
+diff -ru a/Audapter.cpp b/Audapter.cpp
+--- a/Audapter.cpp	2026-09-27 09:14:35.793426277 -0500
++++ b/Audapter.cpp	2026-09-27 09:14:35.809559962 -0500
+@@ -347,6 +347,7 @@
+ 		data_pb[n]      = 0;
+ 	}
+ 	pbCounter			= 0;
++	pbLen				= maxPBSize;	/* audit fix I-01 */
+ 
+ 	for (n = 0; n < maxToneSeqRecLen; n++) {
+ 		tsg_wf[n] = 0.0;
+@@ -1323,6 +1324,7 @@
+ 			
+ 		} else if (ns == string("datapb")) {
+ 			pbCounter = 0;
++			pbLen = (len > 0) ? len : maxPBSize;	/* audit fix I-01: loop at the loaded length */
+ 		} else if (ns == string("tsgint")) {
+ 			tsgToneOnsets[0]=0;
+ 			for (int n = 1; n < maxNTones; n++){
+@@ -2200,8 +2202,8 @@
+ 				outFrameBufSum[n + p.pvocFrameLen - p.frameLen] = speech_modulated_component + playback_component;
+ 			}
+ 			pbCounter += p.downFact;
+-			if (pbCounter >= maxPBSize)
+-				pbCounter -= maxPBSize;
++			if (pbCounter >= pbLen)	/* audit fix I-01: was maxPBSize */
++				pbCounter -= pbLen;
+ 		}
+ 	}
+ 
+diff -ru a/Audapter.h b/Audapter.h
+--- a/Audapter.h	2026-09-27 09:14:35.793949398 -0500
++++ b/Audapter.h	2026-09-27 09:14:35.809095803 -0500
+@@ -606,6 +606,7 @@
+ 	const dtype* getOutFrameBufPS() const;
+ 
+ 	int pbCounter;	//SC The integer counter used in wave playback 
++	int pbLen;	/* audit fix I-01: length of the loaded datapb (loop point) */
+ 
+ 	char deviceName[256];
+ 

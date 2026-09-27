@@ -9,7 +9,8 @@
  * overflow of one silently lands in the next; ASan cannot see that, CBMC here can).
  */
 #include <assert.h>
-typedef double dtype;
+#include <stdlib.h>
+typedef int dtype;   /* sample VALUES are irrelevant to indexing; int avoids bit-blasting floating point */
 #define internalBufLen 1728000          /* maxFrameLen * downSampFact_default * maxDelayFrames */
 #define maxRecSize     480000
 #define maxDataSize    480000
@@ -22,7 +23,7 @@ typedef double dtype;
 int nondet_int(void);
 
 struct { int frameLen, pvocFrameLen, pvocHop, nFB, nWin, bRecord;
-         int delayFrames[maxNVoices]; int mute[maxNVoices]; double gain[maxNVoices]; } p;
+         int delayFrames[maxNVoices]; int mute[maxNVoices]; dtype gain[maxNVoices]; } p;
 
 dtype outFrameBuf[internalBufLen];
 dtype outFrameBufPS[maxNVoices][internalBufLen];
@@ -35,34 +36,45 @@ int frame_counter, data_counter; int frame_counter_nowarp;
 struct PV { dtype *ftBuf2; } pv0;
 struct PV *pVocs[maxNVoices];
 
-/* ---- DSPF_dp_blk_move model: memcpy of nx doubles.  We copy one arbitrary element (so
- * --pointer-check checks every element's address) and record where the call pointed. ---- */
-const void *bm_src_obj, *bm_dst_obj; int bm_src_off, bm_dst_off, bm_n, bm_j; int bm_calls;
-void DSPF_dp_blk_move(const double *x, double *r, const int nx) {
+/* ---- DSPF_dp_blk_move model (DSPF.cpp:13-19 is memcpy(r, x, nx*sizeof(double))).
+ * We do not copy; we record where the call points and assert that the whole source and
+ * destination ranges lie inside their C objects (--pointer-check semantics, done arithmetically
+ * so that CBMC does not have to flatten the 7-million-element arrays). ---- */
+int bm_src_off, bm_dst_off, bm_n, bm_j; int bm_calls;
+void DSPF_dp_blk_move(const dtype *x, dtype *r, const int nx) {
     bm_calls++;
-    bm_src_off = __CPROVER_POINTER_OFFSET(x) / (int)sizeof(double);
-    bm_dst_off = __CPROVER_POINTER_OFFSET(r) / (int)sizeof(double);
+    bm_src_off = (int)(__CPROVER_POINTER_OFFSET(x) / (int)sizeof(dtype));
+    bm_dst_off = (int)(__CPROVER_POINTER_OFFSET(r) / (int)sizeof(dtype));
     bm_n = nx;
+#ifdef BM_ASSERT
+    assert(nx >= 0);
+    assert(bm_src_off >= 0 && bm_src_off + nx <= (int)(__CPROVER_OBJECT_SIZE(x) / (int)sizeof(dtype)));
+    assert(bm_dst_off >= 0 && bm_dst_off + nx <= (int)(__CPROVER_OBJECT_SIZE(r) / (int)sizeof(dtype)));
+#endif
     int j = nondet_int();
-    bm_j = -1;
-    if (0 <= j && j < nx) { bm_j = j; r[j] = x[j]; }
+    bm_j = (0 <= j && j < nx) ? j : -1;   /* an arbitrary element index of the copy */
 }
 
 /* ---- index recorders used by the *.char.inc variants ---- */
-double sink;
+dtype sink;
 int ps_row, ps_idx; int ps_hits;  int sum_idx; int sum_hits;
 int ps_bad_any;  /* some ACC_PS in this path was out of [0, internalBufLen) */
-double *ACC_PS(int row, int idx) {
+dtype *ACC_PS(int row, int idx) {
     ps_row = row; ps_idx = idx; ps_hits++;
     if (!(0 <= idx && idx < internalBufLen)) ps_bad_any = 1;
-    if (0 <= row && row < maxNVoices && 0 <= idx && idx < internalBufLen) return &outFrameBufPS[row][idx];
-    return &sink;
+#ifdef ACC_ASSERT
+    assert(0 <= row && row < maxNVoices);
+    assert(0 <= idx && idx < internalBufLen);
+#endif
+    return &sink;   /* values are irrelevant; never touch the 7M-element array symbolically */
 }
 int sum_bad_any;
-double *ACC_SUM(int idx) {
+dtype *ACC_SUM(int idx) {
     sum_idx = idx; sum_hits++;
     if (!(0 <= idx && idx < SUMLEN)) sum_bad_any = 1;
-    if (0 <= idx && idx < SUMLEN) return &outFrameBufSum[idx];
+#ifdef ACC_ASSERT
+    assert(0 <= idx && idx < SUMLEN);
+#endif
     return &sink;
 }
 
@@ -93,6 +105,8 @@ void params(void) {
     outFrameBuf_circPtr = (int)c;
     ifb = nondet_int(); __CPROVER_assume(0 <= ifb && ifb < p.nFB);
     D = p.delayFrames[ifb];
+    pv0.ftBuf2 = malloc(2 * N * sizeof(dtype));   /* phase_vocoder.cpp:24 */
+    __CPROVER_assume(pv0.ftBuf2 != 0);
     for (int v = 0; v < maxNVoices; v++) pVocs[v] = &pv0;
 }
 
@@ -104,6 +118,9 @@ int main(void) {
     int F_div_L = divides(F, internalBufLen), F_div_R = divides(F, maxRecSize);
     int sumOK = (N >= F && N <= SUMLEN);
     int sel = nondet_int();        /* which block runs on this path (all are explored) */
+#ifdef SEL
+    sel = SEL;
+#endif
 
 #ifdef GROUP_PASS   /* run with --bounds-check --pointer-check: everything below must be memory safe */
     if (sel == 1 && F_div_L) {                         /* current frame into ring (1962; 1948/1952 same ptr/len) */
@@ -115,20 +132,20 @@ int main(void) {
     }
     if (sel == 3) {                                    /* pvoc analysis copy: safe for every c, N <= 4096 */
 #include "extracted/pvoc_in.inc"
-        if (bm_j >= 0) assert(pmod(bm_src_off - (c - N), internalBufLen) == bm_dst_off);
+        if (bm_j >= 0) assert(pmod(bm_src_off + bm_j - (c - N), internalBufLen) == bm_dst_off + bm_j);
     }
     if (sel == 4) {                                    /* OLA with positive-modulo back zeroing: always safe */
-#include "extracted/pvoc_ola.fixed.inc"
+#include "extracted/pvoc_ola.fixed.char.inc"
     }
     if (sel == 5 && F_div_L && sumOK) {                /* DAF read with `>= 0` */
-#include "extracted/optr_sum.fixed.inc"
+#include "extracted/optr_sum.fixed.char.inc"
         for (int m = 0; m < p.nFB; m++) {
             assert(0 <= optr[m] && optr[m] + F <= internalBufLen);
             assert(optr[m] == pmod(c - p.delayFrames[m] * F, internalBufLen)); /* = frame written d frames ago */
         }
     }
     if (sel == 6 && F_div_R && sumOK) {                /* recorder writes */
-        frame_counter = nondet_int(); __CPROVER_assume(frame_counter >= 0 && frame_counter * F < maxRecSize);
+        frame_counter = nondet_int(); __CPROVER_assume(frame_counter >= 0 && frame_counter <= maxRecSize && frame_counter * F < maxRecSize);
         p.bRecord = 1;
 #include "extracted/rec_in.inc"
         assert(bm_dst_off + bm_n <= maxRecSize);       /* row 0 must not spill into row 1 */
@@ -142,7 +159,7 @@ int main(void) {
         if (F_div_L) assert(outFrameBuf_circPtr == (before + F) % internalBufLen);
     }
     if (sel == 8) {                                    /* recorder counter invariant (inductive step) */
-        frame_counter = nondet_int(); __CPROVER_assume(frame_counter >= 0 && frame_counter * F < maxRecSize);
+        frame_counter = nondet_int(); __CPROVER_assume(frame_counter >= 0 && frame_counter <= maxRecSize && frame_counter * F < maxRecSize);
         data_counter = frame_counter;
         p.nWin = nondet_int(); __CPROVER_assume(1 <= p.nWin && p.nWin <= F);
         data_counter++;                                /* 2181 */
@@ -207,7 +224,7 @@ int main(void) {
         }
     }
     if (sel == 8 && sumOK) {   /* recorder: overflow iff (fc+1)F > R; reachable iff F does not divide R */
-        frame_counter = nondet_int(); __CPROVER_assume(frame_counter >= 0 && frame_counter * F < maxRecSize);
+        frame_counter = nondet_int(); __CPROVER_assume(frame_counter >= 0 && frame_counter <= maxRecSize && frame_counter * F < maxRecSize);
         p.bRecord = 1;
 #include "extracted/rec_in.inc"
         assert((bm_dst_off + bm_n > maxRecSize) == (frame_counter * F + F > maxRecSize));

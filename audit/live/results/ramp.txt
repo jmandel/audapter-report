@@ -1,0 +1,2 @@
+onset ramp 0.00-0.07s: max|gain_live_L - gain_offline| = 0.040, max|gain_L - gain_R| = 0.000, min gain offline 0.333 live L 0.345
+offset ramp 1.53-1.62s: max|gain_live_L - gain_offline| = 0.040, max|gain_L - gain_R| = 0.000, min gain offline -0.000 live L -0.039

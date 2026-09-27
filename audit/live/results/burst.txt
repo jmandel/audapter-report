@@ -1,0 +1,6 @@
+hammer op=reset: 1945 iterations in 120.0 s without crashing; callbacks 59915; op duration median 11.61 ms max 21.34 ms
+reference peak 0.171; bursts (> 2x reference peak, i.e. > 6 dB over the loudest normal sample): 1 in 1945 operations (0.1 %)
+  burst peak: median 1.22 (+17.0 dB re normal peak), max 1.22 (+17.0 dB); 1 exceed digital full scale (clip/wrap at the DAC)
+  NaN/Inf samples: 0
+burst at 114.491 s, true peak 1.2, wrote ../results/reset_race_burst.wav/.png
+control, race-free reset every 25 frames (offline): max|out| 0.171

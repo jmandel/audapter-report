@@ -21,7 +21,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_awb_a0030.praat.csv",
   "ref_energy": "ref/arctic_awb_a0030.energy.csv",
-  "notes": "Scottish English; resampled 16k->48k (modification)"
+  "notes": "Scottish English; resampled 16k->48k (modification)",
+  "sha256": "4c80937d1996e1d4aff96b9b7b39af15963ac9fcfc9e79334c44a1d6e4ac8516",
+  "orig_sha256": "b3cb0ee2abe1e8c2eac74d46434c5d99cfb32f36853fb5773fd64465c7f9d7ff",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_awb_arctic/wav/arctic_a0030.wav"
  },
  {
   "id": "arctic_bdl_a0005",
@@ -45,7 +48,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_bdl_a0005.praat.csv",
   "ref_energy": "ref/arctic_bdl_a0005.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "34d8f22345db51b7961ff0d00ef73ec0f9a1388d0dd08d0874ddb0dc83f8b322",
+  "orig_sha256": "b654e28a68b0f49d40f715744f99f4bba338b1f66e61b58e428588e886d8fa1f",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0005.wav"
  },
  {
   "id": "arctic_bdl_a0018",
@@ -69,7 +75,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_bdl_a0018.praat.csv",
   "ref_energy": "ref/arctic_bdl_a0018.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "da3a98d075bd4b4cff40393b1175e70daacc7f47a6f6a927fd7a0186a7e1ac21",
+  "orig_sha256": "c643486a6f278738b31eadc08809d9250299510f4e4a5ddab5af6da2b954fe07",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0018.wav"
  },
  {
   "id": "arctic_bdl_a0030",
@@ -93,7 +102,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_bdl_a0030.praat.csv",
   "ref_energy": "ref/arctic_bdl_a0030.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "f249ba7b0136a7b6b5d51961c5fd79a629f001aa28039642b24cb3bc851c0f40",
+  "orig_sha256": "f77587d100edcd21b6083c4d3bf77e2e4d62b2bb5d45bbe37c0176f86ef71f0a",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0030.wav"
  },
  {
   "id": "arctic_bdl_a0036",
@@ -117,7 +129,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_bdl_a0036.praat.csv",
   "ref_energy": "ref/arctic_bdl_a0036.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "50e63ddc1d9eac30d71f5e1eb5d944615fb178d544f78c121ee556de607492bd",
+  "orig_sha256": "579b1f0d4dce59f849c1b1924e26df6287d34ab227adc9eaa4aa9966286e5b77",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0036.wav"
  },
  {
   "id": "arctic_clb_a0005",
@@ -141,7 +156,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_clb_a0005.praat.csv",
   "ref_energy": "ref/arctic_clb_a0005.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "2e2b1aefc6de6a54af84a6e1fd5d1d08970c6355a7913442f36f1fb26978695f",
+  "orig_sha256": "9ee3ec38d5096b65ad4e90f9ac81f5ea7015a5e5cf46560c30de1940f42a1004",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/wav/arctic_a0005.wav"
  },
  {
   "id": "arctic_clb_a0018",
@@ -165,7 +183,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_clb_a0018.praat.csv",
   "ref_energy": "ref/arctic_clb_a0018.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "8d26210aa3d7b50aacf7d844ed997e1a0449ca75a1c6780cb9a8e4d15249b084",
+  "orig_sha256": "121dfc36af0f6eb8a41d2117787d5d92a9c2965b1a388e3c3c701e8c45585056",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/wav/arctic_a0018.wav"
  },
  {
   "id": "arctic_clb_a0030",
@@ -189,7 +210,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_clb_a0030.praat.csv",
   "ref_energy": "ref/arctic_clb_a0030.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "aafdb9dc4aaa7cd696daa7058333b9448e7dfef967f10219e9ea55ec81b361e2",
+  "orig_sha256": "966fbe553597f4aad7f2a3dfadb68a0ef93c9d6d812391caa8e605586d0d9bc6",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/wav/arctic_a0030.wav"
  },
  {
   "id": "arctic_clb_a0036",
@@ -213,7 +237,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_clb_a0036.praat.csv",
   "ref_energy": "ref/arctic_clb_a0036.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "f74d38730fb3a3a4f757594a911c86212891c1d7422803f8441e216fe4503878",
+  "orig_sha256": "e61d583103b680113514f117954598ec06b9c05a4f652ca9dea97dc5f4c2e479",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_clb_arctic/wav/arctic_a0036.wav"
  },
  {
   "id": "arctic_jmk_a0030",
@@ -237,7 +264,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_jmk_a0030.praat.csv",
   "ref_energy": "ref/arctic_jmk_a0030.energy.csv",
-  "notes": "Canadian English; resampled 16k->48k (modification)"
+  "notes": "Canadian English; resampled 16k->48k (modification)",
+  "sha256": "7457f922c8eb3e7acde208af8d7d08d94cb3ccb8288012e6d7a930951be6021c",
+  "orig_sha256": "c3cce41246676b5acbfb22386cef888ce78483479f3b7fe363196eee83df9a31",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_jmk_arctic/wav/arctic_a0030.wav"
  },
  {
   "id": "arctic_ksp_a0030",
@@ -261,7 +291,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_ksp_a0030.praat.csv",
   "ref_energy": "ref/arctic_ksp_a0030.energy.csv",
-  "notes": "Indian English; resampled 16k->48k (modification)"
+  "notes": "Indian English; resampled 16k->48k (modification)",
+  "sha256": "dc5cde9640e74ad94e8cdcfd5d8eb714b31cbce0b6bef592ca5dc2ea6411bb92",
+  "orig_sha256": "8fc049272e1e2caabd3949d30e043746cc5cff7fc4b842976cf6db2b329e9617",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_ksp_arctic/wav/arctic_a0030.wav"
  },
  {
   "id": "arctic_rms_a0005",
@@ -285,7 +318,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_rms_a0005.praat.csv",
   "ref_energy": "ref/arctic_rms_a0005.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "8acf5e9d6d105ea798776e610729a101fcf6cfb1a891870a19229483e9a0d568",
+  "orig_sha256": "3b6d28a4eb6b0feb56fb0f4f6eaca1e714d69119a824918c716620912ce011ea",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/wav/arctic_a0005.wav"
  },
  {
   "id": "arctic_rms_a0018",
@@ -309,7 +345,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_rms_a0018.praat.csv",
   "ref_energy": "ref/arctic_rms_a0018.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "de65d82c89899a6787598a99f9717218a81aeb6d569b3b8bfe77b34db899170b",
+  "orig_sha256": "25ac50cddc43d2815d875a9e589d816b2c682f111f86abde8a68aac0425714b7",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/wav/arctic_a0018.wav"
  },
  {
   "id": "arctic_rms_a0030",
@@ -333,7 +372,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_rms_a0030.praat.csv",
   "ref_energy": "ref/arctic_rms_a0030.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "2a4a13f39a532919cc300f84b98eb997e0612ebc0b9874d6e2002c2b44800c83",
+  "orig_sha256": "52870162afad8bed2f35f9e1c1787825c1fa50d735e3c897046dbf4df06473f6",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/wav/arctic_a0030.wav"
  },
  {
   "id": "arctic_rms_a0036",
@@ -357,7 +399,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_rms_a0036.praat.csv",
   "ref_energy": "ref/arctic_rms_a0036.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "8b3d00d18fef7ef37805b69154e5537b1278fd8841dee74984b21a05a6283d44",
+  "orig_sha256": "d0dbbc99d8e427a6980d937385a7bfb515a56c8c8d6040ab46e9cff6b69bd83f",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/wav/arctic_a0036.wav"
  },
  {
   "id": "arctic_slt_a0005",
@@ -381,7 +426,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_slt_a0005.praat.csv",
   "ref_energy": "ref/arctic_slt_a0005.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "1fcf4cab55a5c097b29de5a837e9bb02be82358ecce18084528742a4431c2b25",
+  "orig_sha256": "f93c823f955875d2389ae0f731a95128afb1ee096df7614e063e8b4b5695801d",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0005.wav"
  },
  {
   "id": "arctic_slt_a0018",
@@ -405,7 +453,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_slt_a0018.praat.csv",
   "ref_energy": "ref/arctic_slt_a0018.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "df09a4b08e4eda94d4a671e1f542923b86ad772fe2d62325fc23466b64cfed37",
+  "orig_sha256": "fd4eafdcb7de7f8d72e04666e1376e1cabf68739f6132fa719378b4f1e5fa4f9",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0018.wav"
  },
  {
   "id": "arctic_slt_a0030",
@@ -429,7 +480,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_slt_a0030.praat.csv",
   "ref_energy": "ref/arctic_slt_a0030.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "6d09695aeedb07d4c9e53c728be4120896a27b87f754cb30ebaac7e159c34281",
+  "orig_sha256": "b7dced6cdcbfc286f8424014dfc857d0c27d2ef269f0172b078d8818333bd55d",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0030.wav"
  },
  {
   "id": "arctic_slt_a0036",
@@ -453,7 +507,10 @@
   "gt_type": "phone alignment (auto); pitchmarks",
   "ref_praat": "ref/arctic_slt_a0036.praat.csv",
   "ref_energy": "ref/arctic_slt_a0036.energy.csv",
-  "notes": "US English; resampled 16k->48k (modification)"
+  "notes": "US English; resampled 16k->48k (modification)",
+  "sha256": "aca8dfc3bcc65e0ede3e5f4ca252d35bf6e3163348398e05709b527f79806c61",
+  "orig_sha256": "1d08306b7b26131d150a55f0ca5c584712c1da573979499450e60c86927e5b8a",
+  "orig_url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0036.wav"
  },
  {
   "id": "so762_0093_103",
@@ -477,7 +534,10 @@
   "gt_type": "transcript; expert scores",
   "ref_praat": "ref/so762_0093_103.praat.csv",
   "ref_energy": "ref/so762_0093_103.energy.csv",
-  "notes": "Mandarin-L1 child reading English; expert total score 9/10"
+  "notes": "Mandarin-L1 child reading English; expert total score 9/10",
+  "sha256": "5c0dda475acd7a6528e5f75e0256596d3115fc9db84dbfe11a2b6d83b7a9352c",
+  "orig_sha256": "fcaf091787ffa55f2272e4a0353d55a351d82702753bf4dec3a071ac74ad9a0e",
+  "orig_url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
  },
  {
   "id": "so762_0112_180",
@@ -501,7 +561,10 @@
   "gt_type": "transcript; expert scores",
   "ref_praat": "ref/so762_0112_180.praat.csv",
   "ref_energy": "ref/so762_0112_180.energy.csv",
-  "notes": "Mandarin-L1 child reading English; expert total score 9/10"
+  "notes": "Mandarin-L1 child reading English; expert total score 9/10",
+  "sha256": "ea56d2e2982d4a1c3b6fbc2c674442d059471f10918c41c6c406843fcf926b2c",
+  "orig_sha256": "b85e95febbe5bb03a8b0774c48a6f40699bdbe2864bb09401d2ea641ce93385c",
+  "orig_url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
  },
  {
   "id": "so762_0092_81",
@@ -525,7 +588,10 @@
   "gt_type": "transcript; expert scores",
   "ref_praat": "ref/so762_0092_81.praat.csv",
   "ref_energy": "ref/so762_0092_81.energy.csv",
-  "notes": "Mandarin-L1 child reading English; expert total score 8/10"
+  "notes": "Mandarin-L1 child reading English; expert total score 8/10",
+  "sha256": "0f6c8051d23dfd286de552dda7854902e16b874d9ed0c503aa1b3621f4852fbb",
+  "orig_sha256": "903b10a6b7bcc0302009f77745033765968117de1b34860f0de795fc9218c099",
+  "orig_url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
  },
  {
   "id": "so762_0049_64",
@@ -549,7 +615,10 @@
   "gt_type": "transcript; expert scores",
   "ref_praat": "ref/so762_0049_64.praat.csv",
   "ref_energy": "ref/so762_0049_64.energy.csv",
-  "notes": "Mandarin-L1 child reading English; expert total score 9/10"
+  "notes": "Mandarin-L1 child reading English; expert total score 9/10",
+  "sha256": "52952e2e4afd6449a90a27a752923faebf09b15fae841f4d4a7d62538738e5ce",
+  "orig_sha256": "dcc816b554da0cb5622707d809e44788d31416ff5b548ef36120dde20e5e9b83",
+  "orig_url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
  },
  {
   "id": "so762_0094_123",
@@ -573,7 +642,10 @@
   "gt_type": "transcript; expert scores",
   "ref_praat": "ref/so762_0094_123.praat.csv",
   "ref_energy": "ref/so762_0094_123.energy.csv",
-  "notes": "Mandarin-L1 child reading English; expert total score 10/10"
+  "notes": "Mandarin-L1 child reading English; expert total score 10/10",
+  "sha256": "51491c3df3e147defb3f8f1d8f58081ff1997c3c064ef6a04d1ae3bda5b7ef15",
+  "orig_sha256": "df85957195ee47ad2c6bf5a5b7e929a36fc9ad67663a50bf8c515cbe6a7b6df8",
+  "orig_url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
  },
  {
   "id": "so762_0114_222",
@@ -597,7 +669,10 @@
   "gt_type": "transcript; expert scores",
   "ref_praat": "ref/so762_0114_222.praat.csv",
   "ref_energy": "ref/so762_0114_222.energy.csv",
-  "notes": "Mandarin-L1 child reading English; expert total score 10/10"
+  "notes": "Mandarin-L1 child reading English; expert total score 10/10",
+  "sha256": "0c8b0f7c014a7a4d319e5930a1c79599a6ff95c2b71d611e477a73122b3e304e",
+  "orig_sha256": "e99ff62ffec8d9ec1bc906c93147c03bb5aa30d1b2729fc33f31f9a77bd5ab89",
+  "orig_url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
  },
  {
   "id": "so762_0003_0",
@@ -621,7 +696,10 @@
   "gt_type": "transcript; expert scores",
   "ref_praat": "ref/so762_0003_0.praat.csv",
   "ref_energy": "ref/so762_0003_0.energy.csv",
-  "notes": "Mandarin-L1 child reading English; expert total score 9/10"
+  "notes": "Mandarin-L1 child reading English; expert total score 9/10",
+  "sha256": "24782516f8a1be3417ae40be83192b59cfdbd76dc102cebe67df8a284baeff02",
+  "orig_sha256": "02cf77504d9523c05edf7f777b742c5580f59d8c028e16b7b07b1d7184007579",
+  "orig_url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
  },
  {
   "id": "so762_0111_163",
@@ -645,7 +723,10 @@
   "gt_type": "transcript; expert scores",
   "ref_praat": "ref/so762_0111_163.praat.csv",
   "ref_energy": "ref/so762_0111_163.energy.csv",
-  "notes": "Mandarin-L1 child reading English; expert total score 9/10"
+  "notes": "Mandarin-L1 child reading English; expert total score 9/10",
+  "sha256": "86782f1deb4962b62524a30770d70b1c49f1d30e5348867c7cd8bea19af995c3",
+  "orig_sha256": "c5b9d5657ab10cd44035cd8c814777f52a4f5108fbb1bed49b6151509661ab08",
+  "orig_url": "https://huggingface.co/datasets/mispeech/speechocean762/resolve/06385584fad212b26134c656fdd3ccf9f093f33e/data/test-00000-of-00001.parquet"
  },
  {
   "id": "libri_84-121123-0000",
@@ -669,7 +750,10 @@
   "gt_type": "transcript",
   "ref_praat": "ref/libri_84-121123-0000.praat.csv",
   "ref_energy": "ref/libri_84-121123-0000.energy.csv",
-  "notes": "audiobook read speech"
+  "notes": "audiobook read speech",
+  "sha256": "23b91cd73ce318dcf2ee7278359d6df0ff35b66ef98031426b7b318332320aab",
+  "orig_sha256": "4c0f9a693f6a2f56e877dec64b26deb56d77648a138ccbac7bcc95c35e74e995",
+  "orig_url": "https://huggingface.co/datasets/openslr/librispeech_asr/resolve/71cacbfb7e2354c4226d01e70d77d5fca3d04ba1/all/validation.clean/0000.parquet"
  },
  {
   "id": "libri_1988-24833-0010",
@@ -693,7 +777,10 @@
   "gt_type": "transcript",
   "ref_praat": "ref/libri_1988-24833-0010.praat.csv",
   "ref_energy": "ref/libri_1988-24833-0010.energy.csv",
-  "notes": "audiobook read speech"
+  "notes": "audiobook read speech",
+  "sha256": "f6333fa158c5b7e95468261ac420fc1ae230ddd8584a603cfc0dc81ef500d8fa",
+  "orig_sha256": "7b2bc917f17d147055634971e6a657c6f9e23e7dc04f0be3a5326dcf63a30ac4",
+  "orig_url": "https://huggingface.co/datasets/openslr/librispeech_asr/resolve/71cacbfb7e2354c4226d01e70d77d5fca3d04ba1/all/validation.clean/0000.parquet"
  },
  {
   "id": "libri_8297-275154-0022",
@@ -717,7 +804,10 @@
   "gt_type": "transcript",
   "ref_praat": "ref/libri_8297-275154-0022.praat.csv",
   "ref_energy": "ref/libri_8297-275154-0022.energy.csv",
-  "notes": "audiobook read speech"
+  "notes": "audiobook read speech",
+  "sha256": "4cf936aa2deb1313885f84aeb67717cc25efc8eb89b526c44936ec40dfd2c4b0",
+  "orig_sha256": "fd19bcd7d2fb17a247cbb337ea68ee8e98abf83f70a01627ec22603cf46087dc",
+  "orig_url": "https://huggingface.co/datasets/openslr/librispeech_asr/resolve/71cacbfb7e2354c4226d01e70d77d5fca3d04ba1/all/validation.clean/0000.parquet"
  },
  {
   "id": "libri_5338-284437-0014",
@@ -741,7 +831,10 @@
   "gt_type": "transcript",
   "ref_praat": "ref/libri_5338-284437-0014.praat.csv",
   "ref_energy": "ref/libri_5338-284437-0014.energy.csv",
-  "notes": "audiobook read speech"
+  "notes": "audiobook read speech",
+  "sha256": "f3775dde84bf4bd56fd258306ef620c7bb6ac78137f553a305d4b00702e4667b",
+  "orig_sha256": "0622ec8ba40a435919f69a93681d7f8ea36129f559da26e7b6ebc343fdf9ce55",
+  "orig_url": "https://huggingface.co/datasets/openslr/librispeech_asr/resolve/71cacbfb7e2354c4226d01e70d77d5fca3d04ba1/all/validation.clean/0000.parquet"
  },
  {
   "id": "libri_2078-142845-0026",
@@ -765,7 +858,10 @@
   "gt_type": "transcript",
   "ref_praat": "ref/libri_2078-142845-0026.praat.csv",
   "ref_energy": "ref/libri_2078-142845-0026.energy.csv",
-  "notes": "audiobook read speech"
+  "notes": "audiobook read speech",
+  "sha256": "5b17411ecd2c762223083433db80d79ba57da76f4823a5b9c1c67ba6a95b9d47",
+  "orig_sha256": "1945339221586afca73303eaf096aa743481918d2628df0abe42cffc64c2ce4a",
+  "orig_url": "https://huggingface.co/datasets/openslr/librispeech_asr/resolve/71cacbfb7e2354c4226d01e70d77d5fca3d04ba1/all/validation.clean/0000.parquet"
  },
  {
   "id": "libri_2803-154320-0006",
@@ -789,7 +885,10 @@
   "gt_type": "transcript",
   "ref_praat": "ref/libri_2803-154320-0006.praat.csv",
   "ref_energy": "ref/libri_2803-154320-0006.energy.csv",
-  "notes": "audiobook read speech"
+  "notes": "audiobook read speech",
+  "sha256": "b76bf86d9932b043d15dee0b80d054f4a9e7517873df207947694d9a3ea88915",
+  "orig_sha256": "b9b0fad2b999ed8c303ae3978ac50a0259e18b170695a3cbfb79421425956424",
+  "orig_url": "https://huggingface.co/datasets/openslr/librispeech_asr/resolve/71cacbfb7e2354c4226d01e70d77d5fca3d04ba1/all/validation.clean/0000.parquet"
  },
  {
   "id": "vbd_p257_387_bus2.5",
@@ -814,6 +913,9 @@
   "ref_praat": "ref/vbd_p257_387_bus2.5.praat.csv",
   "ref_energy": "ref/vbd_p257_387_bus2.5.energy.csv",
   "notes": "DEMAND noise \"bus\" at 2.5 dB SNR",
+  "sha256": "375bcbd8bf9664c83400a95917ec4f6c655039149a41de060e87c07fcfa8698a",
+  "orig_sha256": "375bcbd8bf9664c83400a95917ec4f6c655039149a41de060e87c07fcfa8698a",
+  "orig_url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content",
   "snr_db": 2.5,
   "noise": "bus"
  },
@@ -840,6 +942,9 @@
   "ref_praat": "ref/vbd_p232_234_psquare2.5.praat.csv",
   "ref_energy": "ref/vbd_p232_234_psquare2.5.energy.csv",
   "notes": "DEMAND noise \"psquare\" at 2.5 dB SNR",
+  "sha256": "71afa43bb9399038c8c1ab7669ec00b2ed88055b65d7ed043cda8275787bf6f5",
+  "orig_sha256": "71afa43bb9399038c8c1ab7669ec00b2ed88055b65d7ed043cda8275787bf6f5",
+  "orig_url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content",
   "snr_db": 2.5,
   "noise": "psquare"
  },
@@ -866,6 +971,9 @@
   "ref_praat": "ref/vbd_p257_110_cafe2.5.praat.csv",
   "ref_energy": "ref/vbd_p257_110_cafe2.5.energy.csv",
   "notes": "DEMAND noise \"cafe\" at 2.5 dB SNR",
+  "sha256": "603e3881586b7286e3bdd0914d5b4a3ae7abd55b19b0e3a57d661cccd1fc96fa",
+  "orig_sha256": "603e3881586b7286e3bdd0914d5b4a3ae7abd55b19b0e3a57d661cccd1fc96fa",
+  "orig_url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content",
   "snr_db": 2.5,
   "noise": "cafe"
  },
@@ -892,6 +1000,9 @@
   "ref_praat": "ref/vbd_p257_315_living2.5.praat.csv",
   "ref_energy": "ref/vbd_p257_315_living2.5.energy.csv",
   "notes": "DEMAND noise \"living\" at 2.5 dB SNR",
+  "sha256": "d4fe016d400f0fac606cafa89ae27a7b3d4ae58c522cead64e63e8b98ee07725",
+  "orig_sha256": "d4fe016d400f0fac606cafa89ae27a7b3d4ae58c522cead64e63e8b98ee07725",
+  "orig_url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content",
   "snr_db": 2.5,
   "noise": "living"
  },
@@ -918,6 +1029,9 @@
   "ref_praat": "ref/vbd_p232_100_office2.5.praat.csv",
   "ref_energy": "ref/vbd_p232_100_office2.5.energy.csv",
   "notes": "DEMAND noise \"office\" at 2.5 dB SNR",
+  "sha256": "8ff36ebfd77b4c82826ce6309db96156c0f783ca1ab99f271973c6d3c9e2046b",
+  "orig_sha256": "8ff36ebfd77b4c82826ce6309db96156c0f783ca1ab99f271973c6d3c9e2046b",
+  "orig_url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content",
   "snr_db": 2.5,
   "noise": "office"
  },
@@ -944,6 +1058,9 @@
   "ref_praat": "ref/vbd_p232_113_cafe2.5.praat.csv",
   "ref_energy": "ref/vbd_p232_113_cafe2.5.energy.csv",
   "notes": "DEMAND noise \"cafe\" at 2.5 dB SNR",
+  "sha256": "c31c7bccf6130afa9edf6e62f25a5c4a0e69f91dee7624b0fca367128246ad86",
+  "orig_sha256": "c31c7bccf6130afa9edf6e62f25a5c4a0e69f91dee7624b0fca367128246ad86",
+  "orig_url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content",
   "snr_db": 2.5,
   "noise": "cafe"
  },
@@ -970,6 +1087,9 @@
   "ref_praat": "ref/vbd_p257_037_office7.5.praat.csv",
   "ref_energy": "ref/vbd_p257_037_office7.5.energy.csv",
   "notes": "DEMAND noise \"office\" at 7.5 dB SNR",
+  "sha256": "fd31fa0664cc10fb3a592d36672a511ae4eb65e88237d2b5aa865ef0c6eb120b",
+  "orig_sha256": "fd31fa0664cc10fb3a592d36672a511ae4eb65e88237d2b5aa865ef0c6eb120b",
+  "orig_url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content",
   "snr_db": 7.5,
   "noise": "office"
  },
@@ -996,6 +1116,9 @@
   "ref_praat": "ref/vbd_p232_039_office7.5.praat.csv",
   "ref_energy": "ref/vbd_p232_039_office7.5.energy.csv",
   "notes": "DEMAND noise \"office\" at 7.5 dB SNR",
+  "sha256": "c1a0aa476eaecbe0e0e0d824083a8ad19f832f9f03c0dfd72528588a8efaecee",
+  "orig_sha256": "c1a0aa476eaecbe0e0e0d824083a8ad19f832f9f03c0dfd72528588a8efaecee",
+  "orig_url": "https://datashare.ed.ac.uk/server/api/core/bitstreams/13c1bfbf-14a6-41db-9b41-8f7310f01ad5/content",
   "snr_db": 7.5,
   "noise": "office"
  },
@@ -1022,6 +1145,9 @@
   "ref_praat": "ref/pvqd_LA9003_a.praat.csv",
   "ref_energy": "ref/pvqd_LA9003_a.energy.csv",
   "notes": "diagnosis: none; CAPE-V overall severity 1.2; 44.1k->48k",
+  "sha256": "1b936b374aee3b8beee620efb03ab3c9af523832036781127d3b689cf6341a6d",
+  "orig_sha256": "a971a7f76b4261fda54b5165236f15cba3ca1b3cc65e62b91a79ad7d26ff1950",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/e4c1b413-ca9e-4329-b999-e6eaadaab0fe/file_downloaded",
   "capev_severity": 1.2,
   "diagnosis": "none"
  },
@@ -1048,6 +1174,9 @@
   "ref_praat": "ref/pvqd_LA9003_i.praat.csv",
   "ref_energy": "ref/pvqd_LA9003_i.energy.csv",
   "notes": "diagnosis: none; CAPE-V overall severity 1.2; 44.1k->48k",
+  "sha256": "e40f00b909babea64706994155726f5ddf4c40368831be05854cea88070cb56b",
+  "orig_sha256": "a971a7f76b4261fda54b5165236f15cba3ca1b3cc65e62b91a79ad7d26ff1950",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/e4c1b413-ca9e-4329-b999-e6eaadaab0fe/file_downloaded",
   "capev_severity": 1.2,
   "diagnosis": "none"
  },
@@ -1074,6 +1203,9 @@
   "ref_praat": "ref/pvqd_SJ7001_a.praat.csv",
   "ref_energy": "ref/pvqd_SJ7001_a.energy.csv",
   "notes": "diagnosis: none; CAPE-V overall severity 0.3; 44.1k->48k",
+  "sha256": "d6a10c5f1b18ffe96699308f4debc79bc4b40c923825b61345d414eaf4463e30",
+  "orig_sha256": "f81b58f4556e9c7e2b719e6b8f646a80a7c212d8f142135cebf146d81d2d0603",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/b58a5b9f-4401-4060-a818-cd62326bfd8a/file_downloaded",
   "capev_severity": 0.3,
   "diagnosis": "none"
  },
@@ -1100,6 +1232,9 @@
   "ref_praat": "ref/pvqd_SJ7001_i.praat.csv",
   "ref_energy": "ref/pvqd_SJ7001_i.energy.csv",
   "notes": "diagnosis: none; CAPE-V overall severity 0.3; 44.1k->48k",
+  "sha256": "dbfa380f3a61987fa7db91855f0fd52f1e5b5f7dc64c348fa2dcf487491b8d53",
+  "orig_sha256": "f81b58f4556e9c7e2b719e6b8f646a80a7c212d8f142135cebf146d81d2d0603",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/b58a5b9f-4401-4060-a818-cd62326bfd8a/file_downloaded",
   "capev_severity": 0.3,
   "diagnosis": "none"
  },
@@ -1126,6 +1261,9 @@
   "ref_praat": "ref/pvqd_SJ2001_a.praat.csv",
   "ref_energy": "ref/pvqd_SJ2001_a.energy.csv",
   "notes": "diagnosis: none; CAPE-V overall severity 0.8; 44.1k->48k",
+  "sha256": "90c5849c75918b90d922a3f796d8b69140116cfae8bf36b6b14f439619cfe89c",
+  "orig_sha256": "c07c49d6253de4b0b14201de6eb16a7498cc7c67fc219a6c0c9ec1363222d5b3",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/75ff97e4-1a82-4f2e-a32e-2604107dd5de/file_downloaded",
   "capev_severity": 0.8,
   "diagnosis": "none"
  },
@@ -1152,6 +1290,9 @@
   "ref_praat": "ref/pvqd_SJ2001_i.praat.csv",
   "ref_energy": "ref/pvqd_SJ2001_i.energy.csv",
   "notes": "diagnosis: none; CAPE-V overall severity 0.8; 44.1k->48k",
+  "sha256": "8da8644d6d7ed612ffc453a2a81ae3127a1d4e2eff5e26b27d796e1f6bbf95b7",
+  "orig_sha256": "c07c49d6253de4b0b14201de6eb16a7498cc7c67fc219a6c0c9ec1363222d5b3",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/75ff97e4-1a82-4f2e-a32e-2604107dd5de/file_downloaded",
   "capev_severity": 0.8,
   "diagnosis": "none"
  },
@@ -1178,6 +1319,9 @@
   "ref_praat": "ref/pvqd_PT101_a.praat.csv",
   "ref_energy": "ref/pvqd_PT101_a.energy.csv",
   "notes": "diagnosis: MTD; CAPE-V overall severity 6.7; 44.1k->48k",
+  "sha256": "84d2399a17ae90ca652ff2abf562d36db13c0a75147b810f0498ded345b0e08e",
+  "orig_sha256": "4c3c625511d2e4cff2b236388b208bfdfb1692fd980e3136afdec3ea892ae5f3",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/a3015414-1113-4c1a-82ec-1ec264386ffe/file_downloaded",
   "capev_severity": 6.7,
   "diagnosis": "MTD"
  },
@@ -1204,6 +1348,9 @@
   "ref_praat": "ref/pvqd_PT101_i.praat.csv",
   "ref_energy": "ref/pvqd_PT101_i.energy.csv",
   "notes": "diagnosis: MTD; CAPE-V overall severity 6.7; 44.1k->48k",
+  "sha256": "09e5db264e184ed26f5e5466227036c6a75a6364be4da5eb518772d2d1214d11",
+  "orig_sha256": "4c3c625511d2e4cff2b236388b208bfdfb1692fd980e3136afdec3ea892ae5f3",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/a3015414-1113-4c1a-82ec-1ec264386ffe/file_downloaded",
   "capev_severity": 6.7,
   "diagnosis": "MTD"
  },
@@ -1230,6 +1377,9 @@
   "ref_praat": "ref/pvqd_NYU1015_a.praat.csv",
   "ref_energy": "ref/pvqd_NYU1015_a.energy.csv",
   "notes": "diagnosis: atrophy; CAPE-V overall severity 45.5; 44.1k->48k",
+  "sha256": "3f1474b8cadf0f62fe379c221c57b3a8b4553ee0df846acbe4e03e443be269f0",
+  "orig_sha256": "a41e74ccb25b4eae5c07fbe3e0c481e4cd86dd5c40a2178b61ec913a330410c2",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/944ca8d8-a7f7-4fa9-9076-1eb6af4b94a8/file_downloaded",
   "capev_severity": 45.5,
   "diagnosis": "atrophy"
  },
@@ -1256,6 +1406,9 @@
   "ref_praat": "ref/pvqd_NYU1015_i.praat.csv",
   "ref_energy": "ref/pvqd_NYU1015_i.energy.csv",
   "notes": "diagnosis: atrophy; CAPE-V overall severity 45.5; 44.1k->48k",
+  "sha256": "ed9b58131f54760a09c5fd9a9b83df61046100511df0d0aee4833a56a24d98ee",
+  "orig_sha256": "a41e74ccb25b4eae5c07fbe3e0c481e4cd86dd5c40a2178b61ec913a330410c2",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/944ca8d8-a7f7-4fa9-9076-1eb6af4b94a8/file_downloaded",
   "capev_severity": 45.5,
   "diagnosis": "atrophy"
  },
@@ -1282,6 +1435,9 @@
   "ref_praat": "ref/pvqd_LA9015_a.praat.csv",
   "ref_energy": "ref/pvqd_LA9015_a.energy.csv",
   "notes": "diagnosis: none; CAPE-V overall severity 2.7; 44.1k->48k",
+  "sha256": "4b2bec6f8dad0b1d922468562e0c9dfe87fb876af61c308140220b15e20c727c",
+  "orig_sha256": "b21c1e8810e3e4e028cb93d4305a939064ef33794ad9ec1702d3e8c3946146fb",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/b068deb9-8b35-4d87-8f73-4dac621fc1d9/file_downloaded",
   "capev_severity": 2.7,
   "diagnosis": "none"
  },
@@ -1308,6 +1464,9 @@
   "ref_praat": "ref/pvqd_LA9015_i.praat.csv",
   "ref_energy": "ref/pvqd_LA9015_i.energy.csv",
   "notes": "diagnosis: none; CAPE-V overall severity 2.7; 44.1k->48k",
+  "sha256": "b8c26f037e301c6c51fc25d95a517c487331497757f2ff67e6ce83ae63d0404b",
+  "orig_sha256": "b21c1e8810e3e4e028cb93d4305a939064ef33794ad9ec1702d3e8c3946146fb",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/b068deb9-8b35-4d87-8f73-4dac621fc1d9/file_downloaded",
   "capev_severity": 2.7,
   "diagnosis": "none"
  },
@@ -1334,6 +1493,9 @@
   "ref_praat": "ref/pvqd_LA9022_a.praat.csv",
   "ref_energy": "ref/pvqd_LA9022_a.energy.csv",
   "notes": "diagnosis: none; CAPE-V overall severity 2.5; 44.1k->48k",
+  "sha256": "efcc1e75a1d25d2e0011910731cf497c012e1fc1d00279406e515d1fd26801aa",
+  "orig_sha256": "b7bdd103d88c6e5ee1385c3b626f552aff64a1fe19968731f8ebd62dc6daf081",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/edc27cd9-adb8-4f33-973e-43b2c8225229/file_downloaded",
   "capev_severity": 2.5,
   "diagnosis": "none"
  },
@@ -1360,6 +1522,9 @@
   "ref_praat": "ref/pvqd_LA9022_i.praat.csv",
   "ref_energy": "ref/pvqd_LA9022_i.energy.csv",
   "notes": "diagnosis: none; CAPE-V overall severity 2.5; 44.1k->48k",
+  "sha256": "15d7e498c2f0090dd302bb175da149c78b5daad185a391af41d11f0c904503ca",
+  "orig_sha256": "b7bdd103d88c6e5ee1385c3b626f552aff64a1fe19968731f8ebd62dc6daf081",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/edc27cd9-adb8-4f33-973e-43b2c8225229/file_downloaded",
   "capev_severity": 2.5,
   "diagnosis": "none"
  },
@@ -1386,6 +1551,9 @@
   "ref_praat": "ref/pvqd_SJ2009_a.praat.csv",
   "ref_energy": "ref/pvqd_SJ2009_a.energy.csv",
   "notes": "diagnosis: none; CAPE-V overall severity 4.2; 44.1k->48k",
+  "sha256": "52c3e8ce09c974b1f82b9febd70c1353d85b2aa434e79a7559920f56f5a536e3",
+  "orig_sha256": "b80a165d7af6c74835c6bb2df9aae7f1949cc90ee76cb899a6eaaa565224f0e3",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/8811de72-e633-40b1-b8b2-059478483fa6/file_downloaded",
   "capev_severity": 4.2,
   "diagnosis": "none"
  },
@@ -1412,6 +1580,9 @@
   "ref_praat": "ref/pvqd_SJ2009_i.praat.csv",
   "ref_energy": "ref/pvqd_SJ2009_i.energy.csv",
   "notes": "diagnosis: none; CAPE-V overall severity 4.2; 44.1k->48k",
+  "sha256": "0519471379fbb3f1bf12ec5f43d6732c6d226a47cee994a4e5e9790242c8e7b2",
+  "orig_sha256": "b80a165d7af6c74835c6bb2df9aae7f1949cc90ee76cb899a6eaaa565224f0e3",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/8811de72-e633-40b1-b8b2-059478483fa6/file_downloaded",
   "capev_severity": 4.2,
   "diagnosis": "none"
  },
@@ -1438,6 +1609,9 @@
   "ref_praat": "ref/pvqd_PT128_a.praat.csv",
   "ref_energy": "ref/pvqd_PT128_a.energy.csv",
   "notes": "diagnosis: MTD; CAPE-V overall severity 1.2; 44.1k->48k",
+  "sha256": "92851e8fa0a99629681cc8371bcb55121e9af70d123042353a789a35b3176933",
+  "orig_sha256": "5b73c29b81352c856193ba1fd2d956839c8d5f21e894916967da93b6b146ff49",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/2317c6ad-e368-4dfa-acbb-b8ffefc4f528/file_downloaded",
   "capev_severity": 1.2,
   "diagnosis": "MTD"
  },
@@ -1464,6 +1638,9 @@
   "ref_praat": "ref/pvqd_NYU1017_a.praat.csv",
   "ref_energy": "ref/pvqd_NYU1017_a.energy.csv",
   "notes": "diagnosis: vocal tremor; CAPE-V overall severity 19.8; 44.1k->48k",
+  "sha256": "384e7da64a78c871ec2854a3c543293e7ac54ef5e10947614e66ce7cf136df43",
+  "orig_sha256": "a46ac68b943119578a3aa059b152ade892203ed49a755dce4bfe1aff0d59178f",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/655452fc-c57e-4279-b662-bbd1cdab059b/file_downloaded",
   "capev_severity": 19.8,
   "diagnosis": "vocal tremor"
  },
@@ -1490,6 +1667,9 @@
   "ref_praat": "ref/pvqd_NYU1017_i.praat.csv",
   "ref_energy": "ref/pvqd_NYU1017_i.energy.csv",
   "notes": "diagnosis: vocal tremor; CAPE-V overall severity 19.8; 44.1k->48k",
+  "sha256": "65bb4f77e5d94fabd10fc6990c0dc5639206a5830dc69a941a40eff859801c35",
+  "orig_sha256": "a46ac68b943119578a3aa059b152ade892203ed49a755dce4bfe1aff0d59178f",
+  "orig_url": "https://data.mendeley.com/public-files/datasets/9dz247gnyb/files/655452fc-c57e-4279-b662-bbd1cdab059b/file_downloaded",
   "capev_severity": 19.8,
   "diagnosis": "vocal tremor"
  },
@@ -1515,7 +1695,10 @@
   "gt_type": "none (F0 from Praat ref)",
   "ref_praat": "ref/vocalset_f2_long_straight_a.praat.csv",
   "ref_energy": "ref/vocalset_f2_long_straight_a.energy.csv",
-  "notes": "trained singer; 44.1k->48k"
+  "notes": "trained singer; 44.1k->48k",
+  "sha256": "e2d244014075af2ba640d1cc2e6b31c98e9d120d07cadd62cd9947c73dd81b50",
+  "orig_sha256": "2ec3b7655fc7e9500d74fb21fc9c38c35153fd8bd548bfe654f10f2dd7b0ef2e",
+  "orig_url": "https://zenodo.org/api/records/1442513/files/VocalSet11.zip/content"
  },
  {
   "id": "vocalset_f2_long_straight_i",
@@ -1539,7 +1722,10 @@
   "gt_type": "none (F0 from Praat ref)",
   "ref_praat": "ref/vocalset_f2_long_straight_i.praat.csv",
   "ref_energy": "ref/vocalset_f2_long_straight_i.energy.csv",
-  "notes": "trained singer; 44.1k->48k"
+  "notes": "trained singer; 44.1k->48k",
+  "sha256": "d23060e54b2af68995fc4133afc0d99b223bc6638f8195249d755cd78d055b3f",
+  "orig_sha256": "612cbb3f4be21177c9687d5cc8a33f9815141f3865cc3a88124ee241dabbd0d8",
+  "orig_url": "https://zenodo.org/api/records/1442513/files/VocalSet11.zip/content"
  },
  {
   "id": "vocalset_f9_long_straight_a",
@@ -1563,7 +1749,10 @@
   "gt_type": "none (F0 from Praat ref)",
   "ref_praat": "ref/vocalset_f9_long_straight_a.praat.csv",
   "ref_energy": "ref/vocalset_f9_long_straight_a.energy.csv",
-  "notes": "trained singer; 44.1k->48k"
+  "notes": "trained singer; 44.1k->48k",
+  "sha256": "eaba307d8f0813ae443d4fbb266343e7be143d66d50efd1855d108a58442e313",
+  "orig_sha256": "e6d393abeb0d6473b5b425b0b5c7b2d4f47647ea2d7772d811f34088329d6f03",
+  "orig_url": "https://zenodo.org/api/records/1442513/files/VocalSet11.zip/content"
  },
  {
   "id": "vocalset_f9_long_straight_i",
@@ -1587,7 +1776,10 @@
   "gt_type": "none (F0 from Praat ref)",
   "ref_praat": "ref/vocalset_f9_long_straight_i.praat.csv",
   "ref_energy": "ref/vocalset_f9_long_straight_i.energy.csv",
-  "notes": "trained singer; 44.1k->48k"
+  "notes": "trained singer; 44.1k->48k",
+  "sha256": "7fb22d8e0ecc37615533fc7e2d3f7120e6f4ad8ec2ff370e3ec3e8a5a6e40507",
+  "orig_sha256": "791237895763d807ca662a960f1d4bf8139eee1c699f9066fb7fc0707f08b96f",
+  "orig_url": "https://zenodo.org/api/records/1442513/files/VocalSet11.zip/content"
  },
  {
   "id": "vocalset_m2_long_straight_a",
@@ -1611,7 +1803,10 @@
   "gt_type": "none (F0 from Praat ref)",
   "ref_praat": "ref/vocalset_m2_long_straight_a.praat.csv",
   "ref_energy": "ref/vocalset_m2_long_straight_a.energy.csv",
-  "notes": "trained singer; 44.1k->48k"
+  "notes": "trained singer; 44.1k->48k",
+  "sha256": "b47fd461aa8538374f4eddced606f4097ad6579b0cc83727da979e99bd3ae053",
+  "orig_sha256": "d82342655730126bfe78d0f351714a0bab8438bb23a4a4dccd6426633eb3610e",
+  "orig_url": "https://zenodo.org/api/records/1442513/files/VocalSet11.zip/content"
  },
  {
   "id": "vocalset_m2_long_straight_i",
@@ -1635,7 +1830,10 @@
   "gt_type": "none (F0 from Praat ref)",
   "ref_praat": "ref/vocalset_m2_long_straight_i.praat.csv",
   "ref_energy": "ref/vocalset_m2_long_straight_i.energy.csv",
-  "notes": "trained singer; 44.1k->48k"
+  "notes": "trained singer; 44.1k->48k",
+  "sha256": "5aee4937f306de404f84884944c4d91e9b574afd4806631677ad34f08b69c68d",
+  "orig_sha256": "6df61ec7415355514af516cdd363be6c9722405e695801020f0fce0efbf9c63b",
+  "orig_url": "https://zenodo.org/api/records/1442513/files/VocalSet11.zip/content"
  },
  {
   "id": "blab_diao1_female",
@@ -1648,7 +1846,7 @@
   "age": "adult",
   "group": "adult_F",
   "content": "Mandarin syllable (diao1), formant-shift trial",
-  "orig_file": "example_data/diao1_female.mat data.signalIn",
+  "orig_file": "audapter_matlab/example_data/diao1_female.mat data.signalIn",
   "orig_sr": 12000,
   "clip_start_s": "",
   "clip_end_s": "",
@@ -1659,7 +1857,10 @@
   "gt_type": "Audapter online log (fmts,sfmts,rms,ost_stat) from original Windows session",
   "ref_praat": "ref/blab_diao1_female.praat.csv",
   "ref_energy": "ref/blab_diao1_female.energy.csv",
-  "notes": "signalIn stored at 12000 Hz (sr), upsampled to 48k; original device rate 48000; nLPC 11"
+  "notes": "signalIn stored at 12000 Hz (sr), upsampled to 48k; original device rate 48000; nLPC 11",
+  "sha256": "eae0af7780bb3de9f34689274ee8c9d96d907ecfd1a1e21de926fc6dbd88decb",
+  "orig_sha256": "0ce36597ece4aa52c2fe4a2fe3cd5c7bc90018826de6ac7f60c0c280f6eaf69c",
+  "orig_url": "https://raw.githubusercontent.com/shanqing-cai/audapter_matlab/0398701a40ff9a0a5bebf2ab0a4ddf28b02ea961/example_data/diao1_female.mat"
  },
  {
   "id": "blab_trial_1_2",
@@ -1672,7 +1873,7 @@
   "age": "adult",
   "group": "adult_M",
   "content": "\"The steady bat gave birth to pups\" (rhythm study trial)",
-  "orig_file": "example_data/trial-1-2.mat data.signalIn",
+  "orig_file": "audapter_matlab/example_data/trial-1-2.mat data.signalIn",
   "orig_sr": 16000,
   "clip_start_s": "",
   "clip_end_s": "",
@@ -1683,7 +1884,10 @@
   "gt_type": "Audapter online log (fmts,sfmts,rms,ost_stat) from original Windows session",
   "ref_praat": "ref/blab_trial_1_2.praat.csv",
   "ref_energy": "ref/blab_trial_1_2.energy.csv",
-  "notes": "signalIn stored at 16000 Hz (sr), upsampled to 48k; original device rate 48000; nLPC 17"
+  "notes": "signalIn stored at 16000 Hz (sr), upsampled to 48k; original device rate 48000; nLPC 17",
+  "sha256": "ab0742440fed90b60ba4799a4ad2d9871ce188efa88b3fcccc0a6a6b2f37532c",
+  "orig_sha256": "616605a4973114fab0705b526d9e4e106b349e989f325763dec8d9a6e66f53d3",
+  "orig_url": "https://raw.githubusercontent.com/shanqing-cai/audapter_matlab/0398701a40ff9a0a5bebf2ab0a4ddf28b02ea961/example_data/trial-1-2.mat"
  },
  {
   "id": "blab_da1_male",
@@ -1707,7 +1911,10 @@
   "gt_type": "Audapter online log (fmts,sfmts,rms) from original session",
   "ref_praat": "ref/blab_da1_male.praat.csv",
   "ref_energy": "ref/blab_da1_male.energy.csv",
-  "notes": "signalIn stored at 12000 Hz, upsampled to 48k; nLPC 13"
+  "notes": "signalIn stored at 12000 Hz, upsampled to 48k; nLPC 13",
+  "sha256": "09040579951dc1dcdaf3563e79268ceaeb6048711b4df200232aac7f02cb3fcf",
+  "orig_sha256": "ad9dc89e5bfedbbf1f306d1073dc834f1740408a2f1ba5e8877652dd7f293d9c",
+  "orig_url": "https://raw.githubusercontent.com/shanqing-cai/audapter_mex/f547196483fd2e68ef33f8a6fa7ed532eefd5af5/mcode/da1_male.mat"
  },
  {
   "id": "kearney_eee_female",
@@ -1731,7 +1938,10 @@
   "gt_type": "none",
   "ref_praat": "ref/kearney_eee_female.praat.csv",
   "ref_energy": "ref/kearney_eee_female.energy.csv",
-  "notes": "used by upstream time_domain_shift_demo.m with pitch bounds 150-300 Hz; 32-bit 44.1k -> 48k"
+  "notes": "used by upstream time_domain_shift_demo.m with pitch bounds 150-300 Hz; 32-bit 44.1k -> 48k",
+  "sha256": "3a2af9ff9979ec7c50530295cbfe83f2a4ba0779143a908a44df748cf296aa55",
+  "orig_sha256": "7b09746ad012db58edde33f456453f039e61e3c8eea562be4daf3ee0251f7272",
+  "orig_url": "https://raw.githubusercontent.com/elainekearney/audapter_matlab/7e59a9286168421648e37e551c6515c96adc9874/mcode/audio/sustained-eee-female.wav"
  },
  {
   "id": "kearney_eee_male",
@@ -1755,7 +1965,10 @@
   "gt_type": "none",
   "ref_praat": "ref/kearney_eee_male.praat.csv",
   "ref_energy": "ref/kearney_eee_male.energy.csv",
-  "notes": "used by upstream time_domain_shift_demo.m with pitch bounds 80-160 Hz; 32-bit 44.1k -> 48k"
+  "notes": "used by upstream time_domain_shift_demo.m with pitch bounds 80-160 Hz; 32-bit 44.1k -> 48k",
+  "sha256": "c0a8b2e15b7b2b702859d8097b5693bdb80e9d41c1251de630245b36fe30541a",
+  "orig_sha256": "c7dcbbd8725c181eb2cacb83464ecc1b28b60cd33d8e3159fc88b25774d0669c",
+  "orig_url": "https://raw.githubusercontent.com/elainekearney/audapter_matlab/7e59a9286168421648e37e551c6515c96adc9874/mcode/audio/sustained-eee-male.wav"
  },
  {
   "id": "freespeech_dipper_cwn",
@@ -1779,7 +1992,10 @@
   "gt_type": "none",
   "ref_praat": "ref/freespeech_dipper_cwn.praat.csv",
   "ref_energy": "ref/freespeech_dipper_cwn.energy.csv",
-  "notes": "stereo original, channel 1 used; very short (0.5 s)"
+  "notes": "stereo original, channel 1 used; very short (0.5 s)",
+  "sha256": "f3acbf9b0537f9cbd3baadd0fdfe47209ba45bfdd3ef191b4a770432ac789d59",
+  "orig_sha256": "98245c177fb31fcdb21d38f8f176af1e2d43b8ffbadd42497276d9df404b53ed",
+  "orig_url": "https://raw.githubusercontent.com/carrien/free-speech/ec961b7a04a79199217f4973effda9157afcdf9d/templates/dipper_cwn.wav"
  },
  {
   "id": "freespeech_tipper_cwn",
@@ -1803,7 +2019,10 @@
   "gt_type": "none",
   "ref_praat": "ref/freespeech_tipper_cwn.praat.csv",
   "ref_energy": "ref/freespeech_tipper_cwn.energy.csv",
-  "notes": "stereo original, channel 1 used; very short (0.5 s)"
+  "notes": "stereo original, channel 1 used; very short (0.5 s)",
+  "sha256": "bf5a1b6b5cac3350ac1ffb7b1df9bebd979a31cb83adbe0ebb405b3f01a3d53c",
+  "orig_sha256": "0dcb0ac89926bfa68cbd7ef77e42d76dfabad65dafddee45be54a8dc89f76e49",
+  "orig_url": "https://raw.githubusercontent.com/carrien/free-speech/ec961b7a04a79199217f4973effda9157afcdf9d/templates/tipper_cwn.wav"
  },
  {
   "id": "praat_heed",
@@ -1827,7 +2046,10 @@
   "gt_type": "none",
   "ref_praat": "ref/praat_heed.praat.csv",
   "ref_energy": "ref/praat_heed.energy.csv",
-  "notes": "11025 Hz original: no energy above 5.5 kHz"
+  "notes": "11025 Hz original: no energy above 5.5 kHz",
+  "sha256": "c798dfd9c246b11f514a25ec673b23792c1b93d8945bf87552566a5e5d8695b8",
+  "orig_sha256": "12c663bf829bc824c7661f2084008688553fb31f7f9423d5a99ffb37ec5da022",
+  "orig_url": "https://raw.githubusercontent.com/praat/praat/b753a09ba0f4c2385735f08dacd2086088094d69/test/fon%20ExperimentMFC/Sounds/heed.wav"
  },
  {
   "id": "praat_hid",
@@ -1851,7 +2073,10 @@
   "gt_type": "none",
   "ref_praat": "ref/praat_hid.praat.csv",
   "ref_energy": "ref/praat_hid.energy.csv",
-  "notes": "11025 Hz original: no energy above 5.5 kHz"
+  "notes": "11025 Hz original: no energy above 5.5 kHz",
+  "sha256": "2f723b01de36ae275fa3f31967f04156b5eca9011b3178cb3f173f9a03caff85",
+  "orig_sha256": "5f88801f0ee195bd94f617f486ecc8382761d902fd522966b69a055d5fdef955",
+  "orig_url": "https://raw.githubusercontent.com/praat/praat/b753a09ba0f4c2385735f08dacd2086088094d69/test/fon%20ExperimentMFC/Sounds/hid.wav"
  },
  {
   "id": "praat_hood",
@@ -1875,7 +2100,10 @@
   "gt_type": "none",
   "ref_praat": "ref/praat_hood.praat.csv",
   "ref_energy": "ref/praat_hood.energy.csv",
-  "notes": "11025 Hz original: no energy above 5.5 kHz"
+  "notes": "11025 Hz original: no energy above 5.5 kHz",
+  "sha256": "1733f8cad1659d5a64e8f36897d0e70bd15738d7ee4e0d287ba4e76960ae668a",
+  "orig_sha256": "fdf8dbcfed99d20102e09c6b9bb8a464723e1e69aa74139bfc4a724d2d6424a9",
+  "orig_url": "https://raw.githubusercontent.com/praat/praat/b753a09ba0f4c2385735f08dacd2086088094d69/test/fon%20ExperimentMFC/Sounds/hood.wav"
  },
  {
   "id": "praat_hud",
@@ -1899,7 +2127,10 @@
   "gt_type": "none",
   "ref_praat": "ref/praat_hud.praat.csv",
   "ref_energy": "ref/praat_hud.energy.csv",
-  "notes": "11025 Hz original: no energy above 5.5 kHz"
+  "notes": "11025 Hz original: no energy above 5.5 kHz",
+  "sha256": "1efa1cb84bc086a19fd01d6354de2d8a269473a41ee7ed7345b3fe1aef033f42",
+  "orig_sha256": "0879687b15cc630aa5a6eb26d8d8957473c51fde7c44bf5d933f3df4846bfcf8",
+  "orig_url": "https://raw.githubusercontent.com/praat/praat/b753a09ba0f4c2385735f08dacd2086088094d69/test/fon%20ExperimentMFC/Sounds/hud.wav"
  },
  {
   "id": "vocadito_2",
@@ -1923,7 +2154,10 @@
   "gt_type": "expert F0 annotation",
   "ref_praat": "ref/vocadito_2.praat.csv",
   "ref_energy": "ref/vocadito_2.energy.csv",
-  "notes": "solo singing; 44.1k -> 48k"
+  "notes": "solo singing; 44.1k -> 48k",
+  "sha256": "5862352a0498f92a91573f076876b51204e841dfeea4dc915587477956c9ba37",
+  "orig_sha256": "8dcc99c3b08a9a5800b793e3d65cccfb4464961f15cf8ccde25bd4c8b853d519",
+  "orig_url": "https://zenodo.org/api/records/5578807/files/vocadito.zip/content"
  },
  {
   "id": "vocadito_4",
@@ -1947,7 +2181,10 @@
   "gt_type": "expert F0 annotation",
   "ref_praat": "ref/vocadito_4.praat.csv",
   "ref_energy": "ref/vocadito_4.energy.csv",
-  "notes": "solo singing; 44.1k -> 48k"
+  "notes": "solo singing; 44.1k -> 48k",
+  "sha256": "2ccc4522665c6f7319f952cc0a507c8d9ceb7bc0faea9fd584b54cdc1e33e1d8",
+  "orig_sha256": "fc07b202eb609c975d1549be5320db116a49be1bd1fc6904e70e31cd7e44ec23",
+  "orig_url": "https://zenodo.org/api/records/5578807/files/vocadito.zip/content"
  },
  {
   "id": "vocadito_10",
@@ -1971,6 +2208,9 @@
   "gt_type": "expert F0 annotation",
   "ref_praat": "ref/vocadito_10.praat.csv",
   "ref_energy": "ref/vocadito_10.energy.csv",
-  "notes": "solo singing; 44.1k -> 48k"
+  "notes": "solo singing; 44.1k -> 48k",
+  "sha256": "8d0b1a96ea028803717d21a3643ca1f605a7ef82d24975ef4b9bb09ac6e4852f",
+  "orig_sha256": "0978bde1c130ae26a9cfcd90012f12fdaf9877bbe45cf21c5237ba7ac9b8703b",
+  "orig_url": "https://zenodo.org/api/records/5578807/files/vocadito.zip/content"
  }
 ]

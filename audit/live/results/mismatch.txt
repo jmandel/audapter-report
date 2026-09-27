@@ -5,5 +5,5 @@ device buffer 128, Audapter frame 96: heard output matches the 'raw input read a
   heard level vs mic during voicing: rms heard 0.0443, rms mic 0.0692 (no Audapter gain/dScale applied)
 --- JACK server period 128:
 [mex] WARNING: mexFunction wrote plhs[2] with nlhs=2 (out of bounds in MATLAB)
-live: wall 2.05 s, callbacks 801, getData rows 1, plhs overflow 1
+live: wall 2.04 s, callbacks 799, getData rows 1, plhs overflow 1
 [jackd] 0 server-side XRun messages (timer lateness of the dummy driver)

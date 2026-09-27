@@ -1,11 +1,13 @@
 % CORPUS: Audapter formant tracker vs Hillenbrand et al. (1995) hand-corrected formants (hVd words).
-% RESTRICTED DATA: audio is read from a local, non-redistributed copy under
-% audit/scratch/corpus/restricted/hillenbrand (see corpus/README.md "Restricted sources"); results only.
+% RESTRICTED DATA: audio is read from a local, non-redistributed copy in audit/corpus/restricted/hillenbrand
+% (gitignored), created by audit/corpus/fetch_restricted.sh. Skips cleanly if absent.
 % 12 talkers x 12 vowels per group (men, women, boys, girls; kids aged 10-12).
 % Compares Audapter fmts (median over steady state +/- 20 ms) with the published steady-state F1/F2,
 % for the default preset (men: 'male', everyone else: 'female') and an nLPC sweep.
-HB = '/a/audit/scratch/corpus/restricted/hillenbrand';
-if ~exist([HB '/index.tsv'], 'file'), printf('SKIP: Hillenbrand restricted copy not present\n'); return; end
+HB = '/a/audit/corpus/restricted/hillenbrand';   % container path of <repo>/audit/corpus/restricted/hillenbrand
+if ~exist([HB '/index.tsv'], 'file') || ~exist([HB '/wav/m01ae.wav'], 'file')
+  printf('SKIP  corpus_hillenbrand: licence-restricted Hillenbrand (1995) data not present; run audit/corpus/fetch_restricted.sh to fetch it locally\n'); return;
+end
 1;
 function s = preset(g), if g == 'm', s = 'male'; else, s = 'female'; end, end
 fid = fopen([HB '/index.tsv']); hdr = strsplit(fgetl(fid), "\t");

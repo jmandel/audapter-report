@@ -1,0 +1,58 @@
+Conventions for building full finding cards (audit/report). Read this before writing anything.
+
+Read first: audit/BRIEF.md, audit/FINDINGS-LOG.md, audit/report/PLAN.md (sections 3-7), the relevant audit/notes/*.md
+section, audit/harness/README.md. Then study the three finished examples end to end:
+  cards/OST-F1.yaml + sketches/ost_f1.py + harness/oct/report_ost_f1.m + templates/panels/ost-f1.js + wasm/checks/fix-ost-f1.mjs
+  cards/I-01.yaml   + sketches/i01.py   + harness/oct/report_i01.m
+  cards/PT-5.yaml   + sketches/pt5.py   + harness/oct/report_pt5.m
+Rendered result: audit/report/prototype/index.html (open the screenshots made by check-render.mjs).
+
+Per card you produce (ID = log id, e.g. OST-F2; slug = lower-case, e.g. ost-f2):
+1. harness/oct/report_<slug_underscored>.m : export script run with `cd audit/harness && ./run-oct.sh report_x.m`
+   (and for origin: `VARIANT=upstream ./run-oct.sh report_x.m build-upstream upstream/audapter_matlab`, loading blab-made
+   params from a .mat as report_ost_f1.m does; ASan: `./run-oct.sh report_x.m build-asan`). Use report_outdir('<slug>'),
+   report_wavgroup (ONE shared gain per card; give warn strings for abrupt/loud clips) and report_json. Everything the card
+   says as a number must come from data.json. Also export device-rate (48 kHz) unscaled inputs dev_*.wav if a panel needs them.
+   Deterministic seeds. Do not modify existing harness files; only add report_*.m (and cfg/report_* files the script writes).
+2. sketches/<name>.py : `from sketchlib import *`; `def sketch(d, up)` returns SVG (use the Sketch class: envelope, intervals,
+   lines, band, guide, axis). The main SVG id MUST be "sk-<slug>" (audio playhead). Optional `def derive(d, up)` returns
+   extra template values. Visual language (PLAN.md §4): tiers on one time axis; input grey; expected = hollow ("expected"
+   kind / thin ink line); observed = solid blue; discrepancy = orange band via s.band(...) labelled in ink; no dual axes.
+   For memory findings use a simple array-extent diagram (allocated extent vs read extent, drawn with the same classes)
+   and quote the sanitizer line in the card.
+3. cards/<ID>.yaml : same fields as cards/OST-F1.yaml. Rules:
+   - headline = the real-world effect with a number, plain words. Tone factual and collegial.
+   - Numbers in expected/observed/numbers are {templates} over data.json (+derive). No hand-typed measured numbers.
+   - cause.refs: excerpts at the pinned SHA; line numbers VERIFIED with `git -C blab/audapter_mex show 169cadf:<path> | sed -n a,bp`;
+     every ref has an `expect` substring (build fails on drift). upstream_refs for inherited code (upstream SHA f547196).
+   - verify: list harness tests by exact name as in audit/harness/logs-summary.txt (build pulls PASS/FAIL live), your
+     report_*.m, drivers/scratch scripts, and a pending F entry. reproduce: one command.
+   - origin: upstream | blab | blab-amplified | blab-intended | both, with origin_note saying how we know (ran upstream build, or reading).
+   - audio: list clips with role input/expected/observed. Figure-only cards: `audio: []` and `audio_note:` explaining why
+     (e.g. heap garbage differs between machines, so any recording would be one arbitrary instance).
+   - interactive: either {status: planned, plan: ...} or a live panel (see 4).
+   - notes: "notes/<file>.md#<anchor>"; log: the id as it appears in FINDINGS-LOG.md bold text.
+4. Live panel (only where assigned): templates/panels/<slug>.js calling AudPanels.register('<slug>', async P => html)
+   (see templates/widgets/panel.js for P: instance(v), data(), status(), states/bars/line/row helpers, play(sig, 16000, gain)).
+   The Audapter JS API is wasm/web/audapter-api.mjs (a.init('female', overrides), loadOst/loadPcf(text), runTrial({input}),
+   setParam, returns {output, signalIn, signalOut, ost_stat, fmts, sfmts, rms, frameRate, ...}). Card yaml interactive:
+   {id, variants: [shipped, <fix-variant>], patches: {<fix-variant>: [<file>]}, needs: {...}, inputs: {name: dev_x.wav},
+   params: {...}, button, text}. Variant names and patch file names are fixed in report/wasm/variants.yaml.
+   Patches go in report/patches/<file> as unified diffs applying with `patch -p1` inside TransShiftMex (paths a/Audapter.cpp),
+   minimal, with a comment "/* audit fix <ID>: ... */". Build: `audit/report/wasm/build-variants.sh <variant>`.
+   Verification (required): report/wasm/checks/<variant>.mjs exporting `affects` (reference scenarios the patch may change,
+   usually []) and `async target(A)` returning {shippedBug, variantBug, shipped, variant} (see checks/fix-ost-f1.mjs).
+   Run `node audit/report/wasm/check-patches.mjs <variant>`; it must print ALL PASS. If the reference scenarios in
+   audit/wasm/testdata don't exercise code near your patch, add a regression case inside your target() that runs a nearby
+   configuration the patch must NOT change and assert bit-identity there too (report it in the result strings).
+5. Render: `cd audit/report && CARDS=<ID>[,<ID>...] python3 build.py`, then
+   `node check-render.mjs ~/hobby/.agent-scratch/<you>-shots` and LOOK at card-<id>.png (desktop) and fix collisions/overflow.
+   (Other agents render concurrently; the index may briefly contain only some cards. That's fine.)
+6. Log: append one entry per new or refined result to audit/FINDINGS-LOG.md under "## Session 2", format at the top of the
+   file, one `cat >> ... <<'EOF'` per entry, never rewrite the file. Prefix IDs REPORT-n where n is unused (check the log).
+   If something does NOT reproduce as the notes claim, log it and say so on the card.
+Rules: repo is ~/hobby/audapter (git); never git commit/push; never modify blab/, upstream/, other/, audit/wasm/, or other
+agents' files (build.py, sketchlib.py, panel.js, style.css, findings.yaml belong to the coordinator: if you need a change there,
+say so in your final report). All scripts use repo-relative paths. Bulk temp files go in ~/hobby/.agent-scratch/<you>/, not /tmp.
+Final report: cards built, what each shows (key numbers), patch verification results, anything that did not reproduce,
+and any build.py/sketchlib/panel.js changes you need.

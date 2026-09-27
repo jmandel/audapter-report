@@ -1,0 +1,14 @@
+# WebAssembly variants for the report's in-browser panels. Every variant is compiled from the pinned blab SHA
+# (git archive, never a working tree) with the same portability edits as the native harness (harness/prep-src.sh),
+# the wasm line's build-only size patch (audit/wasm/patches/build/size-flags.patch) and the listed report/patches.
+# sizes: "lite" = recorders 10 s (AUDAPTER_MAX_REC_SIZE/DATA_SIZE=160000); playback, tone and delay buffers keep
+# the shipped sizes. "full" = everything as shipped.
+sha: 169cadffef4c2d82a33939b840245b8a8a9db0de
+variants:
+  shipped:     {sizes: lite, patches: []}
+  fix-ost-f1:  {sizes: lite, patches: [ost-f1-reset-per-trial.patch]}
+  fix-ost-f2:  {sizes: lite, patches: [ost-f2-maxioi-onset-index.patch]}
+  fix-i-01:    {sizes: lite, patches: [i-01-datapb-loop-length.patch]}
+  fix-pt-5:    {sizes: lite, patches: [pt-5-ola-normalise.patch]}
+  alt-f6:      {sizes: lite, patches: [f6-restore-transdone.patch]}
+  fix-i-02:    {sizes: lite, patches: [i-02-dscale-once.patch]}

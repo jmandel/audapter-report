@@ -1,0 +1,68 @@
+# Full finding card OST-F1. Rendered by build.py; see PLAN.md section 3 for the fields.
+id: OST-F1
+log: OST-F1
+notes: "notes/ost-pcf.md#f1"
+headline: "After a long trial, the next trial's speech offset is detected 1.2 s late"
+severity: high
+origin: upstream
+origin_note: "Present unchanged in upstream 2.1.5 (same output on build-upstream). Blab's new INTENSITY_RATIO_ABOVE_THRESH_WITH_RMS_FLOOR rule does not update lastStatEnd either, so OST files that use it are also affected."
+status: [H, D]
+effect:
+  setup: >
+    OST: <code>0 ELAPSED_TIME 0.1</code> → <code>1 INTENSITY_FALL 0.01 0.02</code> → <code>2 OST_END</code>.
+    PCF: F1 +30 % in state 1 only, i.e. the perturbation should last until the offset of the first word.
+    Trial B has two vowels (0.04–0.40 s and 0.60–1.30 s). We ran it once as the first trial of the session,
+    then again right after trial A, a single vowel ending at 1.60 s. The same MEX session was used throughout,
+    with <code>Audapter('reset')</code> between trials, as in an experiment loop.
+  expected: "State 2 begins shortly after the first word ends ({state2_B_fresh_s:.2f} s here, including RMS smoothing). The second word is not perturbed."
+  observed: "After trial A, state 2 begins at {state2_B_after_A_s:.2f} s, just after trial A's own transition ({state2_A_s:.2f} s). State 1 lasts {overrun:.2f} s too long, and the second word is heard with F1 raised: {word2_F1_in_hz:.0f} → {word2_F1_out_after_A_hz:.0f} Hz, logged sF1/F1 = {logged_ratio:.2f}."
+  matters: >
+    The first trial of a session behaves correctly, so pilot runs look fine. On later trials, any perturbation,
+    time warp or state-based segmentation that depends on an INTENSITY_FALL after a rule that does not set
+    <code>lastStatEnd</code> can be late by up to the length of the previous trial. The logged <code>ost_stat</code>
+    shows the late transition too, so the data are internally consistent with what was played. That
+    consistency is why nothing looks wrong afterwards.
+  numbers:
+    - ["State 2 onset, first trial of the session", "{state2_B_fresh_s:.3f} s"]
+    - ["State 2 onset, same input after trial A", "{state2_B_after_A_s:.3f} s"]
+    - ["Trial A's own state 2 onset", "{state2_A_s:.3f} s"]
+    - ["Word-2 F1 heard (independent LPC): input / first trial / after A", "{word2_F1_in_hz:.0f} / {word2_F1_out_fresh_hz:.0f} / {word2_F1_out_after_A_hz:.0f} Hz"]
+sketch: ost_f1
+interactive:
+  id: ost-f1
+  variants: [shipped, fix-ost-f1]
+  patches: {fix-ost-f1: [ost-f1-reset-per-trial.patch]}
+  needs: {recorder_s: 2.0}
+  button: "Run trials B, A, B on both builds"
+  inputs: {trialA: dev_trialA_48k.wav, trialB: dev_trialB_48k.wav}
+  params: {rmsthresh: 0.005, bdetect: 1, btrack: 1, bshift: 1, bratioshift: 1, bmelshift: 0, f1min: 0, f1max: 5000, f2min: 0, f2max: 5000,
+           lbk: 0, lbb: 0, pertf1: {linspace: [0, 5000, 257]}, pertf2: {linspace: [0, 5000, 257]}, pertamp: {fill: 0, n: 257}, pertphi: {fill: 0, n: 257}}
+  text: >
+    This runs the same three trials through the real Audapter C++ core compiled to WebAssembly from the pinned commit,
+    once as released and once with the fix below. Inputs and parameters are the ones used in the harness run, and both
+    builds reproduce the harness timings to the frame.
+asset_dir: ost-f1
+audio:
+  - {file: trialB_input.wav, role: input}
+  - {file: trialB_output_fresh.wav, role: expected}
+  - {file: trialB_output_after_A.wav, role: observed}
+cause:
+  summary: >
+    <code>OST_TAB::reset()</code> exists and clears <code>lastStatEnd</code>, but nothing calls it.
+    <code>Audapter::reset()</code> sets <code>stat = 0</code> and restarts <code>data_counter</code>, but the OST table keeps
+    the previous trial's <code>lastStatEnd</code>. INTENSITY_FALL fires only once
+    <code>data_counter - lastStatEnd</code> exceeds the minimum duration, so in trial B it has to wait until the frame count passes where trial A's fall happened.
+  refs:
+    - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [97, 101], hl: [99], expect: "lastStatEnd = 0", note: "The reset that would fix it. There are no callers in blab or upstream (grep: no ostTab.reset)."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [648, 652], hl: [651], expect: "stat = 0;", note: "Audapter::reset() resets the OST state index but not the OST table."}
+    - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [546, 550], hl: [546], expect: "(data_counter - lastStatEnd) > minDurN", note: "INTENSITY_FALL compares this trial's frame counter with the stale lastStatEnd."}
+  upstream_refs:
+    - {repo: upstream-mex, path: TransShiftMex/ost.cpp, lines: [91, 95], expect: "lastStatEnd = 0"}
+    - {repo: upstream-mex, path: TransShiftMex/ost.cpp, lines: [478, 478], expect: "lastStatEnd) > minDurN"}
+  fix: "Call <code>ostTab.reset()</code> from <code>Audapter::reset()</code>, and have it also clear <code>statOnsetIndices</code>. One line plus one loop."
+verify:
+  - {kind: H, what: "harness test", name: "t_ost.m", test: "OST F1: trial B (after A) offset detected"}
+  - {kind: H, what: "report export (vowels, audible)", name: "report_ost_f1.m", detail: "blab and upstream builds give identical onsets"}
+  - {kind: D, what: "standalone driver of ost.cpp", name: "scratch/ost-pcf/t/drv.cpp fall_leak", detail: "offset at frame 200 fired at frame 815"}
+  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+reproduce: "cd audit/harness && ./run-oct.sh t_ost.m"

@@ -1,0 +1,576 @@
+=== work/tsan/alwayson.1
+== grouped by function (main-thread fn <-> audio-thread fn [MEX action line])
+  26  Audapter::reset                          <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:368]
+  17  Audapter::setGetParam                    <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:279]
+  11  OST_TAB::readFromFile                    <-> OST_TAB::osTrack                    [build/src/mexLibrary.cpp:398]
+  11  LPFormantTracker::postSupraThreshReset   <-> LPFormantTracker::postSupraThreshReset [build/src/mexLibrary.cpp:368]
+  10  PERT_CFG::readFromFile                   <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:424]
+  10  IIR_Filter<double>::reset                <-> IIR_Filter<double>::filter          [build/src/mexLibrary.cpp:368]
+   8  Audapter::reset                          <-> DSPF_dp_blk_move                    [build/src/mexLibrary.cpp:368]
+   6  IIR_Filter<double>::setCoeff             <-> IIR_Filter<double>::filter          [build/src/mexLibrary.cpp:279]
+   6  Audapter::reset                          <-> IIR_Filter<double>::filter          [build/src/mexLibrary.cpp:368]
+   6  Audapter::reset                          <-> Audapter::getDFmt                   [build/src/mexLibrary.cpp:368]
+   6  LPFormantTracker::postSupraThreshReset   <-> LPFormantTracker::hqr_roots         [build/src/mexLibrary.cpp:368]
+   6  LPFormantTracker::reset                  <-> LPFormantTracker::hqr_roots         [build/src/mexLibrary.cpp:368]
+   5  LPFormantTracker::reset                  <-> LPFormantTracker::postSupraThreshReset [build/src/mexLibrary.cpp:368]
+   4  Audapter::setGetParam                    <-> Audapter::calcRMS_fb                [build/src/mexLibrary.cpp:279]
+   4  LPFormantTracker::reset                  <-> LPFormantTracker::mwa               [build/src/mexLibrary.cpp:368]
+   3  LPFormantTracker::postSupraThreshReset   <-> LPFormantTracker::mwa               [build/src/mexLibrary.cpp:368]
+   2  RtApiAsio::startStream                   <-> RtApiAsio::callbackEvent            [build/src/mexLibrary.cpp:233]
+   2  Audapter::setGetParam                    <-> Audapter::checkParameters           [build/src/mexLibrary.cpp:279]
+   2  Audapter::reset                          <-> Audapter::calcRMS_fb                [build/src/mexLibrary.cpp:368]
+   2  LPFormantTracker::reset                  <-> DSPF_dp_blk_move                    [build/src/mexLibrary.cpp:368]
+   1  Audapter::setGetParam                    <-> Audapter::calcRMS1                  [build/src/mexLibrary.cpp:279]
+   1  Audapter::readOSTTab                     <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:398]
+   1  Audapter::reset                          <-> Audapter::downSampSig               [build/src/mexLibrary.cpp:368]
+   1  Audapter::reset                          <-> Audapter::upSampSig                 [build/src/mexLibrary.cpp:368]
+   1  Audapter::reset                          <-> Audapter::calcRMSSlope              [build/src/mexLibrary.cpp:368]
+   1  Audapter::reset                          <-> Audapter::calcRMS1                  [build/src/mexLibrary.cpp:368]
+   1  Audapter::reset                          <-> Audapter::calcRMS2                  [build/src/mexLibrary.cpp:368]
+   1  Audapter::reset                          <-> Audapter::detectTrans               [build/src/mexLibrary.cpp:368]
+   1  LPFormantTracker::reset                  <-> LPFormantTracker::procFrame         [build/src/mexLibrary.cpp:368]
+   1  OST_TAB::osTrack                         <->                                     []
+
+157 reports, 135 unique site pairs
+SUMMARY: ThreadSanitizer: heap-use-after-free build/src/ost.cpp:361 in OST_TAB::osTrack(int, int, int, double, double, double, double const*, double)
+WARNING: ThreadSanitizer: heap-use-after-free (pid=1)
+=== work/tsan/hammer_getdata.1
+== grouped by function (main-thread fn <-> audio-thread fn [MEX action line])
+  14  mexFunction                              <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:330]
+   2  RtApiAsio::startStream                   <-> RtApiAsio::callbackEvent            [build/src/mexLibrary.cpp:233]
+   1  Audapter::getSignal                      <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:311]
+   1  mexFunction                              <-> DSPF_dp_blk_move                    [build/src/mexLibrary.cpp:318]
+   1  mexFunction                              <-> DSPF_dp_blk_move                    [build/src/mexLibrary.cpp:319]
+
+19 reports, 17 unique site pairs
+=== work/tsan/hammer_init.1
+== grouped by function (main-thread fn <-> audio-thread fn [MEX action line])
+  20  Audapter::setGetParam                    <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:279]
+   6  IIR_Filter<double>::setCoeff             <-> IIR_Filter<double>::filter          [build/src/mexLibrary.cpp:279]
+   6  Audapter::setGetParam                    <-> Audapter::calcRMS_fb                [build/src/mexLibrary.cpp:279]
+   6  Audapter::setGetParam                    <-> Audapter::detectTrans               [build/src/mexLibrary.cpp:279]
+   2  RtApiAsio::startStream                   <-> RtApiAsio::callbackEvent            [build/src/mexLibrary.cpp:233]
+   2  Audapter::setGetParam                    <-> Audapter::checkParameters           [build/src/mexLibrary.cpp:279]
+   2  Audapter::setGetParam                    <-> Audapter::locateF1                  [build/src/mexLibrary.cpp:279]
+   2  Audapter::setGetParam                    <-> Audapter::locateF2                  [build/src/mexLibrary.cpp:279]
+   1  Audapter::setGetParam                    <-> Audapter::calcRMS1                  [build/src/mexLibrary.cpp:279]
+   1  Audapter::setGetParam                    <-> isabove                             [build/src/mexLibrary.cpp:279]
+   1  Audapter::setGetParam                    <-> Audapter::getDFmt                   [build/src/mexLibrary.cpp:279]
+
+49 reports, 41 unique site pairs
+=== work/tsan/hammer_ost.1
+== grouped by function (main-thread fn <-> audio-thread fn [MEX action line])
+   2  RtApiAsio::startStream                   <-> RtApiAsio::callbackEvent            [build/src/mexLibrary.cpp:233]
+   2  OST_TAB::readFromFile                    <-> OST_TAB::osTrack                    [build/src/mexLibrary.cpp:398]
+   1  Audapter::readOSTTab                     <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:398]
+
+5 reports, 5 unique site pairs
+SUMMARY: ThreadSanitizer: SEGV build/src/ost.cpp:361 in OST_TAB::osTrack(int, int, int, double, double, double, double const*, double)
+=== work/tsan/hammer_pcf.1
+== grouped by function (main-thread fn <-> audio-thread fn [MEX action line])
+   9  PERT_CFG::readFromFile                   <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:424]
+   2  RtApiAsio::startStream                   <-> RtApiAsio::callbackEvent            [build/src/mexLibrary.cpp:233]
+
+11 reports, 9 unique site pairs
+SUMMARY: ThreadSanitizer: SEGV build/src/Audapter.cpp:1972 in Audapter::handleBuffer(double*, double*, int, bool)
+=== work/tsan/hammer_pertamp.1
+== grouped by function (main-thread fn <-> audio-thread fn [MEX action line])
+   2  RtApiAsio::startStream                   <-> RtApiAsio::callbackEvent            [build/src/mexLibrary.cpp:233]
+   2  Audapter::setGetParam                    <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:279]
+
+4 reports, 4 unique site pairs
+=== work/tsan/hammer_reset.1
+== grouped by function (main-thread fn <-> audio-thread fn [MEX action line])
+  20  Audapter::reset                          <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:368]
+   9  IIR_Filter<double>::reset                <-> IIR_Filter<double>::filter          [build/src/mexLibrary.cpp:368]
+   8  Audapter::reset                          <-> DSPF_dp_blk_move                    [build/src/mexLibrary.cpp:368]
+   6  Audapter::reset                          <-> Audapter::getDFmt                   [build/src/mexLibrary.cpp:368]
+   6  LPFormantTracker::postSupraThreshReset   <-> LPFormantTracker::hqr_roots         [build/src/mexLibrary.cpp:368]
+   5  Audapter::reset                          <-> IIR_Filter<double>::filter          [build/src/mexLibrary.cpp:368]
+   4  LPFormantTracker::reset                  <-> LPFormantTracker::mwa               [build/src/mexLibrary.cpp:368]
+   2  RtApiAsio::startStream                   <-> RtApiAsio::callbackEvent            [build/src/mexLibrary.cpp:233]
+   2  Audapter::reset                          <-> Audapter::detectTrans               [build/src/mexLibrary.cpp:368]
+   2  LPFormantTracker::reset                  <-> DSPF_dp_blk_move                    [build/src/mexLibrary.cpp:368]
+   2  LPFormantTracker::postSupraThreshReset   <-> LPFormantTracker::mwa               [build/src/mexLibrary.cpp:368]
+   1  Audapter::reset                          <-> Audapter::downSampSig               [build/src/mexLibrary.cpp:368]
+   1  Audapter::reset                          <-> Audapter::upSampSig                 [build/src/mexLibrary.cpp:368]
+   1  Audapter::reset                          <-> Audapter::calcRMSSlope              [build/src/mexLibrary.cpp:368]
+   1  Audapter::reset                          <-> Audapter::calcRMS1                  [build/src/mexLibrary.cpp:368]
+   1  Audapter::reset                          <-> Audapter::calcRMS2                  [build/src/mexLibrary.cpp:368]
+   1  Audapter::reset                          <-> Audapter::calcRMS_fb                [build/src/mexLibrary.cpp:368]
+   1  LPFormantTracker::reset                  <-> LPFormantTracker::procFrame         [build/src/mexLibrary.cpp:368]
+
+73 reports, 59 unique site pairs
+=== work/tsan/hammer_tdratio.1
+== grouped by function (main-thread fn <-> audio-thread fn [MEX action line])
+   7  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::processFrame [build/src/mexLibrary.cpp:279]
+   4  Audapter::setGetParam                    <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:279]
+   4  audapter::TimeDomainShifter::TimeDomainShifter <-> audapter::TimeDomainShifter::getPitchShiftRatio [build/src/mexLibrary.cpp:279]
+   3  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::copyToRotBuf [build/src/mexLibrary.cpp:279]
+   3  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::genShiftedPitchCycle [build/src/mexLibrary.cpp:279]
+   2  RtApiAsio::startStream                   <-> RtApiAsio::callbackEvent            [build/src/mexLibrary.cpp:233]
+   2  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::getPitchShiftRatio [build/src/mexLibrary.cpp:279]
+   2  audapter::TimeDomainShifter::TimeDomainShifter <-> audapter::TimeDomainShifter::smoothScratch [build/src/mexLibrary.cpp:279]
+   2  audapter::TimeDomainShifter::~TimeDomainShifter <-> audapter::TimeDomainShifter::processFrame [build/src/mexLibrary.cpp:279]
+   1  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::checkFrameLen [build/src/mexLibrary.cpp:279]
+   1  audapter::TimeDomainShifter::TimeDomainShifter <-> DSPF_dp_blk_move                    [build/src/mexLibrary.cpp:279]
+   1  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::scratchNeedsPitchCycle [build/src/mexLibrary.cpp:279]
+   1  audapter::TimeDomainShifter::TimeDomainShifter <-> audapter::TimeDomainShifter::genShiftedPitchCycle [build/src/mexLibrary.cpp:279]
+   1  audapter::TimeDomainShifter::TimeDomainShifter <-> audapter::TimeDomainShifter::accessRotBuf [build/src/mexLibrary.cpp:279]
+   1  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::getLatestShiftedPitchHz [build/src/mexLibrary.cpp:279]
+   1  audapter::TimeDomainShifter::~TimeDomainShifter <-> audapter::TimeDomainShifter::genShiftedPitchCycle [build/src/mexLibrary.cpp:279]
+
+36 reports, 33 unique site pairs
+=== work/tsan/startstop.1
+== grouped by function (main-thread fn <-> audio-thread fn [MEX action line])
+   2  RtApiAsio::startStream                   <-> RtApiAsio::callbackEvent            [build/src/mexLibrary.cpp:233]
+
+2 reports, 2 unique site pairs
+=== all logs combined
+== grouped by function (main-thread fn <-> audio-thread fn [MEX action line])
+  46  Audapter::reset                          <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:368]
+  43  Audapter::setGetParam                    <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:279]
+  19  PERT_CFG::readFromFile                   <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:424]
+  19  IIR_Filter<double>::reset                <-> IIR_Filter<double>::filter          [build/src/mexLibrary.cpp:368]
+  18  RtApiAsio::startStream                   <-> RtApiAsio::callbackEvent            [build/src/mexLibrary.cpp:233]
+  16  Audapter::reset                          <-> DSPF_dp_blk_move                    [build/src/mexLibrary.cpp:368]
+  14  mexFunction                              <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:330]
+  13  OST_TAB::readFromFile                    <-> OST_TAB::osTrack                    [build/src/mexLibrary.cpp:398]
+  12  IIR_Filter<double>::setCoeff             <-> IIR_Filter<double>::filter          [build/src/mexLibrary.cpp:279]
+  12  Audapter::reset                          <-> Audapter::getDFmt                   [build/src/mexLibrary.cpp:368]
+  12  LPFormantTracker::postSupraThreshReset   <-> LPFormantTracker::hqr_roots         [build/src/mexLibrary.cpp:368]
+  11  Audapter::reset                          <-> IIR_Filter<double>::filter          [build/src/mexLibrary.cpp:368]
+  11  LPFormantTracker::postSupraThreshReset   <-> LPFormantTracker::postSupraThreshReset [build/src/mexLibrary.cpp:368]
+  10  Audapter::setGetParam                    <-> Audapter::calcRMS_fb                [build/src/mexLibrary.cpp:279]
+   8  LPFormantTracker::reset                  <-> LPFormantTracker::mwa               [build/src/mexLibrary.cpp:368]
+   7  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::processFrame [build/src/mexLibrary.cpp:279]
+   6  LPFormantTracker::reset                  <-> LPFormantTracker::hqr_roots         [build/src/mexLibrary.cpp:368]
+   6  Audapter::setGetParam                    <-> Audapter::detectTrans               [build/src/mexLibrary.cpp:279]
+   5  LPFormantTracker::postSupraThreshReset   <-> LPFormantTracker::mwa               [build/src/mexLibrary.cpp:368]
+   5  LPFormantTracker::reset                  <-> LPFormantTracker::postSupraThreshReset [build/src/mexLibrary.cpp:368]
+   4  Audapter::setGetParam                    <-> Audapter::checkParameters           [build/src/mexLibrary.cpp:279]
+   4  LPFormantTracker::reset                  <-> DSPF_dp_blk_move                    [build/src/mexLibrary.cpp:368]
+   4  audapter::TimeDomainShifter::TimeDomainShifter <-> audapter::TimeDomainShifter::getPitchShiftRatio [build/src/mexLibrary.cpp:279]
+   3  Audapter::reset                          <-> Audapter::calcRMS_fb                [build/src/mexLibrary.cpp:368]
+   3  Audapter::reset                          <-> Audapter::detectTrans               [build/src/mexLibrary.cpp:368]
+   3  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::copyToRotBuf [build/src/mexLibrary.cpp:279]
+   3  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::genShiftedPitchCycle [build/src/mexLibrary.cpp:279]
+   2  Audapter::setGetParam                    <-> Audapter::calcRMS1                  [build/src/mexLibrary.cpp:279]
+   2  Audapter::readOSTTab                     <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:398]
+   2  Audapter::reset                          <-> Audapter::downSampSig               [build/src/mexLibrary.cpp:368]
+   2  Audapter::reset                          <-> Audapter::upSampSig                 [build/src/mexLibrary.cpp:368]
+   2  Audapter::reset                          <-> Audapter::calcRMSSlope              [build/src/mexLibrary.cpp:368]
+   2  Audapter::reset                          <-> Audapter::calcRMS1                  [build/src/mexLibrary.cpp:368]
+   2  Audapter::reset                          <-> Audapter::calcRMS2                  [build/src/mexLibrary.cpp:368]
+   2  LPFormantTracker::reset                  <-> LPFormantTracker::procFrame         [build/src/mexLibrary.cpp:368]
+   2  Audapter::setGetParam                    <-> Audapter::locateF1                  [build/src/mexLibrary.cpp:279]
+   2  Audapter::setGetParam                    <-> Audapter::locateF2                  [build/src/mexLibrary.cpp:279]
+   2  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::getPitchShiftRatio [build/src/mexLibrary.cpp:279]
+   2  audapter::TimeDomainShifter::TimeDomainShifter <-> audapter::TimeDomainShifter::smoothScratch [build/src/mexLibrary.cpp:279]
+   2  audapter::TimeDomainShifter::~TimeDomainShifter <-> audapter::TimeDomainShifter::processFrame [build/src/mexLibrary.cpp:279]
+   1  OST_TAB::osTrack                         <->                                     []
+   1  Audapter::getSignal                      <-> Audapter::handleBuffer              [build/src/mexLibrary.cpp:311]
+   1  mexFunction                              <-> DSPF_dp_blk_move                    [build/src/mexLibrary.cpp:318]
+   1  mexFunction                              <-> DSPF_dp_blk_move                    [build/src/mexLibrary.cpp:319]
+   1  Audapter::setGetParam                    <-> isabove                             [build/src/mexLibrary.cpp:279]
+   1  Audapter::setGetParam                    <-> Audapter::getDFmt                   [build/src/mexLibrary.cpp:279]
+   1  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::checkFrameLen [build/src/mexLibrary.cpp:279]
+   1  audapter::TimeDomainShifter::TimeDomainShifter <-> DSPF_dp_blk_move                    [build/src/mexLibrary.cpp:279]
+   1  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::scratchNeedsPitchCycle [build/src/mexLibrary.cpp:279]
+   1  audapter::TimeDomainShifter::TimeDomainShifter <-> audapter::TimeDomainShifter::genShiftedPitchCycle [build/src/mexLibrary.cpp:279]
+   1  audapter::TimeDomainShifter::TimeDomainShifter <-> audapter::TimeDomainShifter::accessRotBuf [build/src/mexLibrary.cpp:279]
+   1  Audapter::setGetParam                    <-> audapter::TimeDomainShifter::getLatestShiftedPitchHz [build/src/mexLibrary.cpp:279]
+   1  audapter::TimeDomainShifter::~TimeDomainShifter <-> audapter::TimeDomainShifter::genShiftedPitchCycle [build/src/mexLibrary.cpp:279]
+
+356 reports, 195 unique site pairs
+
+   n  main thread (MEX action)  <->  audio callback thread
+  10  W build/src/filter.h:44 IIR_Filter<double>::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/filter.h:64 IIR_Filter<double>::filter
+   9  W build/src-io/RtAudio.cpp:5485 RtApiAsio::startStream   [build/src/mexLibrary.cpp:233]
+      <-> R build/src-io/RtAudio.cpp:5544 RtApiAsio::callbackEvent
+   9  W build/src-io/RtAudio.cpp:5484 RtApiAsio::startStream   [build/src/mexLibrary.cpp:233]
+      <-> R build/src-io/RtAudio.cpp:5548 RtApiAsio::callbackEvent
+   6  W build/src/filter.h:44 IIR_Filter<double>::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/filter.h:62 IIR_Filter<double>::filter
+   4  W build/src/Audapter.cpp:1197 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1618 Audapter::checkParameters
+   4  W build/src/filter.h:38 IIR_Filter<double>::setCoeff   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/filter.h:60 IIR_Filter<double>::filter
+   4  W build/src/filter.h:38 IIR_Filter<double>::setCoeff   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/filter.h:64 IIR_Filter<double>::filter
+   4  W build/src/filter.h:36 IIR_Filter<double>::setCoeff   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/filter.h:64 IIR_Filter<double>::filter
+   4  W build/src/Audapter.cpp:1339 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1717 Audapter::handleBuffer
+   4  W build/src/pcf.cpp:431 PERT_CFG::readFromFile   [build/src/mexLibrary.cpp:424]
+      <-> R build/src/Audapter.cpp:1811 Audapter::handleBuffer
+   4  W build/src/Audapter.cpp:558 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/DSPF.cpp:15 DSPF_dp_blk_move
+   4  W build/src/Audapter.cpp:587 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/DSPF.cpp:15 DSPF_dp_blk_move
+   4  W build/src/Audapter.cpp:597 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1920 Audapter::handleBuffer
+   4  W build/src/Audapter.cpp:597 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1921 Audapter::handleBuffer
+   4  W build/src/Audapter.cpp:622 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2377 Audapter::getDFmt
+   4  W build/src/Audapter.cpp:623 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2383 Audapter::getDFmt
+   4  W build/src/Audapter.cpp:624 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2385 Audapter::getDFmt
+   4  W build/src/lpc_formant.cpp:275 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:470 LPFormantTracker::hqr_roots
+   4  W build/src/lpc_formant.cpp:276 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:471 LPFormantTracker::hqr_roots
+   4  W build/src/Audapter.cpp:1200 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2402 Audapter::detectTrans
+   3  W build/src/pcf.cpp:435 PERT_CFG::readFromFile   [build/src/mexLibrary.cpp:424]
+      <-> R build/src/Audapter.cpp:1842 Audapter::handleBuffer
+   3  W build/src/Audapter.cpp:1341 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1768 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1197 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1667 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1197 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1670 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1200 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2540 Audapter::calcRMS1
+   2  W build/src/Audapter.cpp:1200 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1725 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1197 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2555 Audapter::calcRMS_fb
+   2  W build/src/Audapter.cpp:1194 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1806 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1194 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1946 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1200 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2221 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1197 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2184 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1197 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2089 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1200 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2285 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1248 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2560 Audapter::calcRMS_fb
+   2  W build/src/Audapter.cpp:1248 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2559 Audapter::calcRMS_fb
+   2  W build/src/Audapter.cpp:1259 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2619 Audapter::calcRMS_fb
+   2  W build/src/Audapter.cpp:1194 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1989 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1214 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> W build/src/Audapter.cpp:1972 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1197 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1987 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1197 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2262 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1209 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2111 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1194 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1699 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1194 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1814 Audapter::handleBuffer
+   2  W build/src/ost.cpp:143 OST_TAB::readFromFile   [build/src/mexLibrary.cpp:398]
+      <-> R build/src/ost.cpp:361 OST_TAB::osTrack
+   2  W build/src/ost.cpp:201 OST_TAB::readFromFile   [build/src/mexLibrary.cpp:398]
+      <-> R build/src/ost.cpp:354 OST_TAB::osTrack
+   2  W build/src/Audapter.cpp:3153 Audapter::readOSTTab   [build/src/mexLibrary.cpp:398]
+      <-> R build/src/Audapter.cpp:1794 Audapter::handleBuffer
+   2  W build/src/pcf.cpp:335 PERT_CFG::readFromFile   [build/src/mexLibrary.cpp:424]
+      <-> R build/src/Audapter.cpp:1972 Audapter::handleBuffer
+   2  W build/src/pcf.cpp:339 PERT_CFG::readFromFile   [build/src/mexLibrary.cpp:424]
+      <-> R build/src/Audapter.cpp:1973 Audapter::handleBuffer
+   2  W build/src/pcf.cpp:421 PERT_CFG::readFromFile   [build/src/mexLibrary.cpp:424]
+      <-> R build/src/Audapter.cpp:1807 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:532 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2638 Audapter::downSampSig
+   2  W build/src/Audapter.cpp:533 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/filter.h:60 IIR_Filter<double>::filter
+   2  W build/src/Audapter.cpp:534 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2657 Audapter::upSampSig
+   2  W build/src/Audapter.cpp:541 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/filter.h:60 IIR_Filter<double>::filter
+   2  W build/src/Audapter.cpp:544 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/DSPF.cpp:15 DSPF_dp_blk_move
+   2  W build/src/Audapter.cpp:544 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> R build/src/Audapter.cpp:2124 Audapter::handleBuffer
+   2  W build/src/pcf.cpp:423 PERT_CFG::readFromFile   [build/src/mexLibrary.cpp:424]
+      <-> R build/src/Audapter.cpp:1972 Audapter::handleBuffer
+   2  W build/src/pcf.cpp:427 PERT_CFG::readFromFile   [build/src/mexLibrary.cpp:424]
+      <-> R build/src/Audapter.cpp:1973 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:547 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2225 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:550 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2121 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:557 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/filter.h:60 IIR_Filter<double>::filter
+   2  W build/src/Audapter.cpp:559 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/DSPF.cpp:15 DSPF_dp_blk_move
+   2  W build/src/Audapter.cpp:560 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/DSPF.cpp:15 DSPF_dp_blk_move
+   2  W build/src/Audapter.cpp:561 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/DSPF.cpp:15 DSPF_dp_blk_move
+   2  W build/src/Audapter.cpp:562 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/filter.h:60 IIR_Filter<double>::filter
+   2  W build/src/Audapter.cpp:559 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/filter.h:60 IIR_Filter<double>::filter
+   2  W build/src/Audapter.cpp:597 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1914 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:597 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1928 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:597 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1933 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:597 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1936 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:597 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2097 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:602 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1793 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:603 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:3027 Audapter::calcRMSSlope
+   2  W build/src/Audapter.cpp:610 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2305 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:612 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2182 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:631 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2540 Audapter::calcRMS1
+   2  W build/src/Audapter.cpp:632 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2547 Audapter::calcRMS2
+   2  W build/src/Audapter.cpp:633 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2619 Audapter::calcRMS_fb
+   2  W build/src/Audapter.cpp:637 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1770 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:645 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2405 Audapter::detectTrans
+   2  W build/src/Audapter.cpp:651 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1797 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:663 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2088 Audapter::handleBuffer
+   2  W build/src/lpc_formant.cpp:309 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> R build/src/DSPF.cpp:15 DSPF_dp_blk_move
+   2  W build/src/lpc_formant.cpp:310 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/DSPF.cpp:15 DSPF_dp_blk_move
+   2  W build/src/lpc_formant.cpp:321 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:922 LPFormantTracker::mwa
+   2  W build/src/lpc_formant.cpp:322 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:924 LPFormantTracker::mwa
+   2  W build/src/lpc_formant.cpp:326 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:919 LPFormantTracker::mwa
+   2  W build/src/lpc_formant.cpp:327 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:920 LPFormantTracker::mwa
+   2  W build/src/lpc_formant.cpp:332 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:967 LPFormantTracker::procFrame
+   2  W build/src/lpc_formant.cpp:275 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:447 LPFormantTracker::hqr_roots
+   2  W build/src/lpc_formant.cpp:276 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:448 LPFormantTracker::hqr_roots
+   2  W build/src/lpc_formant.cpp:293 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:916 LPFormantTracker::mwa
+   2  W build/src/Audapter.cpp:597 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1905 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:609 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2304 Audapter::handleBuffer
+   2  W build/src/lpc_formant.cpp:295 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:912 LPFormantTracker::mwa
+   2  R build/src/mexLibrary.cpp:330 mexFunction   [build/src/mexLibrary.cpp:330]
+      <-> W build/src/Audapter.cpp:1920 Audapter::handleBuffer
+   2  R build/src/mexLibrary.cpp:330 mexFunction   [build/src/mexLibrary.cpp:330]
+      <-> W build/src/Audapter.cpp:1921 Audapter::handleBuffer
+   2  W build/src/Audapter.cpp:1200 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2403 Audapter::detectTrans
+   2  W build/src/filter.h:44 IIR_Filter<double>::reset   [build/src/mexLibrary.cpp:368]
+      <-> R build/src/filter.h:60 IIR_Filter<double>::filter
+   2  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:89 audapter::TimeDomainShifter::processFrame
+   2  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:215 audapter::TimeDomainShifter::copyToRotBuf
+   2  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:238 audapter::TimeDomainShifter::getPitchShiftRatio
+   1  W build/src/ost.cpp:142 OST_TAB::readFromFile   [build/src/mexLibrary.cpp:398]
+      <-> R build/src/ost.cpp:361 OST_TAB::osTrack
+   1  W build/src/ost.cpp:146 OST_TAB::readFromFile   [build/src/mexLibrary.cpp:398]
+      <-> R build/src/ost.cpp:369 OST_TAB::osTrack
+   1  W build/src/ost.cpp:147 OST_TAB::readFromFile   [build/src/mexLibrary.cpp:398]
+      <-> R build/src/ost.cpp:369 OST_TAB::osTrack
+   1  W build/src/ost.cpp:150 OST_TAB::readFromFile   [build/src/mexLibrary.cpp:398]
+      <-> R build/src/ost.cpp:379 OST_TAB::osTrack
+   1  W build/src/ost.cpp:151 OST_TAB::readFromFile   [build/src/mexLibrary.cpp:398]
+      <-> R build/src/ost.cpp:379 OST_TAB::osTrack
+   1  W build/src/ost.cpp:271 OST_TAB::readFromFile   [build/src/mexLibrary.cpp:398]
+      <-> R build/src/ost.cpp:723 OST_TAB::osTrack
+   1  W build/src/pcf.cpp:334 PERT_CFG::readFromFile   [build/src/mexLibrary.cpp:424]
+      <-> R build/src/Audapter.cpp:1972 Audapter::handleBuffer
+   1  W build/src/pcf.cpp:338 PERT_CFG::readFromFile   [build/src/mexLibrary.cpp:424]
+      <-> R build/src/Audapter.cpp:1973 Audapter::handleBuffer
+   1  W build/src/ost.cpp:206 OST_TAB::readFromFile   [build/src/mexLibrary.cpp:398]
+      <-> R build/src/ost.cpp:361 OST_TAB::osTrack
+   1  W build/src/ost.cpp:210 OST_TAB::readFromFile   [build/src/mexLibrary.cpp:398]
+      <-> R build/src/ost.cpp:369 OST_TAB::osTrack
+   1  W build/src/ost.cpp:214 OST_TAB::readFromFile   [build/src/mexLibrary.cpp:398]
+      <-> R build/src/ost.cpp:379 OST_TAB::osTrack
+   1  W build/src/Audapter.cpp:609 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> R build/src/Audapter.cpp:1663 Audapter::handleBuffer
+   1  W build/src/lpc_formant.cpp:295 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> R build/src/lpc_formant.cpp:935 LPFormantTracker::mwa
+   1  W build/src/lpc_formant.cpp:281 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:281 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:282 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:282 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:285 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:285 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:286 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:286 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:291 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:291 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:296 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:296 LPFormantTracker::postSupraThreshReset
+   1  W build/src/Audapter.cpp:561 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/filter.h:60 IIR_Filter<double>::filter
+   1  W build/src/Audapter.cpp:597 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1906 Audapter::handleBuffer
+   1  W build/src/Audapter.cpp:597 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1907 Audapter::handleBuffer
+   1  W build/src/Audapter.cpp:597 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1908 Audapter::handleBuffer
+   1  W build/src/Audapter.cpp:597 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:1913 Audapter::handleBuffer
+   1  W build/src/Audapter.cpp:611 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2181 Audapter::handleBuffer
+   1  W build/src/lpc_formant.cpp:321 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:281 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:322 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:282 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:326 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:285 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:327 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:286 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:332 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:291 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:275 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:275 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:276 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:276 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:293 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:293 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:295 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:295 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:298 LPFormantTracker::postSupraThreshReset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:298 LPFormantTracker::postSupraThreshReset
+   1  W build/src/lpc_formant.cpp:310 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:409 LPFormantTracker::hqr_roots
+   1  W build/src/lpc_formant.cpp:310 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:580 LPFormantTracker::hqr_roots
+   1  W build/src/lpc_formant.cpp:310 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:524 LPFormantTracker::hqr_roots
+   1  W build/src/lpc_formant.cpp:310 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:528 LPFormantTracker::hqr_roots
+   1  W build/src/lpc_formant.cpp:310 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:577 LPFormantTracker::hqr_roots
+   1  W build/src/lpc_formant.cpp:310 LPFormantTracker::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/lpc_formant.cpp:595 LPFormantTracker::hqr_roots
+   1  heap-use-after-free: build/src/ost.cpp:361 OST_TAB::osTrack
+   1  W build/src/Audapter.cpp:660 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> W build/src/Audapter.cpp:2599 Audapter::calcRMS_fb
+   1  R build/src/Audapter.cpp:1603 Audapter::getSignal   [build/src/mexLibrary.cpp:311]
+      <-> W build/src/Audapter.cpp:2304 Audapter::handleBuffer
+   1  R build/src/mexLibrary.cpp:318 mexFunction   [build/src/mexLibrary.cpp:318]
+      <-> W build/src/DSPF.cpp:15 DSPF_dp_blk_move
+   1  R build/src/mexLibrary.cpp:319 mexFunction   [build/src/mexLibrary.cpp:319]
+      <-> W build/src/DSPF.cpp:15 DSPF_dp_blk_move
+   1  R build/src/mexLibrary.cpp:330 mexFunction   [build/src/mexLibrary.cpp:330]
+      <-> W build/src/Audapter.cpp:1905 Audapter::handleBuffer
+   1  R build/src/mexLibrary.cpp:330 mexFunction   [build/src/mexLibrary.cpp:330]
+      <-> W build/src/Audapter.cpp:1906 Audapter::handleBuffer
+   1  R build/src/mexLibrary.cpp:330 mexFunction   [build/src/mexLibrary.cpp:330]
+      <-> W build/src/Audapter.cpp:1907 Audapter::handleBuffer
+   1  R build/src/mexLibrary.cpp:330 mexFunction   [build/src/mexLibrary.cpp:330]
+      <-> W build/src/Audapter.cpp:1908 Audapter::handleBuffer
+   1  R build/src/mexLibrary.cpp:330 mexFunction   [build/src/mexLibrary.cpp:330]
+      <-> W build/src/Audapter.cpp:1913 Audapter::handleBuffer
+   1  R build/src/mexLibrary.cpp:330 mexFunction   [build/src/mexLibrary.cpp:330]
+      <-> W build/src/Audapter.cpp:1914 Audapter::handleBuffer
+   1  R build/src/mexLibrary.cpp:330 mexFunction   [build/src/mexLibrary.cpp:330]
+      <-> W build/src/Audapter.cpp:1928 Audapter::handleBuffer
+   1  R build/src/mexLibrary.cpp:330 mexFunction   [build/src/mexLibrary.cpp:330]
+      <-> W build/src/Audapter.cpp:1933 Audapter::handleBuffer
+   1  R build/src/mexLibrary.cpp:330 mexFunction   [build/src/mexLibrary.cpp:330]
+      <-> W build/src/Audapter.cpp:1936 Audapter::handleBuffer
+   1  R build/src/mexLibrary.cpp:330 mexFunction   [build/src/mexLibrary.cpp:330]
+      <-> W build/src/Audapter.cpp:2097 Audapter::handleBuffer
+   1  W build/src/Audapter.cpp:1200 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.h:75 isabove
+   1  W build/src/Audapter.cpp:1194 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1750 Audapter::handleBuffer
+   1  W build/src/Audapter.cpp:1200 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2383 Audapter::getDFmt
+   1  W build/src/Audapter.cpp:1194 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1761 Audapter::handleBuffer
+   1  W build/src/Audapter.cpp:1259 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> W build/src/Audapter.cpp:2573 Audapter::calcRMS_fb
+   1  W build/src/Audapter.cpp:1214 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2682 Audapter::locateF1
+   1  W build/src/Audapter.cpp:1214 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2687 Audapter::locateF1
+   1  W build/src/Audapter.cpp:1214 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2710 Audapter::locateF2
+   1  W build/src/Audapter.cpp:1214 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2715 Audapter::locateF2
+   1  W build/src/Audapter.cpp:1248 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2561 Audapter::calcRMS_fb
+   1  W build/src/filter.h:44 IIR_Filter<double>::reset   [build/src/mexLibrary.cpp:368]
+      <-> R build/src/filter.h:62 IIR_Filter<double>::filter
+   1  W build/src/Audapter.cpp:644 Audapter::reset   [build/src/mexLibrary.cpp:368]
+      <-> R build/src/Audapter.cpp:2400 Audapter::detectTrans
+   1  W build/src/Audapter.cpp:1214 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:2097 Audapter::handleBuffer
+   1  W build/src/Audapter.cpp:1451 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/Audapter.cpp:1900 Audapter::handleBuffer
+   1  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:415 audapter::TimeDomainShifter::checkFrameLen
+   1  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:91 audapter::TimeDomainShifter::processFrame
+   1  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:98 audapter::TimeDomainShifter::processFrame
+   1  W build/src/time_domain_shifter.cpp:27 audapter::TimeDomainShifter::TimeDomainShifter   [build/src/mexLibrary.cpp:279]
+      <-> W build/src/DSPF.cpp:15 DSPF_dp_blk_move
+   1  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:216 audapter::TimeDomainShifter::copyToRotBuf
+   1  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> W build/src/time_domain_shifter.cpp:108 audapter::TimeDomainShifter::processFrame
+   1  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:132 audapter::TimeDomainShifter::processFrame
+   1  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:229 audapter::TimeDomainShifter::scratchNeedsPitchCycle
+   1  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:278 audapter::TimeDomainShifter::genShiftedPitchCycle
+   1  W build/src/time_domain_shifter.cpp:18 audapter::TimeDomainShifter::TimeDomainShifter   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:245 audapter::TimeDomainShifter::getPitchShiftRatio
+   1  W build/src/time_domain_shifter.cpp:18 audapter::TimeDomainShifter::TimeDomainShifter   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:250 audapter::TimeDomainShifter::getPitchShiftRatio
+   1  W build/src/time_domain_shifter.cpp:18 audapter::TimeDomainShifter::TimeDomainShifter   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:256 audapter::TimeDomainShifter::getPitchShiftRatio
+   1  W build/src/time_domain_shifter.cpp:18 audapter::TimeDomainShifter::TimeDomainShifter   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:257 audapter::TimeDomainShifter::getPitchShiftRatio
+   1  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:301 audapter::TimeDomainShifter::genShiftedPitchCycle
+   1  W build/src/time_domain_shifter.cpp:29 audapter::TimeDomainShifter::TimeDomainShifter   [build/src/mexLibrary.cpp:279]
+      <-> W build/src/time_domain_shifter.cpp:301 audapter::TimeDomainShifter::genShiftedPitchCycle
+   1  W build/src/time_domain_shifter.cpp:27 audapter::TimeDomainShifter::TimeDomainShifter   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:221 audapter::TimeDomainShifter::accessRotBuf
+   1  W build/src/time_domain_shifter.cpp:29 audapter::TimeDomainShifter::TimeDomainShifter   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:427 audapter::TimeDomainShifter::smoothScratch
+   1  W build/src/time_domain_shifter.cpp:29 audapter::TimeDomainShifter::TimeDomainShifter   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:428 audapter::TimeDomainShifter::smoothScratch
+   1  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> W build/src/time_domain_shifter.cpp:354 audapter::TimeDomainShifter::genShiftedPitchCycle
+   1  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> W build/src/time_domain_shifter.cpp:175 audapter::TimeDomainShifter::processFrame
+   1  W build/src/Audapter.cpp:1454 Audapter::setGetParam   [build/src/mexLibrary.cpp:279]
+      <-> R build/src/time_domain_shifter.cpp:77 audapter::TimeDomainShifter::getLatestShiftedPitchHz
+   1  W build/src/time_domain_shifter.cpp:42 audapter::TimeDomainShifter::~TimeDomainShifter   [build/src/mexLibrary.cpp:279]
+      <-> W build/src/time_domain_shifter.cpp:330 audapter::TimeDomainShifter::genShiftedPitchCycle
+   1  W build/src/time_domain_shifter.cpp:44 audapter::TimeDomainShifter::~TimeDomainShifter   [build/src/mexLibrary.cpp:279]
+      <-> W build/src/time_domain_shifter.cpp:98 audapter::TimeDomainShifter::processFrame
+   1  W build/src/time_domain_shifter.cpp:44 audapter::TimeDomainShifter::~TimeDomainShifter   [build/src/mexLibrary.cpp:279]
+      <-> W build/src/time_domain_shifter.cpp:174 audapter::TimeDomainShifter::processFrame

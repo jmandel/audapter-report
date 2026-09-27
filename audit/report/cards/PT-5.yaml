@@ -1,0 +1,73 @@
+# Full finding card PT-5. Rendered by build.py; see PLAN.md section 3 for the fields.
+id: PT-5
+log: PT-5
+notes: "notes/pitch-time.md#pt-5"
+headline: "With the phase vocoder on, output is 3.5 dB louder, and the level changes when the pitch shift starts"
+severity: high
+origin: upstream
+origin_note: "Identical in upstream 2.1.5: the blab/upstream differential is bit-exact for pvoc_pitch_up2 and pcf_pitch."
+status: [H, D]
+effect:
+  setup: >
+    <code>bPitchShift = 1</code>. The OST enters state 1 at 0.6 s, and the PCF asks for 0 st in state 0 and +2 st in state 1: a typical
+    pitch-perturbation onset. Input: a sustained synthetic /a/ at F0 120 Hz (the same signal as <code>t_pitch.m</code>). Reference: the same input
+    with <code>bPitchShift = 0</code>.
+  expected: "Output level equal to the input level throughout; F0 steps up by 200 cents at 0.6 s."
+  observed: "The F0 step is accurate ({f0_cents:.0f} cents). Before the onset the output is {gain_before_db:+.1f} dB louder than the input. After the onset the level drops and fluctuates from one 20 ms block to the next. With a constant ratio the level at +2 st depends on F0 and vowel: from {sweep_min:.1f} to {sweep_max:.1f} dB below the 0 st level in our sweep."
+  matters: >
+    Any pitch-perturbation design that compares shifted with unshifted feedback also changes loudness at the same moment,
+    and speakers adjust their own voice to the loudness of their feedback. The size of the change depends on the speaker's
+    F0 and the vowel, so it varies between participants and conditions. The +3.5 dB offset also means pitch-shift sessions run louder than
+    a calibration made with <code>bPitchShift = 0</code>. The switch meant to fix this, <code>bPvocAmpNorm</code>, can't be turned on, and with its name corrected it outputs NaN (see the fix below).
+  numbers:
+    - ["Level re input before onset (0 st)", "{gain_before_db:+.2f} dB"]
+    - ["Level re input after onset (+2 st), mean of 20 ms blocks", "{gain_after_db:+.2f} dB"]
+    - ["Reference, bPitchShift = 0", "{gain_bypass_db:+.2f} dB"]
+    - ["Setting bPvocAmpNorm / bpvocmpnorm", "{ampnorm_text}"]
+sketch: pt5
+interactive:
+  id: pt-5
+  variants: [shipped, fix-pt-5]
+  patches: {fix-pt-5: [pt-5-ola-normalise.patch]}
+  needs: {recorder_s: 1.4}
+  button: "Run the pitch step on both builds"
+  inputs: {vowel: dev_vowel_48k.wav}
+  params: {rmsthresh: 0.005, bdetect: 1, btrack: 1, bpitchshift: 1, pitchshiftratio: 1}
+  text: >
+    This runs the card's trial (the same vowel, OST and PCF) through the real Audapter C++ core compiled to WebAssembly from the pinned
+    commit, once as released and once with the overlap-add normalised. Pick the size of the step. Each trace is the output level in 20 ms
+    blocks relative to the same input run with <code>bPitchShift = 0</code>, so 0 dB is the level a participant should hear.
+asset_dir: pt-5
+audio:
+  - {file: input_vowel.wav, role: input}
+  - {file: output_bypass.wav, role: expected}
+  - {file: output_pitch_step.wav, role: observed}
+cause:
+  summary: >
+    Analysis and synthesis both use a Hann window with hop = L/4. Overlap-adding Hann² at that hop sums to 1.5, and the synthesis scaling
+    does not divide this out, so the output is 1.5 × the input (+3.52 dB) even at ratio 1. With a shift, each bin is mapped and resynthesised
+    with fresh phase (<code>sumPhase</code> starts at 0 for every bin), so the level then depends on the signal's harmonics and on the moment the
+    shift begins. The normalisation option is registered under a misspelt name, so the setter never matches it.
+  refs:
+    - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [218, 220], hl: [219], expect: "X_magn[i] = 2.0", note: "Analysis magnitude."}
+    - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [465, 467], hl: [467], expect: "osamp / 2.0", note: "Synthesis scaling: 2·w/(osamp/2) with osamp = 4 leaves the Hann² overlap sum of 1.5 in the output."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [138, 138], hl: [138], expect: "bpvocmpnorm", note: "Registered as \"bpvocmpnorm\" (missing a)..."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [877, 878], hl: [877], expect: "bpvocampnorm", note: "...but the setter matches \"bpvocampnorm\", so both spellings are rejected."}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2152, 2154], hl: [2153], expect: "ms_out / ms_in", note: "If the name is corrected, this divides by <code>ms_in</code>, a local set to 0 at line 1978 and never updated. In our test build the output became NaN."}
+  upstream_refs:
+    - {repo: upstream-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [467, 467], expect: "osamp / 2.0"}
+    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [137, 137], expect: "bpvocmpnorm"}
+  fix: >
+    Divide the overlap-add by the Hann² sum (1.5 at hop = L/4) in pitch-shift mode, as in the patch the panel runs
+    (<code>report/patches/pt-5-ola-normalise.patch</code>). It gives unity gain at 0 st and leaves the time-warp modes bit-identical,
+    but it does not remove the level change at the shift onset, which comes from the resynthesis. That needs a level
+    match after a shift (a running RMS ratio, which is what <code>bPvocAmpNorm</code> was meant to do). Correcting only the
+    parameter's registered name is not safe: in a local build with just that change, turning it on turns the output into NaN from the
+    first phase-vocoder frames on, because <code>ms_in</code> (Audapter.cpp:1978) is never computed. Add a level assertion to the pitch-shift tests.
+verify:
+  - {kind: H, what: "harness test", name: "t_pitch.m", test: "pvoc: unity gain at 0 st"}
+  - {kind: H, what: "harness test", name: "t_pitch.m", test: "pvoc: no loudness step 0 -> +2 st"}
+  - {kind: H, what: "report export + F0/vowel sweep", name: "report_pt5.m"}
+  - {kind: D, what: "standalone pvoc driver", name: "scratch/pitch-time/pv_test.cpp", detail: "gain 1.500 at 0 st on pure tones"}
+  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+reproduce: "cd audit/harness && ./run-oct.sh t_pitch.m"

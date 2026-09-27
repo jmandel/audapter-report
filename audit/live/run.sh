@@ -27,7 +27,7 @@ equiv)  # LIVE-9: live == offline (after alignment + input quantisation), fake A
   echo '=== base (JACK dummy driver, period 96, float32 ports)'
   ./jackrun.sh 96 build/jack/live_driver live trace=$IN/trace_base.txt in=$IN/vowel_a.wav out=/live/work/out/eq_jack >/dev/null 2>&1
   rm -f work/out/eq_off_jack_k*; analysis/find_lead.sh $D /live/work/out/eq_jack /live/work/out/eq_off_jack float32 $IN/trace_base.txt $IN/vowel_a.wav | tail -1
-  K=\$(ls work/out/eq_off_jack_k*_sig.npy | tail -1 | grep -o 'k[0-9]*')
+  K=\$(ls work/out/eq_off_jack_k*_sig.npy | tail -1 | grep -o '_k[0-9]*_' | tr -d _)
   (cd analysis && python3 compare_live_offline.py ../work/out/eq_jack ../work/out/eq_off_jack_\$K)
   " 2>&1 | tee results/equiv.txt ;;
 
@@ -74,7 +74,9 @@ uaf)  # LIVE-2
   { for t in tdratio:trace_td1st toggle:fn1:675:676:trace_f1up toggle:pvocframelen:256:512:trace_pvoc2st; do op=${t%:*}; tr=${t##*:}
       echo "--- setParam $op while running (ASan)"
       ASAN_OPTIONS=detect_leaks=0 ./dock.sh "build/asio-asan/live_driver hammer trace=$IN/$tr.txt in=$IN/vowel_a.wav op=$op secs=30 gap=0.005" 2>&1 | grep -E "ERROR: Addr|SUMMARY: Addr|LIVE-DRIVER" | grep -v 2124 | head -3
-      echo "--- same, plain -O2 build"; ./dock.sh "$D hammer trace=$IN/$tr.txt in=$IN/vowel_a.wav op=$op secs=20 gap=0.01" 2>&1 | grep -E "LIVE-DRIVER|hammer op|Segmentation" | head -2; done; } 2>&1 | tee results/uaf.txt ;;
+      echo "--- same, plain -O2 build"; ./dock.sh "$D hammer trace=$IN/$tr.txt in=$IN/vowel_a.wav op=$op secs=20 gap=0.01" 2>&1 | grep -E "LIVE-DRIVER|hammer op|Segmentation" | head -2; done
+    echo "--- PCF reload while running in a pitch-shift (phase vocoder) configuration (ASan): readPertCfg rebuilds pVocs"
+    ASAN_OPTIONS=detect_leaks=0 ./dock.sh "build/asio-asan/live_driver hammer trace=$IN/trace_pvoc2st.txt ost=$IN/onset.ost pcf=$IN/pitch_s2.pcf in=$IN/vowel_a.wav op=pcf secs=60 gap=0.01" 2>&1 | grep -E "ERROR: Addr|#[0-1] |LIVE-DRIVER" | grep -v 2124 | head -4; } 2>&1 | tee results/uaf.txt ;;
 
 burst)  # LIVE-3: audible consequence of reset() racing the callback
   say "burst -> results/burst.txt"

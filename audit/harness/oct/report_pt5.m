@@ -58,4 +58,6 @@ c = struct('name', {'input_vowel', 'output_bypass', 'output_pitch_step'}, ...
   'label', {sprintf('Input: sustained /a/, F0 %d Hz', F0D), 'Output with bPitchShift = 0 (reference level)', 'Output with the 0 to +2 st PCF step at 0.6 s'}, ...
   'warn', {'', '', ''});
 r.audio = report_wavgroup(od, p.sr, c);
+% device-rate (48 kHz) unscaled input for the in-browser panel (templates/panels/pt-5.js)
+audiowrite(fullfile(od, 'dev_vowel_48k.wav'), x, fs, 'BitsPerSample', 16);
 report_json(fullfile(od, 'data.json'), r);

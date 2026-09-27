@@ -1,0 +1,48 @@
+{
+ "fix-pt-5": {
+  "regression": {
+   "fmtshift": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "fmtshift2d": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "passthru": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "pcf": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "pvoc": [
+    56445,
+    0,
+    18815,
+    0
+   ],
+   "tdshift": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "target": {
+   "shippedBug": true,
+   "variantBug": false,
+   "shipped": "0 st level +3.52 dB re bPitchShift = 0; step at 0 -> +2 st -1.43 dB; time-warp mode -3.03 dB",
+   "variant": "0 st level -0.00 dB re bPitchShift = 0; step at 0 -> +2 st -1.43 dB; regression: time-warp mode (PCF warp, no shift) 0 of 67200 output samples differ from shipped"
+  }
+ }
+}

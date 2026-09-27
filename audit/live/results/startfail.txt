@@ -1,1 +1,14 @@
 --- ASIO driver without 48 kHz:
+Action Start:  1
+RtApi: unable to open specified device(s) with given stream parameters: 
+    RtApiAsio: driver (Fake ASIO Device) does not support requested sample rate (48000).
+Action End:  2
+[mex] WARNING: mexFunction wrote plhs[2] with nlhs=2 (out of bounds in MATLAB)
+live: wall 7.00 s, callbacks 0, getData rows 1, plhs overflow 1
+--- ASIO driver with Int24 samples:
+MEX error (op start): Cannot find device with specified name: "Fake"
+--- JACK server at 44.1 kHz:
+    RtApiJack: the requested sample rate (48000) is different than the JACK server rate (44100).
+Action End:  2
+[mex] WARNING: mexFunction wrote plhs[2] with nlhs=2 (out of bounds in MATLAB)
+live: wall 7.00 s, callbacks 3253, getData rows 1, plhs overflow 1

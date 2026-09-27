@@ -1,0 +1,22 @@
+--- setParam tdratio while running (ASan)
+==1==ERROR: AddressSanitizer: heap-use-after-free on address 0x5220002cbb00 at pc 0x7efdcb618199 bp 0x7efdc7a09df0 sp 0x7efdc7a095b0
+SUMMARY: AddressSanitizer: heap-use-after-free ../../../../src/libsanitizer/sanitizer_common/sanitizer_common_interceptors_memintrinsics.inc:98 in memmove
+*** LIVE-DRIVER: process dying during main-thread op 'tdratio' (iteration 483)
+--- same, plain -O2 build
+hammer op=tdratio: 1985 iterations in 20.0 s without crashing; callbacks 5003; op duration median 0.02 ms max 0.07 ms
+--- setParam toggle:fn1:675:676 while running (ASan)
+==1==ERROR: AddressSanitizer: heap-use-after-free on address 0x51c00003e9f0 at pc 0x5601a2bbb162 bp 0x7f3890901da0 sp 0x7f3890901d98
+SUMMARY: AddressSanitizer: heap-use-after-free build/src/lpc_formant.cpp:570 in LPFormantTracker::hqr_roots(double*, double*, double*)
+*** LIVE-DRIVER: process dying during main-thread op 'toggle:fn1:675:676' (iteration 79)
+--- same, plain -O2 build
+--- setParam toggle:pvocframelen:256:512 while running (ASan)
+==1==ERROR: AddressSanitizer: heap-use-after-free on address 0x511000002708 at pc 0x55f44023c6f6 bp 0x7f68c6a7dfd0 sp 0x7f68c6a7dfc8
+SUMMARY: AddressSanitizer: heap-use-after-free build/src/phase_vocoder.cpp:542 in PhaseVocoder::getMode() const
+*** LIVE-DRIVER: process dying during main-thread op 'toggle:pvocframelen:256:512' (iteration 28)
+--- same, plain -O2 build
+*** LIVE-DRIVER: signal 11 during main-thread op 'toggle:pvocframelen:256:512' (iteration 17)
+--- PCF reload while running in a pitch-shift (phase vocoder) configuration (ASan): readPertCfg rebuilds pVocs
+==1==ERROR: AddressSanitizer: heap-use-after-free on address 0x5110000052c8 at pc 0x564d6e1ee6f6 bp 0x7fb7ab87dfd0 sp 0x7fb7ab87dfc8
+    #0 0x564d6e1ee6f5 in PhaseVocoder::getMode() const build/src/phase_vocoder.cpp:542
+    #1 0x564d6e13d7b8 in Audapter::handleBuffer(double*, double*, int, bool) build/src/Audapter.cpp:2030
+    #0 0x7fb7af424678 in operator delete(void*, unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:164
