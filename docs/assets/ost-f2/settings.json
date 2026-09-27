@@ -18,7 +18,7 @@
   "trial 3"
  ],
  "switching": "OST and PCF loaded once; reset() before every trial",
- "input": "synthetic soft vowel that never reaches the onset threshold",
+ "input": "real: PVQD SJ7001 sustained /a/ (female, CC BY 4.0), played softly so it never reaches the onset threshold; synthetic: a soft /a/ with the same property",
  "playground": {
   "v": 1,
   "preset": "female",

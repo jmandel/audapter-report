@@ -80,13 +80,13 @@ def cut(path, a, b, inner=0.6):
     m = (b - a) * (1 - inner) / 2
     return fs, x[int(round((a + m) * fs)):int(round((b - m) * fs))]
 
-def span(path, a, b, what, inner=0.6):
+def span(path, a, b, what, inner=0.6, rmsmin=1e-3):
     fs, s = cut(path, a, b, inner)
     if what == "F1":
-        F = formants(s, fs); v = F[:, 0]; v = v[np.isfinite(v)]
+        F = formants(s, fs, rmsmin=rmsmin); v = F[:, 0]; v = v[np.isfinite(v)]
         return float(np.median(v)) if len(v) >= 3 else float("nan")
     if what == "F2":
-        F = formants(s, fs); v = F[:, 1]; v = v[np.isfinite(v)]
+        F = formants(s, fs, rmsmin=rmsmin); v = F[:, 1]; v = v[np.isfinite(v)]
         return float(np.median(v)) if len(v) >= 3 else float("nan")
     if what == "F0":
         return f0(s, fs)
@@ -101,3 +101,14 @@ def silent_runs(path, a, b, thresh=1e-6, min_s=0.002):
     d = np.diff(np.concatenate(([0], z.astype(int), [0])))
     on, off = np.where(d == 1)[0], np.where(d == -1)[0]
     return [((i0 + s) / fs, (i0 + e) / fs) for s, e in zip(on, off) if (e - s) / fs >= min_s]
+
+
+def ratio(path_in, path_out, a, b, what="F1", lag=0.01, rmsmin=1e-3):
+    """Median per-frame ratio out/in of F1 (or F2) over [a, b] s, with the output read `lag` later (Audapter's delay), as the
+    harness's exp_trial.m does. Robust on connected speech, where a median over the whole span mixes different vowels."""
+    fs, x = load(path_in); fs2, y = load(path_out)
+    xi = x[int(a * fs):int(b * fs)]; yo = y[int((a + lag) * fs2):int((b + lag) * fs2)]
+    Fi, Fo = formants(xi, fs, rmsmin=rmsmin), formants(yo, fs2, rmsmin=rmsmin)
+    n = min(len(Fi), len(Fo)); j = 0 if what == "F1" else 1
+    q = Fo[:n, j] / Fi[:n, j]; q = q[np.isfinite(q) & (q > 0.5) & (q < 2)]
+    return float(np.median(q)) if len(q) >= 5 else float("nan")

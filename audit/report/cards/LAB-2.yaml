@@ -1,0 +1,82 @@
+# Lab-script card: vsaGeneralize field scaling (EXP-4c). A question to the lab, not an Audapter defect.
+id: LAB-2
+log: EXP-4
+notes: notes/blab-experiments.md
+headline: >-
+  Was vsaGeneralize's data collected with the committed runner? As committed, baseline trials meant to be unperturbed are
+  perturbed by {s0_min:.0f}–{s0_max:.0f} mel, and training trials get the full, unscaled field
+severity: med
+origin: blab
+since: ''
+status: [H]
+reach_kind: current
+reach: >-
+  A question about the lab's public experiment code, not an Audapter defect. The runner that collected the data may differ from
+  the committed one. This is a reading of public code, not a claim about published results; the lab's public data (OSF 78z93)
+  can settle it.
+labels: {what: What the design intends, scope: What the committed code does, and how it differs, example: Example, cause: The code}
+what: >-
+  "A non-uniform auditory perturbation of vowel formants that centralizes all vowels"
+  (<a href="https://github.com/blab-lab/vsaGeneralize/blob/0ec575ae1cde8402628b6cb5cd756467a95dd11d/README.md#L1">README</a>).
+  Baseline-training trials have strength 0 (no perturbation); training trials have strength 0.5, so each vowel is heard halfway
+  to the centre of the speaker's vowel space; generalization trials are unperturbed and masked (fb 4).
+scope: >-
+  <code>calc_pertField</code> switches on the two-dimensional field (<code>bShift2D = 1</code>) at full strength, and
+  <code>AudapterIO('init')</code> sends it. Per trial, the committed runner scales only the one-dimensional <code>pertAmp</code>,
+  which is all zeros, so the two-dimensional field is never scaled: it stays at full strength on every fb 3 trial, including
+  strength 0. The runner also re-sends the Hz grids (as in vsaCentralize), so the full-strength field is looked up in the wrong place.
+example: >-
+  On a real sustained /ɑ/ (PVQD speaker LA9015) on a baseline-training trial (strength 0): the design intends no change; as
+  committed, F2 is raised by {r_obs_df2:.0f} Hz. Measured on the audio: spoken {r_in}; intended {r_exp}; as committed {r_obs}.
+  On six synthetic vowels every one is shifted, by {s0_min:.0f}–{s0_max:.0f} mel, and the training-phase shifts are identical to
+  the baseline ones.
+settings:
+  source_html: "blab's <a href=\"https://github.com/blab-lab/vsaGeneralize/blob/0ec575ae1cde8402628b6cb5cd756467a95dd11d/run_vsaGeneralize_audapter.m\">vsaGeneralize run_vsaGeneralize_audapter.m @0ec575a</a> with run_vsaGeneralize_expt.m and free-speech calc_pertField('in', means, 1), parameter sequence reproduced exactly. Expected = the design: no shift at strength 0, the field scaled by 0.5 on training trials."
+  source: "blab's vsaGeneralize (public runner), parameter sequence reproduced exactly"
+  input: "real: PVQD speaker LA9015 (male, no dysphonia), sustained /ɑ/ and /i/, 1.2 s (CC BY 4.0); synthetic: six male vowels at Hillenbrand men's means"
+  key_params: [bShift, bRatioShift, bMelShift, F1Min, F1Max, F2Min, F2Max]
+  details:
+  - "bShift2D = 1 and the full-strength pertAmp2D come from calc_pertField via expt.audapterParams and are sent by AudapterIO('init'); pertAmp (1-D, all zeros) is the only field the runner scales."
+  - "fb 1 in these runs so formants can be measured; the experiment runs fb 3 with babble at 0.02 (field lookup unchanged)."
+  playground: false
+  playground_why: "the Playground's vowel-variability field is always wired correctly, so it cannot reproduce the committed runner."
+figure_caption: >-
+  F1–F2 vowel space. Expected: what the design intends (no shift at strength 0; 50 % toward the centre at strength 0.5).
+  Observed: the shift Audapter applied with the committed wiring (logged <code>sfmts</code>). Orange: where they differ.
+table:
+- [real voice, 'PVQD /ɑ/, baseline trial (strength 0): F2 measured on the audio, spoken → as committed', '{r_in_f2:.0f} → {r_obs_f2:.0f} Hz (intended: unchanged, {r_exp_f2:.0f} Hz)']
+- [synthetic, 'Baseline trials (strength 0): logged shift', '{s0_min:.0f}–{s0_max:.0f} mel on every vowel (intended 0)']
+- [synthetic, 'Training trials (strength 0.5) vs baseline', '{same_txt}']
+- [synthetic, 'Training trials: vowels moved away from the centre', '{n_away} of {n}']
+sketch: vsa_generalize
+asset_dir: vsa-generalize
+audio:
+- {file: real_a_input.wav, src: ../vsa-meas/real_in_a.wav, role: input, title: 'Input, real /ɑ/', label: '{r_in}', no_playhead: true}
+- {file: real_a_expected.wav, src: ../vsa-meas/real_sent_s00_a_out.wav, role: expected, title: 'Expected, strength 0', label: 'no shift: {r_exp}', no_playhead: true}
+- {file: real_a_observed.wav, src: ../vsa-meas/real_gen_s00_a_out.wav, role: observed, title: 'Observed, strength 0', label: 'as committed: {r_obs} (F2 {r_obs_df2:+.0f} Hz)', no_playhead: true}
+- {file: real_a_ab.wav, src: [../vsa-meas/real_sent_s00_a_out.wav, ../vsa-meas/real_gen_s00_a_out.wav], gap_s: 0.4, role: ab, title: 'A/B', label: 'expected, then observed', no_playhead: true}
+- {file: syn_u_observed.wav, src: ../vsa-meas/gen_s00_uw_out.wav, role: observed, title: 'Observed, synthetic /u/, strength 0', label: '{m_obs} (spoken {m_in})', no_playhead: true}
+audio_note: >-
+  All clips share one playback gain. Real voice: PVQD (Walden 2022), speaker LA9015, sustained /ɑ/, cut and processed by Audapter
+  (CC BY 4.0). F1 and F2 beside each clip are measured on that clip's audio.
+cause:
+  summary: >-
+    The two-dimensional field is switched on at full strength by <code>calc_pertField</code>; the runner scales the one-dimensional
+    field instead, and re-sends the Hz grids.
+  refs:
+  - {repo: free-speech, path: experiment_helpers/calc_pertField.m, lines: [186, 188], hl: [186, 187], expect: p.bShift2D = 1;, note: "calc_pertField turns on the 2-D field and supplies it at full strength."}
+  - {repo: vsaGeneralize, path: run_vsaGeneralize_expt.m, lines: [131, 141], hl: [134, 141], expect: p.pertAmp = zeros(1, fieldDim);, note: "The script stores an all-zero 1-D field and Hz grids, and a strength of 0 for the baselines and 0.5 for training."}
+  - {repo: vsaGeneralize, path: run_vsaGeneralize_audapter.m, lines: [74, 77], hl: [74, 75], expect: "Audapter(3,'pertf1',p.pertf1);", note: "After init: the Hz grids and the 1-D field are re-sent."}
+  - {repo: vsaGeneralize, path: run_vsaGeneralize_audapter.m, lines: [116, 118], hl: [117], expect: p.pertAmp = expt.shiftScaleFact(trial_index) * expt.audapterParams.pertAmp;, note: "Per trial only the 1-D pertAmp (zeros) is scaled; pertAmp2D keeps its full strength."}
+  fix_label: How to check
+  fix: >-
+    <strong>In the public data (OSF 78z93):</strong> on baseline-training trials (<code>shiftScaleFact = 0</code>) every frame
+    should have <code>sfmts == fmts</code>. If the committed runner was used, <code>sfmts</code> differs from <code>fmts</code> by
+    hundreds of mel, mostly F2 up, and training trials show the same shift size as baseline trials. If baseline trials have
+    <code>sfmts == fmts</code> and training shifts point toward the centre at about half the distance, the question is closed.
+    <strong>Correction, if needed:</strong> scale <code>pertAmp2D</code> per trial (<code>p.pertAmp2D = scale * expt.audapterParams.pertAmp2D</code>)
+    and re-send the mel grids <code>p.pertF1</code>/<code>p.pertF2</code>, as vsaSentence does.
+verify:
+- {kind: H, what: report export (public runner's exact parameter sequence, real and synthetic vowels), name: report_vsa.m}
+- {kind: H, what: field wiring check, name: exp_vsa_field.m, detail: 'EXP-4: re-run for this report'}
+reproduce: cd audit/harness && ./run-oct.sh report_vsa.m

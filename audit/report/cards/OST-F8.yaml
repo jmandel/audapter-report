@@ -98,7 +98,7 @@ cause:
     note: >-
       The hold for mode 40 (mode 45 at line 702 is the same). With prm3 = 0 the second qualifying frame advances.
   fix: >-
-    Give modes 40 and 45 an explicit parameter layout: reject a non-numeric field 5 for them at load, keep the <code>{}</code> check for other modes, document the
+    Give modes 40 and 45 an explicit parameter layout: reject a non-numeric field 5 for them at load, keep the <code>{{}}</code> check for other modes, document the
     hold, and print it in the verbose summary. Workaround: put the hold time in field 5.
 verify:
 - kind: H

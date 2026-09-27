@@ -19,24 +19,30 @@ def _f(x):
     return "n/a" if x is None else f"{x:+.0f} %".replace("+0 %", "0 %").replace("-0 %", "0 %")
 
 
-def measured(d):
-    """Per-word F1 in (input) and out (expected, observed), measured on the WAVs in out/report/ost-f1/meas/."""
+def measured(d, pf=""):
+    """Per-word F1 in (input) and out (expected, observed), measured on the WAVs in out/report/ost-f1/meas/ (pf "real_": real voice)."""
     md = os.path.join(d["_dir"], "meas"); out = {}
     for k in range(len(d["w1"])):
         for j, (a, b) in enumerate(_words(d, k)):
-            fi = M.span(os.path.join(md, f"leak_t{k+1}_in.wav"), a, b, "F1")
-            fe = M.span(os.path.join(md, f"leak_t{k+1}_exp.wav"), a, b, "F1")
-            fo = M.span(os.path.join(md, f"leak_t{k+1}_obs.wav"), a, b, "F1")
+            fi = M.span(os.path.join(md, f"{pf}leak_t{k+1}_in.wav"), a, b, "F1")
+            fe = M.span(os.path.join(md, f"{pf}leak_t{k+1}_exp.wav"), a, b, "F1")
+            fo = M.span(os.path.join(md, f"{pf}leak_t{k+1}_obs.wav"), a, b, "F1")
             out[(k, j)] = (fi, fe, fo)
     return out
+
+
+def real(d):
+    import json
+    r = json.load(open(os.path.join(d["_dir"], "meas", "real.json"))); r["_dir"] = d["_dir"]
+    return r
 
 
 def _num(x):
     return None if x is None or (isinstance(x, float) and math.isnan(x)) else x
 
 
-def spec(d):
-    m = measured(d); L = d["leak"]; trials = []
+def spec(d, pf=""):
+    m = measured(d, pf); L = d["leak"]; trials = []
     for k in range(FIG_TRIALS):
         ws = _words(d, k); catch = d["catch"][k]
         tr = {"n": k + 1, "tag": "catch" if catch else "shift", "dur": d["trial_s"][k], "hl": k == 2,
@@ -59,7 +65,7 @@ def spec(d):
 
 
 def sketch(d, up):
-    return evlib.render(spec(d))
+    return evlib.render(spec(real(d), "real_"))
 
 
 def derive(d, up):
@@ -84,6 +90,13 @@ def derive(d, up):
     v["same_first"], v["same_step_ms"] = sm[0], 1000 * (sm[7] - sm[0]) / 7
     v["same_w2_trial"] = next((k + 1 for k, x in enumerate(sm) if _num(x) is None or x > w2on), "none of the 10")
     v["same_last"] = t(sm[-1])
+    R = real(d); mr = measured(R, "real_")
+    for k in range(len(d["w1"])):
+        for j in range(2):
+            fi, fe, fo = mr[(k, j)]
+            v[f"R_t{k+1}w{j+1}_in"] = fi; v[f"R_t{k+1}w{j+1}_exp"] = fe; v[f"R_t{k+1}w{j+1}_obs"] = fo
+            v[f"R_t{k+1}w{j+1}_exp_pct"] = _f(_pct(fe, fi)); v[f"R_t{k+1}w{j+1}_obs_pct"] = _f(_pct(fo, fi))
+        v[f"R_t{k+1}_off_exp"] = t(R["leak"]["t3_exp"][k]); v[f"R_t{k+1}_off_obs"] = t(R["leak"]["t3_obs"][k])
     rl = d.get("reload_t3", [])
     v["reload_never"] = sum(1 for k, x in enumerate(rl) if _num(x) is None and not d["catch"][k])
     v["reload_first"] = t(rl[0]) if rl else "n/a"

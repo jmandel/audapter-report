@@ -46,7 +46,7 @@ audio:
 - file: output_27_to_35s.wav
   role: observed
   offset: 27
-audio_note: 'Heard output from 27 to 35 s: the fade-in at 30 s and the missing mute at 34 s.'
+audio_note: 'Heard output from 27 to 35 s: the fade-in at 30 s and the missing mute at 34 s. Synthetic only: the finding is about a 35 s recording, longer than any clip in the open corpus.'
 cause:
   summary: >-
     After each frame, <code>handleBuffer</code> checks whether the recorder is full and, if so, sets <code>frame_counter</code> and <code>data_counter</code> to 0.

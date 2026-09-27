@@ -51,6 +51,7 @@ audio:
 audio_note: >-
   These clips share one playback gain and are the masking noise alone, as heard in fb 2 (the participant also hears their own voice
   through bone conduction). The dropout is short: listen on headphones.
+  There is no speech in these clips: in fb 2 the participant hears only the masking noise, so a real voice would not change what is heard.
 interactive:
   id: i-01
   variants:

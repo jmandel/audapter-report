@@ -95,7 +95,7 @@ def code_block(repos, ref, compact=False):
     lines, url = excerpt(repos, ref)
     a, b = ref["lines"]; r = repos[ref["repo"]]
     loc = f'{ref["path"].split("/")[-1]}:{a}' + (f"–{b}" if b != a else "")
-    who = {"blab-mex": "blab", "blab-matlab": "blab MATLAB", "upstream-mex": "upstream"}[ref["repo"]]
+    who = {"blab-mex": "blab", "blab-matlab": "blab MATLAB", "upstream-mex": "upstream"}.get(ref["repo"]) or r.get("who", ref["repo"])
     if compact:
         return f'<a class="permalink" href="{url}">{E(who)} {E(loc)} @{r["sha"][:7]}</a>'
     hl = set(ref.get("hl", []))
@@ -124,14 +124,17 @@ def clip_li(card, a, m, src_rel, sketch_id=None, credit=None, fmt=None):
     title = a.get("title") or ROLE[a["role"]]
     dur = f' <span class="dur">{m["dur_s"]:.1f} s</span>' if m.get("dur_s") else ""
     ds = ""
-    if sketch_id and a.get("panel"):
-        ds = f' data-sketch="{sketch_id}-{a["panel"]}" data-trial="{a.get("trial", "")}" data-offset="{a.get("offset", 0)}"'
-    elif sketch_id and not a.get("no_playhead"):
-        ds = f' data-sketch="{sketch_id}" data-offset="{a.get("offset", 0)}"'
+    if sketch_id and a.get("panel") and not a.get("no_playhead"):
+        # mapping: figure panel, trial box, and the time within that trial where the clip starts (excerpts)
+        ds = (f' data-sketch="{sketch_id}-{a["panel"]}" data-trial="{a["trial"]}" data-offset="{a.get("offset", a.get("a", 0))}"'
+              f' data-dur="{m.get("dur_s", 0):.4f}"')
+    np_note = ""
+    if a.get("no_playhead") or not a.get("panel"):
+        np_note = f'<p class="nph">{E(a.get("no_playhead_why") or ("No playhead: two clips back to back." if a["role"] == "ab" else "No playhead: this clip is not drawn in the figure."))}</p>' if sketch_id else ""
     cr = f'<p class="credit">{credit}</p>' if credit else ""
     return (f'<li class="clip role-{a["role"]}"><span class="swatch" aria-hidden="true"></span><div>'
             f'<p class="clip-l" data-file="{E(a["file"])}"><strong>{E(title)}.</strong> {E(label)}{dur}</p>'
-            f'<audio controls preload="none" src="{src_rel}/{a["file"]}"{ds}></audio>{warn}{cr}</div></li>')
+            f'<audio controls preload="none" src="{src_rel}/{a["file"]}"{ds}></audio>{warn}{np_note}{cr}</div></li>')
 
 
 def meas_clips(card, exp_dir, dst):
@@ -230,6 +233,13 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
             res = f' <span class="res-d">{E(x["detail"])}</span>'
         ver.append(f'<li><span class="vk-l">{x["kind"]}</span> {E(x["what"])}: {file_link(x["name"])}{res}</li>')
     wide = mod.sketch(data, up)
+    for a in card.get("audio", []):
+        if a.get("panel") and not a.get("no_playhead"):
+            m_ = re.search(r'<svg[^>]*id="' + re.escape(f'{sid}-{a["panel"]}') + r'".*?</svg>', wide, re.S)
+            if not m_ or f'data-trial="{a["trial"]}"' not in m_.group(0):
+                fail(f'card {card["id"]}: clip {a["file"]} maps to {sid}-{a["panel"]} trial {a.get("trial")}, which the figure does not draw')
+        elif re.search(r"\btrial \d", a.get("title", "")) and not a.get("no_playhead") and a["role"] != "ab":
+            fail(f'card {card["id"]}: clip {a["file"]} names a trial but has no figure mapping (panel/trial) or no_playhead')
     narrow = narrow_sketch(card, data, up)
     cap = f'<p class="figcap">{fmt(card["figure_caption"])}</p>' if card.get("figure_caption") else ""
     setp = ""
@@ -247,13 +257,13 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
     <p class="railnote"><a href="{notes_url(card["notes"])}">Audit notes</a><br><a href="{AUDIT_URL}/FINDINGS-LOG.md">Findings log</a></p>
   </aside>
   <div class="main">
-    <h3 id="{anchor(card["id"])}-h">{E(card["headline"])}</h3>
+    <h3 id="{anchor(card["id"])}-h">{E(fmt(card["headline"]))}</h3>
     {reach}
-    <h4>What happens</h4>
+    <h4>{E(card.get("labels", {}).get("what", "What happens"))}</h4>
     <p>{fmt(card["what"])}</p>
-    <h4>When it matters</h4>
+    <h4>{E(card.get("labels", {}).get("scope", "When it matters"))}</h4>
     <p>{fmt(card["scope"])}</p>
-    <h4>Example</h4>
+    <h4>{E(card.get("labels", {}).get("example", "Example"))}</h4>
     <p>{fmt(card["example"])}</p>
     {setp}
     <figure class="fig">{cap}<div class="sk-wide-wrap">{wide}</div><div class="sk-narrow-wrap">{narrow}</div></figure>
@@ -263,14 +273,14 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
     <table class="plain howbig"><tbody>{rows}</tbody></table>
     <p class="norm">Data: <a href="{asset_rel}/data.json">data.json</a> from the export script.</p>
     <section class="cause" aria-label="Cause">
-      <h4>Cause</h4>
+      <h4>{E(card.get("labels", {}).get("cause", "Cause"))}</h4>
       <p>{card["cause"]["summary"]}</p>
       {refs}
-      <p class="since">{card.get("since", SINCE_LINE[card["origin"]])}</p>
+      {'<p class="since">' + card.get("since", SINCE_LINE[card["origin"]]) + '</p>' if card.get("since", SINCE_LINE[card["origin"]]) else ""}
     </section>
     <section class="fix-sec" aria-label="Fix">
       <h4>{E(card["cause"].get("fix_label", "Safe pattern and fix"))}</h4>
-      <p>{card["cause"]["fix"]}</p>
+      <p>{fmt(card["cause"]["fix"])}</p>
     </section>
     <section class="verify" aria-label="Verification">
       <h4>How we know</h4>

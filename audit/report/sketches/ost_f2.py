@@ -1,46 +1,61 @@
-from sketchlib import *
+"""OST-F2 (maxIOI timeout) as a session of three trials, real soft voice (report_ost_f2.m real arm): expected = the intended
+timing (timeout at 0.2 s, shift 0.1 s later) on every trial; observed = the maxIOI OST loaded once."""
+import os
+import measure as M
+from sketches import evlib
+
+WIN = ((0.21, 0.30), (0.42, 0.60))
+POS = (0.16, 0.62)   # where the two values are printed (centres of text), kept apart for legibility
 
 
-def _lab(ivs):
-    return [(a, b, "state 3" if l == "state 3" else l, k) for a, b, l, k in ivs]
+def measured(d):
+    md = os.path.join(d["_dir"], "meas"); out = {}
+    f = lambda n, a, b: M.span(os.path.join(md, n), a, b, "F1", 1.0, 1e-4)
+    for k in range(3):
+        for j, (a, b) in enumerate(WIN):
+            fi = f("real_in.wav", a, b)
+            out[(k, j)] = (fi, f(f"real_exp_t{k+1}.wav", a, b), f(f"real_obs_t{k+1}.wav", a, b))
+    return out
+
+
+def _p(o, i):
+    x = 100 * (o / i - 1)
+    return "0 %" if abs(x) < 2 else f"{x:+.0f} %"
+
+
+def spec(d):
+    R = d["real"]; m = measured(d); trials = []
+    for k in range(3):
+        tr = {"n": k + 1, "tag": "soft /a/", "dur": R["trial_s"], "words": [(R["v_on"], R["v_off"], "soft /a/ (real voice)")]}
+        tr["exp"] = {"pert": [(R["exp_on"][k], R["v_off"], "F1 +30 %")], "marks": [(d["ctrl_state2_s"], "timeout")],
+                     "vals_at": [(POS[j], _p(m[(k, j)][1], m[(k, j)][0])) for j in range(2)]}
+        tr["obs"] = {"pert": [(R["obs_on"][k], R["v_off"], "F1 +30 %")], "marks": [(R["obs_s2"][k], "timeout")],
+                     "vals_at": [(POS[j], _p(m[(k, j)][2], m[(k, j)][0])) for j in range(2)]}
+        a, b = sorted((R["exp_on"][k], R["obs_on"][k]))
+        if b - a > 0.01:
+            tr["obs"]["diff"] = [(a, b)]
+        trials.append(tr)
+    return {"sid": "sk-ost-f2", "trials": trials, "gap": 0.35,
+            "rows": {"words": "Speech", "pert": "Perturbation", "marks": "Timeout fires", "vals": "F1 heard vs spoken"},
+            "heads": {"exp": "the intended timing on every trial: timeout at 0.2 s, shift 0.1 s later", "obs": "the OST loaded once, reset() between trials"},
+            "callout": "Trial 1 starts the shift 0.1 s early; after that the timeout drifts 0.2 s later on every trial", "callout_anchor": "end"}
 
 
 def sketch(d, up):
-    t, TT = d["t"], 1.4                     # each trial is 1.4 s; three trials in one session
-    off = lambda k: [x + k * TT for x in t]
-    s = Sketch("sk-ost-f2", 0, 3 * TT, "One session with three trials and the OST loaded once, against the intended timing")
-    s.header("Session: OST loaded once, three trials with reset() between them")
-    s.lane([(k * TT, "reset()", "start") for k in (1, 2)])
-    y0 = s.y
-    s.envelope("Input", off(0) + off(1) + off(2), db(d["rms"]) * 3, -60, -10, h=30, marks=[(k * TT + 0.03, f"trial {k + 1}") for k in range(3)])
-    ys = s.intervals("OST state", sum([_lab(state_ivs(off(k), d[f"stat_{k + 1}"], "observed", (k + 1) * TT)) for k in range(3)], []))
-    sh = sum([[(a + k * TT, b + k * TT, "F1 +30 %", "observed") for a, b in runs(t, d[f"sF1_{k + 1}"], lambda v: v > 0)] for k in range(3)], [])
-    yf = s.intervals("F1 +30 % applied", sh)
-    for k in (1, 2):
-        s.event(k * TT, y0 - 20, yf + 30, "")
-    c = d["ctrl_shift_on_s"]
-    for k in range(3):
-        s.guide(k * TT + d["ctrl_state2_s"], ys, ys + 30, dashed=True)
-        o = d["shift_on_s"][k]
-        s.band(k * TT + min(o, c), k * TT + max(o, c), yf, yf + 30, "")
-    s.lane([(k * TT + d["state2_s"][k], f"timeout at {d['state2_s'][k]:.2f} s", "start") for k in range(3)])
-    s.header("Intended timing, the same in every trial")
-    sc = runs(t, d["sF1_ctrl"], lambda v: v > 0)
-    s.intervals("OST state", sum([_lab(state_ivs(off(k), d["stat_ctrl"], "expected", (k + 1) * TT)) for k in range(3)], []))
-    s.intervals("F1 +30 % applied", [(a + k * TT, b + k * TT, "F1 +30 %", "expected") for k in range(3) for a, b in sc])
-    s.lane([(d["ctrl_state2_s"], f"timeout at {d['ctrl_state2_s']:.2f} s (dashed lines), shift from {c:.2f} s, in every trial", "start")])
-    s.axis([0, 0.7, 1.4, 2.1, 2.8, 3.5, 4.2], label="time in the session (s); trials start at 0, 1.4 and 2.8 s")
-    return s.svg("Intended: in every trial the timeout moves to state 2 at %.2f s and the F1 shift starts at %.2f s. With the OST loaded once, "
-                 "state 2 lasts %.0f ms instead of %.0f ms, and the timeout fires at %.2f, %.2f and %.2f s into trials 1, 2 and 3."
-                 % (d["ctrl_state2_s"], c, 1000 * d["held_s"][0], 1000 * (d["ctrl_state3_s"] - d["ctrl_state2_s"]), *d["state2_s"]))
+    return evlib.render(spec(d))
 
 
 def derive(d, up):
-    c = d["ctrl_shift_on_s"]
-    return {"early": c - d["shift_on_s"][0], "late2": d["shift_on_s"][1] - c, "late3": d["shift_on_s"][2] - c,
-            "held_ms": [1000 * h for h in d["held_s"]], "held1_ms": 1000 * d["held_s"][0], "held_ctrl_ms": 1000 * (d["ctrl_state3_s"] - d["ctrl_state2_s"]),
-            "s2_1": d["state2_s"][0], "s2_2": d["state2_s"][1], "s2_3": d["state2_s"][2],
-            "on_1": d["shift_on_s"][0], "on_2": d["shift_on_s"][1], "on_3": d["shift_on_s"][2]}
+    c = d["ctrl_shift_on_s"]; R = d["real"]; m = measured(d)
+    v = {"early": c - d["shift_on_s"][0], "late2": d["shift_on_s"][1] - c, "late3": d["shift_on_s"][2] - c,
+         "held1_ms": 1000 * d["held_s"][0], "held_ctrl_ms": 1000 * (d["ctrl_state3_s"] - d["ctrl_state2_s"]),
+         "s2_1": d["state2_s"][0], "s2_2": d["state2_s"][1], "s2_3": d["state2_s"][2],
+         "on_1": d["shift_on_s"][0], "on_2": d["shift_on_s"][1], "on_3": d["shift_on_s"][2],
+         "r_on1": R["obs_on"][0], "r_on2": R["obs_on"][1], "r_on3": R["obs_on"][2], "r_exp_on": R["exp_on"][0]}
+    for k in range(3):
+        for j in range(2):
+            v[f"t{k+1}w{j+1}_exp"] = _p(m[(k, j)][1], m[(k, j)][0]); v[f"t{k+1}w{j+1}_obs"] = _p(m[(k, j)][2], m[(k, j)][0])
+    return v
 
 
 def derive_real(rd):

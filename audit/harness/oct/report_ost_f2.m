@@ -53,6 +53,30 @@ r.t = round((k-1) * fr * 1e4) / 1e4;
 r.rms = lg(d{1}.rms(:,1)); r.stat_ctrl = dC.ost_stat(k)';
 r.stat_1 = d{1}.ost_stat(k)'; r.stat_2 = d{2}.ost_stat(k)'; r.stat_3 = d{3}.ost_stat(k)';
 r.sF1_ctrl = round(dC.sfmts(k,1))'; r.sF1_1 = round(d{1}.sfmts(k,1))'; r.sF1_2 = round(d{2}.sfmts(k,1))'; r.sF1_3 = round(d{3}.sfmts(k,1))';
+
+% ---- real voice (primary example): a soft sustained /a/ (PVQD SJ7001, CC BY 4.0) that stays below the onset threshold.
+% Expected = the intended timing (the control OST) on every trial; observed = the maxIOI OST loaded once, three trials.
+if ~UP
+  Mc = corpus_index(); xr0 = corpus_wav(Mc(strcmp({Mc.id}, 'pvqd_SJ7001_a')), 0.008); xr0 = xr0(round(0.3*fs)+1:round(1.45*fs));
+  ramp = linspace(0, 1, round(0.02*fs))'; xr0(1:numel(ramp)) = xr0(1:numel(ramp)) .* ramp; xr0(end-numel(ramp)+1:end) = xr0(end-numel(ramp)+1:end) .* flipud(ramp);
+  xr = 1e-4*randn(round(T1*fs), 1); xr(round(0.05*fs)+(1:numel(xr0))) = xr(round(0.05*fs)+(1:numel(xr0))) + xr0;
+  md = '/h/oct/out/report/ost-f2/meas'; if ~exist(md, 'dir'), mkdir(md); end
+  wr = @(f, y) audiowrite(fullfile(md, f), y / 1.5, p.sr, 'BitsPerSample', 16);
+  Audapter('ost', '', 0); Audapter('pcf', '', 0);
+  for k = 1:3
+    q = run_trial(p, xr, 'ost', 'cfg/report_ioi_ctrl.ost', 'pcf', 'cfg/report_ioi_ctrl.pcf');
+    r.real.exp_on(k) = shon(q); wr(sprintf('real_exp_t%d.wav', k), q.signalOut);
+  end
+  wr('real_in.wav', q.signalIn);
+  q = run_trial(p, xr, 'ost', 'cfg/report_ioi.ost', 'pcf', 'cfg/report_ioi.pcf'); r.real.max_rms = max(q.rms(:,1));
+  for k = 1:3
+    if k > 1, q = run_trial(p, xr, 'init', false); end
+    r.real.obs_on(k) = shon(q); r.real.obs_s2(k) = first(q, 2); r.real.obs_s3(k) = first(q, 3); wr(sprintf('real_obs_t%d.wav', k), q.signalOut);
+  end
+  Audapter('ost', '', 0); Audapter('pcf', '', 0);
+  r.real.trial_s = T1; r.real.v_on = 0.05; r.real.v_off = 0.05 + numel(xr0) / fs; r.real.clip = 'pvqd_SJ7001_a';
+  printf('real: max rms %.4f; expected shift on %s; observed shift on %s s\n', r.real.max_rms, mat2str(r.real.exp_on, 3), mat2str(r.real.obs_on, 3));
+end
 od = report_outdir('ost-f2');
 c = struct('name', {'input', 'output_control', 'output_trial1', 'output_trial3'}, ...
   'x', {dC.signalIn, dC.signalOut, d{1}.signalOut, d{3}.signalOut}, ...
@@ -63,5 +87,5 @@ r.audio = report_wavgroup(od, p.sr, c);
 r.params = struct('sr', p.sr, 'downFact', p.downFact, 'frameLen', p.frameLen, 'rmsThresh', p.rmsThresh, ...
   'ost', fileread('cfg/report_ioi.ost'), 'pcf', fileread('cfg/report_ioi.pcf'), 'ost_ctrl', fileread('cfg/report_ioi_ctrl.ost'));
 audiowrite(fullfile(od, 'dev_vowel_48k.wav'), x, fs, 'BitsPerSample', 16);
-if ~UP, r.settings = report_settings(p, 'female', 'ost', fileread('cfg/report_ioi.ost'), 'pcf', fileread('cfg/report_ioi.pcf'), 'sequence', {{'trial 1', 'trial 2', 'trial 3'}}, 'switching', 'OST and PCF loaded once; reset() before every trial', 'input', 'synthetic soft vowel that never reaches the onset threshold'); end
+if ~UP, r.settings = report_settings(p, 'female', 'ost', fileread('cfg/report_ioi.ost'), 'pcf', fileread('cfg/report_ioi.pcf'), 'sequence', {{'trial 1', 'trial 2', 'trial 3'}}, 'switching', 'OST and PCF loaded once; reset() before every trial', 'input', 'real: PVQD SJ7001 sustained /a/ (female, CC BY 4.0), played softly so it never reaches the onset threshold; synthetic: a soft /a/ with the same property'); end
 report_json(fullfile(od, 'data.json'), r);

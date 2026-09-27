@@ -31,12 +31,14 @@ scope: >-
 example: >-
   A "shift the first word" design with catch trials: two-word trials, F1 raised 125 mel from the detected onset of word 1 to its
   detected offset, one catch trial in four, same OST all session and the PCF reloaded before every trial, with blab's standard
-  settings. Onset is detected with blab's RMS-floor rule. Trials 1 and 2 are correct. Trial 3 is a catch trial with a long first
-  word (1.20 s); after it, trial 4's offset is found only at {t4_off_obs} instead of {t4_off_exp}, so word 2 is heard with F1
-  raised ({t4w2_obs_pct} instead of {t4w2_exp_pct}). After the second long catch trial the offset is never detected again
-  (trials 7 and 8).
+  settings. Onset is detected with blab's RMS-floor rule. The words are a real voice (a sustained /ɑ/ then /i/ of PVQD speaker
+  SJ7001, cut to each trial's length). Trials 1 and 2 are correct. Trial 3 is a catch trial with a long first word (1.20 s); after
+  it, trial 4's offset is found only at {R_t4_off_obs} instead of {R_t4_off_exp}, so word 2 (/i/) is heard with F1 raised
+  ({R_t4w2_obs_pct} instead of {R_t4w2_exp_pct}; F1 {R_t4w2_in:.0f} → {R_t4w2_obs:.0f} Hz). After the second long catch trial the offset
+  is never detected again (trials 7 and 8). The same session on synthetic vowels gives the same timings within 22 ms.
 settings:
   source: "Hypothetical design: a plausible design, not one blab runs. Settings are blab's standard runner settings; the onset rule is blab's own (it is used in blab's timeWrap experiment, where the FALL follows a rise-and-hold rule and is safe)."
+  input: "real voice (figure and main clips): PVQD speaker SJ7001 (female, no dysphonia), sustained /ɑ/ as word 1 cut to 0.30-1.20 s and sustained /i/ as word 2 (0.5 s), CC BY 4.0; synthetic (table, secondary clips, browser panel): /æ/-like and /e/-like vowels with the same timing"
   key_params: [bShift, bRatioShift, bMelShift, fb, fb3Gain]
   details:
   - "The safe variant differs only in its first rule: <code>0 INTENSITY_RISE_HOLD_POS_SLOPE 0.01 0.05 {}</code>, the onset rule of free-speech measureFormants.ost."
@@ -44,6 +46,8 @@ figure_caption: >-
   Trials 1–5 of the session, end to end. Expected: each trial as the first trial of a session (what the one-line fix gives).
   Observed: the same trials in one session. Settings as in the panel above; values under the words are F1 measured on the audio.
 table:
+- [real voice, 'Trial 4 (after the 1.20 s catch trial): offset detected', '{R_t4_off_obs} (expected {R_t4_off_exp})']
+- [real voice, 'Trial 4, word 2 (/i/): F1 heard vs spoken', '{R_t4w2_obs_pct} (expected {R_t4w2_exp_pct}; {R_t4w2_in:.0f} → {R_t4w2_obs:.0f} Hz)']
 - [synthetic, 'Trial 4 (after the 1.20 s catch trial): offset detected', '{t4_off_obs} (expected {t4_off_exp})']
 - [synthetic, 'Trial 4, word 2: F1 heard vs spoken, measured on the audio', '{t4w2_obs_pct} (expected {t4w2_exp_pct}; {t4w2_in:.0f} → {t4w2_obs:.0f} Hz)']
 - [synthetic, 'Perturbed trials with a late or missing offset', '{n_late} of {n_pert}; never detected in {n_never}']
@@ -53,11 +57,15 @@ table:
 sketch: ost_f1
 asset_dir: ost-f1
 audio:
-- {file: t4_input.wav, role: input, title: 'Input, trial 4', label: 'two words, same as trial 1', panel: exp, trial: 4}
-- {file: t4_expected.wav, role: expected, title: 'Expected, trial 4', label: 'word 1 raised ({t4w1_exp_pct}), word 2 unchanged ({t4w2_exp_pct})', panel: exp, trial: 4}
-- {file: t4_observed.wav, role: observed, title: 'Observed, trial 4', label: 'word 1 raised ({t4w1_obs_pct}), word 2 also raised ({t4w2_obs_pct})', panel: obs, trial: 4}
-- {file: t4_ab.wav, role: ab, title: 'A/B, trial 4', label: 'expected, then observed; listen to the second word', no_playhead: true}
-- {file: t7_observed.wav, role: observed, title: 'Observed, trial 7', label: 'after the second catch trial: word 2 raised ({t7w2_obs_pct})', no_playhead: true}
+- {file: real_t4_input.wav, src: meas/real_leak_t4_in.wav, role: input, title: 'Input, trial 4', label: 'real voice: /ɑ/ then /i/, same as trial 1', panel: exp, trial: 4}
+- {file: real_t4_expected.wav, src: meas/real_leak_t4_exp.wav, role: expected, title: 'Expected, trial 4', label: 'word 1 raised ({R_t4w1_exp_pct}), word 2 unchanged ({R_t4w2_exp_pct})', panel: exp, trial: 4}
+- {file: real_t4_observed.wav, src: meas/real_leak_t4_obs.wav, role: observed, title: 'Observed, trial 4', label: 'word 1 raised ({R_t4w1_obs_pct}), word 2 also raised ({R_t4w2_obs_pct})', panel: obs, trial: 4}
+- {file: real_t4_ab.wav, src: [meas/real_leak_t4_exp.wav, meas/real_leak_t4_obs.wav], gap_s: 0.5, role: ab, title: 'A/B, trial 4', label: 'expected, then observed; listen to the second word'}
+- {file: t4_expected.wav, role: expected, title: 'Synthetic, expected', label: 'the same trial on synthetic vowels: word 2 {t4w2_exp_pct}', no_playhead: true, no_playhead_why: 'No playhead: the figure shows the real-voice session.'}
+- {file: t4_observed.wav, role: observed, title: 'Synthetic, observed', label: 'word 2 {t4w2_obs_pct} ({t4w2_in:.0f} → {t4w2_obs:.0f} Hz)', no_playhead: true, no_playhead_why: 'No playhead: the figure shows the real-voice session.'}
+audio_note: >-
+  All clips share one playback gain. Real voice: PVQD (Walden 2022), speaker SJ7001, sustained /ɑ/ and /i/, cut and processed by
+  Audapter (CC BY 4.0). Values beside each clip are F1 measured on that clip, per word.
 interactive:
   id: ost-f1
   variants: [shipped, fix-ost-f1]
@@ -69,7 +77,7 @@ interactive:
   inputs: {t1: dev_t1_48k.wav, t2: dev_t2_48k.wav, t3: dev_t3_48k.wav, t4: dev_t4_48k.wav, t5: dev_t5_48k.wav}
   params: {bshift: 1, bratioshift: 0, bmelshift: 1}
   text: >-
-    This runs trials 1–5 of the example (same inputs, OST and PCFs; masking noise off, which does not affect detection) through the
+    This runs trials 1–5 of the example on the synthetic inputs (same timing, OST and PCFs; masking noise off, which does not affect detection) through the
     real Audapter core compiled to WebAssembly from the pinned commit, as released and with the one-line fix.
 cause:
   summary: >-

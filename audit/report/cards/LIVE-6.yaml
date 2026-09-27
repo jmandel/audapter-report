@@ -52,6 +52,7 @@ audio:
 audio_note: >-
   All clips share one playback gain, so level differences you hear are real. 48 kHz, 16-bit, the signal at the sound card (left channel; the right channel gets the
   odd-numbered mic samples). The expected clip is the same trial with a 96-sample buffer.
+  Synthetic only: the live-path simulation was run with this vowel.
 cause:
   summary: >-
     <code>audioIO::startdev</code> requests <code>frameLen·downFact</code> samples and passes the variable to RtAudio, which may change it; nobody compares the result.

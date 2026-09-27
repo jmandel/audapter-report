@@ -50,7 +50,8 @@ audio:
 - file: cond2_output_reused.wav
   role: observed
   label: 'Condition 2 from the reused frames: the shifts cancel'
-audio_note: All clips share one playback gain. 16 kHz, 16-bit, as recorded by Audapter.
+audio_note: >-
+  All clips share one playback gain. 16 kHz, 16-bit, as recorded by Audapter. Synthetic only: the effect is exact sample reuse, the same for any input; the figure's numbers come from this vowel.
 cause:
   summary: >-
     The MEX gateway passes the pointer to MATLAB's input array straight to <code>audapterCallback</code>, which calls <code>handleBuffer</code> with the same pointer

@@ -65,6 +65,7 @@ audio:
 audio_note: >-
   The clips share one playback gain, set so the burst clip peaks at −1 dBFS; the other clips play at their true level relative to it, so the speech is quiet. 48 kHz,
   as it reaches the sound card, clipped at full scale.
+  Synthetic only: the live-path simulation was run with this vowel; re-running it needs the live rig simulation, not the offline harness.
 cause:
   summary: >-
     Nothing serialises <code>reset()</code> with the audio callback. <code>reset()</code> zeroes the 48 ↔ 16 kHz resampling filters' delay lines while the callback

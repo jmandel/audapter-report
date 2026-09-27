@@ -1,0 +1,60 @@
+# Lab-script card: vsaGeneralize fb4Gain (EXP-5). A question to the lab, not an Audapter defect.
+id: LAB-3
+log: EXP-5
+notes: notes/blab-experiments.md
+headline: >-
+  Did vsaGeneralize's generalization phases play the masking noise at the level the script sets? As committed, p.fb4Gain never
+  reaches Audapter, and the noise is {lv_diff:.1f} dB louder
+severity: low
+origin: blab
+since: ''
+status: [H]
+reach_kind: current
+reach: >-
+  A question about the lab's public experiment code. The saved <code>data.params</code> of the lab's own sessions answer it
+  directly. This is a reading of public code, not a claim about published results.
+labels: {what: What the design intends, scope: What the committed code does, and how it differs, example: Example, cause: The code}
+what: >-
+  In the generalization phases (fb 4, speech-modulated masking noise) the script sets the noise gain to 0.98
+  (<code>p.fb4Gain = 0.98</code>), just under unity.
+scope: >-
+  <code>AudapterIO('init')</code> forwards only <code>p.fb4GainDB</code>, in decibels; a field called <code>fb4Gain</code> is ignored
+  without a warning. Audapter therefore uses its default of 10 dB, not the −0.18 dB that 0.98 corresponds to.
+example: >-
+  A real sentence (CMU ARCTIC bdl "Will we ever forget it.") in fb 4 with the bundled babble. Measured on the audio: with the
+  intended gain the output is {lv_int:.1f} dBFS; as committed, {lv_obs:.1f} dBFS, {lv_diff:.1f} dB louder.
+settings:
+  source_html: "blab's <a href=\"https://github.com/blab-lab/vsaGeneralize/blob/0ec575ae1cde8402628b6cb5cd756467a95dd11d/run_vsaGeneralize_audapter.m#L62-L66\">vsaGeneralize run_vsaGeneralize_audapter.m lines 62–66 @0ec575a</a> (fb 4, p.fb4Gain = 0.98), bundled babble via free-speech get_noiseSource. Expected: fb4GainDB = 20·log10(0.98)."
+  source: "blab's vsaGeneralize generalization phases (public runner)"
+  input: "real: CMU ARCTIC bdl a0005 \"Will we ever forget it.\" (male); synthetic: male /ɑ/, 1 s"
+  key_params: [fb, fb4Gain]
+figure_caption: Level of what the participant hears in fb 4 (speech-modulated babble), measured on the audio.
+table:
+- [real voice, 'fb 4 output level: intended / as committed', '{lv_int:.1f} / {lv_obs:.1f} dBFS']
+- [real voice, 'Difference', '+{lv_diff:.1f} dB']
+- [settings, 'fb4GainDB in effect: as committed / intended', '{db_obs:.1f} / {db_int:.2f} dB']
+sketch: vsa_fb4
+asset_dir: vsa-fb4
+audio:
+- {file: fb4_input.wav, src: ../vsa-meas/fb4_real_in.wav, role: input, title: 'Input', label: 'the spoken sentence (not heard in fb 4)', no_playhead: true}
+- {file: fb4_expected.wav, src: ../vsa-meas/fb4_real_intended.wav, role: expected, title: 'Expected', label: 'noise at the intended gain: {lv_int:.1f} dBFS', no_playhead: true}
+- {file: fb4_observed.wav, src: ../vsa-meas/fb4_real_committed.wav, role: observed, title: 'Observed', label: 'noise as committed: {lv_obs:.1f} dBFS (+{lv_diff:.1f} dB)', no_playhead: true}
+- {file: fb4_ab.wav, src: [../vsa-meas/fb4_real_intended.wav, ../vsa-meas/fb4_real_committed.wav], gap_s: 0.4, role: ab, title: 'A/B', label: 'expected, then observed', no_playhead: true}
+audio_note: >-
+  All clips share one playback gain, so the level difference you hear is real. The noise follows the loudness of the sentence
+  (fb 4). CMU ARCTIC © 2003 Carnegie Mellon University (<a href="assets/licenses/CMU_ARCTIC_COPYING.txt">licence notice</a>); cut and processed by Audapter.
+cause:
+  summary: The script sets a field that <code>AudapterIO</code> does not know; only <code>fb4GainDB</code> is forwarded.
+  refs:
+  - {repo: vsaGeneralize, path: run_vsaGeneralize_audapter.m, lines: [62, 66], hl: [65], expect: p.fb4Gain = 0.98;, note: "The script sets fb4Gain (linear)."}
+  - {repo: blab-matlab, path: mcode/AudapterIO.m, lines: [163, 165], hl: [163, 164], expect: fb4GainDB, note: "AudapterIO forwards only fb4GainDB; other fields of p are ignored silently."}
+  fix_label: How to check
+  fix: >-
+    <strong>In the lab's data:</strong> look at <code>data.params</code> of a generalization-phase trial: if it shows no
+    <code>fb4GainDB</code> (or 10), the noise played at the 10 dB default. <strong>Correction, if needed:</strong>
+    <code>p.fb4GainDB = 20*log10(0.98);</code> <strong>Audapter could have warned:</strong> list fields of <code>p</code> that
+    <code>AudapterIO('init')</code> does not forward.
+verify:
+- {kind: H, what: report export, name: report_vsa.m}
+- {kind: H, what: gain check, name: exp_vsa_field.m, detail: 'EXP-5: +10.2 dB'}
+reproduce: cd audit/harness && ./run-oct.sh report_vsa.m

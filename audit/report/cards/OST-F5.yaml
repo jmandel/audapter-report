@@ -26,16 +26,19 @@ scope: >-
   <code>pitchShiftRatio</code> after clearing the PCF.
 example: >-
   A sustained-vowel pitch design: +2 semitones from the detected voice onset until the level falls, phase vocoder, catch trials
-  interleaved. The participant is still voicing when each perturbed trial stops. With catch trials made by loading an all-zero
-  PCF, trial 2 is heard at {t2_exp_txt}. Made with <code>Audapter('pcf', '', 0)</code>, trial 2 is heard at {t2_obs_txt}, the
-  whole perturbation, and <code>data.params.pitchShiftRatio</code> logs {obs_ratio:.4f}.
+  interleaved, on a real sustained /a/ (PVQD speaker SJ7001). The speaker is still voicing when each perturbed trial stops. With
+  catch trials made by loading an all-zero PCF, catch trial 2 is heard at {R_t2_exp_txt}. Made with <code>Audapter('pcf', '', 0)</code>,
+  it is heard at {R_t2_obs_txt}, the whole perturbation, and <code>data.params.pitchShiftRatio</code> logs {R_obs_ratio:.4f}. A
+  synthetic vowel gives the same ({t2_exp_txt} vs {t2_obs_txt}).
 settings:
   source: "Hypothetical design: a plausible pitch design, not one blab runs. blab's defaults (female preset, 16 kHz, frameLen 32) with the phase vocoder on."
+  input: "real: PVQD SJ7001 sustained /a/ (female, CC BY 4.0), 1.2 s cut mid-phonation on shift trials, 0.8 s on catch trials; synthetic: the same timing"
   key_params: [bShift, bPitchShift, fb]
 figure_caption: >-
   One session of four trials. Expected: catch trials made with an all-zero PCF (the safe pattern). Observed: catch trials made by
   clearing the PCF. Values are F0 measured on the audio, in cents re the spoken F0.
 table:
+- [real voice, 'Catch trial after a trial that ended while shifted: F0 heard', '{R_t2_obs_txt} (all-zero PCF: {R_t2_exp_txt})']
 - [synthetic, 'Catch trial after a trial that ended while shifted: F0 heard', '{t2_obs_txt} (all-zero PCF: {t2_exp_txt})']
 - [synthetic, 'Logged data.params.pitchShiftRatio on that catch trial', '{obs_ratio:.4f} (all-zero PCF: {exp_ratio:.4f})']
 - [synthetic, "Same, with AudapterIO('init', p) before every trial", 'catch trials within {reinit_catch:.0f} cents of the spoken F0']
@@ -43,10 +46,14 @@ table:
 sketch: ost_f5
 asset_dir: ost-f5
 audio:
-- {file: t2_input.wav, src: meas/t2_in.wav, role: input, title: 'Input, trial 2', label: 'sustained vowel (catch trial)', panel: exp, trial: 2}
-- {file: t2_expected.wav, src: meas/exp_t2_out.wav, role: expected, title: 'Expected, trial 2', label: 'not shifted ({t2_exp_txt})', panel: exp, trial: 2}
-- {file: t2_observed.wav, src: meas/obs_t2_out.wav, role: observed, title: 'Observed, trial 2', label: 'shifted up ({t2_obs_txt})', panel: obs, trial: 2}
-- {file: t2_ab.wav, src: [meas/exp_t2_out.wav, meas/obs_t2_out.wav], gap_s: 0.4, role: ab, title: 'A/B, trial 2', label: 'expected, then observed', no_playhead: true}
+- {file: real_t2_input.wav, src: meas/real_t2_in.wav, role: input, title: 'Input, trial 2', label: 'real sustained /a/ (catch trial)', panel: exp, trial: 2}
+- {file: real_t2_expected.wav, src: meas/real_exp_t2_out.wav, role: expected, title: 'Expected, trial 2', label: 'not shifted ({R_t2_exp_txt})', panel: exp, trial: 2}
+- {file: real_t2_observed.wav, src: meas/real_obs_t2_out.wav, role: observed, title: 'Observed, trial 2', label: 'shifted up ({R_t2_obs_txt})', panel: obs, trial: 2}
+- {file: real_t2_ab.wav, src: [meas/real_exp_t2_out.wav, meas/real_obs_t2_out.wav], gap_s: 0.4, role: ab, title: 'A/B, trial 2', label: 'expected, then observed'}
+- {file: t2_observed.wav, src: meas/obs_t2_out.wav, role: observed, title: 'Synthetic, observed', label: 'a synthetic vowel, shifted ({t2_obs_txt}; expected {t2_exp_txt})', no_playhead: true, no_playhead_why: 'No playhead: the figure shows the real-voice session.'}
+audio_note: >-
+  All clips share one playback gain. Real voice: PVQD (Walden 2022), speaker SJ7001, sustained /a/, cut and processed by Audapter
+  (CC BY 4.0). Values: F0 measured on the clip, in cents re the spoken F0.
 cause:
   summary: >-
     With a PCF loaded, each frame overwrites <code>p.pitchShiftRatio[0]</code> with the current state's pitch shift. After

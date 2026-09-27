@@ -381,3 +381,11 @@ body { overflow-wrap: break-word; }
   table.carry td:nth-of-type(3)::before { content: "Result: "; font-weight: 700; }
   table.carry td:nth-of-type(1) { font-weight: 700; }
 }
+
+.sk-arrow-e { stroke: var(--ink-2); stroke-width: 1.6; stroke-dasharray: 5 3; fill: none; }
+.sk-arrow-o { stroke: var(--observed); stroke-width: 2.2; fill: none; }
+.sk-ah-e { fill: var(--ink-2); } .sk-ah-o { fill: var(--observed); }
+.sk-vdot { fill: var(--input); stroke: var(--ink-2); stroke-width: 1; }
+.sk-cen { stroke: var(--ink); stroke-width: 2; fill: none; }
+.sk-miss { stroke: var(--disc); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.nph { font-size: 0.8rem; color: var(--ink-3); margin: 2px 0 0; }

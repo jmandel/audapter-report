@@ -39,6 +39,27 @@ for arm = {'exp', 'obs'}
            arm{1}, k, seq{k}, r.(arm{1}).st2_on(k), r.(arm{1}).st3(k), c, r.(arm{1}).ratio_logged(k));
   end
 end
+
+% ---- real voice (primary): PVQD SJ7001 sustained /a/ (female, CC BY 4.0); shift trials stop mid-phonation
+Mc = corpus_index(); ra = corpus_wav(Mc(strcmp({Mc.id}, 'pvqd_SJ7001_a')), 0.06); rp = ra(round(0.3*fs) + (1:round(VP*fs)));
+rc = ra(round(0.3*fs) + (1:round(VC*fs))); rmp = linspace(0, 1, round(0.02*fs))'; rp(1:numel(rmp)) = rp(1:numel(rmp)) .* rmp;
+rc(1:numel(rmp)) = rc(1:numel(rmp)) .* rmp; rc(end-numel(rmp)+1:end) = rc(end-numel(rmp)+1:end) .* flipud(rmp);
+XR = {[1e-4*randn(round(G1*fs),1); rp], [1e-4*randn(round(G1*fs),1); rc; 1e-4*randn(round(TAIL*fs),1)]};
+XR = XR([1 2 1 2]); f0r = est_f0(XR{2}(1:3:end), p.sr); r.real.f0_in = f0r;
+for arm = {'exp', 'obs'}
+  AudapterIO('init', p); Audapter('ost', 'cfg/report_ostf5.ost', 0);
+  for k = 1:numel(seq)
+    if strcmp(seq{k}, 'shift'), Audapter('pcf', 'cfg/report_ostf5_up.pcf', 0);
+    elseif strcmp(arm{1}, 'exp'), Audapter('pcf', 'cfg/report_ostf5_zero.pcf', 0);
+    else, Audapter('pcf', '', 0); end
+    q = exp_trial(p, XR{k}); o = q.d.ost_stat(:); fr = p.frameLen / p.sr; on = find(o == 2, 1);
+    r.real.(arm{1}).st2_on(k) = min([(on - 1) * fr, NaN]); r.real.(arm{1}).ratio_logged(k) = q.d.params.pitchShiftRatio;
+    audiowrite(fullfile(md, sprintf('real_%s_t%d_out.wav', arm{1}, k)), q.d.signalOut / 1.5, p.sr, 'BitsPerSample', 16);
+    audiowrite(fullfile(md, sprintf('real_t%d_in.wav', k)), q.d.signalIn / 1.5, p.sr, 'BitsPerSample', 16);
+    printf('real %s trial %d (%s): state 2 from %.3f s, output F0 %+.0f cents\n', arm{1}, k, seq{k}, r.real.(arm{1}).st2_on(k), 1200*log2(est_f0(q.d.signalOut, p.sr) / f0r));
+  end
+end
+r.real.trial_s = cellfun(@(x) numel(x) / fs, XR); r.real.clip = 'pvqd_SJ7001_a';
 % the same with AudapterIO('init', p) before every trial and catch trials made by clearing the PCF (blab's pitch experiments re-init)
 AudapterIO('init', p); Audapter('ost', 'cfg/report_ostf5.ost', 0);
 for k = 1:numel(seq)

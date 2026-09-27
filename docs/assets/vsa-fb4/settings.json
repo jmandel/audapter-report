@@ -1,0 +1,49 @@
+{
+ "card": "LAB-3",
+ "source": "blab's vsaGeneralize generalization phases (public runner)",
+ "preset": "male",
+ "build": "shipped",
+ "params": {
+  "fb": 4,
+  "fb4Gain": 0.98
+ },
+ "setparam": {
+  "datapb": "bundled babble via free-speech get_noiseSource"
+ },
+ "ost": "",
+ "pcf": "",
+ "sequence": [],
+ "switching": "generalization phases: fb 4 (speech-modulated noise)",
+ "input": "synthetic male /a/ (F0 120 Hz), 1 s",
+ "playground": {
+  "v": 1,
+  "preset": "male",
+  "build": "lite",
+  "raw": {
+   "fb": 4
+  },
+  "shift": {
+   "formant": {
+    "on": false
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 4,
+   "noise": {
+    "type": "pink",
+    "seconds": 10,
+    "level": -20,
+    "gain": 1
+   }
+  }
+ },
+ "playground_left_out": [
+  "the masking noise: the Playground plays its own generated pink noise, not the lab's babble file"
+ ]
+}

@@ -20,10 +20,19 @@ EH = [731 2058 2979 4000]; V2 = [500 1500 2600 4000]; BW = [80 100 150 200];
 randn('seed', 5);
 w1 = [0.30 0.35 1.20 0.30 0.40 0.90 0.35 0.30]; catchT = [0 0 1 0 0 1 0 0]; T = numel(w1);
 G1 = 0.15; P12 = 0.25; W2 = 0.5; TAIL = 0.3;                 % silence before word 1, pause, word 2, silence after
-X = cell(1, T);
+X = cell(1, T); sc = strsplit(strtrim(getenv('SCEN'))); REAL = strcmp(sc{1}, 'real'); PF = ifelse_str(REAL, 'real_', '');
+if REAL, sc = sc(2:end); if isempty(sc), sc = {''}; end, end   % SCEN="real ...": the same runs on real voice (run-oct.sh passes only SCEN/VARIANT)
+if REAL   % real voice: word 1 = a sustained /a/, word 2 = a sustained /i/, both PVQD speaker SJ7001 (female), cut to length
+  Mc = corpus_index(); ra = corpus_wav(Mc(strcmp({Mc.id}, 'pvqd_SJ7001_a')), 0.06); ri = corpus_wav(Mc(strcmp({Mc.id}, 'pvqd_SJ7001_i')), 0.06);
+  cutv = @(y, d) y(round(0.3*fs) + (1:round(d*fs))) .* [linspace(0,1,round(0.01*fs))'; ones(round(d*fs) - 2*round(0.01*fs), 1); linspace(1,0,round(0.01*fs))'];
+end
 for k = 1:T
-  X{k} = [1e-4*randn(round(G1*fs),1); synth_vowel(fs, w1(k), 210, EH, BW, 'onset', 0, 'offset', 0, 'amp', 0.3); ...
-          1e-4*randn(round(P12*fs),1); synth_vowel(fs, W2, 200, V2, BW, 'onset', 0, 'offset', 0, 'amp', 0.3); 1e-4*randn(round(TAIL*fs),1)];
+  if REAL
+    X{k} = [1e-4*randn(round(G1*fs),1); cutv(ra, w1(k)); 1e-4*randn(round(P12*fs),1); cutv(ri, W2); 1e-4*randn(round(TAIL*fs),1)];
+  else
+    X{k} = [1e-4*randn(round(G1*fs),1); synth_vowel(fs, w1(k), 210, EH, BW, 'onset', 0, 'offset', 0, 'amp', 0.3); ...
+            1e-4*randn(round(P12*fs),1); synth_vowel(fs, W2, 200, V2, BW, 'onset', 0, 'offset', 0, 'amp', 0.3); 1e-4*randn(round(TAIL*fs),1)];
+  end
 end
 PCF_ON = sprintf('0\n\n4\n0, 0.0, 0, 0, 0\n1, 0.0, 0, 0, 0\n2, 0.0, 0, 125, 0\n3, 0.0, 0, 0, 0\n');
 PCF_OFF = sprintf('0\n\n4\n0, 0.0, 0, 0, 0\n1, 0.0, 0, 0, 0\n2, 0.0, 0, 0, 0\n3, 0.0, 0, 0, 0\n');
@@ -40,7 +49,6 @@ r.trial_s = arrayfun(@(k) numel(X{k}) / fs, 1:T);
 for di = 1:2
   fid = fopen(sprintf('cfg/report_ostf1_%s.ost', OSTS{di,1}), 'w'); fprintf(fid, '%s', OSTS{di,2}); fclose(fid);
 end
-sc = strsplit(getenv('SCEN'));
 if strcmp(sc{1}, 'fresh')
   % EXPECTED: one trial in a fresh process (the first trial after the MEX is loaded), i.e. what the fix gives.
   % (clear mex does not reload Audapter's statics in Octave, so each expected trial needs its own process.)
@@ -48,8 +56,8 @@ if strcmp(sc{1}, 'fresh')
   Audapter('setParam', 'datapb', w, 1); AudapterIO('init', p); Audapter('ost', sprintf('cfg/report_ostf1_%s.ost', nm), 0);
   Audapter('pcf', ifelse_str(catchT(k), 'cfg/report_ostf1_off.pcf', 'cfg/report_ostf1_on.pcf'), 0);
   q = exp_trial(p, X{k});
-  wr(sprintf('%s_t%d_exp.wav', nm, k), q.d.signalOut);
-  report_json(fullfile(md, sprintf('%s_t%d_exp.json', nm, k)), struct('t3', t3of(q.d), 'on', q.on, 'off', q.off, 'shift_s', q.shift_s, 'dF1mel', q.dF1mel));
+  wr(sprintf('%s%s_t%d_exp.wav', PF, nm, k), q.d.signalOut);
+  report_json(fullfile(md, sprintf('%s%s_t%d_exp.json', PF, nm, k)), struct('t3', t3of(q.d), 'on', q.on, 'off', q.off, 'shift_s', q.shift_s, 'dF1mel', q.dF1mel));
   printf('fresh %s trial %d: offset detected %.3f s, shift %.3f-%.3f s\n', nm, k, t3of(q.d), q.on, q.off);
   return;
 end
@@ -59,7 +67,7 @@ if strcmp(sc{1}, 'same')
   Audapter('ost', 'cfg/report_ostf1_leak.ost', 0); Audapter('pcf', 'cfg/report_ostf1_on.pcf', 0); t = zeros(1, 10);
   for k = 1:10, q = exp_trial(p, X{1}); t(k) = t3of(q.d); end
   printf('leak design, 10 identical trials (word 1 %.2f s) from a fresh start: offsets %s\n', w1(1), mat2str(t, 4));
-  report_json(fullfile(md, 'same.json'), struct('t3', t)); return;
+  report_json(fullfile(md, [PF 'same.json']), struct('t3', t)); return;
 end
 for di = [2 1]   % leak design first, so its session starts on a freshly loaded MEX
   nm = OSTS{di,1}; ost = sprintf('cfg/report_ostf1_%s.ost', nm);
@@ -74,19 +82,19 @@ for di = [2 1]   % leak design first, so its session starts on a freshly loaded 
   R = struct('t3_obs', zeros(1,T), 't3_exp', zeros(1,T), 'on_obs', zeros(1,T), 'off_obs', zeros(1,T), 'on_exp', zeros(1,T), 'off_exp', zeros(1,T), ...
              'shift_obs', zeros(1,T), 'shift_exp', zeros(1,T), 'dF1mel_obs', zeros(1,T), 'dF1mel_exp', zeros(1,T));
   for k = 1:T
-    e = jsondecode(fileread(fullfile(md, sprintf('%s_t%d_exp.json', nm, k))));
+    e = jsondecode(fileread(fullfile(md, sprintf('%s%s_t%d_exp.json', PF, nm, k))));
     nn = @(v) [v NaN](1);   % JSON null (NaN) reads back as []
     R.t3_obs(k) = t3of(obs{k}.d); R.t3_exp(k) = nn(e.t3);
     R.on_obs(k) = obs{k}.on; R.off_obs(k) = obs{k}.off; R.on_exp(k) = nn(e.on); R.off_exp(k) = nn(e.off);
     R.shift_obs(k) = obs{k}.shift_s; R.shift_exp(k) = e.shift_s; R.dF1mel_obs(k) = obs{k}.dF1mel; R.dF1mel_exp(k) = e.dF1mel;
     printf('%s trial %d (%s, word 1 %.2f s): offset detected obs %.3f exp %.3f s | F1 +125 mel obs %.3f-%.3f exp %.3f-%.3f s\n', nm, k, ...
       ifelse_str(catchT(k), 'catch', 'shift'), w1(k), R.t3_obs(k), R.t3_exp(k), R.on_obs(k), R.off_obs(k), R.on_exp(k), R.off_exp(k));
-    wr(sprintf('%s_t%d_in.wav', nm, k), obs{k}.d.signalIn); wr(sprintf('%s_t%d_obs.wav', nm, k), obs{k}.d.signalOut);
+    wr(sprintf('%s%s_t%d_in.wav', PF, nm, k), obs{k}.d.signalIn); wr(sprintf('%s%s_t%d_obs.wav', PF, nm, k), obs{k}.d.signalOut);
   end
   r.(nm) = R;
   if strcmp(nm, 'leak'), OBS = obs; end
 end
-EXP4 = 1.5 * audioread(fullfile(md, 'leak_t4_exp.wav'));
+EXP4 = 1.5 * audioread(fullfile(md, [PF 'leak_t4_exp.wav']));
 % OST reload before every trial does not help (EXP-9): leak design, OST reloaded each trial, same sequence
 Audapter('ost', '', 0); Audapter('pcf', '', 0); Audapter('setParam', 'datapb', w, 1); AudapterIO('init', p);
 for k = 1:T
@@ -95,8 +103,9 @@ for k = 1:T
   q = exp_trial(p, X{k}); r.reload_t3(k) = t3of(q.d); r.reload_off(k) = q.off;
 end
 printf('leak design, OST reloaded before every trial: offsets %s\n', mat2str(r.reload_t3, 4));
-r.same_t3 = jsondecode(fileread(fullfile(md, 'same.json'))).t3';   % from SCEN=same (fresh process)
+if REAL, r.same_t3 = []; else, r.same_t3 = jsondecode(fileread(fullfile(md, 'same.json'))).t3'; end   % from SCEN=same (fresh process)
 Audapter('ost', '', 0); Audapter('pcf', '', 0);
+if REAL, report_json(fullfile(md, 'real.json'), r); return; end
 % published clips (one shared gain): trial 4 input, expected, observed, and an A/B clip (expected, then observed)
 gap = zeros(round(0.5 * p.sr), 1);
 c = struct('name', {'t4_input', 't4_expected', 't4_observed', 't4_ab', 't7_observed'}, ...

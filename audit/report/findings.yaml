@@ -16,12 +16,19 @@ repos:
   blab-mex:     {url: "https://github.com/blab-lab/audapter_mex",     sha: "169cadffef4c2d82a33939b840245b8a8a9db0de", local: "blab/audapter_mex"}
   blab-matlab:  {url: "https://github.com/blab-lab/audapter_matlab",  sha: "e1695f146a0ecc3014ffe34b2b3cbc578edcd4b2", local: "blab/audapter_matlab"}
   upstream-mex: {url: "https://github.com/shanqing-cai/audapter_mex", sha: "f547196483fd2e68ef33f8a6fa7ed532eefd5af5", local: "upstream/audapter_mex"}
+  vsaCentralize: {url: "https://github.com/blab-lab/vsaCentralize", sha: "9beb9a7767418cae5d681b35fb1e0cc010331d02", local: "other/blab-experiments/vsaCentralize", who: "blab-lab/vsaCentralize"}
+  vsaGeneralize: {url: "https://github.com/blab-lab/vsaGeneralize", sha: "0ec575ae1cde8402628b6cb5cd756467a95dd11d", local: "other/blab-experiments/vsaGeneralize", who: "blab-lab/vsaGeneralize"}
+  vsaSentence: {url: "https://github.com/blab-lab/vsaSentence", sha: "c01942f1381237fd8c205e06e7c1472d72e4e685", local: "other/blab-experiments/vsaSentence", who: "blab-lab/vsaSentence"}
+  free-speech: {url: "https://github.com/carrien/free-speech", sha: "ec961b7a04a79199217f4973effda9157afcdf9d", local: "other/blab-experiments/free-speech", who: "carrien/free-speech"}
 
 # Findings at a glance: one row per full card (text shown in the grouped table). Severity = realistic reach x impact.
 table:
   - {id: I-01,   sev: high, origin: blab-amplified, status: H, text: "Since b2.4 (April 2026), masking noise drops out for 16 ms about every 10 s: about 1 in 5.5 trials of blab's fb 2 masking phases"}
   - {id: PT-5,   sev: high, origin: upstream, status: H F, text: "The phase vocoder plays the voice +3.5 dB (16 kHz) or +6.0 dB (timeAdapt settings) loud unless a warp section is loaded; mixing warp and no-warp trials gives a 6 dB cue"}
   - {id: F6,     sev: med,  origin: blab, status: H, text: "Undocumented blab change that vsaSentence depends on: the field perturbation re-arms on every vowel; minVowelLen has no effect"}
+  - {id: LAB-1, sev: med, origin: blab, status: H, text: "Question: was vsaCentralize run with the committed runner? As committed, 4 of 6 vowels are pushed away from the vowel-space centre"}
+  - {id: LAB-2, sev: med, origin: blab, status: H, text: "Question: was vsaGeneralize run with the committed runner? As committed, baseline trials are perturbed and training trials are not scaled"}
+  - {id: LAB-3, sev: low, origin: blab, status: H, text: "Question: vsaGeneralize sets p.fb4Gain, which AudapterIO never forwards: masking noise 10 dB louder than set"}
   - {id: OST-F1, sev: high, origin: upstream, status: H F, text: "With FALL after ELAPSED_TIME, the RMS-floor rule or a ratio rule, the detected offset creeps later every trial and jumps after long ones; perturbations run into the next word"}
   - {id: COORD-1, sev: med, origin: upstream, status: H, text: "A PCF from an earlier block survives AudapterIO('init') and overrides a later field experiment; blab's runners clear it"}
   - {id: OST-F5, sev: med,  origin: upstream, status: H R, text: "Pitch catch trials made by clearing the PCF get the full shift when the previous trial ended while shifted"}
@@ -53,6 +60,7 @@ sections:
   - id: labscripts
     title: "Questions for the lab, from the public experiment code"
     lead: file:sec_labscripts.html
+    cards: [LAB-1, LAB-2, LAB-3]
   - id: carryover
     title: "Trial-to-trial carry-over in mixed designs"
     lead: file:sec_carryover.html

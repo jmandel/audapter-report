@@ -1,0 +1,88 @@
+# Lab-script card: vsaCentralize field grid (EXP-4b). A question to the lab, not an Audapter defect.
+id: LAB-1
+log: EXP-4
+notes: notes/blab-experiments.md
+headline: >-
+  Was vsaCentralize's data collected with the committed runner? As committed, its perturbation pushes {n_away} of {n}
+  vowels away from the vowel-space centre instead of toward it
+severity: med
+origin: blab
+since: ''
+status: [H]
+reach_kind: current
+reach: >-
+  A question about the lab's public experiment code, not an Audapter defect. The runner that collected the data may differ:
+  vsaCentralize's experiment script calls a runner that is not in the repository. This is a reading of public code, not a claim
+  about published results.
+labels: {what: What the design intends, scope: What the committed code does, and how it differs, example: Example, cause: The code}
+what: >-
+  Each vowel should be heard partway toward the centre of the speaker's own vowel space. The lab's
+  <code>calc_pertField('in', fmtMeans, 1)</code> builds a 257 × 257 field in mel: at every F1–F2 point the shift points toward the
+  centroid of the speaker's corner vowels and its size is the distance to it. The experiment script scales that field by
+  <code>shiftScaleFact</code>, which is 0.5 in the hold phase for the adapt group, so a vowel is heard 50 % of the way to the centre.
+scope: >-
+  Audapter looks up each frame's formants on the grid in <code>pertf1</code>/<code>pertf2</code>. <code>calc_pertField</code> returns
+  mel grids in <code>p.pertF1</code>/<code>p.pertF2</code>, but the committed runner re-sends <code>p.pertf1</code>/<code>p.pertf2</code>
+  (lower case) right after <code>AudapterIO('init')</code>: the Hz grids (200–1500 and 500–3500) the experiment script stored earlier.
+  MATLAB field names are case-sensitive; Audapter's parameter names are not, so the Hz grid silently replaces the mel grid. The
+  formants (in mel) are then looked up at the wrong cell of the field, and each vowel receives the shift meant for a different
+  point of the vowel space.
+example: >-
+  On a real sustained /i/ (PVQD speaker LA9015), at strength 0.5: the design intends F2 to fall toward the centre; as
+  committed, F2 rises. Measured on the audio: spoken {r_in}; correctly wired {r_exp}; as committed {r_obs}. On six
+  synthetic vowels at the lab's default means, {n_away} of {n} ({away_list}) move away from the centre, and every heard vowel
+  misses the intended one by {miss_min:.0f}–{miss_max:.0f} mel. Wired as vsaSentence does it, the same field moves every vowel
+  {ref_min:.2f}–{ref_max:.2f} of the way to the centre, as designed.
+settings:
+  source_html: "blab's <a href=\"https://github.com/blab-lab/vsaCentralize/blob/9beb9a7767418cae5d681b35fb1e0cc010331d02/run_vsaAdapt2_audapter.m\">vsaCentralize run_vsaAdapt2_audapter.m @9beb9a7</a> with <a href=\"https://github.com/blab-lab/vsaCentralize/blob/9beb9a7767418cae5d681b35fb1e0cc010331d02/run_vsaAdapt2_expt.m\">run_vsaAdapt2_expt.m</a> and free-speech calc_pertField('in', means, 1), parameter sequence reproduced exactly. Expected = the same field sent with the mel grids, as vsaSentence does."
+  source: "blab's vsaCentralize (public runner), parameter sequence reproduced exactly"
+  input: "real: PVQD speaker LA9015 (male, no dysphonia), sustained /i/ and /ɑ/, 1.2 s (CC BY 4.0); synthetic: male vowels (F0 120 Hz) at Hillenbrand men's means for /i/, /æ/, /ɑ/, /u/ (the lab's default corner vowels) and /ɪ/, /ɛ/"
+  key_params: [bShift, bRatioShift, bMelShift, bShift2D, F1Min, F1Max, F2Min, F2Max]
+  details:
+  - "fb 1 in these runs so formants can be measured on the audio; the experiment runs fb 3 with the bundled babble at 0.02, which does not change the field lookup."
+  - "Field centre (calc_pertField, default corner means): see settings.json; grids after init: <code>pertf1</code> 200–1500, <code>pertf2</code> 500–3500 (Hz) while <code>F1Min..F2Max</code> and the formants are in mel."
+  playground: false
+  playground_why: "the Playground's vowel-variability field is always wired correctly, so it cannot reproduce the committed runner; its inward field at 50 % is what the design intends."
+figure_caption: >-
+  F1–F2 vowel space (F2 high to low, left to right). Grey dots: produced vowels; +: the field centre. Expected: the intended
+  shift, 50 % toward the centre. Observed: the shift Audapter applied with the committed wiring (from the logged
+  <code>sfmts</code>). Orange: where the heard vowel misses the intended one.
+table:
+- [real voice, 'PVQD /i/, F2 measured on the audio: spoken → correctly wired / as committed', '{r_in_f2:.0f} → {r_exp_f2:.0f} / {r_obs_f2:.0f} Hz']
+- [synthetic, 'Vowels moved away from the centre, strength 0.5', '{n_away} of {n} ({away_list})']
+- [synthetic, 'Movement toward the centre, as a fraction of the distance (intended 0.50)', '{tw_min:.2f} to {tw_max:.2f}']
+- [synthetic, 'Same field wired as vsaSentence does', '{ref_min:.2f} to {ref_max:.2f} (as designed)']
+sketch: vsa_centralize
+asset_dir: vsa-centralize
+audio:
+- {file: real_i_input.wav, src: ../vsa-meas/real_in_i.wav, role: input, title: 'Input, real /i/', label: '{r_in}', no_playhead: true}
+- {file: real_i_expected.wav, src: ../vsa-meas/real_sent_s05_i_out.wav, role: expected, title: 'Expected, strength 0.5', label: 'wired with the mel grids: {r_exp} (F2 {r_exp_df2:+.0f} Hz)', no_playhead: true}
+- {file: real_i_observed.wav, src: ../vsa-meas/real_cent_s05_i_out.wav, role: observed, title: 'Observed, strength 0.5', label: 'as committed: {r_obs} (F2 {r_obs_df2:+.0f} Hz)', no_playhead: true}
+- {file: real_i_ab.wav, src: [../vsa-meas/real_sent_s05_i_out.wav, ../vsa-meas/real_cent_s05_i_out.wav], gap_s: 0.4, role: ab, title: 'A/B', label: 'expected, then observed', no_playhead: true}
+- {file: syn_i_expected.wav, src: ../vsa-meas/sent_s05_iy_out.wav, role: expected, title: 'Expected, synthetic /i/', label: '{m_exp}', no_playhead: true}
+- {file: syn_i_observed.wav, src: ../vsa-meas/cent_s05_iy_out.wav, role: observed, title: 'Observed, synthetic /i/', label: '{m_obs}', no_playhead: true}
+audio_note: >-
+  All clips share one playback gain. Real voice: PVQD (Walden 2022), speaker LA9015, sustained /i/, cut and processed by Audapter
+  (CC BY 4.0). F1 and F2 beside each clip are measured on that clip's audio.
+cause:
+  summary: >-
+    The field and the formants are in mel, the grid the runner re-sends is in Hz. The lines below build the mel field, store the
+    Hz grids, and re-send them after init.
+  refs:
+  - {repo: free-speech, path: experiment_helpers/calc_pertField.m, lines: [186, 190], hl: [190], expect: p.pertF1 = pertF1;, note: "calc_pertField returns the mel field and its mel grid as <code>pertF1</code> (upper-case F)."}
+  - {repo: vsaCentralize, path: run_vsaAdapt2_expt.m, lines: [113, 114], hl: [113, 114], expect: p.pertf1 = floor, note: "The experiment script also stores Hz grids as <code>pertf1</code>/<code>pertf2</code> (lower case)."}
+  - {repo: vsaCentralize, path: run_vsaAdapt2_audapter.m, lines: [61, 65], hl: [62, 63], expect: "Audapter(3,'pertf1',p.pertf1);", note: "After init the runner re-sends the lower-case Hz grids; Audapter's parameter names are case-insensitive, so they replace the mel grid."}
+  - {repo: vsaCentralize, path: run_vsaAdapt2_expt.m, lines: [120, 126], hl: [121, 126], expect: maxScaleFact = .5;, note: "The design: the field is scaled by 0.5 in the hold phase (adapt group)."}
+  fix_label: How to check
+  fix: >-
+    <strong>In the lab's data:</strong> on hold-phase trials, compare the direction of <code>sfmts − fmts</code> (in mel) with the
+    direction from <code>fmts</code> to the field centre (<code>expt.audapterParams.fCen</code>). If the data were collected with this
+    runner, /i/-, /æ/-, /ɪ/- and /ɛ/-like vowels show F2 raised, away from the centre; if the shifts point toward the centre at about
+    half the distance, the collecting runner sent the mel grid and this question is closed. <strong>Correction, if needed:</strong>
+    re-send <code>p.pertF1</code>/<code>p.pertF2</code> (the mel grids) after init, as vsaSentence does, or drop the lower-case Hz grids from
+    <code>expt.audapterParams</code>. <strong>Audapter could have warned:</strong> the grid (Hz) lies outside <code>F1Min..F1Max</code>
+    (mel).
+verify:
+- {kind: H, what: report export (public runner's exact parameter sequence, real and synthetic vowels), name: report_vsa.m}
+- {kind: H, what: field wiring check, name: exp_vsa_field.m, detail: 'EXP-4: re-run for this report'}
+reproduce: cd audit/harness && ./run-oct.sh report_vsa.m

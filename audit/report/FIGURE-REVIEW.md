@@ -75,5 +75,8 @@ Trial and session figures of the reworked cards now use the expected-vs-observed
 | OST-F5 (new card) | new | desktop, 390 px dark | Four trials; catch trials hollow/none in Expected, "+2 st left over" in Observed; values in cents |
 | I-01 | redrawn | desktop, 390 px dark | Trials 5–7 of the simonSingleWord v2 masking session; the 16 ms gap is widened in the drawing (stated in the caption); first draft labelled the axis 0–6 s, now true session time |
 | PT-5 | redrawn | desktop, 390 px dark | timeAdapt settings, four trials; level re input under each trial; the long sentence label is dropped where it does not fit (grey box only) |
-| OST-F2, F6 | kept (earlier design) | desktop | Already session/trial timelines from REPORT-25; converting them to two panels is left for a follow-up (F6's comparison is two rules, not expected vs observed in time) |
+| OST-F2 | redrawn (REPORT-29) | desktop, 390 px dark, mid-playback | Three trials of a real soft voice; timeout markers; value labels placed apart for legibility (windows stated in the caption) |
+| LAB-1, LAB-2 | new | desktop, 390 px dark | F1–F2 vowel space, Expected and Observed side by side (stacked on phones), real voice block first; arrow markers made unique per SVG (the phone layout had lost its arrowheads) |
+| LAB-3 | new | desktop, 390 px dark | Level bars, intended vs as committed, measured on the audio |
+| F6 | kept (earlier design) | desktop | A comparison of two rules, not expected vs observed in time |
 | Other cards | kept | — | Not trial-sequence figures (memory diagrams, sweeps, live-path timelines) |

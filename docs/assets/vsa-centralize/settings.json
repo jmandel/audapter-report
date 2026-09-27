@@ -1,0 +1,80 @@
+{
+ "card": "LAB-1",
+ "source": "blab's vsaCentralize (public runner), parameter sequence reproduced exactly",
+ "preset": "male",
+ "build": "shipped",
+ "params": {
+  "bShift": 1,
+  "bRatioShift": 0,
+  "bMelShift": 1,
+  "F2Min": 607.4547050090661,
+  "F2Max": 2019.3316994592553,
+  "F1Min": 283.2339944477894,
+  "F1Max": 1290.576107936033,
+  "pertF1": "257 values, 283 to 1290",
+  "pertF2": "257 values, 607 to 2019",
+  "pertAmp2D": "66049 values, 0 to 493.244",
+  "pertPhi2D": "66049 values, -1.5708 to 4.70672",
+  "bShift2D": 1,
+  "pertf1": "257 values, 200 to 1500",
+  "pertf2": "257 values, 500 to 3500",
+  "fCen": [
+   601.3905777438594,
+   1312.888952485938
+  ]
+ },
+ "setparam": {
+  "pertf1": "Hz grid 200..1500 (p.pertf1, lower case), re-sent after init",
+  "pertf2": "Hz grid 500..3500 (p.pertf2), re-sent after init",
+  "pertAmp2D": "calc_pertField field x strength, set before every trial",
+  "pertPhi2D": "calc_pertField angles, re-sent after init"
+ },
+ "ost": "",
+ "pcf": "",
+ "sequence": [
+  "strength 0 (baseline)",
+  "strength 0.5 (hold / train)"
+ ],
+ "switching": "setParam pertAmp2D = strength x field before every trial (run_vsaAdapt2_audapter.m:104-105); AudapterIO('init') once",
+ "input": "synthetic male vowels (F0 120 Hz) at Hillenbrand men's means for /i/, /ae/, /a/, /u/ (the lab's default corner vowels) and /I/, /E/",
+ "playground": {
+  "v": 1,
+  "preset": "male",
+  "build": "lite",
+  "raw": {
+   "bshift": 1,
+   "bratioshift": 0,
+   "bmelshift": 1,
+   "f2min": 607.4547050090661,
+   "f2max": 2019.3316994592553,
+   "f1min": 283.2339944477894,
+   "f1max": 1290.576107936033,
+   "bshift2d": 1
+  },
+  "shift": {
+   "formant": {
+    "on": true,
+    "units": "mel",
+    "f1": 0,
+    "f2": 0,
+    "field": "all"
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": [
+  "the trial sequence: the link loads one trial's settings; run several trials as one session in the Playground to see carry-over",
+  "the setParam value pertf1",
+  "the setParam value pertf2",
+  "the setParam value pertAmp2D",
+  "the setParam value pertPhi2D"
+ ]
+}

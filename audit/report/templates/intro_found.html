@@ -14,9 +14,11 @@ collected before April 2026 are not affected (<a href="#I-01">I-01</a>).</li>
 its control trials (<a href="#PT-5">PT-5</a>).</li>
 <li><strong>vsaSentence depends on an undocumented blab change.</strong> The field perturbation switches on again at every vowel;
 on the original Audapter 2.1.5 or another fork, only the first vowel of each sentence would be perturbed (<a href="#F6">F6</a>).</li>
-<li><strong>Questions about the public scripts.</strong> As committed, vsaCentralize's and vsaGeneralize's runners would deliver a
-different field from the one their design describes, and vsaGeneralize's masking noise would be [[fb4_diff_db:.0f]] dB louder than
-set. The runners used for data collection may differ; the lab's logs can settle it (<a href="#labscripts">questions</a>).</li>
+<li><strong>Three questions about the public experiment scripts.</strong> As committed, vsaCentralize's runner looks up the
+lab's field on the wrong grid, so most vowels are pushed away from the vowel-space centre instead of toward it
+(<a href="#LAB-1">LAB-1</a>); vsaGeneralize's runner perturbs its baseline trials and never scales the field
+(<a href="#LAB-2">LAB-2</a>) and plays its fb 4 masking noise [[LAB3_lv_diff:.0f]] dB louder than set (<a href="#LAB-3">LAB-3</a>).
+The runners that collected the data may differ; each card says how to check the lab's own data.</li>
 </ul>
 <p><strong>Pitfalls for future designs.</strong> Carry-over is real with other settings: an offset rule placed after a timer or
 after the RMS-floor rule fires later on every trial (<a href="#OST-F1">OST-F1</a>); a PCF left loaded overrides a later field

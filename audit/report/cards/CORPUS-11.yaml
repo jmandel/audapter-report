@@ -48,6 +48,7 @@ audio:
 audio_note: >-
   All clips share one playback gain, chosen so the loud ratio-mode clip peaks at −1 dBFS; the others are therefore quiet. Real recording from Audapter's example_data
   (diao1_female.mat, MIT licence, © 2006–2021 Audapter Authors), processed by Audapter for this report (modified). 12 kHz internal rate.
+  The input is itself a real recording: Audapter's own 2008 example trial.
 cause:
   summary: >-
     The shift is <code>f1 × (1 + pertAmp·cos φ)</code> in ratio mode or <code>f1 + pertAmp·cos φ</code> otherwise, and is converted to a filter angle without checking

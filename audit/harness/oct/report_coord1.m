@@ -39,6 +39,29 @@ for arm = {'exp', 'obs'}
     printf('%s trial %d (%s): shifted %.3f s (%.3f-%.3f), logged dF1 %+.1f mel, output/input F1 %.3f\n', arm{1}, k, seq{k}, q.shift_s, q.on, q.off, q.dF1mel, q.outF1);
   end
 end
+
+% ---- real voice (primary listening example): the same session with a real sentence on every trial (CMU ARCTIC clb a0030,
+% "I had faith in them.", female)
+Mc = corpus_index(); xs = corpus_wav(Mc(strcmp({Mc.id}, 'arctic_clb_a0030'))); xs = [xs; 1e-4*randn(round(0.3*fs),1)];
+for arm = {'exp', 'obs'}
+  Audapter('setParam', 'datapb', w, 1);
+  Audapter('ost', MF_OST, 0); Audapter('pcf', MF_PCF, 0); AudapterIO('init', pc);
+  for k = 1:numel(seq)
+    if k == 3
+      if strcmp(arm{1}, 'exp'), Audapter('ost', '', 0); Audapter('pcf', '', 0); end
+      AudapterIO('init', p);
+    end
+    if k >= 3
+      a = 125 * strcmp(seq{k}, 'shift'); Audapter('setParam', 'pertAmp', a * ones(1, 257)); Audapter('setParam', 'pertPhi', zeros(1, 257));
+    end
+    PP = {pc, p}; q = exp_trial(PP{1 + (k >= 3)}, xs);
+    r.real.(arm{1}).shift_s(k) = q.shift_s; r.real.(arm{1}).on(k) = q.on; r.real.(arm{1}).off(k) = q.off;
+    wr(sprintf('real_%s_t%d_out.wav', arm{1}, k), q.d.signalOut); if k == 1, wr('real_in.wav', q.d.signalIn); end
+    printf('real %s trial %d (%s): shifted %.3f s, output/input F1 %.3f\n', arm{1}, k, seq{k}, q.shift_s, q.outF1);
+  end
+end
+Audapter('ost', '', 0); Audapter('pcf', '', 0);
+r.real.trial_s = numel(xs) / fs; r.real.clip = 'arctic_clb_a0030';
 % second arm: SimOn hold block (bedhead OST, PCF 125 mel in every row), then a field "noShift" trial
 pcf = 'cfg/report_coord1_hold.pcf'; fid = fopen(pcf, 'w'); fprintf(fid, '0\n\n9\n'); for s = 0:8, fprintf(fid, '%d, 0.0, 0, 125, 0\n', s); end; fclose(fid);
 for cl = [0 1]

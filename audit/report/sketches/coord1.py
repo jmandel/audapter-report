@@ -25,15 +25,24 @@ def _n(x):
     return None if x is None or (isinstance(x, float) and math.isnan(x)) else x
 
 
+def measured_real(d):
+    """Per-trial F1 heard vs spoken on the real sentence: median per-frame ratio (measure.ratio), independent of Audapter's logs."""
+    md = os.path.join(d["_dir"], "meas"); R = d["real"]; out = {}
+    for k in range(len(d["sequence"])):
+        out[k] = tuple(100 * (M.ratio(os.path.join(md, "real_in.wav"), os.path.join(md, f"real_{arm}_t{k+1}_out.wav"), 0.1, R["trial_s"] - 0.3) - 1)
+                       for arm in ("exp", "obs"))
+    return out
+
+
 def spec(d):
-    m = measured(d); trials = []; a, b = d["g1"], d["g1"] + d["wd"]
+    R = d["real"]; m = measured_real(d); trials = []; a, b = 0.1, R["trial_s"] - 0.35
     for k, tag in enumerate(d["sequence"]):
-        tr = {"n": k + 1, "tag": tag, "dur": d["trial_s"], "words": [(a, b, "head")]}
-        for key in ("exp", "obs"):
-            on, off = _n(d[key]["on"][k]), _n(d[key]["off"][k])
-            tr[key] = {"pert": [] if on is None else [(on, off, "+125 mel")], "vals": [_f(_pct(m[k][1 if key == "exp" else 2], m[k][0]))],
+        tr = {"n": k + 1, "tag": tag, "dur": R["trial_s"], "words": [(a, b, "“I had faith in them.”")]}
+        for j, key in enumerate(("exp", "obs")):
+            on, off = _n(R[key]["on"][k]), _n(R[key]["off"][k])
+            tr[key] = {"pert": [] if on is None else [(on, off, "+125 mel")], "vals": [_f(m[k][j])],
                        "none": "none" if tag != "calibration" else "none (calibration)"}
-        if tag == "shift" and not d["obs"]["shift_s"][k]:
+        if tag == "shift" and not R["obs"]["shift_s"][k]:
             tr["obs"]["diff"] = [(a, b)]
         trials.append(tr)
     return {"sid": "sk-coord-1", "trials": trials, "gap": 0.35,
@@ -53,6 +62,10 @@ def derive(d, up):
     for k in range(len(d["sequence"])):
         v[f"t{k+1}_in"], v[f"t{k+1}_exp"], v[f"t{k+1}_obs"] = m[k]
         v[f"t{k+1}_exp_pct"] = _f(_pct(m[k][1], m[k][0])); v[f"t{k+1}_obs_pct"] = _f(_pct(m[k][2], m[k][0]))
+    mr = measured_real(d)
+    for k in range(len(d["sequence"])):
+        v[f"R_t{k+1}_exp_pct"], v[f"R_t{k+1}_obs_pct"] = _f(mr[k][0]), _f(mr[k][1])
+    v["R_exp_shift_s"] = d["real"]["exp"]["shift_s"][2]; v["R_obs_shift_s"] = d["real"]["obs"]["shift_s"][2]
     v["exp_shift_s"] = d["exp"]["shift_s"][2]; v["obs_shift_s"] = d["obs"]["shift_s"][2]
     v["simon_nc_s"] = d["simon"]["not_cleared"]["shift_s"]; v["simon_nc_mel"] = d["simon"]["not_cleared"]["dF1mel"]
     v["simon_c_s"] = d["simon"]["cleared"]["shift_s"]

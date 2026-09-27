@@ -27,11 +27,13 @@ scope: >-
   coAdapt, uhdapter, VSA and template runners do. These two lines are load-bearing.
 example: >-
   The measureFormants calibration (two trials), then an attentionComp-style field experiment: 125 mel F1 shift set per trial with
-  <code>pertAmp</code>/<code>pertPhi</code>, noShift trials interleaved, fb 3 with the bundled babble. With the clear lines, trial 3
-  is heard with F1 raised ({t3_exp_pct}). Without them, trial 3 is heard unchanged ({t3_obs_pct}) and the log shows no shifted
-  frame ({obs_shift_s:.3f} s instead of {exp_shift_s:.3f} s).
+  <code>pertAmp</code>/<code>pertPhi</code>, noShift trials interleaved, fb 3 with the bundled babble, a real sentence on every trial
+  (CMU ARCTIC clb "I had faith in them."). With the clear lines, trial 3 is heard with F1 raised ({R_t3_exp_pct}). Without them,
+  trial 3 is heard unchanged ({R_t3_obs_pct}) and the log shows no shifted frame ({R_obs_shift_s:.3f} s instead of
+  {R_exp_shift_s:.3f} s). A synthetic vowel gives the same result ({t3_exp_pct} vs {t3_obs_pct}).
 settings:
   source: "blab's attentionComp experiment (field mode, per-trial pertAmp/pertPhi, 125 mel, fb 3 with the bundled babble at 0.02), after free-speech's measureFormants calibration block; the only change is removing the runner's two clear lines."
+  input: "real: CMU ARCTIC clb a0030 \"I had faith in them.\" (female) on every trial; synthetic: a 0.4 s /ɛ/-like vowel"
   key_params: [bShift, bRatioShift, bMelShift, fb, fb3Gain]
   details:
   - "The OST and PCF shown are measureFormants.ost/.pcf from the calibration block, which stay loaded in the observed session. The Playground link loads the field experiment only."
@@ -39,16 +41,22 @@ figure_caption: >-
   One session: two calibration trials, then the experiment block. Expected: the runner clears the OST and PCF before
   <code>AudapterIO('init')</code>. Observed: it does not. Values are F1 measured on the audio.
 table:
+- [real voice, 'Shift trial, F1 heard vs spoken: with / without the clear lines', '{R_t3_exp_pct} / {R_t3_obs_pct}']
 - [synthetic, 'Shift trial, F1 heard vs spoken: with / without the clear lines', '{t3_exp_pct} / {t3_obs_pct}']
 - [synthetic, 'Logged shifted time on a shift trial: with / without', '{exp_shift_s:.3f} / {obs_shift_s:.3f} s']
 - [synthetic, 'After a bedhead hold block: a noShift trial without / with the clear lines', 'shifted {simon_nc_s:.3f} s at {simon_nc_mel:+.0f} mel / {simon_c_s:.3f} s']
 sketch: coord1
 asset_dir: coord-1
 audio:
-- {file: t3_input.wav, src: meas/t3_in.wav, role: input, title: 'Input, trial 3', label: 'a "head"-like vowel', panel: exp, trial: 3}
-- {file: t3_expected.wav, src: meas/exp_t3_out.wav, role: expected, title: 'Expected, trial 3', label: 'F1 raised ({t3_exp_pct})', panel: exp, trial: 3}
-- {file: t3_observed.wav, src: meas/obs_t3_out.wav, role: observed, title: 'Observed, trial 3', label: 'not shifted ({t3_obs_pct})', panel: obs, trial: 3}
-- {file: t3_ab.wav, src: [meas/exp_t3_out.wav, meas/obs_t3_out.wav], gap_s: 0.4, role: ab, title: 'A/B, trial 3', label: 'expected, then observed', no_playhead: true}
+- {file: real_t3_input.wav, src: meas/real_in.wav, role: input, title: 'Input, trial 3', label: 'real sentence, the same on every trial', panel: exp, trial: 3}
+- {file: real_t3_expected.wav, src: meas/real_exp_t3_out.wav, role: expected, title: 'Expected, trial 3', label: 'F1 raised ({R_t3_exp_pct})', panel: exp, trial: 3}
+- {file: real_t3_observed.wav, src: meas/real_obs_t3_out.wav, role: observed, title: 'Observed, trial 3', label: 'not shifted ({R_t3_obs_pct})', panel: obs, trial: 3}
+- {file: real_t3_ab.wav, src: [meas/real_exp_t3_out.wav, meas/real_obs_t3_out.wav], gap_s: 0.4, role: ab, title: 'A/B, trial 3', label: 'expected, then observed'}
+- {file: t3_observed.wav, src: meas/obs_t3_out.wav, role: observed, title: 'Synthetic, observed', label: 'a synthetic vowel, not shifted ({t3_obs_pct}; expected {t3_exp_pct})', no_playhead: true, no_playhead_why: 'No playhead: the figure shows the real-sentence session.'}
+audio_note: >-
+  All clips share one playback gain. Real voice: CMU ARCTIC (Kominek and Black 2003), speaker clb, "I had faith in them.", processed by
+  Audapter; © 2003 Carnegie Mellon University (<a href="assets/licenses/CMU_ARCTIC_COPYING.txt">licence notice</a>). Values: median
+  per-frame F1 ratio of output to input, measured on the audio.
 cause:
   summary: >-
     With a PCF loaded (<code>pertCfg.n &gt; 0</code>), the formant branch takes the on/off decision, amplitude and phase from the
