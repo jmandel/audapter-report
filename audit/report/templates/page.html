@@ -224,6 +224,10 @@
     nothing here asks to be taken on trust. Every finding links the exact lines at a pinned commit, shows the recording or data it rests on, and gives a
     one-line command that reproduces it from the public repositories. Where something was only read and not executed, the card says so (<span class="vk-l">R</span>).
     Josh Mandel commissioned the work and decided what to publish; he did not independently re-derive each finding.</p>
+  <p><strong>Reproduced from scratch.</strong> The whole pipeline, from a fresh <code>git clone --recurse-submodules</code> through the harness, WebAssembly, formal,
+    live-path and report stages, was re-run end to end (<code>./reproduce.sh</code>). Of the 17 full cards the report had then, 13 rebuilt byte-identical, as did everything outside the cards. The 4
+    that differ measure quantities that are nondeterministic by nature: the size of the LIVE-3 burst, the LIVE-1 / LIVE-2 crash counts, the time before the CORPUS-10
+    hang was killed, and the heap garbage values of FMT-F1.</p>
 </section>
 
 <section id="limits" class="prose">

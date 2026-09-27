@@ -118,6 +118,16 @@
    ],
    "upstream_export": false
   },
+  "COORD-1": {
+   "assets": [
+    "data.json",
+    "input.wav",
+    "output_after_pcf.wav",
+    "output_fresh.wav",
+    "real"
+   ],
+   "upstream_export": false
+  },
   "I-04": {
    "assets": [
     "cond1_output.wav",

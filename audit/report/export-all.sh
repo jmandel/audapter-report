@@ -4,7 +4,7 @@
 set -euo pipefail
 R=$(cd "$(dirname "$0")" && pwd); H=$R/../harness
 cd "$H"
-mkdir -p oct/out/report/{ost-f1,ost-f2,i-01,pt-5,ost-f4,fmt-f1,i-04,ost-f8,i-02,i-03,f6,corpus-8,corpus-10,corpus-11}   # some scripts write at <id>/ level before report_outdir runs
+mkdir -p oct/out/report/{ost-f1,ost-f2,i-01,pt-5,ost-f4,fmt-f1,i-04,ost-f8,i-02,i-03,f6,corpus-8,corpus-10,corpus-11,coord-1}   # some scripts write at <id>/ level before report_outdir runs
 UP="build-upstream upstream/audapter_matlab"
 run()  { echo "export: $*"; ./run-oct.sh "$@" > /dev/null; }
 runu() { echo "export (upstream): $1"; VARIANT=upstream ./run-oct.sh "$1" $UP > /dev/null; }
@@ -30,5 +30,6 @@ run corpus_report.m;  runu corpus_report.m          # out/report/<id>/real/ (F6 
 SCEN="32 5" ./run-oct.sh report_corpus8.m > /dev/null; SCEN="64 7" ./run-oct.sh report_corpus8.m > /dev/null; echo "export: report_corpus8.m (2 configs)"
 python3 "$R/corpus/merge_corpus8.py"
 run report_corpus11.m
+run report_coord1.m                                 # COORD-1: stale PCF across init (synthetic and real)
 oct/report_corpus10.sh 60                           # the hang: killed after 60 s without progress
 if [ -x "$R/live/export.sh" ]; then "$R/live/export.sh"; elif [ -f "$R/live/export_live.py" ]; then python3 "$R/live/export_live.py"; fi

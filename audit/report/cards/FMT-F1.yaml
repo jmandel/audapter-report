@@ -15,7 +15,7 @@ effect:
     trajectory padded with zeros to 2048, which is what the default parameters and the clamp's own "repeat the last value" rule assume.
     Same as <code>t_mem.m SCEN=clamp_short</code>, plus a release build to see what reaches the filter and the log.
   expected: "The clamp holds F1 at 700 Hz (the last value, repeated) for the whole trial, as in the padded control: logged sF1 700 Hz in all {ctl_n:.0f} frames; output peak {ctl_out_max:.3f}."
-  observed: "Audapter copies 2048 values, {n_past} of them from past the end of MATLAB's array. The clamp follows the 100 values, then walks on into heap contents until it meets a zero (element {first_zero} in this run) and holds element {held} (value {stuck} Hz). Logged sF1: 700 Hz for {short_n_700} frames, then below 1 Hz for {short_n_tiny} frames. With F1 pushed to 0 Hz the formant filter blows up: output peak {short_out_max:.0f}, {gain_db:.0f} dB above the control."
+  observed: "In this run, Audapter copies 2048 values, {n_past} of them from past the end of MATLAB's array. The clamp follows the 100 values, then walks on into heap contents until it meets a zero (element {first_zero} in this run) and holds element {held} (value {stuck} Hz in this run). Logged sF1 in this run: 700 Hz for {short_n_700} frames, then below 1 Hz for {short_n_tiny} frames. With F1 pushed to 0 Hz the formant filter blows up: output peak {short_out_max:.0f} in this run, {gain_db:.0f} dB above the control. These heap values are not reproducible: they change between runs and between machines (a fresh clone gave a different F2 value, output level and held value), so every number after the 100th element describes this run only."
   matters: >
     Any experiment that sets a clamp trajectory shorter than 2048 values gets heap contents as formant targets after the trajectory ends, instead of
     the last value repeated. What happens depends on what lies in memory, which changes with the MATLAB session's allocation history; the copied values
@@ -26,11 +26,11 @@ effect:
     - ["Values passed / values copied by setGetParam", "{n_passed_t} / {n_read_t}"]
     - ["First zero after the passed values (this run)", "element {first_zero}"]
     - ["Logged sF1, control (padded): frames at 700 Hz", "{ctl_n:.0f}"]
-    - ["Logged sF1, 100 values: frames at 700 Hz / below 1 Hz / above 8 kHz", "{short_n_700} / {short_n_tiny} / {short_n_huge}"]
-    - ["Output peak: control / 100 values (input peak {in_peak:.2f})", "{ctl_out_max:.3f} / {short_out_max:.0f}"]
+    - ["Logged sF1 in this run, 100 values: frames at 700 Hz / below 1 Hz / above 8 kHz", "{short_n_700} / {short_n_tiny} / {short_n_huge}"]
+    - ["Output peak in this run: control / 100 values (input peak {in_peak:.2f})", "{ctl_out_max:.3f} / {short_out_max:.0f}"]
     - ["Output peak over {hist_n} runs of the script (first zero at element {hist_fz})", "{hist_min:.0f} to {hist_max:.0f}"]
-    - ["1D field (I-08): 10-element pertAmp, values copied / nonzero past element 10 / largest", "{pert_n_read} / {pert_amp_nonzero_beyond} / {pert_amp_beyond_max:.2g}"]
-    - ["Same on upstream 2.1.5: nonzero past element 10", "{up_pert_nonzero}"]
+    - ["1D field (I-08), this run: 10-element pertAmp, values copied / nonzero past element 10 / largest", "{pert_n_read} / {pert_amp_nonzero_beyond} / {pert_amp_beyond_max:.2g}"]
+    - ["Same on upstream 2.1.5, this run: nonzero past element 10", "{up_pert_nonzero}"]
 sketch: fmt_f1
 asset_dir: fmt-f1
 audio: []

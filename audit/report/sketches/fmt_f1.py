@@ -1,6 +1,6 @@
 from sketchlib import *
 
-CLS = {1: "700 Hz, as passed", 2: "1500 Hz (clamp_f2's values)", 3: "below 1 Hz (heap value)", 4: "above 8 kHz or not finite", 5: "other heap value"}
+CLS = {1: "700 Hz, as passed", 2: "1500 Hz (clamp_f2's values)", 3: "below 1 Hz (heap value)", 4: "above 8 kHz or not finite", 5: "other heap value (differs between runs)"}
 
 def _ivs(t, cls, kind_ok, T1):
     out, a, cur = [], t[0], cls[0]
@@ -22,7 +22,7 @@ def sketch(d, up):
     z = short["first_zero"]
     y2 = s.intervals("Clamp trajectory", [(0, n, "", "observed"), (n, z, "", "observed")], h=26, sub="what the clamp walks")
     s.band(n, z, y2, y2 + 26, "")
-    s.parts.append(f'<text class="sk-note" x="{s.x(z) + 6:.1f}" y="{y2 + 17}">first zero at element {z}: the clamp then holds element {z - 1} ({short["stuck_value"]} Hz)</text>')
+    s.parts.append(f'<text class="sk-note" x="{s.x(z) + 6:.1f}" y="{y2 + 17}">first zero at element {z}: the clamp then holds element {z - 1} ({short["stuck_value"]} Hz in this run)</text>')
     s.axis([0, n, 512, 1024, 1536, 2048], "{:g}")
     main = s.svg(f"MATLAB passes {n} values; Audapter copies {N}, reading {N - n} past the end of the array. The clamp advances "
                  f"through the passed values into heap contents until it meets a zero at element {z}, then holds element {z - 1}.")

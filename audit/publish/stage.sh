@@ -40,7 +40,10 @@ MD
 # ---- public-information gate ----
 fail=0
 chk() { if grep -rIl -i -E "$1" "$S" >/dev/null 2>&1; then echo "GATE FAIL ($2):"; grep -rIl -i -E "$1" "$S" | sed 's/^/  /'; fail=1; fi; }
-# private-name check: patterns kept in an untracked local file (see later versions of this script)
+# Names that must never be published (e.g. private repositories seen during the audit) live in an untracked
+# local file, so the gate itself does not publish them. Missing file = gate still runs the other checks.
+PRIV="$A/publish/private-patterns.local"
+[[ -s "$PRIV" ]] && chk "$(paste -sd'|' "$PRIV")" 'private names listed in publish/private-patterns.local' || echo "note: no publish/private-patterns.local; private-name check skipped"
 chk '/home/[a-vx-z]|/home/w[a-df-z]|~/hobby|\.agent-scratch|jmandel/hobby' 'local filesystem paths (Emscripten /home/web_user is allowed)'
 chk 'claude-(opus|sonnet|haiku|fable)|opus [0-9]|sonnet [0-9]' 'model identifiers'
 chk 'gho_|ghp_|github_pat_|sk-ant-' 'tokens'

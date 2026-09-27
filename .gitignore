@@ -41,3 +41,4 @@ audit/scratch/**
 **/restricted/**
 **/site-packages/**
 !audit/scratch/wasm/package.json
+audit/publish/private-patterns.local

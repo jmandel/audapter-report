@@ -10,7 +10,7 @@ def sketch(d, up):
                     sub="median over the vowel")
     bad = [r["f0"] for r in a["sweep"] if r["within5"] < 0.5]
     if bad:
-        s.band(min(bad) - 3, max(bad) + 5, y, y + 200, f"default window: wrong below {max(bad) + 10} Hz", anchor="start", ty=y + 30)
+        s.band(min(bad) - 3, max(bad) + 5, y, y + 200, f"default window: wrong below {max(bad) + 10} Hz", anchor="end", ty=y + 190)
     for r in a["sweep"]:
         s.parts.append(f'<circle class="sk-dot-a" cx="{s.x(r["f0"]):.1f}" cy="{sy(r["median_hz"]):.1f}" r="4"><title>F0 {r["f0"]} Hz: logged {r["median_hz"]:.0f} Hz, {100*r["within5"]:.0f} % of frames within 5 %</title></circle>')
     s.parts.append(f'<text class="sk-note" x="{s.x(200):.1f}" y="{sy(250):.1f}">frameLen {b["frameLen"]} / nDelay {b["nDelay"]} and the true F0 (ink lines) coincide</text>')

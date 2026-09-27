@@ -31,6 +31,7 @@ table:
   - {id: LIVE-3, sev: med, origin: upstream, status: D, text: "reset() while the participant is voicing can emit a clipped burst, +17 to +61 dB so far (about 1 in 1000–2000 resets during voicing, in simulation)"}
   - {id: LIVE-6, sev: med, origin: upstream, status: D, text: "If the sound card's buffer size differs from Audapter's frame size, the participant hears the raw microphone an octave up, with gaps"}
   - {id: CORPUS-11, sev: med, origin: upstream, status: H, text: "Shifted formant targets are unbounded: old mel-unit parameters under today's ratio default give targets up to 130 kHz and +24 dB clipped output"}
+  - {id: COORD-1, sev: med, origin: upstream, status: H, text: "A PCF loaded in an earlier experiment survives AudapterIO('init') and silently overrides a later field-mode shift (435 frames shifted fresh, 0 after)"}
   - {id: I-04,   sev: med,  origin: upstream, status: H, text: "runFrame writes its output into the caller's input array"}
   - {id: I-02,   sev: med,  origin: blab, status: H, text: "fb mode 5 applies dScale twice to the speech-modulated component"}
   - {id: F6,     sev: med,  origin: blab, status: H, text: "Dropout fix re-arms the perturbation on every field re-entry; minVowelLen no longer has any effect"}
@@ -39,7 +40,7 @@ table:
 
 
 # Full cards, in report order (cards/<ID>.yaml)
-cards: [OST-F1, OST-F2, I-01, CORPUS-10, LIVE-1 / LIVE-2, CORPUS-8, PT-5, OST-F4, FMT-F1, LIVE-3, LIVE-6, CORPUS-11, I-04, I-02, F6, I-03, OST-F8]
+cards: [OST-F1, OST-F2, I-01, CORPUS-10, LIVE-1 / LIVE-2, CORPUS-8, PT-5, OST-F4, FMT-F1, LIVE-3, LIVE-6, CORPUS-11, COORD-1, I-04, I-02, F6, I-03, OST-F8]
 
 # Short cards: effect, one excerpt at the pinned SHA, how verified. `notes` must name an existing heading.
 short:
