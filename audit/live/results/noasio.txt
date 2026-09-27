@@ -1,0 +1,7 @@
+RtAudio: no devices found for compiled audio APIs!
+==1==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000000 (pc 0x56213f2d4e37 bp 0x7fff89916400 sp 0x7fff89916150 T0)
+    #0 0x56213f2d4e37 in RtAudio::getDeviceCount() build/src-io/RtAudio.h:467
+    #1 0x56213f2d4e37 in audioIO::audioIO() build/src-io/audioIO.cpp:27
+    #2 0x56213f24ea0f in mexFunction(int, mxArray**, int, mxArray const**) build/src/mexLibrary.cpp:85
+    #3 0x56213f321ca6 in mex src/driver/live_driver.cpp:73
+SUMMARY: AddressSanitizer: SEGV build/src-io/RtAudio.h:467 in RtAudio::getDeviceCount()

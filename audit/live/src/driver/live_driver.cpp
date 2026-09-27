@@ -241,7 +241,9 @@ static int scOffline() {
   }
   const int N = frameSize(); x.resize(x.size() + (N - x.size() % N) % N, 0.0);
   std::vector<double> out(x.size());
+  const long resetEvery = (long)argd("resetevery", 0);   // race-free control: reset between frames
   for (size_t k = 0; k < x.size() / N; k++) {
+    if (resetEvery > 0 && k > 0 && k % resetEvery == 0) mexNoOut({mxStr("reset")});
     std::vector<double> fr(x.begin() + k * N, x.begin() + (k + 1) * N);
     // Fresh array per frame (MATLAB scripts pass sigInCell{n}); runFrame writes the output into it (H3).
     mxArray *a[2] = {mxStr("runFrame"), mxVec(fr, true)}; mxArray *plhs[1] = {nullptr};
@@ -337,6 +339,11 @@ static int scHammer() {
       else if (op == "tdratio") setParam("pitchshiftratio", 1.0 + 0.01 * (it & 1));
       else if (op == "tdsame") setParam("pitchshiftratio", 1.0);   // what AudapterIO('init') does every trial
       else if (op == "idle") sleepS(0.001);
+      else if (op.rfind("toggle:", 0) == 0) {   // toggle:<param>:<v1>:<v2>  e.g. toggle:fn1:675:676
+        char pn[64]; double v1, v2;
+        if (sscanf(op.c_str(), "toggle:%63[^:]:%lf:%lf", pn, &v1, &v2) != 3) { fprintf(stderr, "bad toggle op\n"); return 2; }
+        setParam(pn, (it & 1) ? v2 : v1);
+      }
       else { fprintf(stderr, "unknown op %s\n", op.c_str()); return 2; }
     } catch (MexError &e) { fprintf(stderr, "[hammer] %s: %s\n", op.c_str(), e.what()); }
     opDur.push_back(nowS() - ts);
@@ -347,6 +354,31 @@ static int scHammer() {
   printf("hammer op=%s: %ld iterations in %.1f s without crashing; callbacks %ld; op duration median %.2f ms max %.2f ms\n", op.c_str(), it, secs, backendCallbacks(),
          opDur.empty() ? 0 : 1e3 * opDur[opDur.size() / 2], opDur.empty() ? 0 : 1e3 * opDur.back());
   if (!arg("out").empty()) backendSave(arg("out"));
+  return 0;
+}
+
+// Always-on trial starts: reset while audio runs, let the "trial" run, getData while running, and
+// check that the logged frame clock (data.intervals) starts at the first frame and is contiguous.
+static int scResetCheck() {
+  auto tr = loadTrace(arg("trace")); replayInit(tr); loadOstPcf(); setDevice();
+  std::vector<double> x = loadMic(arg("in")); backendLoop(); backendArm(x);
+  mexNoOut({mxStr("reset")}); mexNoOut({mxStr("start")});
+  const int fl = (int)getParam("framelen"); int n = (int)argd("n", 200); srand(1);
+  long bad0 = 0, badGap = 0, badRows = 0; std::map<long, long> firstVals;
+  for (int k = 0; k < n; k++) {
+    g_iter = k; g_op = "reset"; mexNoOut({mxStr("reset")});
+    sleepS(argd("tmin", 0.03) + (argd("tmax", 0.08) - argd("tmin", 0.03)) * (rand() / (double)RAND_MAX));
+    g_op = "getData"; Data d = getData();
+    size_t rows = d.datCols ? d.dat.size() / d.datCols : 0;
+    if (rows < 2) { badRows++; continue; }
+    long first = lround(d.dat[0]); firstVals[first]++;
+    if (first != 1) bad0++;
+    for (size_t r = 1; r < rows; r++) if (lround(d.dat[r] - d.dat[r - 1]) != fl) { badGap++; break; }
+    if (rows * fl != d.n && rows * fl != d.n + fl && rows * fl + fl != d.n) badRows++;
+  }
+  g_op = "stop"; mexNoOut({mxStr("stop")});
+  printf("resetcheck: %d resets while running: first logged frame != 1 in %ld; non-contiguous frame clock in %ld; data/signal length mismatch >1 frame in %ld\n", n, bad0, badGap, badRows);
+  for (auto &kv : firstVals) printf("  data.intervals(1) = %ld : %ld trials\n", kv.first, kv.second);
   return 0;
 }
 
@@ -384,6 +416,7 @@ static void usage() {
     "  alwayson  trace= in= [ost= pcf=] trials= triallen= [ops=init,ost,pcf,setp,reset,getdata] [out=]\n"
     "  hammer    trace= in= [ost= pcf=] op=pcf|ost|ostpcf|init|reset|pertamp|getdata|tdratio secs= [gap=]\n"
     "  startstop trace= in= n= run=\n"
+    "  resetcheck trace= in= [ost= pcf=] n= [tmin= tmax=]\n"
     "  info      [device=]\n");
 }
 
@@ -405,6 +438,7 @@ int main(int argc, char **argv) {
     else if (sc == "alwayson") rc = scAlwaysOn();
     else if (sc == "hammer") rc = scHammer();
     else if (sc == "startstop") rc = scStartStop();
+    else if (sc == "resetcheck") rc = scResetCheck();
     else if (sc == "info") rc = scInfo();
     else usage();
   } catch (MexError &e) { fprintf(stderr, "MEX error (op %s): %s\n", g_op.load(), e.what()); rc = 1; }

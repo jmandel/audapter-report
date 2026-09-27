@@ -1,0 +1,9 @@
+Audapter audit (audapter-report)
+Copyright 2026 Josh Mandel
+
+Code in this repository is licensed under the Apache License, Version 2.0 (LICENSE).
+Report text, figures and audio renderings are licensed under CC BY 4.0 (LICENSE-CC-BY-4.0.txt).
+
+This product includes and builds upon Audapter (https://github.com/blab-lab/audapter_mex,
+https://github.com/shanqing-cai/audapter_mex), Copyright Authors of Audapter, Apache License 2.0,
+and audapter_matlab (https://github.com/blab-lab/audapter_matlab), Copyright Audapter Authors, MIT License.

@@ -1,0 +1,9 @@
+[mex] WARNING: mexFunction wrote plhs[2] with nlhs=2 (out of bounds in MATLAB)
+live: wall 2.02 s, callbacks 752, getData rows 1, plhs overflow 1
+device buffer 128, Audapter frame 96: heard output matches the 'raw input read as interleaved stereo' model to max|err| 3.03e-05
+  second half of every buffer: mean|x| = 0 (silence);  first half = decimated-by-2 mic (x2 speed, +1 octave)
+  heard level vs mic during voicing: rms heard 0.0443, rms mic 0.0692 (no Audapter gain/dScale applied)
+--- JACK server period 128:
+[mex] WARNING: mexFunction wrote plhs[2] with nlhs=2 (out of bounds in MATLAB)
+live: wall 2.05 s, callbacks 801, getData rows 1, plhs overflow 1
+[jackd] 0 server-side XRun messages (timer lateness of the dummy driver)

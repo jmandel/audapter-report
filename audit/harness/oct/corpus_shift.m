@@ -45,12 +45,14 @@ for m = M
   [fin, tf] = corpus_f0track(d0.signalIn, p0.sr, lo, hi);
   for st = [0 2 -2]
     p = p0; p.bPitchShift = 1; p.pitchShiftRatio = 2^(st/12); d = run_trial(p, x);
-    fout = corpus_f0track(d.signalOut, p.sr, lo * 2^(min(st,0)/12), hi * 2^(max(st,0)/12));
+    L = corpus_lag(d.signalIn, d.signalOut, p.sr); so = [d.signalOut(L+1:end); zeros(L, 1)];
+    fout = corpus_f0track(so, p.sr, lo * 2^(min(st,0)/12), hi * 2^(max(st,0)/12));
     nn = min(numel(fin), numel(fout)); fout = fout(1:nn); fi_ = fin(1:nn);
     ok = ~isnan(fi_) & ~isnan(fout); cen = 1200*log2(fout(ok) ./ fi_(ok));
     v = d.rms(:,1) > p.rmsThresh; vi = repelem(v, p.frameLen); n = min(numel(vi), numel(d.signalIn));
     gdb = 20*log10(rms(d.signalOut(vi(1:n))) / rms(d.signalIn(vi(1:n))));
     fprintf(fo, '%s,%s,pvoc%+d,,,,,,,,%d,%d,%.1f,%.2f\n', m.id, m.group, st, nnz(ok), 100*st, median(cen), gdb);
+    if st == 0, fprintf(fo, '%s,%s,pvoc_latency_ms,,,,,,,,,,%.1f,\n', m.id, m.group, 1000*L/p.sr); end
   end
   % --- time-domain pitch shift +1 st from onset (bounds per speaker group). Output: frame-paired F0 cents;
   %     tracker: Audapter's logged pitchHz vs reference F0 (vocadito expert annotation if present, else Praat ref)
@@ -58,7 +60,8 @@ for m = M
   p.timeDomainPitchShiftSchedule = [0, 2^(1/12); 100, 2^(1/12)];
   try
     d = run_trial(p, x);
-    fout = corpus_f0track(d.signalOut, p.sr, lo, hi * 1.1); nn = min(numel(fin), numel(fout)); fout = fout(1:nn); fi_ = fin(1:nn);
+    L = corpus_lag(d.signalIn, d.signalOut, p.sr); so = [d.signalOut(L+1:end); zeros(L, 1)];
+    fout = corpus_f0track(so, p.sr, lo, hi * 1.1); nn = min(numel(fin), numel(fout)); fout = fout(1:nn); fi_ = fin(1:nn);
     ok = ~isnan(fi_) & ~isnan(fout); cen = median(1200*log2(fout(ok) ./ fi_(ok)));
     ta = ((1:numel(d.pitchHz))' - 0.5) * p.frameLen / p.sr;
     if strncmp(m.id, 'vocadito', 8), R = corpus_csv([m.root '/gt/' m.id '.f0.csv']); R(R(:,2) == 0, 2) = NaN; rs = 'expert';
@@ -67,7 +70,7 @@ for m = M
     te = abs(pr(ok2) - R(ok2,2)) ./ R(ok2,2);
     lr = median(d.shiftedPitchHz(d.pitchHz > 0) ./ d.pitchHz(d.pitchHz > 0));
     fprintf(fo, '%s,%s,tds+1,,,,,,,,%d,100,%.1f,%.1f\n', m.id, m.group, nnz(ok), cen, 1200*log2(lr));
-    fprintf(fo, '%s,%s,tds_tracker_vs_%s,,,,,,%.4f,%.4f,%d,,,\n', m.id, m.group, rs, median(te), mean(te > 0.2), nnz(ok2));
+    fprintf(fo, '%s,%s,tds_tracker_vs_%s,,,,,%.4f,%.4f,,%d,,,\n', m.id, m.group, rs, median(te), mean(te > 0.2), nnz(ok2));
   catch e
     fprintf(fo, '%s,%s,tds+1,ERROR %s\n', m.id, m.group, strrep(e.message, ',', ';'));
   end

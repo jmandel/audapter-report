@@ -7,6 +7,13 @@ rm -rf "$S"; mkdir -p "$S"
 cp -r "$A/report/prototype/." "$S/"
 touch "$S/.nojekyll"
 cp "$A/../blab/audapter_mex/LICENSE" "$S/LICENSE-audapter-apache-2.0.txt"
+cp "$A/../LICENSE" "$S/LICENSE-apache-2.0.txt"; cp "$A/../LICENSE-CC-BY-4.0.txt" "$S/"; cp "$A/../NOTICE" "$S/NOTICE.txt"
+cat > "$S/LICENSE.md" <<'MD'
+# License
+- Report text, figures and audio renderings: © 2026 Josh Mandel, [CC BY 4.0](LICENSE-CC-BY-4.0.txt).
+- Code, including the WebAssembly builds of Audapter and the page scripts: [Apache-2.0](LICENSE-apache-2.0.txt). See [NOTICE](NOTICE.txt).
+- Third-party sources and data: see [ATTRIBUTION.md](ATTRIBUTION.md).
+MD
 cat > "$S/ATTRIBUTION.md" <<'MD'
 # Attribution and provenance
 This report analyses public open-source code only:

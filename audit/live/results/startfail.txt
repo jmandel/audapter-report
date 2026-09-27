@@ -1,0 +1,1 @@
+--- ASIO driver without 48 kHz:

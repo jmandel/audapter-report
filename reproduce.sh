@@ -6,5 +6,5 @@ git submodule update --init
 docker build -q -t audapter-octave audit/harness/docker
 audit/harness/run-tests.sh --rebuild | tee audit/harness/logs-summary.txt
 [[ -x audit/wasm/build.sh ]] && audit/wasm/build.sh
-python3 audit/report/build.py
+python3 audit/report/build.py --single
 audit/publish/stage.sh

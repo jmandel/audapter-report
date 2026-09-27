@@ -21,7 +21,7 @@ for name, a, b in [('onset', 0.0, 0.07), ('offset', 1.53, 1.62)]:
 fig, ax = plt.subplots(1, 2, figsize=(11, 3.6))
 for a, (lo, hi) in zip(ax, [(0, 0.07), (1.53, 1.62)]):
     s = (t >= lo) & (t < hi)
-    a.plot(t[s], gOff[s], '.', ms=1.5, label='offline (runFrame)'); a.plot(t[s], gL[s], '.', ms=1.5, label='live L'); a.plot(t[s], gR[s], '.', ms=1.5, label='live R')
+    a.plot(t[s], gOff[s], '.', ms=1.5, color='#2a78d6', label='offline (runFrame)'); a.plot(t[s], gL[s], '.', ms=1.5, color='#eb6834', label='live (L; R identical)')
     a.set_xlabel('time (s)'); a.set_ylabel('applied gain'); a.set_ylim(-0.3, 1.3)
 ax[0].legend(markerscale=6); ax[0].set_title('onset ramp'); ax[1].set_title('offset ramp (trialLen 1.6 s)')
 fig.tight_layout(); fig.savefig(png, dpi=110)

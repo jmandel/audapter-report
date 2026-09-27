@@ -36,7 +36,13 @@ Individual pieces: `audit/harness/run-tests.sh`, `audit/wasm/build.sh`, `audit/l
 `audit/formal/run.sh`, `audit/report/build.py`. Each directory's README explains more.
 
 ## Licenses
-License for the audit code and text in `audit/` and `docs/`: **TBD (to be chosen before publishing)**. Audapter sources (submodules)
-keep their own licenses (Apache-2.0 / MIT); the WASM bundles in `docs/` are built from them (see
-`docs/ATTRIBUTION.md`). Corpus clips keep their original licenses (`audit/corpus/manifest.*`).
-License-restricted material is never committed.
+- **Code** (all scripts, harness, build tooling, WASM wrapper, patches, formal models): [Apache-2.0](LICENSE),
+  the same license as Audapter's core (`audapter_mex`).
+- **Report and written analysis** (`docs/` report text, figures and audio renderings; `audit/REPORT.md`,
+  `audit/FINDINGS-LOG.md`, `audit/notes/`, the prose in `audit/report/findings.yaml`, and the READMEs):
+  © 2026 Josh Mandel, [CC BY 4.0](LICENSE-CC-BY-4.0.txt).
+- **Third-party material keeps its own license**:
+  - Audapter sources (submodules): Apache-2.0 (`audapter_mex`) and MIT (`audapter_matlab`). The WASM
+    bundles in `docs/` are built from them (see `docs/ATTRIBUTION.md`).
+  - Corpus clips: see `audit/corpus/manifest.*`.
+  - License-restricted data (e.g. Hillenbrand) is never committed; fetch it with `audit/corpus/fetch_restricted.sh`.
