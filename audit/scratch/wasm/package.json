@@ -1,0 +1,6 @@
+{
+  "name": "audapter-audit-node-tools",
+  "private": true,
+  "description": "Node dependencies for the audit's browser checks (report/check-render.mjs, wasm/test/browser.mjs). Uses the system Chromium (/usr/bin/chromium or $CHROME).",
+  "dependencies": { "playwright-core": "1.63.0" }
+}

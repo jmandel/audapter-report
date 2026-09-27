@@ -40,3 +40,4 @@ audit/scratch/**
 **/.venv/**
 **/restricted/**
 **/site-packages/**
+!audit/scratch/wasm/package.json
