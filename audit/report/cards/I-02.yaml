@@ -68,5 +68,4 @@ verify:
   - {kind: H, what: "interface check", name: "scratch/interface/t_iface.m T3", detail: "recorded speech-modulated component per unit playback 0.0705 at dScale 1, 0.1409 at dScale 2"}
   - {kind: H, what: "report export (heard output, two closedLoopGain settings)", name: "report_i02.m"}
   - {kind: H, what: "patched WASM build vs shipped", name: "report/wasm/checks/fix-i-02.mjs", detail: "node audit/report/wasm/check-patches.mjs fix-i-02"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
 reproduce: "cd audit/harness && ./run-oct.sh report_i02.m"

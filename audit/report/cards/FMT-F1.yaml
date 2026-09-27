@@ -57,5 +57,4 @@ verify:
   - {kind: H, what: "ASan scenario", name: "t_mem.m SCEN=pert_short", detail: "same line, 10-element 1D field arrays"}
   - {kind: H, what: "report export: values copied, clamp trajectory, logged sF1, output peak; 1D field on both builds", name: "report_fmt_f1.m"}
   - {kind: H, what: "report export under ASan", name: "report_fmt_f1.m build-asan", detail: "READ of size 8 at Audapter.cpp:1214, 0 bytes after an 800-byte region (100 doubles)"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
 reproduce: "cd audit/harness && SCEN=clamp_short ./run-oct.sh t_mem.m build-asan"

@@ -69,5 +69,4 @@ verify:
   - {kind: D, what: "live simulation driver", name: "live/run.sh resetcheck", detail: "1 of 1000 always-on trial starts with a zeroed first data row"}
   - {kind: D, what: "ThreadSanitizer inventory", name: "live/run.sh tsan", detail: "356 reports, 195 distinct site pairs; reset ↔ IIR_Filter::filter among them"}
   - {kind: D, what: "report export (burst, dropouts, comparison reset, clips)", name: "report/live/export_live.py live3", detail: "checks its excerpt against results/reset_race_burst.wav"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
 reproduce: "audit/live/run.sh burst && python3 audit/report/live/export_live.py live3"

@@ -63,5 +63,4 @@ verify:
   - {kind: H, what: "harness test", name: "t_ost.m", test: "OST F8: AND_RATIO field-4 hold (50 ms) honoured"}
   - {kind: H, what: "report export (fricative + click, audible)", name: "report_ost_f8.m", detail: "blab build only; upstream rejects the mode"}
   - {kind: D, what: "standalone driver of ost.cpp", name: "scratch/ost-pcf/t/drv.cpp hold", detail: "field 5 = 0.05: 25 frames; {}: 1 frame"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
 reproduce: "cd audit/harness && ./run-oct.sh report_ost_f8.m"

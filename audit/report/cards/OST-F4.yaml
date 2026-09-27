@@ -59,5 +59,4 @@ verify:
   - {kind: H, what: "sanitizer scenario (build-asan)", name: "t_mem.m SCEN=pcf_short", detail: "heap-buffer-overflow READ at Audapter.cpp:1811, 0 bytes after an 8-byte region allocated at pcf.cpp:431"}
   - {kind: H, what: "report export (ASan run + timeline)", name: "report_ost_f4.m", detail: "run under build-asan first (log to out/report/ost-f4/asan.log), then on build-oct"}
   - {kind: D, what: "standalone driver of pcf.cpp", name: "scratch/ost-pcf/t/drvp.cpp oob", detail: "PCF n = 5: fmtPertAmp[6] = 4.6e-44 (during_trans = 1), fmtPertPhi[8] = 4.3e18"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
 reproduce: "cd audit/harness && SCEN=pcf_short ./run-oct.sh t_mem.m build-asan"

@@ -6,7 +6,7 @@ headline: "With the phase vocoder on, output is 3.5 dB louder, and the level cha
 severity: high
 origin: upstream
 origin_note: "Identical in upstream 2.1.5: the blab/upstream differential is bit-exact for pvoc_pitch_up2 and pcf_pitch."
-status: [H, D]
+status: [H, D, F]
 effect:
   setup: >
     <code>bPitchShift = 1</code>. The OST enters state 1 at 0.6 s, and the PCF asks for 0 st in state 0 and +2 st in state 1: a typical
@@ -69,5 +69,6 @@ verify:
   - {kind: H, what: "harness test", name: "t_pitch.m", test: "pvoc: no loudness step 0 -> +2 st"}
   - {kind: H, what: "report export + F0/vowel sweep", name: "report_pt5.m"}
   - {kind: D, what: "standalone pvoc driver", name: "scratch/pitch-time/pv_test.cpp", detail: "gain 1.500 at 0 st on pure tones"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+  - {kind: F, what: "exact algebra on the Hann window", name: "formal/ola/ola_exact.py", detail: "the 0 st overlap-add gain is exactly 3/2 (+3.52 dB) for every hop ratio pvocFrameLen/pvocHop of 3 or more, independent of frame length, hop and sample rate; the unity fix is a factor 2/3 at phase_vocoder.cpp:467 (FORMAL-7)"}
+  - {kind: F, what: "the real phase_vocoder.cpp, measured", name: "formal/ola/pv_gain.cpp", detail: "1.5000 at hop ratios 4 and 8; content below the first bin gets 5/2; at hop ratio 2 the gain swings between 1 and 2 at the hop rate"}
 reproduce: "cd audit/harness && ./run-oct.sh t_pitch.m"

@@ -4,6 +4,7 @@
 M = corpus_index();
 use = ~ismember({M.source}, {'freespeech'});   % 0.5 s words are too short for steady-state measures
 M = M(use);
+if ~isempty(getenv('SCEN')), M = M(strncmp({M.id}, getenv('SCEN'), numel(getenv('SCEN')))); end   % optional id-prefix filter
 1;
 function [lo, hi] = f0range(m)
   switch m.group
@@ -20,6 +21,7 @@ fo = fopen('/h/oct/out/corpus_shift.csv', 'w');
 fprintf(fo, 'id,group,case,cmdF1,cmdF2,logF1,logF2,audF1,audF2,coverage,nfr,cmd_cents,out_cents,gain_db\n');
 cases = {'F1+20', [1.2 1], 0.2, 0; 'F2-20', [1 0.8], 0.2, -pi/2; 'F1-20F2+20', [0.8 1.2], 0.2*sqrt(2), 3*pi/4};
 for m = M
+  printf('clip %s\n', m.id); fflush(stdout); fflush(fo);
   [x, fs] = corpus_wav(m); p0 = defparams(corpus_preset(m)); [lo, hi] = f0range(m);
   d0 = run_trial(p0, x); voiced = d0.fmts(:,1) > 0;
   % --- formant shifts via 1D field covering the whole F1/F2 plane

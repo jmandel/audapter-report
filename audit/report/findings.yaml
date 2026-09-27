@@ -19,13 +19,13 @@ repos:
 
 # Findings at a glance: full cards (rows link to the card when cards/<ID>.yaml exists) in rank order.
 table:
-  - {id: OST-F1, sev: high, origin: upstream, status: H, text: "OST state leaks across trials: an offset in trial B is detected 1.2 s late after a longer trial A"}
-  - {id: OST-F2, sev: high, origin: upstream, status: H, text: "maxIOI timeout writes the onset of the wrong state; ELAPSED_TIME fires after 2 ms instead of 100 ms, and without an OST reload the timeout drifts 0.2 → 0.4 → 0.6 s"}
+  - {id: OST-F1, sev: high, origin: upstream, status: H F, text: "OST state leaks across trials: an offset in trial B is detected 1.2 s late after a longer trial A"}
+  - {id: OST-F2, sev: high, origin: upstream, status: H F, text: "maxIOI timeout writes the onset of the wrong state; ELAPSED_TIME fires after 2 ms instead of 100 ms, and without an OST reload the timeout drifts 0.2 → 0.4 → 0.6 s"}
   - {id: I-01,   sev: high, origin: blab-amplified, status: H, text: "Masking noise shorter than 10 s is followed by silence until the 10 s buffer wraps"}
   - {id: LIVE-1 / LIVE-2, sev: high, origin: upstream, status: D, text: "Changing OST/PCF files or DSP parameters while audio runs (always-on designs) crashes MATLAB or reads freed memory"}
   - {id: OST-F4, sev: high, origin: upstream, status: H, text: "PCF with fewer rows than OST states reads past the perturbation arrays; heap contents decide whether to perturb"}
   - {id: FMT-F1, sev: high, origin: blab, status: H, text: "Clamp trajectory setters copy 2048 values whatever length MATLAB passes"}
-  - {id: PT-5,   sev: high, origin: upstream, status: H, text: "Phase vocoder plays 3.5 dB loud at 0 st, and the level changes when a pitch shift starts"}
+  - {id: PT-5,   sev: high, origin: upstream, status: H F, text: "Phase vocoder plays 3.5 dB loud at 0 st, and the level changes when a pitch shift starts"}
   - {id: LIVE-3, sev: med, origin: upstream, status: D, text: "reset() while the participant is voicing can emit a clipped burst of +17 dB or more (about 1 in 2000 resets in simulation)"}
   - {id: LIVE-6, sev: med, origin: upstream, status: D, text: "If the sound card's buffer size differs from Audapter's frame size, the participant hears the raw microphone an octave up, with gaps"}
   - {id: I-04,   sev: med,  origin: upstream, status: H, text: "runFrame writes its output into the caller's input array"}
@@ -44,7 +44,7 @@ short:
     notes: "notes/pitch-time.md#pt-1"
     sev: low
     origin: upstream
-    status: H
+    status: H F
     title: "The first output frame of every trial, and one frame every 108 s, is read from outside the delay buffer"
     text: >
       The read pointer into the output delay ring uses <code>&gt; 0</code> where <code>&gt;= 0</code> is needed. When the write position minus the
@@ -53,7 +53,7 @@ short:
       The pitch-shift "back zeroing" uses a negative <code>%</code> on the same pointer and writes before the buffer.
     refs:
       - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2110, 2116], hl: [2111], expect: "p.delayFrames[h0] * p.frameLen > 0"}
-    verify: "UBSan on every harness run under build-asan: index 1728000 out of bounds at Audapter.cpp:2124."
+    verify: "UBSan on every harness run under build-asan: index 1728000 out of bounds at Audapter.cpp:2124. Formal (CBMC on the verbatim source, FORMAL-2 and FORMAL-4): the read goes out of bounds exactly at frame delayFrames of every trial and once per 108 s lap; the pvoc back zeroing writes out of bounds exactly when circPtr < delayFrames·frameLen + pvocHop. Both fixes, `>= 0` and a positive modulo, are proven in bounds for all parameters and to read or write the same sample as the original wherever the original was valid."
   - id: PT-2 / I-15
     notes: "notes/pitch-time.md#pt-2"
     sev: med
@@ -197,7 +197,7 @@ compact:
   - {id: OST-F16, sev: low, origin: upstream, status: R, notes: "notes/ost-pcf.md#f16", loc: "TransShiftMex/Audapter.cpp:1797", text: "With nWin > 1, osTrack runs nWin times per frame on the same counters"}
   - {id: FMT-F2, sev: med, origin: blab, status: H, notes: "notes/formant.md#f2", loc: "TransShiftMex/Audapter.cpp:930-953", text: "pertf1 and the 2D fields ignore the MATLAB size; non-257×257 matrices are read out of bounds (part of FMT-F1 / I-08)"}
   - {id: FMT-F5, sev: low, origin: blab, status: R, notes: "notes/formant.md#f5", loc: "TransShiftMex/Audapter.cpp:1654", text: "clampIx is a function static that reset() does not clear"}
-  - {id: FMT-F7, sev: low, origin: blab, status: D, notes: "notes/formant.md#f7", loc: "TransShiftMex/Audapter.cpp:2675-2701", text: "Non-increasing grids make locateF1/locateF2 return NaN, used as an INT_MIN array index"}
+  - {id: FMT-F7, sev: low, origin: blab, status: F, notes: "notes/formant.md#f7", loc: "TransShiftMex/Audapter.cpp:2675-2701", text: "Two equal neighbouring grid points make locateF1/locateF2 return NaN, used as an INT_MIN array index; proven otherwise memory safe for every grid, sorted or not (FORMAL-9)"}
   - {id: FMT-F8, sev: low, origin: blab, status: R, notes: "notes/formant.md#f8", loc: "TransShiftMex/Audapter.cpp:1816", text: "A zero clamp F2 with nonzero F1 moves the F2 pole to DC"}
   - {id: FMT-F9, sev: low, origin: upstream, status: H, notes: "notes/formant.md#f9", loc: "TransShiftMex/lpc_formant.cpp:816", text: "The tracker's static last_f[] survives trials; no observable effect in our /i/→/a/ test (negative result)"}
   - {id: FMT-F10, sev: low, origin: upstream, status: R, notes: "notes/formant.md#f10", loc: "TransShiftMex/lpc_formant.cpp:833-838", text: "trackPhi reads stale root candidates when fewer complex roots exist than it expects"}
@@ -205,9 +205,9 @@ compact:
   - {id: FMT-F12, sev: low, origin: upstream, status: R, notes: "notes/formant.md#f12", loc: "TransShiftMex/Audapter.cpp:1675-1678", text: "With nWin > 1 an unshifted window logs the previous window's shifted formants"}
   - {id: FMT-F13, sev: low, origin: upstream, status: R, notes: "notes/formant.md#f13", loc: "TransShiftMex/Audapter.cpp:1850-1851", text: "The 1D field interpolates pertPhi linearly without angle wrap"}
   - {id: FMT-F14, sev: low, origin: upstream, status: R, notes: "notes/formant.md#f14", loc: "TransShiftMex/Audapter.cpp:2453-2454", text: "gainAdapt/gainPerturb keep static gain and lastSample across trials"}
-  - {id: I-10, sev: med, origin: upstream, status: R, notes: "notes/interface.md#i-10", loc: "TransShiftMex/Audapter.cpp:67-90", text: "No locking between the ASIO callback and the MATLAB thread; reset() now zeroes about 190 MB (to be revisited with the live-path results)"}
+  - {id: I-10, sev: med, origin: upstream, status: D, notes: "notes/interface.md#i-10", loc: "TransShiftMex/Audapter.cpp:67-90", text: "No locking between the audio callback and the MATLAB thread; reset() now zeroes about 190 MB. Confirmed and measured on the live path: see LIVE-1 / LIVE-2 and LIVE-3"}
   - {id: I-11, sev: low, origin: upstream, status: R, notes: "notes/interface.md#i-11", loc: "TransShiftMex/Audapter.cpp:1667-1668", text: "A device buffer-size mismatch makes handleBuffer silently do nothing"}
-  - {id: I-12, sev: low, origin: both, status: R, notes: "notes/interface.md#i-12", loc: "TransShiftMex/Audapter.cpp:1651", text: "outputBuf[maxFrameLen] overflows for large frameLen·downFact; frameLen that does not divide 480000 overruns the recorder"}
+  - {id: I-12, sev: low, origin: both, status: F, notes: "notes/interface.md#i-12", loc: "TransShiftMex/Audapter.cpp:1651", text: "outputBuf[maxFrameLen] overflows for large frameLen·downFact. The recorder overruns when frameLen does not divide 480000 and a trial reaches about 30 s; proven exact set, of common sizes only 512 (FORMAL-5)"}
   - {id: I-13, sev: low, origin: upstream, status: R, notes: "notes/interface.md#i-13", loc: "TransShiftMex/Audapter.cpp:1303-1307", text: "Parameter validation runs after assignment, so a rejected value stays live"}
   - {id: I-14, sev: low, origin: upstream, status: R, notes: "notes/interface.md#i-14", loc: "TransShiftMex/Audapter.cpp:522-680", text: "Further state not reset between trials: pbCounter, wgTime, intShiftRatio, function statics (see OST-F1, I-01)"}
   - {id: I-16, sev: low, origin: both, status: R, notes: "notes/interface.md#i-16", loc: "mcode/getAudapterDefaultParams.m:24-26", repo: blab-matlab, text: "MATLAB side: p.downfact typo; closedLoopGain also sets mouthMicDist; nFB/nfb mismatch; datapb and rmsFF_fb not logged in data.params"}
@@ -219,6 +219,9 @@ compact:
   - {id: PT-11, sev: low, origin: upstream, status: R, notes: "notes/pitch-time.md#pt-11", loc: "TransShiftMex/phase_vocoder.cpp:109", text: "Phase-vocoder parameter checks broken (L & hop != 0); hop < frameLen divides by zero"}
   - {id: PT-12, sev: low, origin: blab, status: R, notes: "notes/pitch-time.md#pt-12", loc: "TransShiftMex/Audapter.cpp:748-756", text: "Blab's resampling filter is chosen by sr, not downFact (aliasing for sr 32000 with downFact 3)"}
   - {id: PT-13, sev: low, origin: upstream, status: R, notes: "notes/pitch-time.md#pt-13", loc: "TransShiftMex/Audapter.cpp:1896-1902", text: "Time-domain shifting silently discards formant perturbation and changes the LPC input"}
+  - {id: FORMAL-1, sev: low, origin: upstream, status: F, notes: "formal/README.md#ring", loc: "TransShiftMex/Audapter.cpp:2119-2127", text: "pvocFrameLen smaller than frameLen writes before outFrameBufSum on every frame, even with pitch shift off, corrupting the ring pointer; MATLAB segfaults. Practically unreachable: it also needs pvocHop ≥ frameLen, which the broken parameter check lets through (PT-11)"}
+  - {id: FORMAL-3, sev: low, origin: upstream, status: F, notes: "formal/README.md#ring", loc: "TransShiftMex/Audapter.cpp:2225-2228", text: "The output ring pointer resets to 0 instead of wrapping, so a frameLen that does not divide 1,728,000 writes past the buffer once per 108 s lap and shifts DAF alignment. Very unlikely: every common frameLen divides it, and it needs 108 s without a reset"}
+  - {id: FORMAL-7, sev: low, origin: upstream, status: F, notes: "formal/README.md#ola", loc: "TransShiftMex/phase_vocoder.cpp:467", text: "Beyond PT-5: with pvocHop = pvocFrameLen/2 the phase-vocoder gain swings between 1× and 2× at the hop rate (audible amplitude modulation), and content below the first FFT bin gets 5/2 (+8 dB) at every hop ratio. Needs a non-default hop"}
   - {id: H1, sev: low, origin: upstream, status: H, notes: "notes/harness-findings.md#h1", loc: "TransShiftMex/DSPF.cpp:15", text: "DSPF_dp_blk_move uses memcpy on overlapping ranges (undefined behaviour; works with MSVC's memcpy)"}
   - {id: WASM-1, sev: low, origin: upstream, status: H, notes: "notes/wasm.md", loc: "TransShiftMex/lpc_formant.cpp:168", text: "The LPC-coefficient columns of the raw data matrix log uninitialised heap memory until the first voiced frame"}
   - {id: WASM-4, sev: low, origin: upstream, status: R, notes: "notes/wasm.md", loc: "TransShiftMex/Audapter.h:552-638", text: "Members declared with an extra Audapter:: qualification: MSVC and GCC accept it, clang (macOS, WASM) rejects it"}

@@ -83,5 +83,4 @@ verify:
   - {kind: H, what: "report export on both builds", name: "report_f6.m", detail: "blab and upstream builds, glide + dip + minVowelLen sweep"}
   - {kind: H, what: "first analysis (the t_diff.m scenario, F1 850 → 400 → 850 Hz)", name: "a_reentry.m", detail: "same pattern: blab adds a second shifted stretch after re-entry"}
   - {kind: H, what: "WASM alternative build", name: "report/wasm/checks/alt-f6.mjs", detail: "alternative = upstream export to the frame; bit-identical to released when the field is never left and on 6 reference scenarios"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
 reproduce: "cd audit/harness && ./run-oct.sh report_f6.m && VARIANT=upstream ./run-oct.sh report_f6.m build-upstream upstream/audapter_matlab && ./run-oct.sh report_f6.m"

@@ -66,5 +66,4 @@ cause:
 verify:
   - {kind: D, what: "live simulation driver (fake ASIO, buffer 128) and JACK dummy server (period 128)", name: "live/run.sh mismatch", detail: "heard signal = raw-input model; getData 1 × 1, plhs[2] written"}
   - {kind: D, what: "report export (model check, levels, clips; JACK model check added here)", name: "report/live/export_live.py live6"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
 reproduce: "audit/live/run.sh equiv mismatch && python3 audit/report/live/export_live.py live6"

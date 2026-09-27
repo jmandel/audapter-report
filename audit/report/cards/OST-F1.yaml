@@ -6,7 +6,7 @@ headline: "After a long trial, the next trial's speech offset is detected 1.2 s 
 severity: high
 origin: upstream
 origin_note: "Present unchanged in upstream 2.1.5 (same output on build-upstream). Blab's new INTENSITY_RATIO_ABOVE_THRESH_WITH_RMS_FLOOR rule does not update lastStatEnd either, so OST files that use it are also affected."
-status: [H, D]
+status: [H, D, F]
 effect:
   setup: >
     OST: <code>0 ELAPSED_TIME 0.1</code> → <code>1 INTENSITY_FALL 0.01 0.02</code> → <code>2 OST_END</code>.
@@ -64,5 +64,6 @@ verify:
   - {kind: H, what: "harness test", name: "t_ost.m", test: "OST F1: trial B (after A) offset detected"}
   - {kind: H, what: "report export (vowels, audible)", name: "report_ost_f1.m", detail: "blab and upstream builds give identical onsets"}
   - {kind: D, what: "standalone driver of ost.cpp", name: "scratch/ost-pcf/t/drv.cpp fall_leak", detail: "offset at frame 200 fired at frame 815"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+  - {kind: F, what: "Lean 4 proof, theorem trial_independent", name: "formal/lean/Ost.lean", detail: "with maxIOI writing [j] and ostTab.reset() at trial start, every trial after any history behaves exactly like a trial on a freshly loaded OST, for every well-formed table and every input (FORMAL-8)"}
+  - {kind: F, what: "Lean 4 counterexamples", name: "formal/lean/OstCex.lean", detail: "each fix alone is not enough: [j] without the reset still loses trial B's offset after a 60-frame trial A (ce1_leak); the reset without [j] still lets a maxIOI timeout drift 11 → 22 → 33 frames (ce2_bug_drift)"}
 reproduce: "cd audit/harness && ./run-oct.sh t_ost.m"

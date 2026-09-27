@@ -6,7 +6,7 @@ headline: "A 35 s trial returns only its last 5 s of data, and the OST, trialLen
 severity: med
 origin: upstream
 origin_note: "Upstream behaviour: the same export script on build-upstream (Audapter 2.1.5) wraps every 14.4 s and returns the last 6.2 s of the 35 s trial. Blab commit 3c90a3a raised the recorder size to 480000 samples, which moved the wrap to 30 s at 16 kHz; it did not change the mechanism."
-status: [H]
+status: [H, F]
 effect:
   setup: >
     One 35 s trial, as in a long reading or continuous-speech task: a 0.6 s vowel every second. OST:
@@ -55,5 +55,5 @@ verify:
   - {kind: H, what: "sanitizer scenario (35.2 s trial)", name: "t_mem.m SCEN=long", detail: "input 35.2 s, getData returned 5.20 s"}
   - {kind: H, what: "interface check", name: "scratch/interface/t_wrap.m", detail: "after 31 s of input, signalIn has 16000 samples (1.0 s)"}
   - {kind: H, what: "report export (OST, trialLen, heard output)", name: "report_i03.m", detail: "blab and upstream builds"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+  - {kind: F, what: "CBMC on the verbatim recorder index code", name: "formal/cbmc/ring.c", detail: "the related recorder overrun (I-12): the write overflows exactly when frameLen does not divide 480000 and a trial reaches about 30 s; of common sizes only frameLen 512 is affected (also 9, 18, 36, 45, 72, 90, 144, 180, …); 16, 32, 48, 64, 80, 96, 120, 128, 160, 192, 256 are safe (FORMAL-5)"}
 reproduce: "cd audit/harness && ./run-oct.sh report_i03.m"

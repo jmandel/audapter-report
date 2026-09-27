@@ -179,7 +179,7 @@ def notes_check(ref):
         fail(f"notes file {fn} missing")
     if anchor:
         heads = [re.sub(r"[^a-z0-9]+", "", h.split(".")[0].lower()) for h in re.findall(r"^### (.+)$", open(p).read(), re.M)]
-        if re.sub(r"[^a-z0-9]+", "", anchor.lower()) not in heads:
+        if re.sub(r"[^a-z0-9]+", "", anchor.lower()) not in heads and f'name="{anchor}"' not in open(p).read():
             fail(f"notes heading {ref} not found")
 
 def notes_url(ref):
@@ -311,6 +311,8 @@ def patch_lines(fn):
             out.append((l[0], l[1:].expandtabs(4).strip()))
     return out
 
+FIRST_PANEL_NOTE = ['<p class="inote">Each run loads the Audapter core in this page, about 150–300 MB of memory per build. On a phone, run one panel at a time.</p>']
+
 def interactive_html(card, variants):
     w = card.get("interactive")
     if not w:
@@ -330,6 +332,7 @@ def interactive_html(card, variants):
       <h4>Run it in your browser</h4>
       <p>{w["text"]}</p>
       {"".join(diffs)}
+      {FIRST_PANEL_NOTE.pop() if FIRST_PANEL_NOTE else ""}
       <p><button type="button" class="run">{E(w.get("button", "Run on both builds"))}</button> <span class="istatus" role="status"></span></p>
       <div class="iresult"></div>
     </section>'''

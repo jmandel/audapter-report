@@ -78,7 +78,7 @@
         <div><dt><span class="vk-l">H</span></dt><dd>Reproduced in the full harness: the MATLAB wrapper plus the C++ core.</dd></div>
         <div><dt><span class="vk-l">D</span></dt><dd>Reproduced by a standalone driver that compiles only the relevant .cpp files.</dd></div>
         <div><dt><span class="vk-l">R</span></dt><dd>By reading the code; not yet executed.</dd></div>
-        <div><dt><span class="vk-l">F</span></dt><dd>Formal analysis: model check or proof (in progress).</dd></div>
+        <div><dt><span class="vk-l">F</span></dt><dd>Formal analysis: model check (CBMC) or machine-checked proof (Lean).</dd></div>
       </dl>
     </div>
   </div>
@@ -140,7 +140,49 @@
     patch should not affect, and it removes the finding's effect (<code>audit/report/wasm/check-patches.mjs</code>).</p>
   <p>The WebAssembly build is bit-identical to a native build that uses the same maths library, and differs from the MATLAB MEX build by at most about
     3·10<sup>−11</sup> (about −195 dB), which comes from the maths library alone. The browser builds keep 10 s of recording instead of 30 s to save memory; all other buffers have their shipped sizes.
-    Panels load on click (about 0.4 MB per build), work offline and from a saved copy of this page, and need no install.</p>
+    Panels load on click (about 0.4 MB per build), work offline and from a saved copy of this page, and need no install. Each run starts fresh copies of the Audapter core, about 150–300 MB of memory; on a phone, run one panel at a time.</p>
+</section>
+
+<section id="formal" class="prose">
+  <h2>Formal analysis</h2>
+  <p>Tests show that a bug happens for the settings that were tried. For a few findings we also wanted to know <em>for which settings exactly</em>
+    it happens, and whether the proposed fix works <em>for all settings</em>. A separate line of work (<code>audit/formal/</code>) answered that with three tools,
+    each chosen for the kind of question:</p>
+  <ul>
+    <li><strong>CBMC</strong>, a bounded model checker for C, for the ring-buffer, recorder and grid-lookup index arithmetic. It runs on the
+      <em>verbatim</em> lines of <code>Audapter.cpp</code>, copied by a script and pinned by SHA-256 hash, so a changed source refuses to check. CBMC models C's
+      integer rules exactly, including the negative <code>%</code> that is the bug in PT-1, and IEEE doubles including NaN and infinity.</li>
+    <li><strong>Lean 4</strong>, a proof assistant, for the OST state machine. "A trial never depends on earlier trials" is a statement about unboundedly many trials,
+      which needs a proof by induction rather than a bounded search.</li>
+    <li><strong>Exact algebra</strong> in rational arithmetic for the phase-vocoder gain, cross-checked by running the real <code>phase_vocoder.cpp</code>.</li>
+  </ul>
+  <h3>What was proven</h3>
+  <ul>
+    <li><strong>OST state across trials</strong> (<a href="#OST-F1">OST-F1</a>, <a href="#OST-F2">OST-F2</a>). With the maxIOI write fixed (<code>[j]</code>) and
+      <code>ostTab.reset()</code> called at trial start, every trial's frame-by-frame state sequence equals the one on a freshly loaded OST, whatever came before. This holds for
+      every well-formed OST table, every rule setting and every input, NaN included (theorem <code>trial_independent</code>). Clearing the onset table is not needed.
+      Machine-checked counterexamples show that each fix alone is insufficient.</li>
+    <li><strong>Phase-vocoder loudness</strong> (<a href="#PT-5">PT-5</a>). At 0 semitones the gain is exactly 3/2 (+3.52 dB) for every ratio of frame length to hop of 3 or more,
+      independent of frame length, hop and sample rate; a factor 2/3 at <code>phase_vocoder.cpp:467</code> gives unity. New: at a ratio of 2 the gain swings between 1× and 2× at the
+      hop rate, and content below the first FFT bin gets 5/2 (FORMAL-7).</li>
+    <li><strong>Buffer indices</strong> (<a href="#h2-pt-1">H2 / PT-1</a>, I-12). The exact conditions under which the delay-ring read and the pitch-shift back zeroing go out of bounds,
+      and proofs that the <code>&gt;= 0</code> and positive-modulo fixes are in bounds for every setting while reading the same samples wherever the original was valid.
+      The recorder overruns exactly when frameLen does not divide 480000 and a trial reaches about 30 s; of the common frame lengths only 512 is affected. Two new, very
+      unlikely configurations are listed in the table of other findings (FORMAL-1, FORMAL-3).</li>
+    <li><strong>Grid lookup</strong> (FMT-F7). For every perturbation-field grid, sorted or not, the lookup returns NaN or a valid row, so unsorted grids are memory safe but meaningless.</li>
+  </ul>
+  <h3>How far to trust it</h3>
+  <p>The CBMC results are about the actual source text at the pinned commit, for every enumerated frame length (0 failures in the sweep so far). The Lean model is a
+    <em>hand translation</em> of <code>osTrack</code>, branch by branch with line citations, and treats the audio measurements as abstract values: it proves the model,
+    not the compiled code. The harness and WASM runs on the real code agree with it on every case we compared.</p>
+  <h3>What was not done, and why</h3>
+  <ul>
+    <li>The whole <code>handleBuffer</code> was not model-checked: FFT, LPC and filters in floating point are far beyond these tools. Only the index-carrying statements were.</li>
+    <li>The masking-noise loop (I-01) is a semantic bug, not an index bug; the harness already shows it exactly.</li>
+    <li>The time-domain shifter's loud bursts (PT-9) are a loudness question that needs a signal model; its indices are all taken modulo the buffer length.</li>
+    <li>A fully symbolic frame length is intractable for CBMC; frame lengths were enumerated instead, which is complete for the values enumerated.</li>
+  </ul>
+  <p>Everything re-checks with <code>audit/formal/run.sh</code> (a few minutes; the full frame-length sweep takes hours).</p>
 </section>
 
 <section id="who" class="prose">
@@ -211,11 +253,6 @@
 </section>
 
 
-<section id="formal" class="reserved">
-  <h2>Formal analysis</h2>
-  <p><strong>Placeholder, in review.</strong> A separate line of work (<code>audit/formal/</code>) model-checks the ring-buffer index arithmetic and the OST
-    state machine and checks the overlap-add gain. Its results will be added here, and as <span class="vk-l">F</span> entries on the cards, once they have been verified.</p>
-</section>
 <section id="corpus" class="reserved">
   <h2>Real speech</h2>
   <p><strong>Placeholder, in review.</strong> Our inputs are synthetic. A separate line of work (<code>audit/corpus/</code>) repeats key tests on openly licensed

@@ -62,5 +62,4 @@ cause:
 verify:
   - {kind: H, what: "interface check", name: "scratch/interface/t_iface.m T1", detail: "fb 2: mean |out| 0.100 for 0–4.9 s, 0.000 for 5.1–9.9 s"}
   - {kind: H, what: "report export", name: "report_i01.m", detail: "blab and upstream builds; upstream shows no gap"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
 reproduce: "cd audit/harness && ./run-oct.sh report_i01.m"

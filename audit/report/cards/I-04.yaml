@@ -58,5 +58,4 @@ verify:
   - {kind: H, what: "determinism with input copies (NEG-1)", name: "t_repeat.m", test: "repeat: identical signalOut"}
   - {kind: H, what: "report export: two conditions, fresh vs reused frames", name: "report_i04.m", detail: "condition 2 on the reused cell array tracks condition 1's output"}
   - {kind: H, what: "interface check", name: "scratch/interface/t_iface.m T4", detail: "the input and an alias of it were both modified"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
 reproduce: "cd audit/harness && ./run-oct.sh report_i04.m"

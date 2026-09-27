@@ -70,5 +70,4 @@ verify:
   - {kind: D, what: "live simulation driver, ASan build", name: "live/run.sh uaf", detail: "heap-use-after-free for pitchshiftratio, fn1, pvocFrameLen and PCF reload with pvoc"}
   - {kind: D, what: "ThreadSanitizer inventory", name: "live/run.sh tsan", detail: "SEGV at ost.cpp:361 during OST reload; 195 distinct racing site pairs"}
   - {kind: D, what: "report export (crash counts, sanitizer lines)", name: "report/live/export_live.py live12"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
 reproduce: "audit/live/run.sh crash uaf tsan && python3 audit/report/live/export_live.py live12"

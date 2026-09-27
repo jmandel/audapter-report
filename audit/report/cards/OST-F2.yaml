@@ -6,7 +6,7 @@ headline: "After a maxIOI timeout, an ELAPSED_TIME of 0.1 s lasts 2 ms, and with
 severity: high
 origin: upstream
 origin_note: "Present unchanged in upstream 2.1.5: the same export script on build-upstream gives identical onsets in every trial."
-status: [H, D]
+status: [H, D, F]
 effect:
   setup: >
     OST: <code>0 INTENSITY_RISE_HOLD 0.02 0.02</code> → <code>2 ELAPSED_TIME 0.1</code> → <code>3 OST_END</code>, with the maxIOI
@@ -78,5 +78,6 @@ verify:
   - {kind: H, what: "report export (vowel, audible)", name: "report_ost_f2.m", detail: "blab and upstream builds give identical onsets"}
   - {kind: H, what: "WASM patch check", name: "report/wasm/checks/fix-ost-f2.mjs", detail: "shipped vs fix-ost-f2 (and fix-ost-f1 for comparison); regression case without maxIOI must stay bit-identical"}
   - {kind: D, what: "standalone driver of ost.cpp", name: "scratch/ost-pcf/t/drv.cpp maxioi_onset, maxioi_trials", detail: "state 2 entered at frame 101, left at 102; timeouts at frames 101, 202, 303"}
-  - {kind: F, what: "formal analysis", name: "pending (audit/formal/)", pending: true}
+  - {kind: F, what: "Lean 4 proof, theorem trial_independent", name: "formal/lean/Ost.lean", detail: "with [j] plus the existing OST_TAB::reset(), trials are independent of their history; clearing statOnsetIndices is not needed, because with [j] every onset read touches only states entered in the current trial (FORMAL-8)"}
+  - {kind: F, what: "Lean 4 counterexamples", name: "formal/lean/OstCex.lean", detail: "reset without [j]: identical silent trials time out at frame 11, 22, 33 (ce2_bug_drift), and ELAPSED_TIME after the jump fires 1 frame after entry instead of 6 (ce2_bug_trial1); [j] without reset: an offset is missed (ce1_leak)"}
 reproduce: "cd audit/harness && ./run-oct.sh t_ost.m"
