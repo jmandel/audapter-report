@@ -19,3 +19,39 @@
 [submodule "other/beamscource_32kHz"]
 	path = other/beamscource_32kHz
 	url = https://github.com/beamscource/Audapter_32kHz_version
+[submodule "other/blab-experiments/attentionAAF"]
+	path = other/blab-experiments/attentionAAF
+	url = https://github.com/blab-lab/attentionAAF.git
+[submodule "other/blab-experiments/commonmcode"]
+	path = other/blab-experiments/commonmcode
+	url = https://github.com/blab-lab/commonmcode.git
+[submodule "other/blab-experiments/comppedagogy"]
+	path = other/blab-experiments/comppedagogy
+	url = https://github.com/blab-lab/comppedagogy.git
+[submodule "other/blab-experiments/free-speech"]
+	path = other/blab-experiments/free-speech
+	url = https://github.com/carrien/free-speech.git
+[submodule "other/blab-experiments/postMan"]
+	path = other/blab-experiments/postMan
+	url = https://github.com/blab-lab/postMan.git
+[submodule "other/blab-experiments/simonMulti"]
+	path = other/blab-experiments/simonMulti
+	url = https://github.com/blab-lab/simonMulti.git
+[submodule "other/blab-experiments/simonSingleWord"]
+	path = other/blab-experiments/simonSingleWord
+	url = https://github.com/blab-lab/simonSingleWord.git
+[submodule "other/blab-experiments/uhdapter"]
+	path = other/blab-experiments/uhdapter
+	url = https://github.com/blab-lab/uhdapter.git
+[submodule "other/blab-experiments/vsaCentralize"]
+	path = other/blab-experiments/vsaCentralize
+	url = https://github.com/blab-lab/vsaCentralize.git
+[submodule "other/blab-experiments/vsaGeneralize"]
+	path = other/blab-experiments/vsaGeneralize
+	url = https://github.com/blab-lab/vsaGeneralize.git
+[submodule "other/blab-experiments/vsaSentence"]
+	path = other/blab-experiments/vsaSentence
+	url = https://github.com/blab-lab/vsaSentence.git
+[submodule "other/blab-experiments/wave_viewer"]
+	path = other/blab-experiments/wave_viewer
+	url = https://github.com/blab-lab/wave_viewer.git
