@@ -86,8 +86,8 @@ PG.Engine = (() => {
             else if (m.type === 'done') { clearInterval(dog); resolve(); }
           };
           slot.w.onerror = e => { clearInterval(dog); reject(new Error(e.message || 'engine worker crashed')); };
-          const payload = g.map(i => ({ input: trials[i].input, settings: trials[i].settings }));
-          slot.w.postMessage({ type: 'run', id, trials: payload, sequence: !!sequence, clearAbsent: !!opts.clearAbsent });
+          const payload = g.map(i => ({ input: trials[i].input, settings: trials[i].settings, ops: trials[i].ops }));
+          slot.w.postMessage({ type: 'run', id, trials: payload, sequence: !!sequence, clearAbsent: !!opts.clearAbsent, setup: opts.setup });
         });
         slot.w.terminate(); active = null;
       }

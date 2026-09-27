@@ -40,6 +40,23 @@ output, 1 SD dispersion ellipses, and the heard/spoken dispersion ratio. "Vowel 
 makes N tokens with random F1/F2 around a vowel, optionally runs them unshifted first to set the centre, then runs them
 with the current settings and shows them as tokens.
 
+**Test cases tab.** Every report card that can be replayed is a test case (14 of 22 cards; the other 8 say why:
+live audio path, a hang, heap-garbage reads, array reuse, a 35 s trial). A case is the exact command stream the card's
+export script sent to Audapter: `audit/playground/tools/capture-cases.sh` runs the export (`audit/harness/oct/report_*.m`,
+with `case_mark` section marks) against the real Octave MEX through a recording shim (`capture/Audapter.m`) that logs
+every setParam (including the ones `AudapterIO('init')` sends), OST/PCF text, reset and trial input. The build packs
+each case (`tools/cases.spec.mjs`: which sections are "expected" and "observed", session or fresh per trial, the build,
+and the card's key numbers read from the same export's `data.json`) into `dist/cases/<ID>.js`, with inputs and long
+arrays as shared 24-bit FLAC or float32 resources. Open a case from the picker or with `#case=<ID>` (each report card
+links it): it replays every variant (for example expected = fresh per trial or patched build or the runner with its
+clear lines, observed = one session as run), adds the trials to the trial list, draws a session timeline with expected
+(hollow) and observed (blue) rows and orange where they differ, and lists card vs replay for each key number. Edit the
+trial order, the input of each trial (case inputs or bundled clips), the build and session mode of each variant, or the
+switching between trials (as captured, clear OST/PCF, re-send the init parameters, reset only), and run again.
+
+When a custom OST/PCF or a timeline design sets the shift, the Explore cards show what it sets per state
+("set by the OST/PCF: F1 +125 mel in state 2") with their switches locked, instead of their own unused values.
+
 **Timing & design tab.** Graphical control of WHEN the perturbation happens.
 - The current input is analysed by a dry run of the real core; its per-frame level (`rms`, `rms_slope`) drives a
   JavaScript port of `OST_TAB::osTrack` (`src/js/ostsim.js`), which finds the "sounds" Audapter's level rules detect
@@ -105,6 +122,11 @@ light and dark, with a one-column phone layout:
 
 ## Build
 
+Test cases: `audit/playground/tools/capture-cases.sh` (docker, the harness image and `audit/harness/build-oct`) writes
+`audit/playground/capture/out/<ID>/`; the build then packs them and writes `audit/playground/cases.json`, which the
+report build reads to link each card. Without captures the build skips the cases with a warning.
+
+
 ```sh
 audit/playground/build.sh        # -> audit/playground/dist/ (about 4.2 MB); copy it to docs/playground/
 ```
@@ -140,6 +162,10 @@ fed from `audit/corpus/audio/pvqd_LA9003_a.wav`. Results on 2026-09-27, Chromium
   heard point is within 1.8 Hz of the intended point on the line to the centre (grid step 7.9 Hz diagonal). In node the
   JavaScript port of Audapter's 2-D lookup reproduced sfmts on all 6042 shifted frames of each direction
   (`audit/scratch/playground/probe10.mjs`).
+- Test cases: every one of the 14 replays the card's key numbers (OST-F1 32/32, OST-F2 11/11, COORD-1 10/10, OST-F5 16/16,
+  I-01 4/4, LAB-1 24/24, LAB-2 24/24, LAB-3 2/2, F6 7/7, OST-F8 4/4, CORPUS-11 4/4, CORPUS-8 28/28, I-02 3/3, PT-5 4/4).
+  Tolerances are one frame (2 ms) for times, 1 frame count, 3 Hz for heard formants, 12 cents, 0.1 dB, and one lag step
+  for CORPUS-8's logged pitchHz (16000 / integer lag; a single frame decided differently moves the median by that much).
 - 14 settings variants run (pvoc, time-domain after 0.5 s, loudness window, time warp during the vowel, 150 ms delay,
   speech + 3 s noise, Hz region, F2-dependent field, painted 2-D field, mel units, custom OST/PCF, child preset, low-voice
   preset on the patched build, full-size build).

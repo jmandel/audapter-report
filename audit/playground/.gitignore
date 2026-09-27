@@ -1,3 +1,5 @@
 # build output (copied to docs/playground by the publishing step) and test screenshots
 dist/
 test/shots/
+capture/out/
+capture/tmp/

@@ -4,6 +4,7 @@
 % Output: out/report/corpus-8/blab/data_<frameLen>.json
 cfg = str2num(getenv('SCEN')); p0 = defparams('male'); fs = p0.sr * p0.downFact;
 F0 = [85 90 100 110 120 130 140 150 160 170 180 200 220 250]; R = struct('f0', {}, 'median_hz', {}, 'within5', {}, 'n', {});
+case_mark('observed');   % Playground test case capture (audit/playground/capture); no-op otherwise
 for f0 = F0
   p = p0; p.frameLen = cfg(1); p.nDelay = cfg(2);
   p.bTimeDomainShift = 1; p.pitchLowerBoundHz = 70; p.pitchUpperBoundHz = 300; p.bCepsLift = 1;
@@ -13,5 +14,6 @@ for f0 = F0
   R(end+1) = struct('f0', f0, 'median_hz', median(v), 'within5', mean(abs(v/f0 - 1) < 0.05), 'n', numel(v));
   printf('frameLen %d nDelay %d F0 %3d: median %6.1f Hz, within 5%%: %3.0f%%\n', cfg(1), cfg(2), f0, median(v), 100*R(end).within5);
 end
+case_mark('');
 r = struct('frameLen', cfg(1), 'nDelay', cfg(2), 'window_ms', 1000 * cfg(1) * cfg(2) / p0.sr, 'sweep', R);
 od = report_outdir('corpus-8'); report_json(fullfile(od, sprintf('data_%d.json', cfg(1))), r);

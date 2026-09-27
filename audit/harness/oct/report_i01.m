@@ -28,12 +28,16 @@ function d = pbtrial(p, x, fb, gain, pb, N)
   d = AudapterIO('getData');
 end
 d3 = pbtrial(p, x, 3, 0.05, noise5, N);                        % voice + 5 s noise
+case_mark('observed');                                          % Playground test case capture
 d2 = pbtrial(p, zeros(size(x)), 2, 0.05, noise5, N);           % noise only: where is noise present?
+case_mark('');
 db = pbtrial(p, zeros(round(11*fs),1), 2, 0.05, nfull, N);     % bundled babble, full length
 % pbCounter is not reset by Audapter('reset'): two consecutive 4 s trials, noise loaded once
+case_mark('carryover');
 dt1 = pbtrial(p, zeros(round(4*fs),1), 2, 0.05, noise5, N);
 Audapter('reset'); for k = 1:floor(4*fs/N), fr = zeros(N,1); Audapter('runFrame', fr); end
 dt2 = AudapterIO('getData');
+case_mark('');
 z2 = find(abs(dt2.signalOut) < 1e-9, 1); if isempty(z2), r_t2 = NaN; else, r_t2 = (z2-1)/p.sr; end
 printf('second trial (after reset): noise stops at %.3f s into the trial\n', r_t2);
 % 20 ms envelopes

@@ -33,8 +33,10 @@ xg = synth_vowel(fs, 1.0, f0, Fg, BW, 'onset', 0.1, 'offset', 0.2, 'amp', 0.3);
 dip = 240 * exp(-0.5 * ((tt - 0.5) / 0.012).^2);                 % 40 ms dip (Gaussian, sd 12 ms) centred 0.5 s into the vowel
 Fd = [760 - dip, 1150 * ones(n,1), 2500 * ones(n,1), 3500 * ones(n,1)];
 xd = synth_vowel(fs, 1.0, f0, Fd, BW, 'onset', 0.1, 'offset', 0.2, 'amp', 0.3);
+case_mark('observed');   % Playground test case capture (audit/playground/capture); no-op otherwise
 dg = run_trial(p, xg);
 dd = run_trial(p, xd);
+case_mark('');
 % minVowelLen sweep: setting it changes nothing on either build. Blab never reads it; in upstream the setter writes an
 % int into the double p.minVowelLen (Audapter.cpp setGetParam, TYPE_INT), so the value stays 60 frames plus a few ulps.
 MVL = [5 60 1000]; dm = cell(1, numel(MVL)); mvl_get = zeros(1, numel(MVL));

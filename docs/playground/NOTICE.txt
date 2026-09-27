@@ -3,3 +3,4 @@ engine/engine-*.js embed the blab-lab Audapter core (audapter_mex, Apache-2.0) c
 fonts/: Charis SIL, SIL Open Font License 1.1 (https://software.sil.org/charis/).
 clips/: speech clips under their own licences, listed in clips/ATTRIBUTION.md (CC BY 4.0 and the CMU ARCTIC licence).
 Vowel-space backdrop: average formant values from Peterson & Barney (1952), J. Acoust. Soc. Am. 24, 175-184.
+cases/: test-case inputs and parameters captured from the audit report's export scripts: synthetic signals, the bundled babble mtbabble48k.wav and the example trial diao1_female from audapter_matlab (MIT, (c) 2006-2021 Audapter Authors).

@@ -39,7 +39,7 @@ settings:
   - "bShift2D = 1 and the full-strength pertAmp2D come from calc_pertField via expt.audapterParams and are sent by AudapterIO('init'); pertAmp (1-D, all zeros) is the only field the runner scales."
   - "fb 1 in these runs so formants can be measured; the experiment runs fb 3 with babble at 0.02 (field lookup unchanged)."
   playground: false
-  playground_why: "the Playground's vowel-variability field is always wired correctly, so it cannot reproduce the committed runner."
+  playground_why: "a settings link would load the Playground's own, correctly wired field; the test case replays the committed runner exactly."
 figure_caption: >-
   F1–F2 vowel space. Expected: what the design intends (no shift at strength 0; 50 % toward the centre at strength 0.5).
   Observed: the shift Audapter applied with the committed wiring (logged <code>sfmts</code>). Orange: where they differ.

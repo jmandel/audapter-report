@@ -143,6 +143,22 @@
     return [inv(x1 + amp * u1), inv(x2 + amp * u2)];
   }
 
+  // What a custom OST/PCF or a timeline design sets per state, for the cards (so they never show a stale value).
+  function pcfShifts(s) {
+    const c = compile(s), m = c.map; if (!c.pcf) return null;
+    const p = parsePcf(c.pcf), ratio = num(m, 'bratioshift') === 1, mel = num(m, 'bmelshift') === 1;
+    const u = ratio ? '%' : mel ? ' mel' : ' Hz', sc = ratio ? 100 : 1, r1 = v => +(v * sc).toFixed(ratio ? 1 : 0), sg = v => (v > 0 ? '+' : '') + v;
+    const F = [], P = [], L = [];
+    p.rows.forEach((r, k) => {
+      if (r.amp) { const f1 = r1(r.amp * Math.cos(r.phi)), f2 = r1(r.amp * Math.sin(r.phi)); F.push(`${[f1 ? `F1 ${sg(f1)}${u}` : '', f2 ? `F2 ${sg(f2)}${u}` : ''].filter(Boolean).join(', ') || `amplitude ${r.amp}`} in state ${k}`); }
+      if (r.pitch) P.push(`${sg(r.pitch)} st in state ${k}`);
+      if (r.db) L.push(`${sg(r.db)} dB in state ${k}`);
+    });
+    const Wp = p.warps.map(w => `warp ×${w.rate1} for ${w.dur1} s${w.ostInitState !== null ? ` from state ${w.ostInitState}` : ` at ${w.tBegin} s`}`);
+    const src = s.when.mode === 'design' ? 'set by the timeline design' : 'set by the OST/PCF';
+    return { src, formant: F, pitch: P, level: L, warp: Wp, bshift: num(m, 'bshift') === 1, bpitch: num(m, 'bpitchshift') === 1 };
+  }
+
   function defaultSettings() {
     return {
       v: 1, preset: 'female', build: 'lite',
@@ -314,12 +330,19 @@
     const sr = num(m, 'srate'), frameLen = num(m, 'framelen'), nDelay = num(m, 'ndelay');
     const F = s.shift.formant, Pi = s.shift.pitch, L = s.shift.loudness, T = s.shift.timing, D = s.shift.delay, W = s.when;
     const isDesign = W.mode === 'design', cd = isDesign ? compileDesign(s.design) : null;
+    const isCustom = W.mode === 'custom', cp = isCustom ? parsePcf(W.pcf || '') : null;
+    const cF = isCustom && cp.rows.some(r => r.amp), cP = isCustom && (cp.rows.some(r => r.pitch) || cp.warps.length > 0);
     const anyW = k => isDesign && s.design.blocks.some(b => b.what && b.what[k]);
-    const fOn = isDesign ? (anyW('f1') || anyW('f2')) : F.on && (F.f1 !== 0 || F.f2 !== 0 || F.field === 'curve' || F.field === 'painted' || F.field === 'variability');
-    const pvoc = isDesign ? anyW('st') : Pi.on && Pi.method === 'pvoc', tds = !isDesign && Pi.on && Pi.method === 'tds';
+    const fOn = isDesign ? (anyW('f1') || anyW('f2')) : isCustom ? cF : F.on && (F.f1 !== 0 || F.f2 !== 0 || F.field === 'curve' || F.field === 'painted' || F.field === 'variability');
+    const pvoc = isDesign ? anyW('st') : isCustom ? cP : Pi.on && Pi.method === 'pvoc', tds = !isDesign && !isCustom && Pi.on && Pi.method === 'tds';
     const timeWhen = W.mode !== 'always';
     // A PCF is needed for anything per-state: level shifts, time warps, pvoc pitch or formant shifts that are not always on.
     const needPcf = isDesign || W.mode === 'custom' || (L.on && L.db !== 0) || (T.on && !isDesign) || (timeWhen && (fOn || pvoc));
+    if (isCustom) {
+      if (Pi.on && Pi.method === 'tds') notes.push({ where: 'when', text: 'Time-domain pitch shifting follows its own schedule, not OST states; with a custom OST/PCF the pitch column uses the phase vocoder.' });
+      if (T.on) notes.push({ where: 'when', text: 'The time-warp card is not used with a custom OST/PCF; warps come from the PCF.' });
+      if (L.on) notes.push({ where: 'when', text: 'The loudness card is not used with a custom OST/PCF; levels come from the PCF.' });
+    }
     if (isDesign) {
       if (Pi.on && Pi.method === 'tds' && anyW('st')) notes.push({ where: 'when', text: 'Time-domain pitch shifting follows its own schedule, not OST states, so a timeline design shifts pitch with the phase vocoder.' });
       if (T.on) notes.push({ where: 'when', text: 'The time-warp card is not used by a timeline design.' });
@@ -328,7 +351,7 @@
     const vec = fmtVector(F), mel = F.units === 'mel';
 
     // formant shift
-    if (fOn || (W.mode === 'custom' && F.on)) {
+    if (fOn) {
       m.set('bshift', 1);
       for (const [k, v] of Object.entries(unitsFlags(F.units))) m.set(k, v);
       const top = mel ? hz2mel(FMAX) : FMAX, grid = Array.from({ length: GRID }, (_, i) => top * i / (GRID - 1));
@@ -377,7 +400,7 @@
     }
 
     // pitch
-    if (pvoc || (T.on && !isDesign)) {
+    if (pvoc || (T.on && !isDesign && !isCustom)) {
       m.set('bpitchshift', 1); m.set('btimedomainshift', 0);
       m.set('pitchshiftratio', pvoc && !needPcf ? Math.pow(2, Pi.semitones / 12) : 1);
     }
@@ -612,5 +635,5 @@
   }
 
   G.PGS = { PRESETS, OST_MODES, defaultSettings, normalize, clone, getPath, setPath, baseParams, compile, warnings, summarize, diff, flatten, effective,
-    parseOst, serializeOst, ostStateCount, variField, apply2D, variIntended, TEMPLATES, defaultDesign, compileDesign, refText, parsePcf, serializePcf, hz2mel, fmtVector, GRID, FMAX };
+    parseOst, serializeOst, ostStateCount, pcfShifts, variField, apply2D, variIntended, TEMPLATES, defaultDesign, compileDesign, refText, parsePcf, serializePcf, hz2mel, fmtVector, GRID, FMAX };
 })(typeof self !== 'undefined' ? self : globalThis);

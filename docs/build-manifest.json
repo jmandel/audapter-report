@@ -586,7 +586,7 @@
   "PT5_f0_cents": 199.3853,
   "PT5_sweep_min": 0.83,
   "PT5_sweep_max": 8.84,
-  "PT5_ampnorm_text": "bPvocAmpNorm: Unknown parameter name: bpvocampnorm; bpvocmpnorm: Unknown parameter name: bpvocmpnorm",
+  "PT5_ampnorm_text": "bPvocAmpNorm: AudapterReal: Unknown parameter name: bpvocampnorm; bpvocmpnorm: AudapterReal: Unknown parameter name: bpvocmpnorm",
   "PT5_r_finding": "PT-5",
   "PT5_r_note": "gain = output/input RMS over supra-threshold frames; in-utterance step = (output level change) - (input level change) across the state-4 onset",
   "PT5_r_n_clean": 70,

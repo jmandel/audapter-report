@@ -26,6 +26,15 @@ function info() {
   return { variant: i.variant, patches: i.patches, sizeofAudapter: i.sizeofAudapter, memoryBytes: i.memoryBytes, recorderSeconds: i.recorderSeconds };
 }
 
+// Replay captured commands (test cases): setParam / OST / PCF / reset, exactly as the export script sent them.
+function applyOps(ops) {
+  for (const o of ops || []) {
+    if (o.op === 'setParam') A.setParam(o.name, o.value);
+    else if (o.op === 'ost') A.loadOst(o.text || '');
+    else if (o.op === 'pcf') A.loadPcf(o.text || '');
+    else if (o.op === 'reset') A.reset();
+  }
+}
 function apply(settings, seq, clearAbsent) {
   const c = self.PGS.compile(settings);
   A.setParams(c.list);                     // AudapterIO('init') order, values from the settings
@@ -93,15 +102,18 @@ self.onmessage = async e => {
     }
     if (m.type === 'run') {
       await ensure();
+      if (m.setup) applyOps(m.setup);
       for (let i = 0; i < m.trials.length; i++) {
         const t = m.trials[i], t0 = performance.now();
         post({ type: 'progress', id: m.id, i, frac: 0 });
         try {
-          const c = apply(t.settings, !!m.sequence, !!m.clearAbsent);
+          const c = t.ops ? { ost: null, pcf: null, meta: null } : apply(t.settings, !!m.sequence, !!m.clearAbsent);
+          if (t.ops) applyOps(t.ops);
           const input = t.input instanceof Float64Array ? t.input : Float64Array.from(t.input);
           const output = processChunked(input, frac => post({ type: 'progress', id: m.id, i, frac }));
           const r = { output, ...pack(A.getData()) };
           r.compiled = { ost: c.ost, pcf: c.pcf, meta: c.meta };
+          r.params = { pitchshiftratio: A.getParam('pitchshiftratio')[0], framelen: A.getParam('framelen')[0], srate: A.getParam('srate')[0] };
           r.info = { ...info(), processMs: performance.now() - t0 };
           r.analysis = analyse(input, r);
           r.info.totalMs = performance.now() - t0;

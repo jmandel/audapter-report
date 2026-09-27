@@ -25,11 +25,14 @@ V_AA = [760 1150 2500 3500]; BW = [80 100 150 200];
 T1 = 1.4; x = 1e-4*randn(round(T1*fs), 1);
 v = synth_vowel(fs, 1.15, 200, V_AA, BW, 'onset', 0, 'offset', 0, 'amp', 0.035);   % soft /a/, 0.05-1.20 s
 x(round(0.05*fs)+(1:numel(v))) = x(round(0.05*fs)+(1:numel(v))) + v;
+case_mark('expected');                                                                     % Playground test case capture
 dC = run_trial(p, x, 'ost', 'cfg/report_ioi_ctrl.ost', 'pcf', 'cfg/report_ioi_ctrl.pcf');
+case_mark('observed');
 dC.ost_stat(dC.ost_stat >= 1) = dC.ost_stat(dC.ost_stat >= 1) + 1;          % map to the maxIOI OST's numbering
 d = cell(1, 3);
 d{1} = run_trial(p, x, 'ost', 'cfg/report_ioi.ost', 'pcf', 'cfg/report_ioi.pcf');   % loaded once ...
 for k = 2:3, d{k} = run_trial(p, x, 'init', false); end                              % ... then only reset
+case_mark('');
 dR = run_trial(p, x, 'ost', 'cfg/report_ioi.ost', 'pcf', 'cfg/report_ioi.pcf');     % reloaded before the trial
 Audapter('ost', '', 0); Audapter('pcf', '', 0);
 first = @(d, s) (find(d.ost_stat >= s, 1) - 1) * fr;

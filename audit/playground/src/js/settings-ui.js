@@ -45,7 +45,18 @@ PG.SettingsUI = (() => {
     const el = h('div.card', { 'data-card': cd.id },
       h('div.card-head', {}, sw, h('label.card-title', { for: 'sw-' + cd.id, text: cd.title }), sum),
       h('p.card-blurb', { id: 'cb-' + cd.id, text: cd.blurb }), body);
-    rows.push({ sync(s) { const on = !!S.getPath(s, cd.on); sw.checked = on; el.classList.toggle('on', on); body.hidden = !on; sum.textContent = on ? cd.summary(s) : 'off'; } });
+    const extNote = h('p.derived.ext-note');
+    body.prepend(extNote);
+    rows.push({ sync(s) {
+      const ext = PG.cardExternal(s) && cd.id !== 'delay';
+      let on = !!S.getPath(s, cd.on);
+      if (ext) { const P = S.pcfShifts(s); const k = { formant: 'formant', pitch: 'pitch', loudness: 'level', timing: 'warp' }[cd.id]; on = !!(P && P[k] && P[k].length); }
+      sw.checked = on; sw.disabled = ext; el.classList.toggle('on', on); el.classList.toggle('ext', ext);
+      body.hidden = !on && !(ext && cd.id === 'formant');
+      sum.textContent = ext ? cd.summary(s) : on ? cd.summary(s) : 'off';
+      extNote.hidden = !ext;
+      if (ext) extNote.textContent = `${s.when.mode === 'design' ? 'The timeline design (Timing & design)' : 'The custom OST/PCF (Timing & design, advanced)'} sets ${cd.id === 'formant' ? 'the formant shift' : cd.id === 'pitch' ? 'the pitch shift (phase vocoder)' : cd.id === 'loudness' ? 'the level change' : 'the time warp'} per state; the values here are not used.${cd.id === 'formant' ? ' Units still apply.' : ''}`;
+    } });
     return el;
   }
 

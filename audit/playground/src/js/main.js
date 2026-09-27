@@ -13,7 +13,7 @@
   // ---------------- layout
   function layout() {
     const app = $('#app');
-    const tabs = [['explore', 'Explore'], ['design', 'Timing & design'], ['about', 'About']];
+    const tabs = [['explore', 'Explore'], ['design', 'Timing & design'], ['cases', 'Test cases'], ['about', 'About']];
     const nav = $('#tabs');
     for (const [k, t] of tabs) nav.append(h('button', { type: 'button', role: 'tab', id: 'tab-' + k, 'aria-controls': 'panel-' + k, 'aria-selected': String(k === 'explore'), text: t, on: { click: () => PG.bus.emit('tab', k) } }));
     $('#theme-btn').addEventListener('click', () => PG.theme.toggle());
@@ -25,6 +25,7 @@
     PG.InputUI.mount($('#input-panel'));
     PG.TrialsUI.mount($('#trials'));
     PG.DesignUI.mount($('#panel-design'));
+    PG.Cases.mount($('#panel-cases'));
     PG.Compare.mount($('#v-compare'));
     PG.Vowel.mount($('#v-vowel'));
     runBar(); PG.Transport.mount($('#transport')); viewTabs();
@@ -311,6 +312,7 @@
       if (first) PG.InputUI.loadClip(first.id).catch(e => PG.toast(e.message, 'error'));
     }
     showView();
+    if (/[#&]case=/.test(location.hash)) setTimeout(() => window.dispatchEvent(new HashChangeEvent('hashchange')), 50);
   }
 
   // Test hooks (used by audit/playground/test/run.mjs); harmless in normal use.

@@ -214,6 +214,28 @@ await (await page.$('#v-vowel')).screenshot({ path: path.join(SHOTS, 'variabilit
 await page.setViewportSize({ width: 1440, height: 1000 }); await page.emulateMedia({ colorScheme: 'light' }); await page.evaluate(() => PG.bus.emit('theme'));
 await page.evaluate(() => { PG.Vowel.setMode('trial'); PG.setSettings(PG.S.defaultSettings(), 'noauto'); PG.state.selected.clear(); PG.bus.emit('trials'); PG.bus.emit('view', 'spectro'); });
 
+// ---------------- 2d. report test cases: every case replays the card's numbers
+const caseIds = await page.evaluate(() => PG.CASES.filter(c => c.available).map(c => c.id));
+const caseRows = [];
+for (const cid of caseIds) {
+  await page.evaluate(id => { location.hash = 'case=' + id; }, cid);
+  await page.waitForFunction(id => PG.Cases.current() && PG.Cases.current().id === id && !PG.Cases.running() && Object.keys(PG.Cases.results()).length, cid, { timeout: 180000 });
+  const C = await page.evaluate(() => PG.Cases.comparisons().map(x => ({ l: x.label, v: x.variant, want: x.want, got: x.got, ok: x.ok })));
+  const bad = C.filter(x => !x.ok);
+  caseRows.push([cid, C.length - bad.length, C.length]);
+  T(`test case ${cid}: the replay reproduces the card`, !bad.length, `${C.length - bad.length} of ${C.length} numbers` + (bad.length ? '; ' + bad.slice(0, 3).map(x => `${x.v} ${x.l}: card ${x.want} replay ${x.got}`).join('; ') : ''));
+  if (cid === 'OST-F1') { await page.waitForTimeout(300); await page.screenshot({ path: path.join(SHOTS, 'case-ost-f1-1440-light.png') }); await (await page.$('#case-results')).screenshot({ path: path.join(SHOTS, 'case-ost-f1-timeline-1440-light.png') }); }
+}
+console.log('test cases: ' + caseRows.map(([i, a, b]) => `${i} ${a}/${b}`).join(', '));
+await page.evaluate(() => { location.hash = ''; window.scrollTo(0, 0); PG.bus.emit('tab', 'cases'); });
+await page.waitForTimeout(300);
+await page.screenshot({ path: path.join(SHOTS, 'case-picker-1440-light.png') });
+// part A: a report settings link with a custom OST/PCF shows the per-state values on the cards, not "F1 0 mel"
+const link = JSON.parse(fs.readFileSync(path.join(A, 'report', 'prototype', 'assets', 'ost-f1', 'settings.json'), 'utf8')).playground;
+const summ = await page.evaluate(sv => { PG.setSettings(sv, 'noauto'); PG.bus.emit('tab', 'explore'); return document.querySelector('[data-card="formant"] .card-sum').textContent; }, link);
+T('a custom OST/PCF shows its per-state values on the formant card', /set by the OST\/PCF: F1 \+125 mel in state 2/.test(summ), JSON.stringify(summ));
+await page.evaluate(() => { PG.setSettings(PG.S.defaultSettings(), 'noauto'); });
+
 // ---------------- 3. sweep + same-session sequence, memory
 const beforeMB = treeRssMB();
 await page.evaluate(() => { PG.setSettings(PG.S.defaultSettings(), 'noauto'); PG.bus.emit('sweep', { control: PG.controlByPath('shift.formant.f1'), values: [0, 10, 20, 30, 40] }); });
@@ -227,7 +249,7 @@ const seq = await page.evaluate(async () => {
   PG.bus.emit('run-sequence', ids);
   await new Promise(r => setTimeout(r, 300));
   while (!PG_TEST.idle()) await new Promise(r => setTimeout(r, 100));
-  const s = PG.state.trials.filter(t => t.seq); return { n: s.length, sameSession: new Set(s.map(t => t.seq.id)).size === 1 };
+  const s = PG.state.trials.filter(t => t.seq && / in session$/.test(t.name)); return { n: s.length, sameSession: new Set(s.map(t => t.seq.id)).size === 1 };
 });
 T('three trials run as one Audapter session', seq.n === 3 && seq.sameSession, JSON.stringify(seq));
 const stats = await page.evaluate(() => PG_TEST.stats());
@@ -259,6 +281,16 @@ async function shots(width, scheme) {
     else await p.screenshot({ path: path.join(SHOTS, `${v}-${tag}.png`) });
   }
   if (width < 600) { await p.click('#vt-spectro'); await p.screenshot({ path: path.join(SHOTS, `top-${tag}.png`) }); }
+  if (width < 600 || scheme === 'dark') {
+    await p.evaluate(() => { location.hash = 'case=OST-F1'; });
+    await p.waitForFunction(() => PG.Cases.current() && !PG.Cases.running() && Object.keys(PG.Cases.results()).length, null, { timeout: 180000 });
+    await p.waitForTimeout(300);
+    await p.screenshot({ path: path.join(SHOTS, `case-ost-f1-${tag}.png`) });
+    await (await p.$('#case-results')).screenshot({ path: path.join(SHOTS, `case-ost-f1-timeline-${tag}.png`) });
+    await p.evaluate(() => { location.hash = ''; window.scrollTo(0, 0); PG.bus.emit('tab', 'cases'); });
+    await p.waitForTimeout(300);
+    await p.screenshot({ path: path.join(SHOTS, `case-picker-${tag}.png`) });
+  }
   await p.click('#tab-design');
   await p.waitForFunction(() => PG.DesignUI.state().dry && PG_TEST.idle() && document.querySelector('.dz-timeline .tiers'), null, { timeout: 60000 });
   await p.waitForTimeout(300);

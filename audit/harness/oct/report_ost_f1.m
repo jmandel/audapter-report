@@ -72,6 +72,7 @@ end
 for di = [2 1]   % leak design first, so its session starts on a freshly loaded MEX
   nm = OSTS{di,1}; ost = sprintf('cfg/report_ostf1_%s.ost', nm);
   % OBSERVED: one session, OST loaded once, PCF reloaded per trial, reset() per trial
+  if di == 2 && ~REAL, case_mark('observed'); end   % Playground test case (audit/playground/capture); no-op otherwise
   Audapter('ost', '', 0); Audapter('pcf', '', 0);
   Audapter('setParam', 'datapb', w, 1); AudapterIO('init', p); Audapter('ost', ost, 0);
   obs = cell(1, T);
@@ -79,6 +80,7 @@ for di = [2 1]   % leak design first, so its session starts on a freshly loaded 
     Audapter('pcf', ifelse_str(catchT(k), 'cfg/report_ostf1_off.pcf', 'cfg/report_ostf1_on.pcf'), 0);
     obs{k} = exp_trial(p, X{k});
   end
+  case_mark('');
   R = struct('t3_obs', zeros(1,T), 't3_exp', zeros(1,T), 'on_obs', zeros(1,T), 'off_obs', zeros(1,T), 'on_exp', zeros(1,T), 'off_exp', zeros(1,T), ...
              'shift_obs', zeros(1,T), 'shift_exp', zeros(1,T), 'dF1mel_obs', zeros(1,T), 'dF1mel_exp', zeros(1,T));
   for k = 1:T

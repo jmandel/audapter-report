@@ -40,6 +40,7 @@ bin = blk(x); act = 20*log10(bin) > -40;          % blocks where the speaker is 
 r = struct(); r.env_dt = 0.02; r.env_in = round(20*log10(max(bin, 1e-6)) * 10) / 10;
 r.clg_bundled_db = clg0; r.closedLoopGain_db = CLG; r.dScale = DS; r.fb5GainDB_speech = 20; r.fb5Gain_playback = 1; r.datapb_rms = 0.03;
 tags = {'ref', 'A', 'B'}; Y = {};
+case_mark('observed');   % Playground test case capture (audit/playground/capture); no-op otherwise
 for i = 1:3
   [yt, dt] = fb5run(p, x, pb, DS(i), 1, N);
   [ys, ds] = fb5run(p, x, pb, DS(i), 0, N);
@@ -54,6 +55,7 @@ for i = 1:3
   printf('dScale %.4f: heard speech-mod re playback %+.2f dB (speech %.1f dBFS, playback %.1f dBFS)\n', DS(i), ...
     r.(['mix_db_' tags{i}]), r.(['speech_db_' tags{i}]), r.(['play_db_' tags{i}]));
 end
+case_mark('');
 r.shift_A_db = r.mix_db_A - r.mix_db_ref; r.shift_B_db = r.mix_db_B - r.mix_db_ref; r.shift_AB_db = r.mix_db_B - r.mix_db_A;
 r.play_step_db = r.play_db_B - r.play_db_A; r.speech_step_db = r.speech_db_B - r.speech_db_A; r.clg_step_db = CLG(2) - CLG(1);
 printf('closedLoopGain %d -> %d dB: playback %+.2f dB, speech-modulated %+.2f dB; mix shift %+.2f dB\n', CLG, r.play_step_db, r.speech_step_db, r.shift_AB_db);

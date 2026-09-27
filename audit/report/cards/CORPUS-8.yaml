@@ -23,7 +23,7 @@ settings:
     switching: each F0 in a fresh session
     input: synthetic vowels of known F0, 85-250 Hz; real speech in the table
   playground: false
-  playground_why: the Playground does not log pitchHz.
+  playground_why: the settings link carries one trial; the test case replays the whole per-F0 sweep and checks the logged pitchHz.
 origin: upstream
 status:
 - H

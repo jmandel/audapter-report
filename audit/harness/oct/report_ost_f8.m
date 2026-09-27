@@ -26,8 +26,10 @@ x(round(S1*fs)+(1:numel(v))) += v;
 xc = x; nc = round(CD*fs); c = fric(nc); c = 0.15 * c / sqrt(mean(c.^2)) .* ramp(nc, 0.003);      % 20 ms click at 0.10 s
 xc(round(C0*fs)+(1:nc)) += c;
 run = @(xx, f) run_trial(p, xx, 'ost', f, 'pcf', 'cfg/report_andratio.pcf');
+case_mark('observed');   % Playground test case capture (audit/playground/capture); no-op otherwise
 dH = run(x, 'cfg/report_andratio_hold.ost');  dB = run(x, 'cfg/report_andratio_braces.ost');
 cH = run(xc, 'cfg/report_andratio_hold.ost'); cB = run(xc, 'cfg/report_andratio_braces.ost');
+case_mark('');
 Audapter('ost', '', 0); Audapter('pcf', '', 0);
 first = @(d, s) (find(d.ost_stat >= s, 1) - 1) * fr;
 r = struct();

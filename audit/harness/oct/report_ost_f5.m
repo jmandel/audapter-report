@@ -22,6 +22,7 @@ md = '/h/oct/out/report/ost-f5/meas'; if ~exist(md, 'dir'), mkdir(md); end
 f0i = est_f0(xc(1:3:end), p.sr);
 r = struct('g1', G1, 'vp', VP, 'vc', VC, 'sequence', {seq}, 'trial_s', cellfun(@(x) numel(x) / fs, X), 'f0_in', f0i);
 for arm = {'exp', 'obs'}
+  case_mark(arm{1});                                                                       % Playground test case capture
   AudapterIO('init', p); Audapter('ost', 'cfg/report_ostf5.ost', 0);
   for k = 1:numel(seq)
     if strcmp(seq{k}, 'shift'), Audapter('pcf', 'cfg/report_ostf5_up.pcf', 0);
@@ -38,6 +39,7 @@ for arm = {'exp', 'obs'}
     printf('%s trial %d (%s): state 2 from %.3f s, state 3 at %.3f s, output F0 %+.0f cents, logged params.pitchShiftRatio %.4f\n', ...
            arm{1}, k, seq{k}, r.(arm{1}).st2_on(k), r.(arm{1}).st3(k), c, r.(arm{1}).ratio_logged(k));
   end
+  case_mark('');
 end
 
 % ---- real voice (primary): PVQD SJ7001 sustained /a/ (female, CC BY 4.0); shift trials stop mid-phonation

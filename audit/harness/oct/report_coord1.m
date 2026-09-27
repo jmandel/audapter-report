@@ -22,6 +22,7 @@ md = '/h/oct/out/report/coord-1/meas'; if ~exist(md, 'dir'), mkdir(md); end
 wr = @(f, y) audiowrite(fullfile(md, f), y / 1.5, p.sr, 'BitsPerSample', 16);
 r = struct('g1', G1, 'wd', WD, 'trial_s', numel(X{1}) / fs, 'sequence', {seq});
 for arm = {'exp', 'obs'}
+  case_mark(arm{1});                                                                       % Playground test case capture
   Audapter('setParam', 'datapb', w, 1);
   Audapter('ost', MF_OST, 0); Audapter('pcf', MF_PCF, 0); AudapterIO('init', pc);        % calibration block
   for k = 1:numel(seq)
@@ -38,6 +39,7 @@ for arm = {'exp', 'obs'}
     wr(sprintf('%s_t%d_out.wav', arm{1}, k), q.d.signalOut); wr(sprintf('t%d_in.wav', k), q.d.signalIn);
     printf('%s trial %d (%s): shifted %.3f s (%.3f-%.3f), logged dF1 %+.1f mel, output/input F1 %.3f\n', arm{1}, k, seq{k}, q.shift_s, q.on, q.off, q.dF1mel, q.outF1);
   end
+  case_mark('');
 end
 
 % ---- real voice (primary listening example): the same session with a real sentence on every trial (CMU ARCTIC clb a0030,

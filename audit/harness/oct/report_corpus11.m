@@ -14,6 +14,7 @@ end
 if isnan(p.rmsThresh), p.rmsThresh = 0.01; end
 r = struct('clip', m.id, 'sr', p.sr, 'pertAmp_max', max(p.pertAmp), 'frame_s', p.frameLen / p.sr);
 modes = {'ratio', 1, 0; 'mel', 0, 1};
+case_mark('observed');   % Playground test case capture (audit/playground/capture); no-op otherwise
 for i = 1:2
   q = p; q.bRatioShift = modes{i,2}; q.bMelShift = modes{i,3}; d = run_trial(q, x); k = d.sfmts(:,1) > 0;
   s = struct('ratio_F1', median(d.sfmts(k,1) ./ d.fmts(k,1)), 'max_sF1_hz', max(d.sfmts(:,1)), 'shifted_frames', nnz(k), ...
@@ -22,6 +23,7 @@ for i = 1:2
   s.t = round((kk-1) * r.frame_s * 1e4) / 1e4; s.F1 = round(d.fmts(kk,1))'; s.sF1 = round(d.sfmts(kk,1))';
   r.(modes{i,1}) = s; D.(modes{i,1}) = d;
 end
+case_mark('');
 k = G.sfmts(:,1) > 0; r.online_ratio_F1 = median(G.sfmts(k,1) ./ G.fmts(k,1)); r.online_shifted_frames = nnz(k);
 printf('ratio: x%.1f, max sF1 %.0f Hz, %+.1f dB, peak %.2f | mel: x%.3f (online x%.3f)\n', r.ratio.ratio_F1, r.ratio.max_sF1_hz, r.ratio.gain_db, r.ratio.peak, r.mel.ratio_F1, r.online_ratio_F1);
 od = report_outdir('corpus-11');

@@ -39,6 +39,7 @@ for k = 1:3
   p = getAudapterDefaultParams('male'); p = add2struct(p, ap);
   p.bShift = 1; p.bRatioShift = 0; p.bMelShift = 1; p.fb = 1;
   if k == 1, p.bShift2D = 1; end
+  case_mark(names{k});                                                                     % Playground test case capture
   Audapter('ost', '', 0); Audapter('pcf', '', 0); AudapterIO('init', p);
   switch names{k}
     case 'sent', Audapter(3, 'pertf1', p.pertF1); Audapter(3, 'pertf2', p.pertF2); Audapter(3, 'pertAmp2D', p.pertAmp2D); Audapter(3, 'pertPhi2D', p.pertPhi2D);
@@ -70,6 +71,7 @@ for k = 1:3
   end
   PS.(names{k}) = p;
 end
+case_mark('');
 Audapter('ost', '', 0); Audapter('pcf', '', 0);
 
 % ---- real vowels (PVQD, CC BY 4.0): sustained /i/ and /a/ of a male speaker without dysphonia, 1.2 s cut from 0.5 s,
@@ -113,8 +115,11 @@ R.centre_mel = cen; R.centre_hz = mel2hz(cen); R.fm = fm; R.field = struct('F1Mi
 p = getAudapterDefaultParams('male'); p.fb = 4; p.fb4Gain = 0.98; w = get_noiseSource(p);
 x = synth_vowel(fs, 1.0, 120, V{3,2}, BW, 'onset', 0.2, 'offset', 0.3, 'amp', 0.3);
 Audapter('ost', '', 0); Audapter('pcf', '', 0);
+case_mark('fb4_committed');                                                               % Playground test case capture
 AudapterIO('init', p); Audapter('setParam', 'datapb', w, 1); d1 = run_trial(p, x, 'init', false); g_c = Audapter('getParam', 'fb4gaindb');
+case_mark('fb4_intended');
 q = p; q.fb4GainDB = 20*log10(0.98); AudapterIO('init', q); Audapter('setParam', 'datapb', w, 1); d2 = run_trial(q, x, 'init', false);
+case_mark('');
 audiowrite(fullfile(md, 'fb4_committed.wav'), d1.signalOut, p.sr, 'BitsPerSample', 16);
 audiowrite(fullfile(md, 'fb4_intended.wav'), d2.signalOut, p.sr, 'BitsPerSample', 16);
 audiowrite(fullfile(md, 'fb4_in.wav'), d1.signalIn, p.sr, 'BitsPerSample', 16);

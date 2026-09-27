@@ -9,9 +9,11 @@ fid = fopen('cfg/report_step.ost', 'w'); fprintf(fid, 'rmsSlopeWin = 0.030000\n\
 fid = fopen('cfg/report_step.pcf', 'w'); fprintf(fid, '0\n\n2\n0, 0, 0, 0, 0\n1, 2, 0, 0, 0\n'); fclose(fid);
 F0D = 120;   % as in t_pitch.m; the F0/vowel sweep below shows how the step size varies
 x = synth_vowel(fs, 1.2, F0D, [850 1220 2810 3800], [80 100 150 200], 'onset', 0.1, 'offset', 0.1, 'amp', 0.25);
+case_mark('observed');   % Playground test case capture (audit/playground/capture); no-op otherwise
 q = p; q.bPitchShift = 0;                          d0 = run_trial(q, x);
 q = p; q.bPitchShift = 1; q.pitchShiftRatio = 1;  d1 = run_trial(q, x);
 q = p; q.bPitchShift = 1; q.pitchShiftRatio = 1;  dS = run_trial(q, x, 'ost', 'cfg/report_step.ost', 'pcf', 'cfg/report_step.pcf');
+case_mark('');
 Audapter('ost', '', 0); Audapter('pcf', '', 0);
 % can the documented fix be switched on?
 nm = {'bPvocAmpNorm', 'bpvocmpnorm'}; r = struct(); r.ampnorm = struct('name', nm, 'result', {'', ''});

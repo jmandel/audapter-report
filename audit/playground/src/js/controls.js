@@ -8,10 +8,13 @@
   const unitRange = { pct: [-50, 50, 1, '%'], hz: [-400, 400, 5, 'Hz'], mel: [-300, 300, 5, 'mel'] };
   const u = s => unitRange[s.shift.formant.units] || unitRange.pct;
 
+  const ext = s => s.when.mode === 'custom' || s.when.mode === 'design';   // an OST/PCF sets the values per state
+  const pcfSum = (s, k) => { const P = S.pcfShifts(s); if (!P) return 'off'; const a = P[k]; return a.length ? `${P.src}: ${a.slice(0, 3).join('; ')}${a.length > 3 ? '; …' : ''}` : `${P.src}: none`; };
+  PG.cardExternal = ext; PG.cardSummaryExternal = pcfSum;
   PG.GROUPS = [
     { id: 'shift', title: 'What gets shifted', blurb: 'Switch on one or more changes to the speech the participant hears.', cards: [
       { id: 'formant', title: 'Formants', on: 'shift.formant.on', blurb: 'Move F1 and F2, the resonances that make vowels sound different.',
-        summary: s => { const f = s.shift.formant, un = u(s)[3]; if (f.field === 'variability') return `variability ${f.vari.dir === 'in' ? 'inward' : 'outward'} ${f.vari.strength} %`; return f.field === 'painted' ? `painted field, ${f.painted.cells.length} cells` : f.field === 'curve' ? 'depends on F2' : `F1 ${PG.fmt.signed(f.f1, 0)} ${un}, F2 ${PG.fmt.signed(f.f2, 0)} ${un}`; },
+        summary: s => { if (ext(s)) return pcfSum(s, 'formant'); const f = s.shift.formant, un = u(s)[3]; if (f.field === 'variability') return `variability ${f.vari.dir === 'in' ? 'inward' : 'outward'} ${f.vari.strength} %`; return f.field === 'painted' ? `painted field, ${f.painted.cells.length} cells` : f.field === 'curve' ? 'depends on F2' : `F1 ${PG.fmt.signed(f.f1, 0)} ${un}, F2 ${PG.fmt.signed(f.f2, 0)} ${un}`; },
         controls: [
           { path: 'shift.formant.units', label: 'Units', kind: 'seg', show: s => s.shift.formant.field !== 'variability', options: [['pct', '% (ratio)'], ['hz', 'Hz'], ['mel', 'mel']],
             desc: 'Percent multiplies each formant; Hz and mel add a fixed amount. Audapter calls these bRatioShift and bMelShift.' },
@@ -39,7 +42,7 @@
           { path: 'shift.formant.painted', kind: 'painter', show: s => s.shift.formant.field === 'painted', desc: 'Paint shift vectors onto the F1–F2 plane (pertAmp2D/pertPhi2D, 257 × 257 cells of 19.5 Hz).' },
         ] },
       { id: 'pitch', title: 'Pitch', on: 'shift.pitch.on', blurb: 'Raise or lower the voice pitch (F0).',
-        summary: s => `${PG.fmt.signed(s.shift.pitch.semitones, 1)} st, ${s.shift.pitch.method === 'pvoc' ? 'phase vocoder' : 'time domain'}`,
+        summary: s => ext(s) ? pcfSum(s, 'pitch') : `${PG.fmt.signed(s.shift.pitch.semitones, 1)} st, ${s.shift.pitch.method === 'pvoc' ? 'phase vocoder' : 'time domain'}`,
         controls: [
           { path: 'shift.pitch.semitones', label: 'Shift', kind: 'range', range: [-12, 12, 0.5, 'st'], sweep: true, desc: '100 cents per semitone; +12 is an octave up.' },
           { path: 'shift.pitch.method', label: 'Method', kind: 'seg', options: [['pvoc', 'Phase vocoder'], ['tds', 'Time domain']],
@@ -53,11 +56,11 @@
           { path: 'shift.pitch.ramp', label: 'Onset ramp', kind: 'number', show: tdsOn, range: [0.001, 2, 0.01, 's'], desc: 'Time to reach the full shift when it is scheduled to start later.' },
         ] },
       { id: 'loudness', title: 'Loudness', on: 'shift.loudness.on', blurb: 'Make the feedback louder or quieter while the perturbation is on.',
-        summary: s => PG.fmt.db(s.shift.loudness.db),
+        summary: s => ext(s) ? pcfSum(s, 'level') : PG.fmt.db(s.shift.loudness.db),
         controls: [{ path: 'shift.loudness.db', label: 'Level change', kind: 'range', range: [-20, 20, 0.5, 'dB'], sweep: true,
           desc: 'Applied at zero crossings through the PCF "intensity" column (gainPerturb).' }] },
       { id: 'timing', title: 'Timing', on: 'shift.timing.on', blurb: 'Slow the feedback down, then let it catch up (a phase-vocoder time warp). It starts at the "When" start time, at voice onset, or at trial start.',
-        summary: s => `×${s.shift.timing.rate1} for ${s.shift.timing.dur1} s`,
+        summary: s => ext(s) ? pcfSum(s, 'warp') : `×${s.shift.timing.rate1} for ${s.shift.timing.dur1} s`,
         controls: [
           { path: 'shift.timing.rate1', label: 'Slow-down rate', kind: 'range', range: [0.1, 1, 0.05, '×'], sweep: true, desc: '0.5 plays the feedback at half speed during the slow-down.' },
           { path: 'shift.timing.dur1', label: 'Slow-down length', kind: 'number', range: [0.01, 1, 0.01, 's'], desc: 'How long the feedback is slowed.' },

@@ -42,7 +42,7 @@ settings:
   - "fb 1 in these runs so formants can be measured on the audio; the experiment runs fb 3 with the bundled babble at 0.02, which does not change the field lookup."
   - "Field centre (calc_pertField, default corner means): see settings.json; grids after init: <code>pertf1</code> 200–1500, <code>pertf2</code> 500–3500 (Hz) while <code>F1Min..F2Max</code> and the formants are in mel."
   playground: false
-  playground_why: "the Playground's vowel-variability field is always wired correctly, so it cannot reproduce the committed runner; its inward field at 50 % is what the design intends."
+  playground_why: "a settings link would load the Playground's own vowel-variability field, which is wired correctly (its inward field at 50 % is what the design intends); the test case replays the committed runner exactly."
 figure_caption: >-
   F1–F2 vowel space (F2 high to low, left to right). Grey dots: produced vowels; +: the field centre. Expected: the intended
   shift, 50 % toward the centre. Observed: the shift Audapter applied with the committed wiring (from the logged
