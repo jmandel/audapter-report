@@ -1,60 +1,112 @@
-# Full finding card FMT-F1 (alias I-08). Figure-only: memory finding. Rendered by build.py; see PLAN.md section 3.
+# Full finding card FMT-F1. Sections follow the fixed template (build.py REQUIRED).
 id: FMT-F1
 log: FMT-F1
-notes: "notes/formant.md#f1"
-headline: "A 100-frame clamp trajectory is read as 2048 frames: after 0.2 s the formant clamp follows whatever lies next in memory"
+notes: notes/formant.md#f1
+headline: >-
+  A clamp trajectory shorter than 2048 values is read as 2048: after it ends, the formant clamp follows whatever lies next in memory
 severity: high
 origin: blab
-origin_note: "The clamp (bClampFormants, clamp_f1/clamp_f2) is blab-only, added for the taimComp experiment in commit 2856c26 (PR #7), with the length fixed at 2048 (Audapter.cpp:1162, 1172). The same pattern, a fixed read length whatever MATLAB passes (interface finding I-08), also applies to the 1D field arrays pertF2/pertAmp/pertPhi, which are upstream code: the same export on build-upstream reads a 10-element pertAmp as 257 values too (see the numbers table)."
-status: [H]
-effect:
-  setup: >
-    <code>bShift = 1</code>, <code>bClampFormants = 1</code>, <code>clamp_osts = [0 5]</code> (no OST, so state 0 throughout),
-    <code>clamp_f1 = 700*ones(1,100)</code>, <code>clamp_f2 = 1500*ones(1,100)</code>: a 0.2 s trajectory, shorter than the 2048 that
-    <code>getAudapterDefaultParams</code> allocates. Set through <code>AudapterIO('init')</code>; input a 0.6 s synthetic /a/. The control is the same
-    trajectory padded with zeros to 2048, which is what the default parameters and the clamp's own "repeat the last value" rule assume.
-    Same as <code>t_mem.m SCEN=clamp_short</code>, plus a release build to see what reaches the filter and the log.
-  expected: "The clamp holds F1 at 700 Hz (the last value, repeated) for the whole trial, as in the padded control: logged sF1 700 Hz in all {ctl_n:.0f} frames; output peak {ctl_out_max:.3f}."
-  observed: "In this run, Audapter copies 2048 values, {n_past} of them from past the end of MATLAB's array. The clamp follows the 100 values, then walks on into heap contents until it meets a zero (element {first_zero} in this run) and holds element {held} (value {stuck} Hz in this run). Logged sF1 in this run: 700 Hz for {short_n_700} frames, then below 1 Hz for {short_n_tiny} frames. With F1 pushed to 0 Hz the formant filter blows up: output peak {short_out_max:.0f} in this run, {gain_db:.0f} dB above the control. These heap values are not reproducible: they change between runs and between machines (a fresh clone gave a different F2 value, output level and held value), so every number after the 100th element describes this run only."
-  matters: >
-    Any experiment that sets a clamp trajectory shorter than 2048 values gets heap contents as formant targets after the trajectory ends, instead of
-    the last value repeated. What happens depends on what lies in memory, which changes with the MATLAB session's allocation history; the copied values
-    are arbitrary doubles (the numbers table shows the range for the 1D field case). In our runs F1 went to about 0 Hz and the output peak was hundreds to
-    thousands of times the input's. On a real rig, output that large clips at the sound card, so the participant hears a loud distorted burst. The logged <code>sfmts</code> record the garbage targets, so affected
-    trials can be found afterwards: look for sF1 below 1 Hz or far above the vowel range during the clamp states. Passing <code>[]</code> hands a NULL pointer to the copy loop.
-  numbers:
-    - ["Values passed / values copied by setGetParam", "{n_passed_t} / {n_read_t}"]
-    - ["First zero after the passed values (this run)", "element {first_zero}"]
-    - ["Logged sF1, control (padded): frames at 700 Hz", "{ctl_n:.0f}"]
-    - ["Logged sF1 in this run, 100 values: frames at 700 Hz / below 1 Hz / above 8 kHz", "{short_n_700} / {short_n_tiny} / {short_n_huge}"]
-    - ["Output peak in this run: control / 100 values (input peak {in_peak:.2f})", "{ctl_out_max:.3f} / {short_out_max:.0f}"]
-    - ["Output peak over {hist_n} runs of the script (first zero at element {hist_fz})", "{hist_min:.0f} to {hist_max:.0f}"]
-    - ["1D field (I-08), this run: 10-element pertAmp, values copied / nonzero past element 10 / largest", "{pert_n_read} / {pert_amp_nonzero_beyond} / {pert_amp_beyond_max:.2g}"]
-    - ["Same on upstream 2.1.5, this run: nonzero past element 10", "{up_pert_nonzero}"]
+status:
+- H
+what: >-
+  The setters for <code>clampf1</code>/<code>clampf2</code> copy 2048 values whatever length MATLAB passes, so a shorter trajectory is followed by memory contents.
+  The clamp runs on into those values until it meets a zero. The 1D-field arrays behave the same way with 257 values.
+scope: >-
+  Affects clamped-formant experiments whose trajectories are shorter than 2048 values; the default parameters pad to 2048 and are safe. The values read past the array
+  vary from run to run and between machines, so the effect ranges from harmless to a formant pushed to 0 Hz.
+example: >-
+  A 100-value trajectory at 700 Hz on a vowel. Audapter copies 2048 values, {n_past} of them from past MATLAB's array. In this run the clamp followed the 100 values,
+  then memory values until the first zero at element {first_zero}, and held a target of {stuck} Hz: F1 pushed to 0 Hz, and the output peaked at {short_out_max:.0f}
+  times full scale, {gain_db:.0f} dB above the padded control.
+figure_caption: >-
+  The array MATLAB passed and the part Audapter reads; below, one trial's logged F1 target. Values past element 100 are from this run and change between runs.
+table:
+- - synthetic
+  - Values passed / values copied
+  - '{n_passed_t} / {n_read_t}'
+- - synthetic
+  - 'Logged F1 target: frames at 700 Hz / below 1 Hz, this run'
+  - '{short_n_700} / {short_n_tiny}'
+- - synthetic
+  - 'Output peak: padded control / 100 values, this run'
+  - '{ctl_out_max:.3f} / {short_out_max:.0f}'
+- - synthetic
+  - Output peak over {hist_n} runs
+  - '{hist_min:.0f} to {hist_max:.0f}'
+- - synthetic
+  - '1D field: 10-value pertAmp, nonzero values read past element 10, this run'
+  - '{pert_amp_nonzero_beyond}'
 sketch: fmt_f1
 asset_dir: fmt-f1
 audio: []
-audio_note: "No recordings: what the clamp reads past the array is heap memory, which differs between machines, MATLAB versions and even runs, so any clip would be one arbitrary instance. The output peaks in the table show how far it can go."
+audio_note: >-
+  No recordings: the values read past the array vary between runs and machines, so any clip would be one arbitrary instance.
 cause:
-  summary: >
-    <code>setGetParam</code> sets the copy length for <code>clampf1</code>/<code>clampf2</code> to <code>maxNClampFrames</code> (2048) whatever
-    <code>nPars</code> MATLAB passed (the comment explains that <code>min(nPars, max)</code> broke <code>getParam</code>, which calls with
-    <code>nPars = 0</code>), and the zero-fill of the remainder is commented out. The generic double-array copy then reads 2048 values from the
-    MATLAB array. In <code>handleBuffer</code> the clamp advances while the next value is nonzero, so it walks on through whatever was copied.
+  summary: >-
+    In set mode, <code>setGetParam</code> uses <code>maxNClampFrames</code> (2048) as the copy length for the clamp arrays whatever length MATLAB passed. The zero-fill
+    of the rest is commented out. The 1D-field arrays use a fixed 257.
   refs:
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1154, 1164], hl: [1161, 1162], expect: "len = maxNClampFrames;", note: "The length is forced to 2048 for set and get alike; clampf2 does the same at 1172."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1212, 1225], hl: [1214, 1221, 1222, 1223], expect: "*((dtype *)ptr + i) = static_cast<dtype>(*((dtype *)value + i));", note: "The copy loop reads len values from MATLAB's array; ASan flags line 1214. The zero-fill for clamp arrays is commented out."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1814, 1823], hl: [1818], expect: "p.clamp_f1[clampIx+1] != 0", note: "The clamp moves on while the next value is nonzero, so it runs through the copied heap values until it meets a zero."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [934, 945], hl: [936, 940, 944], expect: "len = pfNPoints;", note: "I-08: the 1D field arrays also use a fixed length (257), in blab and upstream."}
-  upstream_refs:
-    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [891, 901], expect: "len = pfNPoints;"}
-  fix: >
-    In set mode use <code>len = min(nPars, maxNClampFrames)</code> and zero the rest (and keep <code>len = maxNClampFrames</code> for get);
-    better, reject any array whose length is not what the parameter expects (2048, 257, 257×257), including matrices passed to 1D parameters
-    (mexLibrary.cpp:269–272 currently accepts them) and <code>[]</code>.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 1154
+    - 1164
+    hl:
+    - 1161
+    - 1162
+    expect: len = maxNClampFrames;
+    note: The length is forced to 2048 for set and get alike; clampf2 does the same at 1172.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 1212
+    - 1225
+    hl:
+    - 1214
+    - 1221
+    - 1222
+    - 1223
+    expect: '*((dtype *)ptr + i) = static_cast<dtype>(*((dtype *)value + i));'
+    note: >-
+      The copy loop reads len values from MATLAB's array; ASan flags line 1214. The zero-fill for clamp arrays is commented out.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 1814
+    - 1823
+    hl:
+    - 1818
+    expect: p.clamp_f1[clampIx+1] != 0
+    note: >-
+      The clamp moves on while the next value is nonzero, so it runs through the copied heap values until it meets a zero.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 934
+    - 945
+    hl:
+    - 936
+    - 940
+    - 944
+    expect: len = pfNPoints;
+    note: The 1D field arrays are copied with a fixed length of 257 as well.
+  fix: >-
+    In set mode copy <code>min(nPars, max)</code> values and zero the rest; better, reject arrays of the wrong length. Workaround: always pad clamp trajectories to
+    2048 values and field arrays to 257.
 verify:
-  - {kind: H, what: "ASan scenario", name: "t_mem.m SCEN=clamp_short", detail: "SUMMARY: AddressSanitizer: heap-buffer-overflow src/Audapter.cpp:1214 in Audapter::setGetParam"}
-  - {kind: H, what: "ASan scenario", name: "t_mem.m SCEN=pert_short", detail: "same line, 10-element 1D field arrays"}
-  - {kind: H, what: "report export: values copied, clamp trajectory, logged sF1, output peak; 1D field on both builds", name: "report_fmt_f1.m"}
-  - {kind: H, what: "report export under ASan", name: "report_fmt_f1.m build-asan", detail: "READ of size 8 at Audapter.cpp:1214, 0 bytes after an 800-byte region (100 doubles)"}
-reproduce: "cd audit/harness && SCEN=clamp_short ./run-oct.sh t_mem.m build-asan"
+- kind: H
+  what: ASan scenario
+  name: t_mem.m SCEN=clamp_short
+  detail: 'SUMMARY: AddressSanitizer: heap-buffer-overflow src/Audapter.cpp:1214 in Audapter::setGetParam'
+- kind: H
+  what: ASan scenario
+  name: t_mem.m SCEN=pert_short
+  detail: same line, 10-element 1D field arrays
+- kind: H
+  what: 'report export: values copied, clamp trajectory, logged sF1, output peak; 1D field on both builds'
+  name: report_fmt_f1.m
+- kind: H
+  what: report export under ASan
+  name: report_fmt_f1.m build-asan
+  detail: READ of size 8 at Audapter.cpp:1214, 0 bytes after an 800-byte region (100 doubles)
+reproduce: cd audit/harness && SCEN=clamp_short ./run-oct.sh t_mem.m build-asan

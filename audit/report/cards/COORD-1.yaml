@@ -1,53 +1,112 @@
-# Full finding card COORD-1 (stale OST/PCF across init).
+# Full finding card COORD-1. Sections follow the fixed template (build.py REQUIRED).
 id: COORD-1
 log: COORD-1
-notes: "FINDINGS-LOG.md"
-headline: "A PCF loaded for one experiment stays loaded through AudapterIO('init') and silently switches off a later field-mode formant shift"
+notes: FINDINGS-LOG.md
+headline: >-
+  A PCF loaded for one experiment stays loaded through AudapterIO('init') and silently switches off a later field-mode formant shift
 severity: med
 origin: upstream
-origin_note: "Upstream 2.1.5 has the same override (Audapter.cpp:1666 and 1678 there) and the same AudapterIO('init') without a PCF reset."
-status: [H]
-effect:
-  setup: >
-    One MATLAB session, as in a lab that runs several experiments in a row. First a perturbation-field experiment (1D field, F1 +20 %, no OST or PCF) in a fresh session.
-    Then an experiment that loads an OST and a PCF (Audapter's own <code>example_data/pitch_pert.pcf</code>, a pitch perturbation with no formant rows). Then the same
-    field experiment again, set up with <code>AudapterIO('init')</code> as usual, without clearing the OST/PCF.
-  expected: "The second run of the field experiment shifts F1 exactly as the first: {fresh} frames, heard F1 {F1_in:.0f} → {F1_fresh:.0f} Hz."
-  observed: "It shifts {after} frames. The heard F1 stays at {F1_after:.0f} Hz, the logged sfmts are empty, and nothing warns."
-  matters: >
-    The field parameters are all set correctly and <code>data.params</code> records them, so the data claim a perturbation that was never delivered. It hits any lab
-    that runs a PCF-based experiment (pitch, OST-timed formant, time warp) and a field-based one in the same MATLAB session without <code>clear Audapter</code>. Because the
-    PCF's formant rows are what now decides, a PCF <em>with</em> formant rows would instead apply its own shifts in place of the field's.
-  numbers:
-    - ["Shifted frames: fresh session / after the PCF experiment", "{fresh} / {after}"]
-    - ["Heard F1 (independent LPC): input / fresh / after", "{F1_in:.0f} / {F1_fresh:.0f} / {F1_after:.0f} Hz"]
+status:
+- H
+what: >-
+  Loading an OST/PCF pair makes Audapter take its formant perturbation from the PCF instead of from the perturbation-field parameters. <code>AudapterIO('init')</code>
+  sets every parameter but does not unload the OST/PCF. A field-mode experiment run later in the same MATLAB session is then driven by the leftover PCF.
+scope: >-
+  Affects any session that runs a PCF-based experiment (pitch shift, OST-timed formant shift, time warp) and later a field-mode formant experiment without <code>clear
+  Audapter</code> or <code>Audapter('pcf', '', 0)</code>. With a PCF whose formant rows are zero, the field shift disappears; with non-zero rows, the PCF's shifts
+  replace the field's. The logged parameters still show the field settings.
+example: >-
+  A field experiment raises F1 by 20 % on a vowel. In a fresh session it shifts {fresh} frames and the heard F1 goes from {F1_in:.0f} to {F1_fresh:.0f} Hz. Run after
+  a pitch experiment with Audapter's <code>example_data/pitch_pert.pcf</code> and <code>AudapterIO('init')</code>, it shifts {after} frames and the heard F1 stays
+  at {F1_after:.0f} Hz. No warning is printed.
+figure_caption: >-
+  Session 1 runs the PCF experiment, then AudapterIO('init'), then the field experiment, on one time axis. Session 2 runs the field experiment in a fresh session,
+  drawn under it.
+table:
+- - synthetic
+  - 'Frames shifted: fresh session / after the PCF experiment'
+  - '{fresh} / {after}'
+- - synthetic
+  - 'Heard F1: input / fresh / after'
+  - '{F1_in:.0f} / {F1_fresh:.0f} / {F1_after:.0f} Hz'
+- - real speech
+  - 'Frames shifted on a sentence: fresh / after'
+  - '{r_fresh} / {r_after}'
 sketch: coord1
 asset_dir: coord-1
 audio:
-  - {file: input.wav, role: input}
-  - {file: output_fresh.wav, role: expected}
-  - {file: output_after_pcf.wav, role: observed}
+- file: input.wav
+  role: input
+  label: 'Input: a vowel'
+- file: output_fresh.wav
+  role: expected
+  label: 'Field experiment in a fresh session: F1 +20 %'
+- file: output_after_pcf.wav
+  role: observed
+  label: 'The same experiment after a PCF experiment: unshifted'
 real:
   dir: coord-1
-  text: >
-    On a real sentence (ARCTIC, "I had faith in them.") the same sequence gives {fresh} shifted frames in a fresh session and {after} after the PCF experiment.
   clips:
-    - {file: input.wav, role: input, label: "Input, \"I had faith in them.\"", sources: [arctic_bdl_a0030]}
-    - {file: output_fresh.wav, role: expected, label: "Field experiment, fresh session (F1 +20 %)", sources: [arctic_bdl_a0030]}
-    - {file: output_after_pcf.wav, role: observed, label: "Same experiment after a PCF experiment (unshifted)", sources: [arctic_bdl_a0030]}
+  - file: input.wav
+    role: input
+    label: Input, "I had faith in them."
+    sources:
+    - arctic_bdl_a0030
+  - file: output_fresh.wav
+    role: expected
+    label: Field experiment, fresh session (F1 +20 %)
+    sources:
+    - arctic_bdl_a0030
+  - file: output_after_pcf.wav
+    role: observed
+    label: Same experiment after a PCF experiment (unshifted)
+    sources:
+    - arctic_bdl_a0030
 cause:
-  summary: >
-    When a PCF is loaded (<code>pertCfg.n &gt; 0</code>), the formant branch takes both the on/off decision and the amplitude and phase from the PCF row of the current OST
-    state instead of from the field parameters. <code>AudapterIO('init')</code> sets every parameter but never clears the OST or PCF; only
-    <code>Audapter('pcf', '', 0)</code> and <code>Audapter('ost', '', 0)</code> do.
+  summary: >-
+    With a PCF loaded (<code>pertCfg.n &gt; 0</code>), the formant branch takes the on/off decision, amplitude and phase from the PCF row of the current OST state.
+    Only <code>Audapter('pcf', '', 0)</code> unloads a PCF, and <code>AudapterIO('init')</code> never calls it.
   refs:
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1806, 1812], hl: [1811], expect: "during_trans = (pertCfg.fmtPertAmp[stat] != 0);", note: "With a PCF loaded, the PCF row decides whether to shift at all; pitch_pert.pcf's formant amplitude is 0, so never."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1838, 1843], hl: [1840, 1841, 1842], expect: "That using ost and pcf files overrides the perturbation field", note: "...and supplies amplitude and phase, as the comment intends for OST/PCF experiments."}
-    - {repo: blab-matlab, path: mcode/AudapterIO.m, lines: [427, 434], hl: [429], expect: "Audapter(9, params);", note: "Only this action loads or clears a PCF; the 'init' case (lines 8–415) never calls it."}
-  upstream_refs:
-    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [1666, 1666], expect: "during_trans = (pertCfg.fmtPertAmp[stat] != 0);"}
-  fix: "Clear the OST and PCF in <code>AudapterIO('init')</code> (call <code>Audapter('ost', '', 0)</code> and <code>Audapter('pcf', '', 0)</code>) unless the caller asks to keep them, or at least warn when a PCF is loaded while field parameters are set. Until then, clear them explicitly, or <code>clear Audapter</code>, between experiments."
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 1806
+    - 1812
+    hl:
+    - 1811
+    expect: during_trans = (pertCfg.fmtPertAmp[stat] != 0);
+    note: >-
+      With a PCF loaded, the PCF row decides whether to shift at all; pitch_pert.pcf's formant amplitude is 0, so never.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 1838
+    - 1843
+    hl:
+    - 1840
+    - 1841
+    - 1842
+    expect: That using ost and pcf files overrides the perturbation field
+    note: '...and supplies amplitude and phase, as the comment intends for OST/PCF experiments.'
+  - repo: blab-matlab
+    path: mcode/AudapterIO.m
+    lines:
+    - 427
+    - 434
+    hl:
+    - 429
+    expect: Audapter(9, params);
+    note: Only this action loads or clears a PCF; the 'init' case (lines 8–415) never calls it.
+  fix: >-
+    Unload the OST and PCF in <code>AudapterIO('init')</code> unless the caller asks to keep them, or warn when a PCF is loaded while field parameters are set. Workaround:
+    call <code>Audapter('ost', '', 0)</code> and <code>Audapter('pcf', '', 0)</code>, or <code>clear Audapter</code>, between experiments.
 verify:
-  - {kind: H, what: "harness test (added to run-tests.sh)", name: "t_pcf_persist.m", detail: "FAIL as expected: shifted frames fresh 435, after an earlier PCF experiment 0"}
-  - {kind: H, what: "report export (synthetic and real speech)", name: "harness/oct/report_coord1.m", detail: "found during the fresh-clone reproduction: a full export produced no shift in its F6 section because earlier sections of the same script had loaded PCFs, a script-order effect that turned out to be this finding"}
-reproduce: "cd audit/harness && ./run-oct.sh t_pcf_persist.m"
+- kind: H
+  what: harness test (added to run-tests.sh)
+  name: t_pcf_persist.m
+  detail: 'FAIL as expected: shifted frames fresh 435, after an earlier PCF experiment 0'
+- kind: H
+  what: report export (synthetic and real speech)
+  name: harness/oct/report_coord1.m
+  detail: a vowel and a real sentence, fresh and after a PCF experiment
+reproduce: cd audit/harness && ./run-oct.sh t_pcf_persist.m

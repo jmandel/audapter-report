@@ -62,6 +62,28 @@ var AudPanels = (function () {
     iv(a, T1, cur);
     return svg(h, parts.join(''));
   }
+  // Session timeline: several trials laid end to end on one time axis. segs: [{ost, frameRate, t0, len, kind}] (t0, len in s);
+  // marks: [{t, text}] vertical rules (e.g. reset()). Empty stretches (a session that starts later) stay blank.
+  function session(segs, T, marks) {
+    var h = 26, parts = [], x = function (t) { return t / T * W; };
+    segs.forEach(function (g) {
+      var dt = 1 / g.frameRate, a = 0, cur = g.ost[0];
+      function iv(a, b, st) {
+        parts.push('<rect class="sk-' + g.kind + '" x="' + (x(g.t0 + a) + 1) + '" y="2" width="' + Math.max(x(g.t0 + b) - x(g.t0 + a) - 2, 1) + '" height="' + (h - 4) + '" rx="2"/>');
+        if (x(g.t0 + b) - x(g.t0 + a) > 56) parts.push('<text class="sk-in' + (g.kind === 'observed' ? ' sk-in-observed' : '') + '" x="' + ((x(g.t0 + a) + x(g.t0 + b)) / 2) + '" y="' + (h / 2 + 4) + '" text-anchor="middle">state ' + st + '</text>');
+      }
+      for (var i = 1; i < g.ost.length && i * dt < g.len; i++) if (g.ost[i] !== cur) { iv(a, i * dt, cur); a = i * dt; cur = g.ost[i]; }
+      iv(a, g.len, cur);
+    });
+    (marks || []).forEach(function (m) { parts.push('<line class="sk-event" x1="' + x(m.t) + '" x2="' + x(m.t) + '" y1="0" y2="' + h + '"/>'); });
+    return svg(h, '<rect class="sk-frame" x="0" y="0" width="' + W + '" height="' + h + '"/>' + parts.join(''));
+  }
+  function saxis(T, step, label) {    // tick row for a session timeline
+    var h = 30, parts = [];
+    for (var t = 0; t <= T + 1e-9; t += step) parts.push('<text class="sk-tick" x="' + Math.min(Math.max(t / T * W, 8), W - 8) + '" y="12" text-anchor="middle">' + (+t.toFixed(2)) + '</text>');
+    parts.push('<text class="sk-axlab" x="' + W + '" y="27" text-anchor="end">' + label + '</text>');
+    return svg(h, parts.join(''));
+  }
   function bars(on, kind, T1, dt, label) {       // boolean runs (e.g. "noise present", "shift applied")
     var h = 26, parts = [], a = null, x = function (t) { return t / T1 * W; };
     for (var i = 0; i <= on.length; i++) {
@@ -102,7 +124,7 @@ var AudPanels = (function () {
         try {
           var t0 = performance.now();
           var html = await registry[id]({ instance: instance, data: function () { return data(id); }, status: function (s) { status.textContent = s; },
-            states: states, bars: bars, line: line, row: row, play: play, variants: (panel.dataset.variants || '').split(' ') });
+            states: states, bars: bars, session: session, saxis: saxis, line: line, row: row, play: play, variants: (panel.dataset.variants || '').split(' ') });
           out.innerHTML = html;
           status.textContent = 'Ran in your browser in ' + Math.round(performance.now() - t0) + ' ms.';
           btn.textContent = 'Run again';

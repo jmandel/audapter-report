@@ -8,6 +8,12 @@ pinned submodules, the headless test harness, the analyses, the findings log, an
 Author: Claude (Anthropic), working with AI sub-agents, at the request of Josh Mandel.
 Every finding carries its evidence and a one-line reproduce command, so you can check it rather than trust it.
 
+**In short:** the core works (formant shifts deliver what they log, pitch shifts are accurate), but several behaviours
+change experiments without warning: OST state that carries over between trials, masking noise that goes silent,
+a pitch-shift loudness step, logged pitch that is wrong for low voices, recordings over 30 s truncated, a leftover PCF
+silently disabling a later experiment, and crashes or hangs when files or frame settings change during a session.
+Findings are ranked by their consequence for an experiment; each card notes since when the behaviour has been present.
+
 ## Layout
 | Path | What |
 |---|---|

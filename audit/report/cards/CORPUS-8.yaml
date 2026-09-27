@@ -1,50 +1,86 @@
-# Full finding card CORPUS-8 (pitch tracker and the default analysis window).
+# Full finding card CORPUS-8. Sections follow the fixed template (build.py REQUIRED).
 id: CORPUS-8
 log: CORPUS-8
-notes: "notes/corpus.md#corpus-8"
-headline: "With the default frame settings, Audapter's logged pitch is wrong for voices below about 140 Hz: the analysis window is too short to represent them"
+notes: notes/corpus.md#corpus-8
+headline: With the default frame settings, the logged pitch is wrong for voices below about 140 Hz
 severity: high
 origin: upstream
-origin_note: "Upstream 2.1.5 has the same tracker and defaults. Upstream's own time_domain_shift_demo.m uses frameLen 64 / nDelay 7, which avoids it."
-status: [H]
-effect:
-  setup: >
-    Time-domain pitch shifting on (<code>bTimeDomainShift = 1</code>, pitch bounds 70–300 Hz), which enables Audapter's cepstral pitch tracker; its estimate is logged as
-    <code>pitchHz</code> and centres the shifter's F0 band-pass filter. Synthetic vowels of known F0 from 85 to 250 Hz, each in a fresh process, with the default
-    <code>frameLen 32 / nDelay 5</code> (a 10 ms analysis window at 16 kHz) and with <code>frameLen 64 / nDelay 7</code> (28 ms).
-  expected: "Logged pitchHz follows the true F0."
-  observed: "With the default window, pitchHz is right from about {ok_from} Hz up, and wrong below: a 90 Hz voice is logged at {m90:.0f} Hz, 110 Hz at {m110:.0f} Hz, 130 Hz at {m130:.0f} Hz ({p90:.0f} % of frames within 5 % at 90 Hz). The errors are not clean octave jumps: the tracker returns whatever the window can represent. With frameLen 64 / nDelay 7 every F0 tested is right (at least {b_min:.0f} % of frames within 5 %)."
-  matters: >
-    Typical adult male voices sit at 85–130 Hz, exactly the failing range. The logged <code>pitchHz</code> and <code>shiftedPitchHz</code> are then not F0, and any analysis
-    of them (or of their ratio) is wrong; the time-domain shifter's band-pass is centred on the wrong frequency. On real speech the heard +1 st shift stayed close to target
-    (median 101–104 cents), so the main damage is to the logged data and to how the shift is computed. Nothing warns that the frame settings are too short for the voice.
-  numbers:
-    - ["Analysis window: default / longer", "{w32_ms:.0f} ms / {w64_ms:.0f} ms"]
-    - ["Logged pitchHz at true 90 / 110 / 130 Hz (default window)", "{m90:.0f} / {m110:.0f} / {m130:.0f} Hz"]
-    - ["Correct (≥ 70 % of frames within 5 %) from", "{ok_from} Hz (default window); every F0 tested with 64 / 7"]
+status:
+- H
+what: >-
+  With the time-domain pitch shifter on, Audapter tracks F0 and logs it as <code>pitchHz</code>. Its analysis window is frameLen × nDelay samples, 10 ms with the
+  defaults, which holds too few cycles of a low voice. Below about 140 Hz the tracker returns a higher, wrong value, and the shifter's F0 filter is centred on it.
+scope: >-
+  Affects time-domain pitch shifting with the default frameLen 32 / nDelay 5 for typical adult male voices (85–130 Hz) and some low female voices. <code>pitchHz</code>
+  and <code>shiftedPitchHz</code> are then not F0. The heard shift stayed close to target on real speech. With frameLen 64 / nDelay 7 (28 ms), as in Audapter's own
+  time-domain shift demo, it is correct.
+example: >-
+  Synthetic vowels of known F0, each in a fresh session. With the default window a 90 Hz voice is logged at {m90:.0f} Hz, 110 Hz at {m110:.0f} Hz and 130 Hz at {m130:.0f}
+  Hz; from {ok_from} Hz up the logged value is right. With frameLen 64 / nDelay 7 every F0 from 85 to 250 Hz is right.
+figure_caption: >-
+  Logged pitchHz against the true F0 of synthetic vowels, for the default and the longer window. Each point is one trial; the axis is F0, not time.
+table:
+- - synthetic
+  - Logged pitchHz at true 90 / 110 / 130 Hz, default window
+  - '{m90:.0f} / {m110:.0f} / {m130:.0f} Hz'
+- - synthetic
+  - Correct from (default window / 64 / 7)
+  - '{ok_from} Hz / all F0 tested (≥ {b_min:.0f} % of frames within 5 %)'
+- - real speech
+  - 'Frames within 5 % of F0, default window: men / women / children'
+  - '{r_r_m:.0f} / {r_r_f:.0f} / {r_r_c:.0f} %'
+- - real speech
+  - 'Same with frameLen 64 / nDelay 7: men / women'
+  - '{r_q_m:.0f} / {r_q_f:.0f} %'
 sketch: corpus8
 asset_dir: corpus-8
 audio: []
-audio_note: "No recordings for this card: the finding is about logged values, shown in the figure."
-cause:
-  summary: >
-    The tracker picks the strongest cepstral peak between <code>sr / pitchUpperBoundHz</code> and <code>sr / pitchLowerBoundHz</code>, but the cepstrum comes from the
-    formant tracker's analysis buffer, whose length is set by frameLen × nDelay. A pitch period longer than about half that window has too few cycles in it to produce a
-    cepstral peak, so for low voices the search returns a spurious peak at a higher quefrency.
-  refs:
-    - {repo: blab-mex, path: TransShiftMex/lpc_formant.cpp, lines: [678, 679], hl: [679], expect: "maxCepstralIndex", note: "The search range follows the pitch bounds, whatever the window can support."}
-    - {repo: blab-mex, path: TransShiftMex/lpc_formant.cpp, lines: [690, 697], hl: [697], expect: "smoothPitchTracker.track(indexMags)", note: "The strongest peak in that range becomes latestPitchHz, which is logged as pitchHz."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1896, 1899], hl: [1898], expect: "fmtTracker->getLatestPitchHz()", note: "The estimate centres the time-domain shifter's F0 band-pass filter."}
-  upstream_refs:
-    - {repo: upstream-mex, path: TransShiftMex/lpc_formant.cpp, lines: [678, 678], expect: "minCepstralIndex"}
-  fix: "Warn (or refuse) when 2 / pitchLowerBoundHz is longer than the analysis window, or size the cepstral analysis from the pitch bounds rather than from frameLen × nDelay. Until then, use frameLen 64 / nDelay 7 (as upstream's demo does) for low voices."
-verify:
-  - {kind: H, what: "synthetic F0 sweep (both configurations, fresh process each)", name: "harness/oct/report_corpus8.m", detail: "also harness/oct/a_pitchtrack.m (the coordinator's independent check)"}
-  - {kind: H, what: "real speech, 80 clips", name: "harness/oct/corpus_shift.m", detail: "tdsdef vs tdsdemo groups"}
-reproduce: "cd audit/harness && SCEN=\"32 5\" ./run-oct.sh report_corpus8.m"
+audio_note: 'No recordings for this card: the finding is about logged values, shown in the figure.'
 real:
   dir: corpus-8
   data: ../blab/data.json
-  text: >
-    On real speech from the corpus, with the default window only {r_m:.0f} % of frames of adult men (n = {n_m}) were within 5 % of a Praat reference, against {r_f:.0f} % for
-    adult women and {r_c:.0f} % for children. With frameLen 64 / nDelay 7 it was {q_m:.0f} % for men and {q_f:.0f} % for women.
+cause:
+  summary: >-
+    The tracker picks the strongest cepstral peak between the pitch bounds, but the cepstrum comes from the formant tracker's analysis buffer. A pitch period longer
+    than about half the window gives no cepstral peak, so the search returns a spurious one.
+  refs:
+  - repo: blab-mex
+    path: TransShiftMex/lpc_formant.cpp
+    lines:
+    - 678
+    - 679
+    hl:
+    - 679
+    expect: maxCepstralIndex
+    note: The search range follows the pitch bounds, whatever the window can support.
+  - repo: blab-mex
+    path: TransShiftMex/lpc_formant.cpp
+    lines:
+    - 690
+    - 697
+    hl:
+    - 697
+    expect: smoothPitchTracker.track(indexMags)
+    note: The strongest peak in that range becomes latestPitchHz, which is logged as pitchHz.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 1896
+    - 1899
+    hl:
+    - 1898
+    expect: fmtTracker->getLatestPitchHz()
+    note: The estimate centres the time-domain shifter's F0 band-pass filter.
+  fix: >-
+    Warn when 2 / pitchLowerBoundHz is longer than the analysis window, or size the pitch analysis from the pitch bounds. Workaround: use frameLen 64 / nDelay 7 for
+    low voices.
+verify:
+- kind: H
+  what: synthetic F0 sweep (both configurations, fresh process each)
+  name: harness/oct/report_corpus8.m
+  detail: and an independent check, harness/oct/a_pitchtrack.m
+- kind: H
+  what: real speech, 80 clips
+  name: harness/oct/corpus_shift.m
+  detail: tdsdef vs tdsdemo groups
+reproduce: cd audit/harness && SCEN="32 5" ./run-oct.sh report_corpus8.m

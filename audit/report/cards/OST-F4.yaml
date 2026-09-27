@@ -1,62 +1,99 @@
-# Full finding card OST-F4 (figure-only). Rendered by build.py; see PLAN.md section 3 for the fields.
-# Note: setup/matters are raw HTML (not templated); expected/observed/numbers are templated and escaped.
+# Full finding card OST-F4. Sections follow the fixed template (build.py REQUIRED).
 id: OST-F4
 log: OST-F4
-notes: "notes/ost-pcf.md#f4"
-headline: "A PCF with fewer rows than the OST has states makes Audapter read past the end of its arrays on every frame, and heap contents decide whether formants are shifted"
+notes: notes/ost-pcf.md#f4
+headline: >-
+  A PCF with fewer rows than the OST has states makes Audapter read past its arrays, and memory contents decide whether formants are shifted
 severity: high
 origin: upstream
-origin_note: "Inherited from upstream 2.1.5: the same unchecked fmtPertAmp[stat] / fmtPertPhi[stat] reads are at upstream Audapter.cpp:1666 and 1678-1679. Found by reading and confirmed under AddressSanitizer on the blab build."
-status: [H, D]
-effect:
-  setup: >
-    OST with five states: <code>0 INTENSITY_RISE_HOLD 0.01 0.02</code> → <code>2 ELAPSED_TIME 0.25</code> → <code>3 INTENSITY_FALL 0.01 0.02</code>
-    → <code>4 OST_END</code>, i.e. "raise F1 for 250 ms after vowel onset". The PCF has three rows (states 0–2, F1 +30 % in state 2), because
-    only state 2 is perturbed. Nothing in the file format or the loader says this is wrong: the PCF parser never sees the OST.
-    <code>bShift = 1</code>, a synthetic /a/ from 0.10 to 0.90 s.
-  expected: "Either the PCF is rejected at load for having fewer rows than the OST has states, or states {pcf_n} and later are treated as unperturbed."
-  observed: >
-    From {oob_first_s:.3f} s (state {pcf_n}) to the end of the trial, {oob_frames} of {frames} frames ({oob_pct:.0f} %) index fmtPertAmp[stat] past the
-    end of its {alloc_bytes}-byte array, and fmtPertPhi[stat] too whenever the value read is nonzero. AddressSanitizer stops at the first read: "{asan[summary]}";
-    "{asan[located]}". Without the sanitizer nothing is reported. In this Linux run {shift_frames_oob} frames were logged as F1-shifted in states {pcf_n}–{last_state}
-    (against {shift_frames_state2} in state 2); that count reflects whatever bytes followed the array here, and a nonzero value turns the formant shifter on with an arbitrary amplitude and phase.
-  matters: >
-    The value read decides three things: whether the formant shifter runs at all (<code>during_trans</code>), and its amplitude and phase
-    (<code>mamp</code>, <code>mphi</code>). What lies after a small heap block depends on the allocator, the build and what else was allocated,
-    so the same OST/PCF pair can behave differently between machines, MATLAB sessions or Audapter versions, with no error. The standalone
-    driver listed under "How we know" read a nonzero value (formant shifter on) and an absurd phase on the glibc heap. Pitch and intensity are
-    guarded (<code>stat &lt; pertCfg.n</code>), so they are not affected in the same way.
-  numbers:
-    - ["OST states / PCF rows", "{n_states} / {pcf_n}"]
-    - ["Array allocated / highest byte offset read", "{alloc_bytes} / {oob_bytes_max} bytes"]
-    - ["Onset of states 3 / 4", "{state3_s:.3f} / {state4_s:.3f} s"]
-    - ["Frames reading past the end", "{oob_frames} of {frames} ({oob_pct:.0f} %)"]
-    - ["Frames with F1 shifted in state 2 / in states {pcf_n}–{last_state} (this run)", "{shift_frames_state2} / {shift_frames_oob}"]
-    - ["ASan: access", "{asan[read]} in {asan[frame0]}"]
-    - ["ASan: allocation", "{asan[alloc]}"]
+status:
+- H
+- D
+what: >-
+  The formant path indexes the PCF's amplitude and phase arrays with the current OST state without checking the PCF's length. In OST states beyond the PCF's last
+  row, it reads whatever lies after the arrays in memory, and that value decides whether and how much to shift.
+scope: >-
+  Affects OST/PCF pairs where the PCF has fewer rows than the OST has states, which the file format allows and the loader does not check, for example a PCF written
+  only up to the last perturbed state. Pitch and intensity shifts check the length and are not affected. What happens depends on memory contents, which differ between
+  machines and sessions.
+example: >-
+  An OST with states 0–4 and a 3-row PCF that raises F1 in state 2. From {state3_s:.2f} s, in states 3 and 4, every frame ({oob_frames} of {frames}) reads past the
+  12-byte arrays; AddressSanitizer stops at the first read. In this Linux run the bytes read were zero, so no extra frames were shifted; on another machine they need
+  not be.
+figure_caption: >-
+  The array Audapter allocated and the entries it reads; below, one trial's OST states and which frames read out of bounds.
+table:
+- - synthetic
+  - Frames reading past the arrays
+  - '{oob_frames} of {frames} ({oob_pct:.0f} %), from {state3_s:.2f} s'
+- - synthetic
+  - Allocated / largest index read
+  - '{alloc_bytes} bytes (3 entries) / state {last_state}'
+- - synthetic
+  - Shifted frames outside state 2, this run
+  - '{shift_frames_oob}'
 sketch: ost_f4
 asset_dir: ost-f4
 audio: []
-audio_note: >
-  No recordings for this card. What Audapter does here depends on whatever bytes follow a small block on the heap, which differs
-  between allocators, builds and sessions (the Windows heap in particular is laid out differently from our Linux one), so any recording would be
-  one arbitrary instance rather than what your rig does. The sanitizer report and the state timeline are the reproducible part.
+audio_note: 'No recordings: the effect depends on memory contents, so any clip would be one arbitrary instance.'
 cause:
-  summary: >
-    <code>PERT_CFG::readFromFile</code> allocates <code>fmtPertAmp</code> and <code>fmtPertPhi</code> with exactly as many entries as the PCF has rows.
-    <code>handleBuffer</code> then indexes both with the current OST state and checks only that the PCF is non-empty. The pitch and intensity paths
-    in the same function do check <code>stat &lt; pertCfg.n</code>; the formant path does not.
+  summary: >-
+    <code>PERT_CFG::readFromFile</code> allocates one entry per PCF row. <code>handleBuffer</code> indexes the formant arrays with the OST state and checks only that
+    the PCF is not empty.
   refs:
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1806, 1812], hl: [1811], expect: "during_trans = (pertCfg.fmtPertAmp[stat] != 0);", note: "Runs on every frame with <code>bShift</code> on; this is the line AddressSanitizer reports."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1840, 1843], hl: [1841, 1842], expect: "mamp = pertCfg.fmtPertAmp[stat];", note: "When the value read is nonzero, amplitude and phase are read out of bounds as well."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1970, 1974], hl: [1971], expect: "if (stat < pertCfg.n) {", note: "For comparison: the pitch/intensity path has the bounds check."}
-    - {repo: blab-mex, path: TransShiftMex/pcf.cpp, lines: [431, 438], hl: [431, 435], expect: "fmtPertAmp = (float *)calloc(n, sizeof(float))", note: "Sized by the PCF row count only."}
-  upstream_refs:
-    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [1666, 1666], expect: "fmtPertAmp[stat] != 0"}
-    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [1678, 1679], expect: "fmtPertAmp[stat]"}
-  fix: "Guard the formant path like the pitch path (<code>stat &lt; pertCfg.n</code>, otherwise no formant perturbation), and reject at load a PCF with fewer rows than the loaded OST has states (checked again when either file is reloaded)."
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 1806
+    - 1812
+    hl:
+    - 1811
+    expect: during_trans = (pertCfg.fmtPertAmp[stat] != 0);
+    note: Runs on every frame with <code>bShift</code> on; this is the line AddressSanitizer reports.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 1840
+    - 1843
+    hl:
+    - 1841
+    - 1842
+    expect: mamp = pertCfg.fmtPertAmp[stat];
+    note: When the value read is nonzero, amplitude and phase are read out of bounds as well.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 1970
+    - 1974
+    hl:
+    - 1971
+    expect: if (stat < pertCfg.n) {
+    note: 'For comparison: the pitch/intensity path has the bounds check.'
+  - repo: blab-mex
+    path: TransShiftMex/pcf.cpp
+    lines:
+    - 431
+    - 438
+    hl:
+    - 431
+    - 435
+    expect: fmtPertAmp = (float *)calloc(n, sizeof(float))
+    note: Sized by the PCF row count only.
+  fix: >-
+    Check <code>stat &lt; pertCfg.n</code> in the formant path, as the pitch path does, and reject at load a PCF with fewer rows than the OST has states. Workaround:
+    always write one PCF row per OST state.
 verify:
-  - {kind: H, what: "sanitizer scenario (build-asan)", name: "t_mem.m SCEN=pcf_short", detail: "heap-buffer-overflow READ at Audapter.cpp:1811, 0 bytes after an 8-byte region allocated at pcf.cpp:431"}
-  - {kind: H, what: "report export (ASan run + timeline)", name: "report_ost_f4.m", detail: "run under build-asan first (log to out/report/ost-f4/asan.log), then on build-oct"}
-  - {kind: D, what: "standalone driver of pcf.cpp", name: "scratch/ost-pcf/t/drvp.cpp oob", detail: "PCF n = 5: fmtPertAmp[6] = 4.6e-44 (during_trans = 1), fmtPertPhi[8] = 4.3e18"}
-reproduce: "cd audit/harness && SCEN=pcf_short ./run-oct.sh t_mem.m build-asan"
+- kind: H
+  what: sanitizer scenario (build-asan)
+  name: t_mem.m SCEN=pcf_short
+  detail: >-
+    heap-buffer-overflow READ at Audapter.cpp:1811, 0 bytes after an 8-byte region allocated at pcf.cpp:431
+- kind: H
+  what: report export (ASan run + timeline)
+  name: report_ost_f4.m
+  detail: run under build-asan first (log to out/report/ost-f4/asan.log), then on build-oct
+- kind: D
+  what: standalone driver of pcf.cpp
+  name: scratch/ost-pcf/t/drvp.cpp oob
+  detail: 'PCF n = 5: fmtPertAmp[6] = 4.6e-44 (during_trans = 1), fmtPertPhi[8] = 4.3e18'
+reproduce: cd audit/harness && SCEN=pcf_short ./run-oct.sh t_mem.m build-asan

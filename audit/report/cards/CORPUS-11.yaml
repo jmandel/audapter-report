@@ -1,45 +1,89 @@
-# Full finding card CORPUS-11 (unbounded formant targets; real 2008 recording).
+# Full finding card CORPUS-11. Sections follow the fixed template (build.py REQUIRED).
 id: CORPUS-11
 log: CORPUS-11
-notes: "notes/corpus.md#corpus-11"
-headline: "Shifted formant targets have no upper bound: old mel-unit parameters under today's ratio default ask for F1 at up to 130 kHz, and the output is about 24 dB louder and clips"
+notes: notes/corpus.md#corpus-11
+headline: >-
+  Shifted formant targets have no upper bound, so a unit mix-up produces targets far above Nyquist and loud, clipped output
 severity: med
 origin: upstream
-origin_note: "Upstream 2.1.5 has the same unbounded arithmetic. The trigger comes from a default mismatch: MATLAB defaults are bRatioShift 1 / bMelShift 0, the C++ defaults 0 / 1."
-status: [H]
-effect:
-  setup: >
-    The 2008 trial <code>diao1_female</code> shipped with Audapter (a real recording, with the parameters of the original session, whose <code>pertAmp</code> is in mel units, up to
-    164, and which has no <code>bRatioShift</code> field). The saved parameters are merged into today's <code>getAudapterDefaultParams</code>, as a lab
-    reusing an old parameter file would, and replayed twice: under today's ratio default, and in mel mode as in 2008.
-  expected: "Mel mode, as in the original session: F1 × {mel_r:.3f} (the 2008 log says × {online_r:.3f})."
-  observed: "Ratio mode reads the same numbers as ratios: sfmts/fmts F1 = {ratio_r:.1f}, targets up to {ratio_max:.0f} Hz with a sampling rate of {sr} Hz, and the output is {ratio_gain:+.1f} dB louder than the input with peaks at {ratio_peak:.1f} × full scale."
-  matters: >
-    Nothing in Audapter checks that a shifted formant lies below the Nyquist frequency, so a unit mix-up that should raise an error produces a loud, distorted, clipped
-    signal at the participant's ears instead. The logged <code>sfmts</code> show absurd values, so affected sessions can be found afterwards, but nothing stops them
-    while running.
-  numbers:
-    - ["F1 ratio: mel mode / ratio mode / 2008 log", "{mel_r:.3f} / {ratio_r:.1f} / {online_r:.3f}"]
-    - ["Highest shifted F1 target (ratio mode)", "{ratio_max:.0f} Hz (Nyquist {nyq:.0f} Hz)"]
-    - ["Output re input (ratio mode)", "{ratio_gain:+.1f} dB, peak {ratio_peak:.2f} × full scale"]
+status:
+- H
+what: >-
+  Audapter does not limit a shifted formant to the range a filter can represent. If the perturbation amplitude is given in the wrong units, for example mel values
+  read as ratios, the target can be tens of kilohertz and the output becomes loud and distorted.
+scope: >-
+  Happens when an old parameter set in mel units (with no <code>bRatioShift</code> field) is merged into today's defaults, which are ratio shift, or with any mistaken
+  <code>pertAmp</code>. The C++ defaults (absolute, mel) and the MATLAB defaults (ratio) differ, which makes this easy. The logged <code>sfmts</code> show the absurd
+  targets afterwards.
+example: >-
+  Audapter's own 2008 example trial <code>diao1_female</code>, replayed with its saved parameters (mel-unit <code>pertAmp</code> up to 164) merged into today's defaults.
+  In mel mode, as in 2008, F1 is raised ×{mel_r:.3f}. Under today's ratio default F1 is multiplied by {ratio_r:.1f}, targets reach {ratio_max:.0f} Hz with a {nyq:.0f}
+  Hz Nyquist frequency, and the output is {ratio_gain:+.1f} dB louder than the input, peaking at {ratio_peak:.1f} times full scale.
+figure_caption: >-
+  One trial: tracked F1 and the shifted F1 target in mel mode and in ratio mode, on a log frequency axis.
+table:
+- - real recording
+  - 'F1 ratio: mel mode / ratio mode / the 2008 session''s log'
+  - '{mel_r:.3f} / {ratio_r:.1f} / {online_r:.3f}'
+- - real recording
+  - Highest F1 target, ratio mode
+  - '{ratio_max:.0f} Hz (Nyquist {nyq:.0f} Hz)'
+- - real recording
+  - Output re input, ratio mode
+  - '{ratio_gain:+.1f} dB, peak {ratio_peak:.2f} × full scale'
 sketch: corpus11
 asset_dir: corpus-11
 audio:
-  - {file: input.wav, role: input}
-  - {file: output_mel.wav, role: expected}
-  - {file: output_ratio.wav, role: observed}
-audio_note: "All clips share one playback gain, chosen so the loud ratio-mode clip peaks at −1 dBFS; the others are therefore quiet. Real recording from Audapter's example_data (diao1_female.mat, MIT licence, © 2006–2021 Audapter Authors), processed by Audapter for this report (modified). 12 kHz internal rate."
+- file: input.wav
+  role: input
+- file: output_mel.wav
+  role: expected
+- file: output_ratio.wav
+  role: observed
+audio_note: >-
+  All clips share one playback gain, chosen so the loud ratio-mode clip peaks at −1 dBFS; the others are therefore quiet. Real recording from Audapter's example_data
+  (diao1_female.mat, MIT licence, © 2006–2021 Audapter Authors), processed by Audapter for this report (modified). 12 kHz internal rate.
 cause:
-  summary: >
-    The shift is computed as <code>f1 × (1 + pertAmp·cos φ)</code> in ratio mode or <code>f1 + pertAmp·cos φ</code> otherwise, then converted to a filter angle.
-    Neither branch limits the result to (0, Nyquist). The mismatch between the MATLAB and C++ defaults turns an old mel-unit parameter set into a ratio of about 100.
+  summary: >-
+    The shift is <code>f1 × (1 + pertAmp·cos φ)</code> in ratio mode or <code>f1 + pertAmp·cos φ</code> otherwise, and is converted to a filter angle without checking
+    that it lies below Nyquist.
   refs:
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1855, 1872], hl: [1861, 1866, 1870], expect: "sf1m = f1m * (1 + mamp * cos(mphi));", note: "No bound on sf1m or sf2m before they become filter angles."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [336, 337], hl: [336, 337], expect: "p.bRatioShift", note: "C++ defaults: absolute (mel) shift."}
-    - {repo: blab-matlab, path: mcode/getAudapterDefaultParams.m, lines: [93, 94], hl: [93], expect: "p.bRatioShift   = 1;", note: "MATLAB defaults: ratio shift."}
-  upstream_refs:
-    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [1692, 1692], expect: "sf1m = f1m * (1 + mamp * cos(mphi));"}
-  fix: "Clamp or reject shifted targets outside (0, 0.45·sr); warn at load when ratio mode meets max|pertAmp| above about 2 (a sign of mel or Hz units)."
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 1855
+    - 1872
+    hl:
+    - 1861
+    - 1866
+    - 1870
+    expect: sf1m = f1m * (1 + mamp * cos(mphi));
+    note: No bound on sf1m or sf2m before they become filter angles.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 336
+    - 337
+    hl:
+    - 336
+    - 337
+    expect: p.bRatioShift
+    note: 'C++ defaults: absolute (mel) shift.'
+  - repo: blab-matlab
+    path: mcode/getAudapterDefaultParams.m
+    lines:
+    - 93
+    - 94
+    hl:
+    - 93
+    expect: p.bRatioShift   = 1;
+    note: 'MATLAB defaults: ratio shift.'
+  fix: >-
+    Clamp or reject targets outside (0, 0.45·sr), and warn at load when ratio mode meets |pertAmp| above about 2. Workaround: set <code>bRatioShift</code> and <code>bMelShift</code>
+    explicitly whenever old parameter files are reused.
 verify:
-  - {kind: H, what: "replay of the 2008 trial, both modes", name: "harness/oct/report_corpus11.m", detail: "also harness/oct/corpus_regress.m"}
-reproduce: "cd audit/harness && ./run-oct.sh report_corpus11.m"
+- kind: H
+  what: replay of the 2008 trial, both modes
+  name: harness/oct/report_corpus11.m
+  detail: and harness/oct/corpus_regress.m
+reproduce: cd audit/harness && ./run-oct.sh report_corpus11.m

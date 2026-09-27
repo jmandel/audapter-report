@@ -10,6 +10,7 @@ fs.mkdirSync(OUT, { recursive: true });
 const url = 'file://' + path.join(R, 'prototype', 'index.html');
 const browser = await chromium.launch({ executablePath: '/usr/bin/chromium', headless: true });
 const errs = [];
+const shot = async (el, p) => { if (!el) return; try { await el.screenshot({ path: p, animations: 'disabled', timeout: 60000 }); } catch (e) { console.log('shot failed', p, e.message.split('\n')[0]); } };
 async function open(opts) {
   const page = await browser.newPage(opts);
   page.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
@@ -29,15 +30,15 @@ for (const id of await p.$$eval('.interactive[data-widget]', e => e.map(x => x.d
   console.log('   ', (await p.$$eval(`${sel} .irow`, e => e.map(x => x.querySelector('.ilab').textContent + ': ' + x.querySelector('.ival').textContent))).join(' | '));
 }
 for (const id of await p.$$eval('article.card', e => e.map(x => x.id)))
-  await (await p.$(`article.card[id="${id}"]`)).screenshot({ path: path.join(OUT, `card-${id.toLowerCase()}.png`) });
+  await shot(await p.$(`article.card[id="${id}"]`), path.join(OUT, `card-${id.toLowerCase()}.png`));
 await p.screenshot({ path: path.join(OUT, 'top.png') });
-await (await p.$('#method')).screenshot({ path: path.join(OUT, 'method.png') });
+await shot(await p.$('#methods'), path.join(OUT, 'methods.png'));
 await p.pdf({ path: path.join(OUT, 'print.pdf') }).catch(e => console.log('pdf:', e.message));
 const m = await open({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
-const mc = await m.$('article.card'); if (mc) await mc.screenshot({ path: path.join(OUT, 'mobile-first-card.png') });
+const mc = await m.$('article.card'); await shot(mc, path.join(OUT, 'mobile-first-card.png'));
 await m.screenshot({ path: path.join(OUT, 'mobile-top.png') });
 const d = await open({ viewport: { width: 1280, height: 900 }, colorScheme: 'dark' });
-for (const f of (await d.$$('article.card .fig')).slice(0, 3)) await f.screenshot({ path: path.join(OUT, `dark-fig-${(await d.evaluate(e => e.closest('article').id, f)).toLowerCase()}.png`) });
+for (const f of (await d.$$('article.card .fig')).slice(0, 3)) await shot(f, path.join(OUT, `dark-fig-${(await d.evaluate(e => e.closest('article').id, f)).toLowerCase()}.png`));
 const pr = await open({ viewport: { width: 1280, height: 900 }, colorScheme: 'dark' });
 await pr.emulateMedia({ media: 'print' }); await pr.pdf({ path: path.join(OUT, 'print-from-dark.pdf') }).catch(e => errs.push('pdf: ' + e.message));
 console.log('errors:', errs.length ? errs.join('\n') : 'none');

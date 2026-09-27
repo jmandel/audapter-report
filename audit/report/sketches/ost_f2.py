@@ -2,33 +2,37 @@ from sketchlib import *
 
 
 def _lab(ivs):
-    return [(a, b, "state 3 · F1 +30 %" if l == "state 3" else l, k) for a, b, l, k in ivs]
+    return [(a, b, "state 3" if l == "state 3" else l, k) for a, b, l, k in ivs]
 
 
 def sketch(d, up):
-    t, T1 = d["t"], 1.4
-    s = Sketch("sk-ost-f2", 0, T1, "OST state timeline: maxIOI fallback and ELAPSED_TIME, intended vs three trials without reloading the OST")
-    s.envelope("Input", t, db(d["rms"]), -60, -10, marks=[(0.07, "soft /a/, below the onset threshold (same in every trial)")])
-    yc = s.intervals("OST state", _lab(state_ivs(t, d["stat_ctrl"], "expected", T1)), sub="intended timing")
+    t, TT = d["t"], 1.4                     # each trial is 1.4 s; three trials in one session
+    off = lambda k: [x + k * TT for x in t]
+    s = Sketch("sk-ost-f2", 0, 3 * TT, "One session with three trials and the OST loaded once, against the intended timing")
+    s.header("Session: OST loaded once, three trials with reset() between them")
+    s.lane([(k * TT, "reset()", "start") for k in (1, 2)])
+    y0 = s.y
+    s.envelope("Input", off(0) + off(1) + off(2), db(d["rms"]) * 3, -60, -10, h=30, marks=[(k * TT + 0.03, f"trial {k + 1}") for k in range(3)])
+    ys = s.intervals("OST state", sum([_lab(state_ivs(off(k), d[f"stat_{k + 1}"], "observed", (k + 1) * TT)) for k in range(3)], []))
+    sh = sum([[(a + k * TT, b + k * TT, "F1 +30 %", "observed") for a, b in runs(t, d[f"sF1_{k + 1}"], lambda v: v > 0)] for k in range(3)], [])
+    yf = s.intervals("F1 +30 % applied", sh)
+    for k in (1, 2):
+        s.event(k * TT, y0 - 20, yf + 30, "")
     c = d["ctrl_shift_on_s"]
-    y = yc
-    for k in (1, 2, 3):
-        s.gap(16)
-        y = s.intervals("OST state", _lab(state_ivs(t, d[f"stat_{k}"], "observed", T1)),
-                        sub="trial 1, OST loaded" if k == 1 else f"trial {k}, no reload")
-        o, s2 = d["shift_on_s"][k - 1], d["state2_s"][k - 1]
-        a, b = min(o, c), max(o, c)
-        if k == 1:
-            txt = f"F1 shift starts {c - o:.2f} s early: state 2 (ELAPSED_TIME {d['elapsed_s']:g} s) lasted {1000 * d['held_s'][0]:.0f} ms"
-        else:
-            txt = f"timeout at {s2:.2f} s instead of {d['state2_s'][0]:.2f} s; F1 shift starts {o - c:.2f} s late"
-        s.band(a, b, y, y + 30, txt, anchor="start", ty=y - 5)
-    s.guide(c, yc, y + 30)
-    s.axis([0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4])
-    return s.svg("Intended: state 2 at %.2f s (maxIOI timeout), state 3 and the F1 shift at %.2f s. Trial 1: state 2 at %.2f s but "
-                 "ELAPSED_TIME fires after %.3f s, so the shift starts at %.2f s. Trials 2 and 3 without reloading the OST: the "
-                 "timeout fires at %.2f s and %.2f s." % (d["ctrl_state2_s"], c, d["state2_s"][0], d["held_s"][0], d["shift_on_s"][0],
-                                                          d["state2_s"][1], d["state2_s"][2]))
+    for k in range(3):
+        s.guide(k * TT + d["ctrl_state2_s"], ys, ys + 30, dashed=True)
+        o = d["shift_on_s"][k]
+        s.band(k * TT + min(o, c), k * TT + max(o, c), yf, yf + 30, "")
+    s.lane([(k * TT + d["state2_s"][k], f"timeout at {d['state2_s'][k]:.2f} s", "start") for k in range(3)])
+    s.header("Intended timing, the same in every trial")
+    sc = runs(t, d["sF1_ctrl"], lambda v: v > 0)
+    s.intervals("OST state", sum([_lab(state_ivs(off(k), d["stat_ctrl"], "expected", (k + 1) * TT)) for k in range(3)], []))
+    s.intervals("F1 +30 % applied", [(a + k * TT, b + k * TT, "F1 +30 %", "expected") for k in range(3) for a, b in sc])
+    s.lane([(d["ctrl_state2_s"], f"timeout at {d['ctrl_state2_s']:.2f} s (dashed lines), shift from {c:.2f} s, in every trial", "start")])
+    s.axis([0, 0.7, 1.4, 2.1, 2.8, 3.5, 4.2], label="time in the session (s); trials start at 0, 1.4 and 2.8 s")
+    return s.svg("Intended: in every trial the timeout moves to state 2 at %.2f s and the F1 shift starts at %.2f s. With the OST loaded once, "
+                 "state 2 lasts %.0f ms instead of %.0f ms, and the timeout fires at %.2f, %.2f and %.2f s into trials 1, 2 and 3."
+                 % (d["ctrl_state2_s"], c, 1000 * d["held_s"][0], 1000 * (d["ctrl_state3_s"] - d["ctrl_state2_s"]), *d["state2_s"]))
 
 
 def derive(d, up):

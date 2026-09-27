@@ -9,11 +9,8 @@ def sketch(d, up):
     s.y = 24
     s.envelope("Input", t, d["env_in"], -60, -10, h=26, sub="a vowel every second")
     s.intervals("Trial", [(0, T1, f"{T1:.0f} s of speech and data", "expected")], h=26, sub="what was run")
-    y = s.intervals("getData returns", [(R0, T1, f"{d['returned_s']:.1f} s", "observed")], h=26, sub="blab b2.5")
+    y = s.intervals("getData returns", [(R0, T1, f"{d['returned_s']:.1f} s", "observed")], h=26, sub="after the trial")
     s.band(0, R0, y, y + 26, f"0–{R0:.0f} s not returned (signalIn, signalOut, ost_stat, fmts, …)", ty=y + 17)
-    if up:
-        yu = s.intervals("getData returns", [(up["returned_from_s"], T1, f"{up['returned_s']:.1f} s", "observed")], h=26, sub="upstream 2.1.5")
-        s.band(0, up["returned_from_s"], yu, yu + 26, f"upstream wraps every {up['wrap_s']:.1f} s", ty=yu + 17)
     s.gap(4)
     s.intervals("OST state", [(0, s1, "state 0", "expected"), (s1, s2, "state 1 (e.g. perturbation on)", "expected"), (s2, T1, "state 2", "expected")],
                 h=26, sub=f"ELAPSED_TIME {e1:g} s, {e2:g} s")
@@ -23,8 +20,7 @@ def sketch(d, up):
     post = state_ivs([d["stat_post_t0"] + i * sd for i in range(len(d["stat_post"]))], d["stat_post"], "observed", T1)
     yo = s.intervals("OST state", pre + post, h=26, sub="what Audapter did")
     s.band(s2, T1, yo, yo + 26, "", )
-    s.parts.append(f'<text class="sk-note" x="{s.x(W0) - 6:.1f}" y="{yo + 40}" text-anchor="end">state 2, due at {s2:g} s, never comes (checked to {d["ext_total_s"]:.0f} s)</text>')
-    s.gap(26)
+    s.lane([(W0, f"state 2, due at {s2:g} s, never comes (checked to {d['ext_total_s']:.0f} s)", "end")])
     yh = s.envelope("Heard", t, d["env_out"], -60, -10, h=34, cls="sk-output", sub=f"trialLen {d['trialLen']:g} s")
     s.band(d["trialLen"], T1, yh, yh + 34, f"not muted after trialLen ({d['trialLen']:g} s)", anchor="end", ty=yh - 4)
     s.guide(W0, 20, s.y - 8)
@@ -35,7 +31,7 @@ def sketch(d, up):
     # inset: heard output around the wrap (onset ramp restarts)
     z, t0, zdt = d["ramp_zoom"], d["ramp_zoom_t0"], d["ramp_zoom_dt"]
     zi = Sketch("sk-i-03-zoom", t0, t0 + len(z) * zdt, "Heard output around the recorder wrap")
-    y = zi.y; h = 60; zi.label(y, h, "Heard", f"{t0:.3f}–{t0 + len(z) * zdt:.3f} s"); zi.frame(y, h)
+    y = zi._row(); h = 60; zi.label(y, h, "Heard", f"{t0:.3f}–{t0 + len(z) * zdt:.3f} s"); zi.frame(y, h)
     pk = max(abs(v) for v in z) or 1
     pts = " L".join(f"{zi.x(t0 + i*zdt):.1f},{y + h/2 - v/pk*(h/2-3):.1f}" for i, v in enumerate(z))
     zi.parts.append(f'<path class="sk-line-wave" d="M{pts}"/>')

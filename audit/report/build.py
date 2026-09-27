@@ -81,7 +81,12 @@ def dedent(lines):
 
 # ----------------------------------------------------------------------------------------------- html
 SEV = {"high": ("High", "sev-high"), "med": ("Medium", "sev-med"), "low": ("Low", "sev-low")}
-ORIGIN = {"upstream": "Inherited from upstream", "blab": "Blab-only", "blab-amplified": "Blab-amplified", "blab-intended": "Blab change (intended?)", "both": "Blab and upstream"}
+# Where a behaviour comes from, kept low-key: a narrow "Since" column and one line at the end of each card's cause.
+SINCE = {"upstream": "≤ 2.1.5", "blab": "blab fork", "blab-amplified": "≤ 2.1.5", "blab-intended": "blab fork", "both": "≤ 2.1.5"}
+SINCE_LINE = {"upstream": "Present since at least Audapter 2.1.5.", "both": "Present since at least Audapter 2.1.5.",
+              "blab-amplified": "Present since at least Audapter 2.1.5; made more likely in the blab-lab fork.",
+              "blab": "Introduced in the blab-lab fork.", "blab-intended": "Introduced in the blab-lab fork."}
+SEV_ORDER = {"high": 0, "med": 1, "low": 2}
 KIND = {"H": "Harness", "D": "Driver", "R": "Reading", "F": "Formal"}
 ROLE = {"input": "Input", "expected": "Expected", "observed": "Observed"}
 
@@ -99,7 +104,30 @@ def code_block(repos, ref, compact=False):
             f'{"–"+str(b) if b != a else ""} @{r["sha"][:7]}</a></figcaption><pre><code>{rows}</code></pre>'
             f'<p class="code-note">{ref.get("note", "")}</p></figure>')
 
+REQUIRED = ["headline", "what", "scope", "example", "table", "sketch", "verify", "reproduce"]
+
+def load_real(card):
+    r = card.get("real")
+    if not r:
+        return None, {}
+    p = os.path.normpath(os.path.join(EXPORTS, r["dir"], "real", r.get("data", "data.json")))
+    return r, json.load(open(p))
+
+def clip_li(card, a, m, src_rel, sketch_id=None, credit=None):
+    warn_t = a.get("warn") or m.get("warn")
+    warn = f'<p class="warn"><span aria-hidden="true">!</span> {E(warn_t)}</p>' if warn_t else ""
+    label = re.sub(r"^(Input|Output):\s*", "", a.get("label", m.get("label", "")))
+    dur = f' <span class="dur">{m["dur_s"]:.1f} s</span>' if m.get("dur_s") else ""
+    ds = f' data-sketch="{sketch_id}" data-offset="{a.get("offset", 0)}"' if sketch_id else ""
+    cr = f'<p class="credit">{credit}</p>' if credit else ""
+    return (f'<li class="clip role-{a["role"]}"><span class="swatch" aria-hidden="true"></span><div>'
+            f'<p class="clip-l" data-file="{E(a["file"])}"><strong>{ROLE[a["role"]]}.</strong> {E(label)}{dur}</p>'
+            f'<audio controls preload="none" src="{src_rel}/{a["file"]}"{ds}></audio>{warn}{cr}</div></li>')
+
 def card_html(repos, card, tests, data, up, asset_rel, variants):
+    missing = [k for k in REQUIRED if not card.get(k)] + [f"cause.{k}" for k in ("summary", "refs", "fix") if not card.get("cause", {}).get(k)]
+    if missing:
+        fail(f'card {card["id"]}: missing sections {missing} (template: what, scope, example, table, cause, fix, verify)')
     if data.get("no_event"):   # e.g. a live run that produced no burst: say so instead of drawing a figure
         sev, sevc = SEV[card["severity"]]
         return (f'<article class="card" id="{anchor(card["id"])}"><aside class="rail"><p class="fid">{E(card["id"])}</p>'
@@ -110,24 +138,41 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
     v = dict(data)
     if hasattr(mod, "derive"):
         v.update(mod.derive(data, up))
+    r, rd = load_real(card)
+    if r:
+        rv = dict(rd)
+        if hasattr(mod, "derive_real"):
+            rv.update(mod.derive_real(rd))
+        v.update({"r_" + k: x for k, x in rv.items()})
+    fmt = lambda t: t.format(**v)
     sev, sevc = SEV[card["severity"]]
-    eff = card["effect"]
-    nums = "".join(f"<tr><th scope=row>{E(k)}</th><td>{E(val.format(**v))}</td></tr>" for k, val in eff["numbers"])
+    rows = "".join(f'<tr><td class="grp">{E(g)}</td><th scope="row">{E(fmt(c))}</th><td>{E(fmt(x))}</td></tr>' for g, c, x in card["table"])
     badges = "".join(f'<li class="vk vk-{k}"><span class="vk-l">{k}</span> {KIND[k]}</li>' for k in card["status"])
-    audio = []
+    sid = "sk-" + anchor(card["id"]).lower()
+    clips = []
     for a in card.get("audio", []):
         m = next(x for x in data["audio"] if x["file"] == a["file"])
-        warn = f'<p class="warn"><span aria-hidden="true">!</span> {E(m["warn"])}</p>' if m.get("warn") else ""
-        audio.append(f'<li class="clip role-{a["role"]}"><span class="swatch" aria-hidden="true"></span>'
-                     f'<div><p class="clip-l" data-file="{a["file"]}"><strong>{ROLE[a["role"]]}.</strong> {E(re.sub(r"^(Input|Output):\s*", "", m["label"]))} <span class="dur">{m["dur_s"]:.1f} s</span></p>'
-                     f'<audio controls preload="none" src="{asset_rel}/{a["file"]}" data-sketch="sk-{anchor(card["id"]).lower()}" data-offset="{a.get("offset", 0)}"></audio>{warn}</div></li>')
-    if audio:
-        listen = (f'<section class="listen" aria-label="Audio"><h4>Listen</h4><ul class="clips">{"".join(audio)}</ul>'
-                  f'<p class="norm">{card.get("audio_note", "All clips in this card share one playback gain, so level differences you hear are real. 16 kHz, 16-bit, as recorded by Audapter (<code>signalIn</code>, <code>signalOut</code>).")}</p></section>')
-    else:
-        listen = f'<section class="listen" aria-label="Audio"><h4>Listen</h4><p class="norm">{card["audio_note"]}</p></section>'
-    refs = "".join(code_block(repos, r) for r in card["cause"]["refs"])
-    uprefs = ", ".join(code_block(repos, r, compact=True) for r in card["cause"].get("upstream_refs", []))
+        clips.append(clip_li(card, a, m, asset_rel, sid))
+    rclips = []
+    if r:
+        dst = os.path.join(OUT, "assets", card["asset_dir"], "real"); os.makedirs(dst, exist_ok=True)
+        src = os.path.join(EXPORTS, r["dir"], "real")
+        for c in r.get("clips", []):
+            shutil.copy2(os.path.join(src, c["file"]), dst)
+            m = next((x for x in rd.get("audio", []) if isinstance(rd.get("audio"), list) and x["file"] == c["file"]), {})
+            rclips.append(clip_li(card, c, m, f"assets/{card['asset_dir']}/real", None, clip_credit(c["sources"])))
+    listen = ""
+    if clips or rclips:
+        listen = '<section class="listen" aria-label="Audio"><h4>Listen</h4>'
+        if clips:
+            listen += (f'<ul class="clips">{"".join(clips)}</ul><p class="norm">{card.get("audio_note", "These clips share one playback gain, so level differences you hear are real. 16 kHz, 16-bit, as recorded by Audapter.")}</p>')
+        if rclips:
+            listen += (f'<h5>Real speech</h5><ul class="clips">{"".join(rclips)}</ul>'
+                       f'<p class="norm">{E(r.get("audio_note", "These clips share one playback gain. Real recordings from the audit\u2019s open corpus; credits at the end of the report."))}</p>')
+        listen += '</section>'
+    elif card.get("audio_note"):
+        listen = f'<p class="norm">{card["audio_note"]}</p>'
+    refs = "".join(code_block(repos, x) for x in card["cause"]["refs"])
     ver = []
     for x in card["verify"]:
         res = ""
@@ -136,40 +181,41 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
             res = f' <span class="res res-{st.lower()}">{st}</span> <span class="res-d">“{E(x["test"])}”: {E(det)}</span>'
         elif x.get("detail"):
             res = f' <span class="res-d">{E(x["detail"])}</span>'
-        cls = " pending" if x.get("pending") else ""
-        ver.append(f'<li class="{cls.strip()}"><span class="vk-l">{x["kind"]}</span> {E(x["what"])}: {file_link(x["name"])}{res}</li>')
-    sketch = mod.sketch(data, up)
+        ver.append(f'<li><span class="vk-l">{x["kind"]}</span> {E(x["what"])}: {file_link(x["name"])}{res}</li>')
+    wide = mod.sketch(data, up)
+    narrow = narrow_sketch(card, data, up)
+    cap = f'<p class="figcap">{card["figure_caption"]}</p>' if card.get("figure_caption") else ""
     return f'''
 <article class="card" id="{anchor(card["id"])}" aria-labelledby="{anchor(card["id"])}-h">
   <aside class="rail">
     <p class="fid">{E(card["id"])}</p>
     <p class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev} severity</p>
-    <p class="origin">{ORIGIN[card["origin"]]}</p>
     <ul class="vks" aria-label="Verification">{badges}</ul>
     <p class="railnote"><a href="{notes_url(card["notes"])}">Audit notes</a><br><a href="{AUDIT_URL}/FINDINGS-LOG.md">Findings log</a></p>
   </aside>
   <div class="main">
     <h3 id="{anchor(card["id"])}-h">{E(card["headline"])}</h3>
-    <p class="setup">{eff["setup"]}</p>
-    <dl class="eo">
-      <div class="eo-e"><dt>Expected</dt><dd>{E(eff["expected"].format(**v))}</dd></div>
-      <div class="eo-o"><dt>Observed</dt><dd>{E(eff["observed"].format(**v))}</dd></div>
-      <div class="eo-m"><dt>Why it matters</dt><dd>{eff["matters"]}</dd></div>
-    </dl>
-    <figure class="fig">{sketch}
-      <details class="data"><summary>Numbers behind this figure</summary><table>{nums}</table>
-      <p>Source: <a href="{asset_rel}/data.json">data.json</a>, written by the export script from the harness run.</p></details>
-    </figure>
+    <h4>What happens</h4>
+    <p>{fmt(card["what"])}</p>
+    <h4>When it matters</h4>
+    <p>{fmt(card["scope"])}</p>
+    <h4>Example</h4>
+    <p>{fmt(card["example"])}</p>
+    <figure class="fig">{cap}<div class="sk-wide-wrap">{wide}</div><div class="sk-narrow-wrap">{narrow}</div></figure>
     {listen}
-    {real_html(card)}
     {interactive_html(card, variants)}
+    <h4>How big, how often</h4>
+    <table class="plain howbig"><tbody>{rows}</tbody></table>
+    <p class="norm">Data: <a href="{asset_rel}/data.json">data.json</a> from the export script.</p>
     <section class="cause" aria-label="Cause">
       <h4>Cause</h4>
       <p>{card["cause"]["summary"]}</p>
       {refs}
-      <p class="upstream">Upstream 2.1.5: {uprefs}.</p>
-      <p class="origin-note"><strong>Origin.</strong> {E(card["origin_note"])}</p>
-      <p class="fix"><strong>{E(card["cause"].get("fix_label", "Suggested fix"))}.</strong> {card["cause"]["fix"]}</p>
+      <p class="since">{card.get("since", SINCE_LINE[card["origin"]])}</p>
+    </section>
+    <section class="fix-sec" aria-label="Fix">
+      <h4>{E(card["cause"].get("fix_label", "Fix and workaround"))}</h4>
+      <p>{card["cause"]["fix"]}</p>
     </section>
     <section class="verify" aria-label="Verification">
       <h4>How we know</h4>
@@ -178,6 +224,19 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
     </section>
   </div>
 </article>'''
+
+def narrow_sketch(card, data, up):
+    """Render the card's sketch again in the narrow (phone) layout."""
+    import sketchlib
+    os.environ["SKETCH_LAYOUT"] = "narrow"
+    try:
+        importlib.reload(sketchlib)
+        mod = importlib.reload(importlib.import_module("sketches." + card["sketch"]))
+        return mod.sketch(json.loads(json.dumps(data)), json.loads(json.dumps(up)) if up else up)
+    finally:
+        os.environ["SKETCH_LAYOUT"] = "wide"
+        importlib.reload(sketchlib)
+        importlib.reload(importlib.import_module("sketches." + card["sketch"]))
 
 def notes_check(ref):
     fn, _, anchor = ref.partition("#")
@@ -277,23 +336,29 @@ FIDELITY = (" Live-path simulation: the real audioIO/RtAudio ASIO code built wit
 
 def short_html(repos, items):
     out = []
-    for r in items:
+    for r in sorted(items, key=lambda r: SEV_ORDER[r["sev"]]):
         notes_check(r["notes"])
         sev, sevc = SEV[r["sev"]]
         refs = "".join(code_block(repos, x) for x in r["refs"])
+        miss = [k for k in ("title", "what", "scope", "fix", "verify", "refs") if not r.get(k)]
+        if miss:
+            fail(f'short card {r["id"]}: missing {miss}')
         out.append(f'''<article class="short" id="{slug(r["id"])}" aria-labelledby="{slug(r["id"])}-h">
   <p class="short-meta"><span class="fid">{E(r["id"])}</span> <span class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev}</span>
-    <span class="origin">{ORIGIN[r["origin"]]}</span> <span class="vk-l">{r["status"]}</span></p>
+    <span class="vk-l">{r["status"]}</span></p>
   <h3 id="{slug(r["id"])}-h">{E(r["title"])}</h3>
-  <p>{r["text"]}</p>
+  <p><strong>What happens.</strong> {r["what"]}</p>
+  <p><strong>When it matters.</strong> {r["scope"]}</p>
   {refs}
+  <p class="since">{r.get("since", SINCE_LINE[r["origin"]])}</p>
+  <p><strong>Fix.</strong> {r["fix"]}</p>
   <p class="short-v"><strong>How we know.</strong> {E(r["verify"])}{FIDELITY if r["id"].startswith("LIVE") else ""} <a href="{notes_url(r["notes"])}">Audit notes</a></p>
 </article>''')
     return "".join(out)
 
 def compact_html(repos, rows):
     out = []
-    for r in rows:
+    for r in sorted(rows, key=lambda r: SEV_ORDER[r["sev"]]):
         notes_check(r["notes"])
         sev, sevc = SEV[r["sev"]]
         rp = repos[r.get("repo", "blab-mex")]
@@ -301,23 +366,23 @@ def compact_html(repos, rows):
         a, _, b = ln.partition("-")
         url = f'{rp["url"]}/blob/{rp["sha"]}/{path}#L{a}' + (f"-L{b}" if b else "")
         out.append(f'<tr id="{slug(r["id"])}"><td class="t-id">{E(r["id"])}</td><td><span class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev}</span></td>'
-                   f'<td>{E(r["text"])}</td><td>{ORIGIN[r["origin"]]}</td><td><span class="vk-l">{r["status"]}</span></td>'
-                   f'<td><a class="permalink" href="{url}">{E(path.split("/")[-1])}:{E(ln)}</a></td></tr>')
+                   f'<td>{E(r["text"])}</td><td><span class="vk-l">{r["status"]}</span></td>'
+                   f'<td><a class="permalink" href="{url}">{E(path.split("/")[-1])}:{E(ln)}</a></td><td class="t-since">{SINCE[r["origin"]]}</td></tr>')
     return "".join(out)
 
 def table_html(rows, short=()):
     out = []
-    for r in rows:
+    for r in sorted(rows, key=lambda r: SEV_ORDER[r["sev"]]):
         sev, sevc = SEV[r["sev"]]
         idc = f'<a href="#{anchor(r["id"])}">{E(r["id"])}</a>' if r.get("card") else E(r["id"])
         out.append(f'<tr><td class="t-id">{idc}</td><td><span class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev}</span></td>'
-                   f'<td>{E(r["text"])}</td><td>{ORIGIN[r["origin"]]}</td><td><span class="vk-l">{r["status"]}</span></td></tr>')
+                   f'<td>{E(r["text"])}</td><td><span class="vk-l">{r["status"]}</span></td><td class="t-since">{SINCE[r["origin"]]}</td></tr>')
     if short:
         out.append('<tr class="group"><td colspan="5">Short cards</td></tr>')
-        for r in short:
+        for r in sorted(short, key=lambda r: SEV_ORDER[r["sev"]]):
             sev, sevc = SEV[r["sev"]]
             out.append(f'<tr><td class="t-id"><a href="#{slug(r["id"])}">{E(r["id"])}</a></td><td><span class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev}</span></td>'
-                       f'<td>{E(r["title"])}</td><td>{ORIGIN[r["origin"]]}</td><td><span class="vk-l">{r["status"]}</span></td></tr>')
+                       f'<td>{E(r["title"])}</td><td><span class="vk-l">{r["status"]}</span></td><td class="t-since">{SINCE[r["origin"]]}</td></tr>')
     return "".join(out)
 
 def fonts_css():
@@ -375,7 +440,8 @@ def patch_lines(fn):
             out.append((l[0], l[1:].expandtabs(4).strip()))
     return out
 
-FIRST_PANEL_NOTE = ['<p class="inote">Each run loads the Audapter core in this page, about 150–300 MB of memory per build. On a phone, run one panel at a time.</p>']
+FIRST_PANEL_NOTE = ['<p class="inote">Each run loads the Audapter core in this page, about 150–300 MB of memory per build. On a phone, run one panel at a time. '
+                    'Try your own recordings and settings in the <a href="playground/">Playground</a>.</p>']
 
 def interactive_html(card, variants):
     w = card.get("interactive")

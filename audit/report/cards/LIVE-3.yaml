@@ -1,72 +1,146 @@
-# Full finding card LIVE-3. Rendered by build.py; see PLAN.md section 3 for the fields.
-# Data: live line (audit/live, fake ASIO driver), exported by report/live/export_live.py.
+# Full finding card LIVE-3. Sections follow the fixed template (build.py REQUIRED).
 id: LIVE-3
 log: LIVE-3
-notes: "live/README.md#live-3"
-headline: "reset() while the participant is voicing can send a clipped burst to the headphones: +17 to +61 dB above the loudest speech sample so far"
+notes: live/README.md#live-3
+headline: reset() while the participant is speaking can send a loud, clipped click to the headphones
 severity: med
 origin: upstream
-origin_note: "Inherited: upstream 2.1.5 has the same unlocked reset() and the same resampling-filter reset (Audapter.cpp:506 there). Known from reading both trees; the simulation ran the blab build only."
-fidelity: "Simulation, not a Windows rig: the real mexFunction, audioIO.cpp and RtAudio ASIO code, built with GCC on Linux, driven by a software fake ASIO driver in docker. The burst mechanism is real code; its rate depends on thread scheduling and MATLAB's per-call overhead, so the rate is indicative, not what a Windows machine would show."
-status: [D]
-effect:
-  setup: >
-    The <code>ALWAYS_ON</code> pattern: audio keeps running and <code>AudapterIO('reset')</code> is called while it runs, as
-    <code>UIRecorder.m</code> does at every trial start when <code>bAlwaysOn</code> is set. In the simulation a looped synthetic vowel plays
-    into Audapter's F1-shift configuration (the real <code>AudapterIO('init')</code> parameter trace, an OST and a PCF). A MATLAB-side stand-in
-    calls <code>reset</code> about every 62 ms (a 50 ms pause after each ~12 ms call) for 120 s. The fake driver uses float64 samples so that
-    true peaks above full scale can be measured. The clips are cut from that run at the 48 kHz device rate.
-  expected: "reset() clears Audapter's buffers, so the output drops out for a few ms and then resumes at the usual level. The race-free control (the same resets done between offline runFrame calls) never exceeds {control_peak:.3f}, the normal peak."
-  observed: "{n_resets} resets, {n_resets_voiced} of them during voicing. After one of them the output jumped to {burst_peak:.2f} × digital full scale, {burst_peak_db_re_normal:+.1f} dB above the loudest normal output sample, for {burst_ms:.1f} ms; {clipped_samples} samples lie beyond full scale and a DAC clips them. The other resets during voicing produced only the {dropout_ms_median:.0f} ms dropout. Across three independent runs so far the bursts measured +17.0 dB; +42.9 and +48.8 dB; and +61.1 dB re the loudest normal sample, at a consistent rate of about 1 in 1000–2000 resets during voicing: the rate is stable, the size is not."
-  matters: >
-    A sudden full-scale click in the headphones is unpleasant, can startle the participant, and at the raised playback levels of feedback
-    experiments it is uncomfortably loud. It lands at a trial start, when the participant may already be speaking. No error or warning is raised.
-    The same missing lock also lets <code>reset</code> occasionally corrupt the new trial's frame clock (a zeroed first data row; see the numbers
-    below), and ThreadSanitizer lists many distinct racing code-site pairs between the MATLAB thread and the callback. The default per-trial <code>start</code>/<code>stop</code> flow is not affected.
-    <br><strong>Fidelity.</strong> Simulation, not a Windows rig: the real MEX, <code>audioIO.cpp</code> and RtAudio ASIO code, built with GCC on Linux,
-    driven by a fake ASIO driver in docker. The mechanism is the real code; the rate (1 burst in this 120 s run) depends on scheduling and is indicative only.
-  numbers:
-    - ["Resets while audio ran / during voicing", "{n_resets} / {n_resets_voiced} in {run_s:.0f} s"]
-    - ["Bursts above 2 × the normal peak", "{n_bursts} ({burst_rate_voiced} resets during voicing)"]
-    - ["Normal output peak (no resets) / race-free control", "{ref_peak:.3f} / {control_peak:.3f}"]
-    - ["Burst true peak", "{burst_peak:.3f} × full scale = {burst_peak_dbfs:+.1f} dBFS, {burst_peak_db_re_normal:+.1f} dB re normal peak"]
-    - ["Burst length above the normal peak / above 2 ×", "{burst_ms:.1f} ms / {burst_ms_above_2x:.1f} ms"]
-    - ["Samples beyond full scale", "{clipped_samples} ({clipped_ms:.2f} ms)"]
-    - ["Output dropout after an ordinary reset (median)", "{dropout_ms_median:.0f} ms"]
-    - ["Burst in the run / comparison reset", "{burst_at_s:.3f} s / {match_at_s:.3f} s (same point of the vowel ± {match_phase_offset_ms:.0f} ms)"]
-    - ["Always-on trial starts with a corrupted first data row", "{rc_bad_first} of {rc_n}"]
-    - ["ThreadSanitizer, all live scenarios", "{tsan_reports} reports, {tsan_pairs} distinct site pairs"]
+status:
+- D
+what: >-
+  <code>Audapter('reset')</code> runs on the MATLAB thread while the audio callback may be filtering a frame. It clears the resampling filters' state in the middle
+  of that frame, and the filter can then ring for a few milliseconds far above the speech level. The output is clipped at the sound card, so the participant hears
+  a click.
+scope: >-
+  Affects designs that keep audio running across trials and call <code>reset</code> while the participant may be voicing, such as always-on designs that reset at
+  each trial start. It happens on roughly 1 in 1000–2000 resets during voicing. The size varies from run to run; the observed range is +17 to +61 dB above the loudest
+  normal output sample. The usual start–stop–reset flow per trial is not affected. These numbers come from a simulation of the live path (the real audio code, built
+  with GCC on Linux, with a modelled ASIO driver), so rates are indicative.
+example: >-
+  A looped vowel with <code>reset</code> called about every 62 ms for 120 s: {n_resets} resets, {n_resets_voiced} of them during voicing. One produced a burst of
+  {burst_peak_db_re_normal:+.1f} dB above the normal peak, {burst_ms:.1f} ms long, with {clipped_samples} samples beyond full scale. Every other reset during voicing
+  produced only a {dropout_ms_median:.0f} ms dropout.
+figure_caption: >-
+  Output around the reset that raced the callback, and around another reset at the same point of the vowel; time relative to the reset.
+table:
+- - live simulation
+  - Resets during voicing / bursts, this run
+  - '{n_resets_voiced} / {n_bursts}'
+- - live simulation
+  - Burst peak re the loudest normal sample, this run
+  - '{burst_peak_db_re_normal:+.1f} dB'
+- - live simulation
+  - Burst peak over three independent runs
+  - +17 to +61 dB
+- - live simulation
+  - Rate over three runs
+  - about 1 in 1000–2000 resets during voicing
+- - live simulation
+  - Output after an ordinary reset during voicing
+  - '{dropout_ms_median:.0f} ms dropout'
 sketch: live3
 asset_dir: live-3
 audio:
-  - {file: input_vowel.wav, role: input, offset: -0.5}
-  - {file: output_reset_no_burst.wav, role: expected, offset: -0.5}
-  - {file: output_reset_burst.wav, role: observed, offset: -0.5}
-audio_note: >
-  All three clips share one playback gain, chosen so that the burst clip peaks at −1 dBFS; the other clips play at their true level relative
-  to it, so the speech is quiet. 48 kHz, 16-bit, the signal at the sound card (clipped at full scale as a DAC would play it), 1 s around the
-  reset. The observed clip is an excerpt of the live line's <code>results/reset_race_burst.wav</code>.
+- file: input_vowel.wav
+  role: input
+  label: 'Input: the looped vowel around the reset'
+- file: output_reset_no_burst.wav
+  role: expected
+  label: 'Output around another reset at the same point of the vowel: no click'
+- file: output_reset_burst.wav
+  role: observed
+  label: Output around the reset that raced the callback
+  warn: Loud click. Turn the volume down first.
+audio_note: >-
+  The clips share one playback gain, set so the burst clip peaks at −1 dBFS; the other clips play at their true level relative to it, so the speech is quiet. 48 kHz,
+  as it reaches the sound card, clipped at full scale.
 cause:
-  summary: >
-    <code>Audapter::reset()</code> runs on the MATLAB thread with no lock against the audio callback. Among other things it zeroes the
-    state of the 48 ↔ 16 kHz resampling filters. The callback may be in the middle of <code>IIR_Filter::filter</code> at that moment. These
-    high-order IIR filters carry large internal state values that normally cancel; zeroing part of the state mid-frame leaves the rest
-    uncancelled, and the filter rings out beyond full scale for a few milliseconds.
+  summary: >-
+    Nothing serialises <code>reset()</code> with the audio callback. <code>reset()</code> zeroes the 48 ↔ 16 kHz resampling filters' delay lines while the callback
+    may be inside <code>IIR_Filter::filter</code>; the remaining state no longer cancels and the high-order filter rings.
   refs:
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [522, 538], hl: [537, 538], expect: "upSampFilter.reset();", note: "reset() zeroes the resampling filter states. Nothing stops the callback from running at the same time."}
-    - {repo: blab-mex, path: TransShiftMex/filter.h, lines: [42, 46], hl: [44], expect: "delay[i] = 0.0;", note: "The reset clears the delay line element by element..."}
-    - {repo: blab-mex, path: TransShiftMex/filter.h, lines: [59, 65], hl: [60, 62], expect: "delay[k] = g * b[k + 1] * x[m] + delay[k + 1] - a[k + 1] * y[m];", note: "...while the callback's filter loop reads and writes the same delay line for every sample."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [608, 611], hl: [609, 611], expect: "data_counter=0;", note: "The frame counters are cleared last. A callback between the two counter increments leaves the new trial with an offset frame clock."}
-    - {repo: blab-mex, path: TransShiftMex/mexLibrary.cpp, lines: [367, 369], hl: [368], expect: "audapter.reset();", note: "The MEX 'reset' action calls it directly, whether or not audio is running."}
-    - {repo: blab-matlab, path: mcode/UIRecorder.m, lines: [1090, 1092], hl: [1092], expect: "AudapterIO('reset');", note: "The always-on caller: every trial start while audio runs."}
-  upstream_refs:
-    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [506, 506], expect: "downSampFilter.reset();"}
-  fix: >
-    Put one mutex around every MEX action that touches Audapter state; the callback <code>try_lock</code>s it and outputs silence (or the
-    previous frame) when it is busy. Alternatively, have <code>reset</code> set a flag that the callback acts on at the next frame boundary.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 522
+    - 538
+    hl:
+    - 537
+    - 538
+    expect: upSampFilter.reset();
+    note: >-
+      reset() zeroes the resampling filter states. Nothing stops the callback from running at the same time.
+  - repo: blab-mex
+    path: TransShiftMex/filter.h
+    lines:
+    - 42
+    - 46
+    hl:
+    - 44
+    expect: delay[i] = 0.0;
+    note: The reset clears the delay line element by element...
+  - repo: blab-mex
+    path: TransShiftMex/filter.h
+    lines:
+    - 59
+    - 65
+    hl:
+    - 60
+    - 62
+    expect: delay[k] = g * b[k + 1] * x[m] + delay[k + 1] - a[k + 1] * y[m];
+    note: '...while the callback''s filter loop reads and writes the same delay line for every sample.'
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 608
+    - 611
+    hl:
+    - 609
+    - 611
+    expect: data_counter=0;
+    note: >-
+      The frame counters are cleared last. A callback between the two counter increments leaves the new trial with an offset frame clock.
+  - repo: blab-mex
+    path: TransShiftMex/mexLibrary.cpp
+    lines:
+    - 367
+    - 369
+    hl:
+    - 368
+    expect: audapter.reset();
+    note: The MEX 'reset' action calls it directly, whether or not audio is running.
+  - repo: blab-matlab
+    path: mcode/UIRecorder.m
+    lines:
+    - 1090
+    - 1092
+    hl:
+    - 1092
+    expect: AudapterIO('reset');
+    note: 'The always-on caller: every trial start while audio runs.'
+  fix: >-
+    Put one lock around every MEX action that changes Audapter state; the callback tries the lock and outputs silence if it is busy. Or have <code>reset</code> set
+    a flag that the callback acts on at the next frame. Workaround: stop audio before <code>reset</code>, or reset only while the participant is silent.
 verify:
-  - {kind: D, what: "live simulation driver (fake ASIO, float64 samples)", name: "live/run.sh burst", detail: "1 burst in 1945 resets in the run shown; independent reproductions: 2 in 1901 (+42.9, +48.8 dB) and 1 in 1955 (+61.1 dB); race-free control max 0.171"}
-  - {kind: D, what: "live simulation driver", name: "live/run.sh resetcheck", detail: "1 of 1000 always-on trial starts with a zeroed first data row"}
-  - {kind: D, what: "ThreadSanitizer inventory", name: "live/run.sh tsan", detail: "356 reports, 195 distinct site pairs; reset ↔ IIR_Filter::filter among them"}
-  - {kind: D, what: "report export (burst, dropouts, comparison reset, clips)", name: "report/live/export_live.py live3", detail: "checks its excerpt against results/reset_race_burst.wav"}
-reproduce: "audit/live/run.sh burst && python3 audit/report/live/export_live.py live3"
+- kind: D
+  what: live simulation driver (fake ASIO, float64 samples)
+  name: live/run.sh burst
+  detail: >-
+    1 burst in 1945 resets in the run shown; independent reproductions: 2 in 1901 (+42.9, +48.8 dB) and 1 in 1955 (+61.1 dB); race-free control max 0.171
+- kind: D
+  what: live simulation driver
+  name: live/run.sh resetcheck
+  detail: 1 of 1000 always-on trial starts with a zeroed first data row
+- kind: D
+  what: ThreadSanitizer inventory
+  name: live/run.sh tsan
+  detail: 356 reports, 195 distinct site pairs; reset ↔ IIR_Filter::filter among them
+- kind: D
+  what: report export (burst, dropouts, comparison reset, clips)
+  name: report/live/export_live.py live3
+  detail: checks its excerpt against results/reset_race_burst.wav
+reproduce: audit/live/run.sh burst && python3 audit/report/live/export_live.py live3
+fidelity: >-
+  Simulation, not a Windows rig: the real mexFunction, audioIO.cpp and RtAudio ASIO code, built with GCC on Linux, driven by a software fake ASIO driver in docker.
+  The burst mechanism is real code; its rate depends on thread scheduling and MATLAB's per-call overhead, so the rate is indicative, not what a Windows machine would
+  show.

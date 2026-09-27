@@ -1,84 +1,174 @@
-# Full finding card PT-5. Rendered by build.py; see PLAN.md section 3 for the fields.
+# Full finding card PT-5. Sections follow the fixed template (build.py REQUIRED).
 id: PT-5
 log: PT-5
-notes: "notes/pitch-time.md#pt-5"
-headline: "With the phase vocoder on, output is 3.5 dB louder, and the level changes when the pitch shift starts"
+notes: notes/pitch-time.md#pt-5
+headline: >-
+  With the phase vocoder on, output is 3.5 dB louder than the input, and loudness changes when a pitch shift starts
 severity: high
 origin: upstream
-origin_note: "Identical in upstream 2.1.5: the blab/upstream differential is bit-exact for pvoc_pitch_up2 and pcf_pitch."
-status: [H, D, F]
-effect:
-  setup: >
-    <code>bPitchShift = 1</code>. The OST enters state 1 at 0.6 s, and the PCF asks for 0 st in state 0 and +2 st in state 1: a typical
-    pitch-perturbation onset. Input: a sustained synthetic /a/ at F0 120 Hz (the same signal as <code>t_pitch.m</code>). Reference: the same input
-    with <code>bPitchShift = 0</code>.
-  expected: "Output level equal to the input level throughout; F0 steps up by 200 cents at 0.6 s."
-  observed: "The F0 step is accurate ({f0_cents:.0f} cents). Before the onset the output is {gain_before_db:+.1f} dB louder than the input. After the onset the level drops and fluctuates from one 20 ms block to the next. With a constant ratio the level at +2 st depends on F0 and vowel: from {sweep_min:.1f} to {sweep_max:.1f} dB below the 0 st level in our sweep."
-  matters: >
-    Any pitch-perturbation design that compares shifted with unshifted feedback also changes loudness at the same moment,
-    and speakers adjust their own voice to the loudness of their feedback. The size of the change depends on the speaker's
-    F0 and the vowel, so it varies between participants and conditions. The +3.5 dB offset also means pitch-shift sessions run louder than
-    a calibration made with <code>bPitchShift = 0</code>. The switch meant to fix this, <code>bPvocAmpNorm</code>, can't be turned on, and with its name corrected it outputs NaN (see the fix below).
-  numbers:
-    - ["Level re input before onset (0 st)", "{gain_before_db:+.2f} dB"]
-    - ["Level re input after onset (+2 st), mean of 20 ms blocks", "{gain_after_db:+.2f} dB"]
-    - ["Reference, bPitchShift = 0", "{gain_bypass_db:+.2f} dB"]
-    - ["Setting bPvocAmpNorm / bpvocmpnorm", "{ampnorm_text}"]
+status:
+- H
+- D
+- F
+what: >-
+  When pitch shifting is on (<code>bPitchShift = 1</code>), the phase vocoder plays the voice 3.5 dB louder than the input, even at 0 semitones. When a shift is applied,
+  the level changes again by an amount that depends on the voice's F0 and vowel, and it fluctuates from frame to frame.
+scope: >-
+  Affects every experiment that uses the phase vocoder. A design that switches from no shift to a shift, for example through a PCF, gives the participant a loudness
+  change at the same moment as the pitch change. Conditions with and without <code>bPitchShift</code> differ by 3.5 dB. The switch meant to correct this, <code>bPvocAmpNorm</code>,
+  cannot be turned on, and if its name is corrected it outputs NaN.
+example: >-
+  A sustained vowel at 120 Hz with a PCF that switches from 0 to +2 semitones at 0.6 s. The F0 step is accurate ({f0_cents:.0f} cents). Relative to the same input
+  with <code>bPitchShift = 0</code>, the level is {gain_before_db:+.1f} dB before the step and averages {gain_after_db:+.1f} dB after it.
+figure_caption: >-
+  One trial: F0 and output level of the phase vocoder against the same input with pitch shifting off. The lower chart shows how the level change at +2 st depends
+  on F0 and vowel.
+table:
+- - synthetic
+  - Level at 0 st, relative to bPitchShift = 0
+  - '{gain_before_db:+.2f} dB'
+- - synthetic
+  - Mean level after the 0 → +2 st step
+  - '{gain_after_db:+.2f} dB'
+- - synthetic
+  - Level change 0 → +2 st, F0 100–260 Hz, /a/ and /i/
+  - '{sweep_min:.1f} to {sweep_max:.1f} dB quieter'
+- - real speech
+  - Level at 0 st, {r_n_clean} clips
+  - '{r_g0_lo:+.2f} to {r_g0_hi:+.2f} dB'
+- - real speech
+  - Steady level change 0 → +2 st
+  - >-
+    {r_st_lo:.1f} to {r_st_hi:.1f} dB quieter; medians men {r_med_m:.1f}, women {r_med_f:.1f}, children {r_med_c:.1f} dB
+- - real speech
+  - Loudness step at a mid-utterance onset, {r_n_utt} clips
+  - '{r_on_lo:.1f} to {r_on_hi:.1f} dB (median {r_on_med:.1f} dB)'
 sketch: pt5
-interactive:
-  id: pt-5
-  variants: [shipped, fix-pt-5]
-  patches: {fix-pt-5: [pt-5-ola-normalise.patch]}
-  needs: {recorder_s: 1.4}
-  button: "Run the pitch step on both builds"
-  inputs: {vowel: dev_vowel_48k.wav}
-  params: {rmsthresh: 0.005, bdetect: 1, btrack: 1, bpitchshift: 1, pitchshiftratio: 1}
-  text: >
-    This runs the card's trial (the same vowel, OST and PCF) through the real Audapter C++ core compiled to WebAssembly from the pinned
-    commit, once as released and once with the overlap-add normalised. Pick the size of the step. Each trace is the output level in 20 ms
-    blocks relative to the same input run with <code>bPitchShift = 0</code>, so 0 dB is the level a participant should hear.
 asset_dir: pt-5
 audio:
-  - {file: input_vowel.wav, role: input}
-  - {file: output_bypass.wav, role: expected}
-  - {file: output_pitch_step.wav, role: observed}
-cause:
-  summary: >
-    Analysis and synthesis both use a Hann window with hop = L/4. Overlap-adding Hann² at that hop sums to 1.5, and the synthesis scaling
-    does not divide this out, so the output is 1.5 × the input (+3.52 dB) even at ratio 1. With a shift, each bin is mapped and resynthesised
-    with fresh phase (<code>sumPhase</code> starts at 0 for every bin), so the level then depends on the signal's harmonics and on the moment the
-    shift begins. The normalisation option is registered under a misspelt name, so the setter never matches it.
-  refs:
-    - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [218, 220], hl: [219], expect: "X_magn[i] = 2.0", note: "Analysis magnitude."}
-    - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [465, 467], hl: [467], expect: "osamp / 2.0", note: "Synthesis scaling: 2·w/(osamp/2) with osamp = 4 leaves the Hann² overlap sum of 1.5 in the output."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [138, 138], hl: [138], expect: "bpvocmpnorm", note: "Registered as \"bpvocmpnorm\" (missing a)..."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [877, 878], hl: [877], expect: "bpvocampnorm", note: "...but the setter matches \"bpvocampnorm\", so both spellings are rejected."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2152, 2154], hl: [2153], expect: "ms_out / ms_in", note: "If the name is corrected, this divides by <code>ms_in</code>, a local set to 0 at line 1978 and never updated. In our test build the output became NaN."}
-  upstream_refs:
-    - {repo: upstream-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [467, 467], expect: "osamp / 2.0"}
-    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [137, 137], expect: "bpvocmpnorm"}
-  fix: >
-    Divide the overlap-add by the Hann² sum (1.5 at hop = L/4) in pitch-shift mode, as in the patch the panel runs
-    (<code>report/patches/pt-5-ola-normalise.patch</code>). It gives unity gain at 0 st and leaves the time-warp modes bit-identical,
-    but it does not remove the level change at the shift onset, which comes from the resynthesis. That needs a level
-    match after a shift (a running RMS ratio, which is what <code>bPvocAmpNorm</code> was meant to do). Correcting only the
-    parameter's registered name is not safe: in a local build with just that change, turning it on turns the output into NaN from the
-    first phase-vocoder frames on, because <code>ms_in</code> (Audapter.cpp:1978) is never computed. Add a level assertion to the pitch-shift tests.
-verify:
-  - {kind: H, what: "harness test", name: "t_pitch.m", test: "pvoc: unity gain at 0 st"}
-  - {kind: H, what: "harness test", name: "t_pitch.m", test: "pvoc: no loudness step 0 -> +2 st"}
-  - {kind: H, what: "report export + F0/vowel sweep", name: "report_pt5.m"}
-  - {kind: D, what: "standalone pvoc driver", name: "scratch/pitch-time/pv_test.cpp", detail: "gain 1.500 at 0 st on pure tones"}
-  - {kind: F, what: "exact algebra on the Hann window", name: "formal/ola/ola_exact.py", detail: "the 0 st overlap-add gain is exactly 3/2 (+3.52 dB) for every hop ratio pvocFrameLen/pvocHop of 3 or more, independent of frame length, hop and sample rate; the unity fix is a factor 2/3 at phase_vocoder.cpp:467 (FORMAL-7)"}
-  - {kind: F, what: "the real phase_vocoder.cpp, measured", name: "formal/ola/pv_gain.cpp", detail: "1.5000 at hop ratios 4 and 8; content below the first bin gets 5/2; at hop ratio 2 the gain swings between 1 and 2 at the hop rate"}
-reproduce: "cd audit/harness && ./run-oct.sh t_pitch.m"
+- file: input_vowel.wav
+  role: input
+- file: output_bypass.wav
+  role: expected
+- file: output_pitch_step.wav
+  role: observed
 real:
   dir: pt-5
-  text: >
-    On {n_clean} clean real clips (men, women, children and singers), the level at 0 st is {g0_lo:+.2f} to {g0_hi:+.2f} dB, the same constant offset as on the synthetic vowel.
-    The steady level at +2 st is {st_lo:.1f} to {st_hi:.1f} dB below the 0 st level (group medians: men {med_m:.1f}, women {med_f:.1f}, children {med_c:.1f} dB).
-    With the example OST and <code>pitch_pert.pcf</code> switching to +2 st mid-utterance, the loudness step heard at the onset was {on_lo:.1f} to {on_hi:.1f} dB
-    (median {on_med:.1f} dB, {n_utt} clips): a real, speaker-dependent step, somewhat larger than on the synthetic vowel.
   clips:
-    - {file: pcf_pitch_input.wav, role: input, label: "Input, \"Will we ever forget it.\"", sources: [arctic_bdl_a0005]}
-    - {file: pcf_pitch_output.wav, role: observed, label: "Output: +2 st from the end of word 1 (example OST and pitch_pert.pcf)", sources: [arctic_bdl_a0005]}
+  - file: pcf_pitch_input.wav
+    role: input
+    label: Input, "Will we ever forget it."
+    sources:
+    - arctic_bdl_a0005
+  - file: pcf_pitch_output.wav
+    role: observed
+    label: 'Output: +2 st from the end of word 1 (example OST and pitch_pert.pcf)'
+    sources:
+    - arctic_bdl_a0005
+interactive:
+  id: pt-5
+  variants:
+  - shipped
+  - fix-pt-5
+  patches:
+    fix-pt-5:
+    - pt-5-ola-normalise.patch
+  needs:
+    recorder_s: 1.4
+  button: Run the pitch step on both builds
+  inputs:
+    vowel: dev_vowel_48k.wav
+  params:
+    rmsthresh: 0.005
+    bdetect: 1
+    btrack: 1
+    bpitchshift: 1
+    pitchshiftratio: 1
+  text: >-
+    This runs the card's trial (the same vowel, OST and PCF) through the real Audapter C++ core compiled to WebAssembly from the pinned commit, once as released and
+    once with the overlap-add normalised. Pick the size of the step. Each trace is the output level in 20 ms blocks relative to the same input run with <code>bPitchShift
+    = 0</code>, so 0 dB is the level a participant should hear.
+cause:
+  summary: >-
+    Analysis and synthesis both use a Hann window with a hop of a quarter frame. Overlap-adding the squared window sums to 1.5, and the synthesis scaling does not
+    divide this out, so the output is 1.5 times the input at any shift ratio. With a shift, each frequency bin is resynthesised with fresh phase, so the level then
+    depends on the signal. The normalisation switch is registered under a misspelt name, and its code divides by a quantity that is always zero.
+  refs:
+  - repo: blab-mex
+    path: TransShiftMex/phase_vocoder.cpp
+    lines:
+    - 218
+    - 220
+    hl:
+    - 219
+    expect: X_magn[i] = 2.0
+    note: Analysis magnitude.
+  - repo: blab-mex
+    path: TransShiftMex/phase_vocoder.cpp
+    lines:
+    - 465
+    - 467
+    hl:
+    - 467
+    expect: osamp / 2.0
+    note: 'Synthesis scaling: 2·w/(osamp/2) with osamp = 4 leaves the Hann² overlap sum of 1.5 in the output.'
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 138
+    - 138
+    hl:
+    - 138
+    expect: bpvocmpnorm
+    note: Registered as "bpvocmpnorm" (missing a)...
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 877
+    - 878
+    hl:
+    - 877
+    expect: bpvocampnorm
+    note: '...but the setter matches "bpvocampnorm", so both spellings are rejected.'
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 2152
+    - 2154
+    hl:
+    - 2153
+    expect: ms_out / ms_in
+    note: >-
+      If the name is corrected, this divides by <code>ms_in</code>, a local set to 0 at line 1978 and never updated. In our test build the output became NaN.
+  fix: >-
+    Divide the pitch-shift overlap-add by 1.5 (<code>report/patches/pt-5-ola-normalise.patch</code>; time-warp modes unchanged). That gives unity gain at 0 st but
+    not a constant level after a shift, which needs a running level match. Fixing only the parameter name is not safe. Workaround: calibrate pitch-shift conditions
+    with <code>bPitchShift = 1</code> at 0 st, and treat loudness as a covariate at shift onsets.
+verify:
+- kind: H
+  what: harness test
+  name: t_pitch.m
+  test: 'pvoc: unity gain at 0 st'
+- kind: H
+  what: harness test
+  name: t_pitch.m
+  test: 'pvoc: no loudness step 0 -> +2 st'
+- kind: H
+  what: report export + F0/vowel sweep
+  name: report_pt5.m
+- kind: D
+  what: standalone pvoc driver
+  name: scratch/pitch-time/pv_test.cpp
+  detail: gain 1.500 at 0 st on pure tones
+- kind: F
+  what: exact algebra on the Hann window
+  name: formal/ola/ola_exact.py
+  detail: >-
+    the 0 st overlap-add gain is exactly 3/2 (+3.52 dB) for every hop ratio pvocFrameLen/pvocHop of 3 or more, independent of frame length, hop and sample rate; the
+    unity fix is a factor 2/3 at phase_vocoder.cpp:467 (FORMAL-7)
+- kind: F
+  what: the real phase_vocoder.cpp, measured
+  name: formal/ola/pv_gain.cpp
+  detail: >-
+    1.5000 at hop ratios 4 and 8; content below the first bin gets 5/2; at hop ratio 2 the gain swings between 1 and 2 at the hop rate
+reproduce: cd audit/harness && ./run-oct.sh t_pitch.m

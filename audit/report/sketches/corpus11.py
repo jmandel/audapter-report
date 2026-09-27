@@ -11,7 +11,7 @@ def sketch(d, up):
     ny = math.log10(d["sr"] / 2)
     s.parts.append(f'<line class="sk-guide" x1="{s.x(0):.1f}" x2="{s.x(T):.1f}" y1="{sy(ny):.1f}" y2="{sy(ny):.1f}"/>'
                    f'<text class="sk-note" x="{s.x(T)-4:.1f}" y="{sy(ny)-5:.1f}" text-anchor="end">Nyquist, {d["sr"]/2000:g} kHz: no formant can exist above this line</text>')
-    s.parts.append(f'<text class="sk-note" x="{s.x(0.12*T):.1f}" y="{sy(4.5):.1f}">ratio mode: F1 × {r["ratio_F1"]:.0f}, targets up to {r["max_sF1_hz"]/1000:.0f} kHz</text>')
+    s.lane([(0, f"ratio mode (blue): F1 × {r['ratio_F1']:.0f}, targets up to {r['max_sF1_hz']/1000:.0f} kHz; thin lines: tracked F1 and the mel-mode target", "start")])
     s.axis([round(x, 1) for x in [0, 0.5, 1.0, 1.5, 2.0, 2.5] if x <= T], "{:g} s")
     return s.svg("With the 2008 parameters under today's ratio default, the shifted F1 target is about 100 times the tracked F1, far above the Nyquist "
                  "frequency; under mel mode it is about 1.2 times, as the 2008 session logged.")

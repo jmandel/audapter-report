@@ -1,7 +1,7 @@
 from sketchlib import *
 
 def _wave(s, text, sub, x, t0, dt, cls, h=70, amp=0.22, style=""):
-    y = s.y; s.label(y, h, text, sub); s.frame(y, h)
+    y = s._row(); s.label(y, h, text, sub); s.frame(y, h)
     Y = lambda v: y + h / 2 - max(-amp, min(amp, v)) / amp * (h / 2 - 3)
     pts = " L".join(f"{s.x(t0 + i*dt):.1f},{Y(v):.1f}" for i, v in enumerate(x) if s.t0 <= t0 + i * dt <= s.t1)
     s.parts.append(f'<line class="sk-grid" x1="{X0}" x2="{X1}" y1="{Y(0):.1f}" y2="{Y(0):.1f}"/>')
@@ -23,15 +23,9 @@ def sketch(d, up):
     y = _wave(s, "Heard", "buffer 128, left ear", d["win_heard"], t0, 1 / fs, "sk-line-wave", h=80)
     for i in range(3):
         a = t0 + i * P
-        s.band(a + P / 2, a + P, y, y + 80, "silence" if i == 0 else "", ty=y + 14)
-        s.parts.append(f'<text class="sk-in" x="{s.x(a + P/4):.1f}" y="{y+13}" text-anchor="middle">mic ×2 speed</text>')
-    ticks = [t0 + i * P / 2 for i in range(6)]
-    yy = s.y
-    s.parts.append(f'<line class="sk-axis" x1="{X0}" x2="{X1}" y1="{yy}" y2="{yy}"/>')
-    for tt in ticks:
-        s.parts.append(f'<line class="sk-axis" x1="{s.x(tt):.1f}" x2="{s.x(tt):.1f}" y1="{yy}" y2="{yy+4}"/>'
-                       f'<text class="sk-tick" x="{s.x(tt):.1f}" y="{yy+16}" text-anchor="middle">{tt*1000:.1f} ms</text>')
-    s.y += 22
+        s.band(a + P / 2, a + P, y, y + 80, "")
+    s.lane([(t0, "first half of each buffer: the raw mic at double speed; second half (shaded): silence", "start")])
+    s.axis([t0 + i * P for i in range(4)], label=f"time in the trial (ms); one device buffer = {P*1000:.2f} ms", tickfmt=lambda v: f"{v*1000:.1f}")
     return s.svg(f"With a {B}-sample device buffer, handleBuffer returns without processing. Each buffer then plays the raw mic samples of "
                  f"two buffers earlier, read as interleaved stereo: the left ear gets every second sample in the first half of the buffer "
                  f"(double speed, one octave up) and silence in the second half, {fs/B:.0f} times a second.")

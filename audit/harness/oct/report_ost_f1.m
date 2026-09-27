@@ -40,7 +40,7 @@ k = 1:5:numel(dB1.ost_stat); lg = @(v) round(v(k)' * 1e4) / 1e4;
 r.t = round((k-1) * fr * 1e4) / 1e4;
 r.stat_A = dA.ost_stat(k)'; r.stat_B_fresh = dB0.ost_stat(k)'; r.stat_B_after_A = dB1.ost_stat(k)';
 r.rms_B = lg(dB1.rms(:,1)); r.rms_A = lg(dA.rms(:,1));
-r.sF1_B_fresh = round(dB0.sfmts(k,1))'; r.sF1_B_after_A = round(dB1.sfmts(k,1))'; r.F1_B = round(dB1.fmts(k,1))';
+r.sF1_B_fresh = round(dB0.sfmts(k,1))'; r.sF1_B_after_A = round(dB1.sfmts(k,1))'; r.sF1_A = round(dA.sfmts(k,1))'; r.F1_B = round(dB1.fmts(k,1))';
 od = report_outdir('ost-f1');
 c = struct('name', {'trialB_input', 'trialB_output_fresh', 'trialB_output_after_A', 'trialA_input'}, ...
   'x', {dB0.signalIn, dB0.signalOut, dB1.signalOut, dA.signalIn}, ...

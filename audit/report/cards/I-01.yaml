@@ -1,73 +1,155 @@
-# Full finding card I-01. Rendered by build.py; see PLAN.md section 3 for the fields.
+# Full finding card I-01. Sections follow the fixed template (build.py REQUIRED).
 id: I-01
 log: I-01
-notes: "notes/interface.md#i-01"
-headline: "A 5 s masking-noise file plays as 5 s of noise, then 5 s of silence"
+notes: notes/interface.md#i-01
+headline: >-
+  Playback loops at the fixed 10 s buffer length, not at the loaded noise length, so any noise shorter than 10 s is followed by silence
 severity: high
 origin: blab-amplified
-origin_note: "Wrapping at the buffer size rather than the noise length is upstream behaviour. Upstream's buffer was 230400 samples (4.8 s), and the MATLAB callers truncate noise to that length, so any file of 4.8 s or more looped without a gap. Blab commit 3c90a3a raised the buffer to 480000 (10 s), and from then on a shorter file leaves a silent stretch."
-status: [H]
-effect:
-  setup: >
-    fb = 3 (voice + noise). The masking noise is loaded the way <code>runExperiment.m</code> does it (mtbabble48k.wav, zero mean,
-    unit RMS, truncated to <code>getMaxPBLen</code>), but only its first 5 s are used, as with a lab's own shorter noise file.
-    Input: a 0.5 s vowel every second for 12 s.
-  expected: "Noise throughout the trial: the 5 s file loops without a break."
-  observed: "Noise from 0 to 5.00 s, then none from 5.00 to 10.00 s, then noise again. During the gap the participant hears their own voice unmasked. The full bundled babble file (479230 samples) drops out for 16 ms at 9.98 s."
-  matters: >
-    Masking-noise and fb 4/5 conditions deliver no masking for part of the trial, with no error. <code>Audapter('reset')</code>
-    does not reset the playback position, so the gap falls somewhere different in each trial. In our two-trial check
-    it began 1.0 s into the second trial. <code>signalOut</code> does contain the gap, so affected sessions can be found afterwards.
-  numbers:
-    - ["getMaxPBLen (blab / upstream 2.1.5)", "{maxPBLen} / {up_maxPBLen} samples"]
-    - ["Noise gap(s) in a 12 s trial, blab", "{gaps_text}"]
-    - ["Noise gap(s), same script on upstream 2.1.5", "{up_gaps_text}"]
-    - ["Second trial after reset: noise stops at", "{trial2_gap_start_s:.2f} s into the trial"]
+since: >-
+  Wrapping at the buffer size is long-standing; the buffer grew from 4.8 s to 10 s in the blab-lab fork (commit 3c90a3a), which is when noise files shorter than 10
+  s started to leave a silent stretch.
+status:
+- H
+what: >-
+  In feedback modes 2 to 5 Audapter plays the loaded <code>datapb</code> waveform, such as masking noise, in a loop. The loop point is the end of the 480000-sample
+  (10 s) buffer, not the end of the loaded waveform, and the rest of the buffer is filled with zeros. A shorter noise file therefore plays once and is followed by
+  silence until the 10 s mark.
+scope: >-
+  Affects every fb 2–5 condition whose playback waveform is shorter than 10 s at 48 kHz: masking noise, noise plus voice, and speech-modulated noise. <code>Audapter('reset')</code>
+  does not rewind the playback position, so the silent stretch falls at a different point in each trial. The bundled 10 s babble file is 770 samples short and leaves
+  a 16 ms dropout every 10 s.
+example: >-
+  Voice plus masking noise (fb 3) with the first 5 s of the bundled babble, loaded the way <code>runExperiment.m</code> loads noise, over a 12 s trial: the noise
+  plays from 0 to 5 s, stops from 5 to 10 s, and resumes at 10 s. During the gap the participant hears their own voice unmasked.
+figure_caption: One 12 s trial. The expected row shows the 5 s file looping; the observed row shows what is played.
+table:
+- - synthetic
+  - Noise gap in a 12 s trial, 5 s noise file
+  - '{gaps_text}'
+- - synthetic
+  - 'Second trial after reset(): the noise stops at'
+  - '{trial2_gap_start_s:.1f} s into the trial'
+- - synthetic
+  - Bundled babble (479230 samples)
+  - 16 ms of silence every 10 s
+- - real speech
+  - Noise gap, real sentences as the voice
+  - '{r_noise_gap_start_s:.1f}–{r_noise_gap_end_s:.1f} s'
 sketch: i01
-interactive:
-  id: i-01
-  variants: [shipped, fix-i-01]
-  patches: {fix-i-01: [i-01-datapb-loop-length.patch]}
-  needs: {shipped_playback: true}
-  button: "Run a 12 s trial on both builds"
-  inputs: {babble: dev_babble_every3rd_16k.wav, vowels: dev_vowels3_48k.wav}
-  params: {rmsthresh: 0.005, bdetect: 1, btrack: 1, fb2gain: 0.05, fb3gain: 0.05, dscale: 1}
-  text: >
-    This runs a 12 s trial through the real Audapter C++ core compiled to WebAssembly from the pinned commit, once as released
-    and once with the noise looping at the length that was loaded. Both builds keep the shipped 480000-sample playback buffer. Pick
-    the length of the noise file, cut from the bundled babble and loaded as <code>runExperiment.m</code> does it (zero mean, unit RMS).
-    The page ships only every third sample of the babble, the only samples the fb 2–5 loop reads, and rebuilds the 48 kHz buffer
-    from them, so Audapter reads the same values it would read from the full-rate file. The bars come from a noise-only run (fb 2), and Play gives the voice + noise
-    run (fb 3). Both use the 48 kHz output Audapter returns for every frame, which lags <code>signalOut</code> by a few milliseconds. The build used here records only 10 s, so its
-    <code>signalOut</code> would not cover a 12 s trial.
 asset_dir: i-01
 audio:
-  - {file: input_vowels.wav, role: input}
-  - {file: output_fb3_voice_plus_noise.wav, role: observed}
-  - {file: output_fb2_bundled_babble_zoom.wav, role: observed, offset: 8.5}
-cause:
-  summary: >
-    The fb 2–5 loop advances <code>pbCounter</code> and wraps it at the compile-time <code>maxPBSize</code>, not at the length
-    that was loaded. Setting <code>datapb</code> zero-fills the rest of the buffer, so the pointer runs through zeros
-    until it wraps. <code>pbCounter</code> is reset only when <code>datapb</code> is set, not in <code>reset()</code>.
-  refs:
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2202, 2204], hl: [2203], expect: "pbCounter >= maxPBSize", note: "The wrap uses the buffer capacity."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1216, 1219], hl: [1217, 1218], expect: "Zero out the remaining part", note: "Loading a shorter datapb fills the rest of the buffer with zeros."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.h, lines: [176, 176], hl: [176], expect: "maxPBSize = 480000", note: "Blab's value; upstream has 230400 (Audapter.h:169)."}
-    - {repo: blab-matlab, path: mcode/runExperiment.m, lines: [325, 330], hl: [325], expect: "getMaxPBLen", note: "Callers truncate to the maximum but never pass the actual length to the playback loop."}
-  upstream_refs:
-    - {repo: upstream-mex, path: TransShiftMex/Audapter.h, lines: [169, 169], expect: "maxPBSize = 230400"}
-    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [2029, 2030], expect: "pbCounter -= maxPBSize"}
-  fix: "Store the loaded length when <code>datapb</code> is set and wrap at that length. Reset <code>pbCounter</code> in <code>reset()</code>, or make that optional for continuous-noise designs."
-verify:
-  - {kind: H, what: "interface check", name: "scratch/interface/t_iface.m T1", detail: "fb 2: mean |out| 0.100 for 0–4.9 s, 0.000 for 5.1–9.9 s"}
-  - {kind: H, what: "report export", name: "report_i01.m", detail: "blab and upstream builds; upstream shows no gap"}
-reproduce: "cd audit/harness && ./run-oct.sh report_i01.m"
+- file: input_vowels.wav
+  role: input
+- file: output_fb3_voice_plus_noise.wav
+  role: observed
+- file: output_fb2_bundled_babble_zoom.wav
+  role: observed
+  offset: 8.5
 real:
   dir: i-01
-  text: >
-    With real sentences as the voice input (ARCTIC, LibriSpeech and speechocean762 clips in sequence) and the same 5 s noise file in fb 3, the masking noise is absent
-    from {noise_gap_start_s:.1f} to {noise_gap_end_s:.1f} s, and the voice is heard unmasked in that stretch. The gap does not depend on the input, as the code implies.
   clips:
-    - {file: input.wav, role: input, label: "Input: six real sentences", sources: [arctic_bdl_a0005, arctic_slt_a0018, libri_84-121123-0000, arctic_rms_a0036, so762_0003_0, libri_2078-142845-0026]}
-    - {file: output_fb3.wav, role: observed, label: "Output fb 3: voice + 5 s masking noise", warn: "The noise stops abruptly at 5 s and resumes at 10 s.", sources: [arctic_bdl_a0005, arctic_slt_a0018, libri_84-121123-0000, arctic_rms_a0036, so762_0003_0, libri_2078-142845-0026]}
+  - file: input.wav
+    role: input
+    label: 'Input: six real sentences'
+    sources:
+    - arctic_bdl_a0005
+    - arctic_slt_a0018
+    - libri_84-121123-0000
+    - arctic_rms_a0036
+    - so762_0003_0
+    - libri_2078-142845-0026
+  - file: output_fb3.wav
+    role: observed
+    label: 'Output fb 3: voice + 5 s masking noise'
+    warn: The noise stops abruptly at 5 s and resumes at 10 s.
+    sources:
+    - arctic_bdl_a0005
+    - arctic_slt_a0018
+    - libri_84-121123-0000
+    - arctic_rms_a0036
+    - so762_0003_0
+    - libri_2078-142845-0026
+interactive:
+  id: i-01
+  variants:
+  - shipped
+  - fix-i-01
+  patches:
+    fix-i-01:
+    - i-01-datapb-loop-length.patch
+  needs:
+    shipped_playback: true
+  button: Run a 12 s trial on both builds
+  inputs:
+    babble: dev_babble_every3rd_16k.wav
+    vowels: dev_vowels3_48k.wav
+  params:
+    rmsthresh: 0.005
+    bdetect: 1
+    btrack: 1
+    fb2gain: 0.05
+    fb3gain: 0.05
+    dscale: 1
+  text: >-
+    This runs a 12 s trial through the real Audapter C++ core compiled to WebAssembly from the pinned commit, once as released and once with the noise looping at
+    the length that was loaded. Both builds keep the shipped 480000-sample playback buffer. Pick the length of the noise file, cut from the bundled babble and loaded
+    as <code>runExperiment.m</code> does it (zero mean, unit RMS). The page ships only every third sample of the babble, the only samples the fb 2–5 loop reads, and
+    rebuilds the 48 kHz buffer from them, so Audapter reads the same values it would read from the full-rate file. The bars come from a noise-only run (fb 2), and
+    Play gives the voice + noise run (fb 3). Both use the 48 kHz output Audapter returns for every frame, which lags <code>signalOut</code> by a few milliseconds.
+    The build used here records only 10 s, so its <code>signalOut</code> would not cover a 12 s trial.
+cause:
+  summary: >-
+    The fb 2–5 loop advances <code>pbCounter</code> and wraps it at the compile-time <code>maxPBSize</code>. Setting <code>datapb</code> zero-fills the rest of the
+    buffer, and only setting <code>datapb</code> resets <code>pbCounter</code>.
+  refs:
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 2202
+    - 2204
+    hl:
+    - 2203
+    expect: pbCounter >= maxPBSize
+    note: The wrap uses the buffer capacity.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 1216
+    - 1219
+    hl:
+    - 1217
+    - 1218
+    expect: Zero out the remaining part
+    note: Loading a shorter datapb fills the rest of the buffer with zeros.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.h
+    lines:
+    - 176
+    - 176
+    hl:
+    - 176
+    expect: maxPBSize = 480000
+    note: The loop length, whatever length was loaded (it was 230400 before the blab-lab fork).
+  - repo: blab-matlab
+    path: mcode/runExperiment.m
+    lines:
+    - 325
+    - 330
+    hl:
+    - 325
+    expect: getMaxPBLen
+    note: Callers truncate to the maximum but never pass the actual length to the playback loop.
+  fix: >-
+    Store the loaded length when <code>datapb</code> is set and wrap there (<code>report/patches/i-01-datapb-loop-length.patch</code>); rewind <code>pbCounter</code>
+    in <code>reset()</code>. Workaround: tile the noise to exactly 480000 samples before loading it.
+verify:
+- kind: H
+  what: interface check
+  name: scratch/interface/t_iface.m T1
+  detail: 'fb 2: mean |out| 0.100 for 0–4.9 s, 0.000 for 5.1–9.9 s'
+- kind: H
+  what: report export
+  name: report_i01.m
+  detail: 12 s trials with a 5 s noise file
+reproduce: cd audit/harness && ./run-oct.sh report_i01.m

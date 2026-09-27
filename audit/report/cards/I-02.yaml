@@ -1,76 +1,150 @@
-# Full finding card I-02. Rendered by build.py; see PLAN.md section 3 for the fields.
+# Full finding card I-02. Sections follow the fixed template (build.py REQUIRED).
 id: I-02
 log: I-02
-notes: "notes/interface.md#i-02"
-headline: "In fb 5, raising closedLoopGain by 6 dB raises the speech-modulated noise by 12 dB, so the mix set by fb5GainDB_speech shifts by 6 dB"
+notes: notes/interface.md#i-02
+headline: >-
+  In feedback mode 5, the speech-modulated noise is scaled by dScale twice, so the noise mix changes with the rig's calibration
 severity: med
 origin: blab
-origin_note: "Feedback mode 5 is new in blab b2.5 (commit 169cadf, 'Feedback mode5 (#11)'). Its speech-modulated term copies fb 4's extra multiplication by dScale. Upstream 2.1.5's fb 4 already multiplies by dScale twice; there it only shifts the level of fb 4's single component, so we leave it alone and the patch below does not touch it. Found by reading and confirmed on the blab build; upstream has no fb 5 to run."
-status: [H]
-effect:
-  setup: >
-    <code>fb = 5</code> with the bundled babble (<code>mtbabble48k.wav</code>, zero mean, scaled to RMS 0.03) as <code>datapb</code>,
-    <code>fb5Gain_playback = 1</code> and <code>fb5GainDB_speech = +20</code> dB, so that both parts are audible. Input: three vowels at
-    different levels. The same input and parameters were run with <code>dScale</code> as <code>getAudapterDefaultParams</code> computes it from the
-    bundled calibration, for <code>closedLoopGain</code> 15 dB (the default) and 21 dB, and with <code>dScale = 1</code> as a reference. Each run was
-    repeated with <code>fb5Gain_playback = 0</code> to separate the two parts of the output.
-  expected: "dScale is one overall output gain. Changing it moves everything the participant hears by the same number of dB, so the balance of speech-modulated to playback noise stays where fb5GainDB_speech puts it ({mix_db_ref:+.1f} dB during the vowels here, measured at dScale 1)."
-  observed: "At closedLoopGain {clgA} dB (dScale {dsA:.3f}) the speech-modulated part sits {shift_A_db:+.1f} dB off that balance; at {clgB} dB (dScale {dsB:.3f}) it sits {shift_B_db:+.1f} dB off. Going from {clgA} to {clgB} dB raises the playback part by {play_step_db:.1f} dB and the speech-modulated part by {speech_step_db:.1f} dB."
-  matters: >
-    The balance between the two components is the manipulation fb 5 exists for, but its real value depends on <code>dScale</code>, which
-    is rarely 1: it comes from <code>closedLoopGain</code> and each rig's calibration file (<code>micRMS_100dBA.mat</code>). Two sessions with the same
-    <code>fb5GainDB_speech</code> but different <code>closedLoopGain</code> deliver different mixes, and <code>data.params</code> records only the nominal value.
-    The effective value can be recomputed afterwards as <code>fb5GainDB_speech + 20·log10(dScale)</code>, since <code>dScale</code> is logged too (<code>data.params.scale</code>).
-    (Where <code>dScale</code> differs only because microphones differ in sensitivity, the extra factor happens to be offset by the weaker or stronger
-    microphone signal; the dependence on <code>closedLoopGain</code> remains.) At the defaults (0 dB, <code>rms_fb</code> of about 0.01–0.1) the speech-modulated
-    part is 20–40 dB below the playback part, which is worth stating in the documentation either way.
-  numbers:
-    - ["dScale for closedLoopGain {clgA} / {clgB} dB (bundled calibration, {clg_bundled_db:.2f} dB)", "{dsA:.4f} / {dsB:.4f}"]
-    - ["Speech-modulated re playback during vowels: dScale 1 (intended)", "{mix_db_ref:+.2f} dB"]
-    - ["Same, closedLoopGain {clgA} dB / {clgB} dB", "{mix_db_A:+.2f} dB / {mix_db_B:+.2f} dB"]
-    - ["Level change {clgA} → {clgB} dB: playback / speech-modulated", "{play_step_db:+.2f} dB / {speech_step_db:+.2f} dB"]
+status:
+- H
+what: >-
+  Feedback mode 5 plays a constant noise plus a noise that follows the speaker's loudness. The speech-modulated part is multiplied by <code>dScale</code> twice and
+  the constant part once, so their balance moves by 20·log10(dScale) dB instead of staying at <code>fb5GainDB_speech</code>.
+scope: >-
+  Affects fb 5 only. <code>dScale</code> comes from <code>closedLoopGain</code> and the lab's calibration, so two setups, or one setup at two gains, get different
+  mixes from the same parameter. A different microphone sensitivity is compensated by the input level, so the error follows <code>closedLoopGain</code>. fb 4 multiplies
+  by <code>dScale</code> twice as well, but has only one component, so it is a level offset there. The logged <code>fb5GainDB_speech</code> is the nominal value.
+example: >-
+  fb 5 with babble noise and <code>fb5GainDB_speech</code> +20 dB. At <code>closedLoopGain</code> 15 dB (dScale {dsA:.3f}) the speech-modulated part sits {mix_db_A:+.1f}
+  dB relative to the constant part; at 21 dB (dScale {dsB:.3f}) it sits {mix_db_B:+.1f} dB. The 6 dB gain step raises the constant noise by {play_step_db:.0f} dB
+  and the speech-modulated noise by {speech_step_db:.0f} dB.
+figure_caption: One trial per setting; the balance between the two components, expected and observed.
+table:
+- - synthetic
+  - Mix (speech-modulated re constant), dScale 1
+  - '{mix_db_ref:+.2f} dB'
+- - synthetic
+  - Mix at closedLoopGain 15 / 21 dB
+  - '{mix_db_A:+.2f} / {mix_db_B:+.2f} dB'
+- - synthetic
+  - 'Level step for a 6 dB gain step: constant / speech-modulated'
+  - '{play_step_db:.0f} / {speech_step_db:.0f} dB'
+- - real speech
+  - Mix change at dScale {r_ds_lo:.3f} / {r_ds_hi:.3f}
+  - '{r_d_lo:+.1f} / {r_d_hi:+.1f} dB'
 sketch: i02
-interactive:
-  id: i-02
-  variants: [shipped, fix-i-02]
-  patches: {fix-i-02: [i-02-dscale-once.patch]}
-  needs: {recorder_s: 4.0, shipped_playback: true}
-  button: "Run fb 5 at both closedLoopGain settings on both builds"
-  inputs: {input: dev_input_48k.wav, babble: dev_babble_48k.wav}
-  params: {rmsthresh: 0.005, bdetect: 1, btrack: 1, fb: 5, fb5gaindb_speech: 20, fb5gain_playback: 1}
-  text: >
-    This runs the same input, babble and parameters as the harness through the real Audapter C++ core compiled to WebAssembly from the
-    pinned commit, as released and with the one-line fix below, at the two <code>dScale</code> values. With the fix the balance no longer moves.
-    Feedback mode 4 is left as it is upstream; our check confirms that fb 2, 3 and 4 output is bit-identical between the two builds.
 asset_dir: i-02
 audio:
-  - {file: input_vowels.wav, role: input}
-  - {file: output_fb5_clg15.wav, role: observed}
-  - {file: output_fb5_clg21.wav, role: observed}
-audio_note: "All clips share one playback gain, so level differences are real: the 21 dB clip is louder overall, as intended, but its speech-modulated noise has grown twice as much. Heard output (device rate) decimated to 16 kHz, 16-bit."
-cause:
-  summary: >
-    In the fb 2–5 loop, fb 5 builds its speech-modulated component as <code>data_pb · rms_fb · fb5Gain_speech · dScale</code> and its playback
-    component without <code>dScale</code>. The sum is then passed to <code>upSampSig</code>, which multiplies the whole output frame by
-    <code>dScale</code> again. The speech-modulated part therefore carries <code>dScale²</code> and the playback part <code>dScale</code>.
-  refs:
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2197, 2201], hl: [2199], expect: "fb5Gain_speech * p.dScale", note: "fb 5: dScale on the speech-modulated term only."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2221, 2223], hl: [2223], expect: "p.downFact, p.dScale);", note: "Every output frame then goes through upSampSig with dScale as its scale factor..."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2660, 2660], hl: [2660], expect: "upfact * scalefact", note: "...which multiplies the frame by it."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2195, 2196], hl: [2196], expect: "fb4Gain * p.dScale", note: "fb 4 has the same extra factor, unchanged from upstream."}
-    - {repo: blab-matlab, path: mcode/getAudapterDefaultParams.m, lines: [34, 34], hl: [34], expect: "p.dScale        = 10 ^", note: "dScale follows closedLoopGain and the rig calibration."}
-    - {repo: blab-matlab, path: mcode/getAudapterDefaultParams.m, lines: [132, 134], hl: [133], expect: "fb5GainDB_speech = 0.0", note: "The documented meaning of fb5GainDB_speech says nothing about dScale."}
-  upstream_refs:
-    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [2026, 2026], expect: "fb4Gain * p.dScale"}
-    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [2049, 2049], expect: "p.downFact, p.dScale);"}
-  fix: "Drop <code>* p.dScale</code> from the fb 5 speech-modulated term (<code>report/patches/i-02-dscale-once.patch</code>, one line), so both components get dScale once, from <code>upSampSig</code>. Whether fb 4 should change too is a separate, upstream question: fixing it would change the level of every existing fb 4 condition."
-verify:
-  - {kind: H, what: "interface check", name: "scratch/interface/t_iface.m T3", detail: "recorded speech-modulated component per unit playback 0.0705 at dScale 1, 0.1409 at dScale 2"}
-  - {kind: H, what: "report export (heard output, two closedLoopGain settings)", name: "report_i02.m"}
-  - {kind: H, what: "patched WASM build vs shipped", name: "report/wasm/checks/fix-i-02.mjs", detail: "node audit/report/wasm/check-patches.mjs fix-i-02"}
-reproduce: "cd audit/harness && ./run-oct.sh report_i02.m"
+- file: input_vowels.wav
+  role: input
+  label: 'Input: vowels'
+- file: output_fb5_clg15.wav
+  role: observed
+  label: fb 5 at closedLoopGain 15 dB
+- file: output_fb5_clg21.wav
+  role: observed
+  label: 'fb 5 at closedLoopGain 21 dB: the speech-modulated noise grows twice as much'
+audio_note: All clips share one playback gain. Heard output at the device rate, decimated to 16 kHz.
 real:
   dir: i-02
-  text: >
-    With real speech driving fb 5, the balance between the speech-modulated and the playback component moved by {d_lo:+.1f} dB at dScale {ds_lo:.3f} and by
-    {d_hi:+.1f} dB at dScale {ds_hi:.3f} relative to dScale 1, i.e. by 20·log10(dScale), as the code predicts.
+interactive:
+  id: i-02
+  variants:
+  - shipped
+  - fix-i-02
+  patches:
+    fix-i-02:
+    - i-02-dscale-once.patch
+  needs:
+    recorder_s: 4.0
+    shipped_playback: true
+  button: Run fb 5 at both closedLoopGain settings on both builds
+  inputs:
+    input: dev_input_48k.wav
+    babble: dev_babble_48k.wav
+  params:
+    rmsthresh: 0.005
+    bdetect: 1
+    btrack: 1
+    fb: 5
+    fb5gaindb_speech: 20
+    fb5gain_playback: 1
+  text: >-
+    This runs the same input, babble and parameters as the harness through the real Audapter C++ core compiled to WebAssembly from the pinned commit, as released
+    and with the one-line fix below, at the two <code>dScale</code> values. With the fix the balance no longer moves. Feedback mode 4 is unchanged.
+cause:
+  summary: >-
+    fb 5 builds its speech-modulated component as <code>data_pb · rms_fb · fb5Gain_speech · dScale</code> and its constant component without <code>dScale</code>.
+    <code>upSampSig</code> then multiplies the whole output by <code>dScale</code> again.
+  refs:
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 2197
+    - 2201
+    hl:
+    - 2199
+    expect: fb5Gain_speech * p.dScale
+    note: 'fb 5: dScale on the speech-modulated term only.'
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 2221
+    - 2223
+    hl:
+    - 2223
+    expect: p.downFact, p.dScale);
+    note: Every output frame then goes through upSampSig with dScale as its scale factor...
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 2660
+    - 2660
+    hl:
+    - 2660
+    expect: upfact * scalefact
+    note: '...which multiplies the frame by it.'
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 2195
+    - 2196
+    hl:
+    - 2196
+    expect: fb4Gain * p.dScale
+    note: fb 4 has the same extra factor; with one component it only offsets the level.
+  - repo: blab-matlab
+    path: mcode/getAudapterDefaultParams.m
+    lines:
+    - 34
+    - 34
+    hl:
+    - 34
+    expect: p.dScale        = 10 ^
+    note: dScale follows closedLoopGain and the rig calibration.
+  - repo: blab-matlab
+    path: mcode/getAudapterDefaultParams.m
+    lines:
+    - 132
+    - 134
+    hl:
+    - 133
+    expect: fb5GainDB_speech = 0.0
+    note: The documented meaning of fb5GainDB_speech says nothing about dScale.
+  fix: >-
+    Drop <code>* p.dScale</code> from the fb 5 speech-modulated term (<code>report/patches/i-02-dscale-once.patch</code>, one line). Workaround: set <code>fb5GainDB_speech</code>
+    to the intended value minus 20·log10(dScale).
+verify:
+- kind: H
+  what: interface check
+  name: scratch/interface/t_iface.m T3
+  detail: recorded speech-modulated component per unit playback 0.0705 at dScale 1, 0.1409 at dScale 2
+- kind: H
+  what: report export (heard output, two closedLoopGain settings)
+  name: report_i02.m
+- kind: H
+  what: patched WASM build vs shipped
+  name: report/wasm/checks/fix-i-02.mjs
+  detail: node audit/report/wasm/check-patches.mjs fix-i-02
+reproduce: cd audit/harness && ./run-oct.sh report_i02.m

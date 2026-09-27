@@ -1,5 +1,5 @@
-// F6 (a question to the maintainers): glide and dip inputs on the released build and on the alternative build that
-// restores upstream 2.1.5's transDone logic. Shows when the field perturbation is applied (sF1 > 0).
+// F6: glide and dip inputs with the current behaviour and with a one-shot-per-trial build that
+// restores the one-shot (transDone) rule. Shows when the field perturbation is applied (sF1 > 0).
 AudPanels.register('f6', async function (P) {
   var D = await P.data(), T1 = D.glide.length / 48000, rows = {};
   var segs = function (d) {
@@ -8,12 +8,12 @@ AudPanels.register('f6', async function (P) {
     return s.length ? 'shifted ' + s.join(', ') + ' s' : 'not shifted';
   };
   for (var v of P.variants) {
-    P.status('Running both inputs on the ' + (v === 'shipped' ? 'released' : 'alternative') + ' build…');
+    P.status('Running both inputs on the ' + (v === 'shipped' ? 'current' : 'one-shot') + ' build…');
     var a = await P.instance(v); a.init('female', D.params); var g = a.runTrial({ input: D.glide });
     a.init('female', D.params); var d = a.runTrial({ input: D.dip });
     rows[v] = { g: g, d: d };
   }
-  var h = '', lab = { shipped: 'as released', 'alt-f6': 'alternative (upstream)' };
+  var h = '', lab = { shipped: 'current behaviour', 'alt-f6': 'one-shot per trial' };
   [['g', 'Glide'], ['d', 'F1 dip']].forEach(function (k) {
     P.variants.forEach(function (v) {
       var r = rows[v][k[0]], on = Array.from(r.sfmts[0], function (x) { return x > 0; });

@@ -1,61 +1,112 @@
-# Full finding card I-04 (log: H3 / I-04). Rendered by build.py; see PLAN.md section 3 for the fields.
+# Full finding card I-04. Sections follow the fixed template (build.py REQUIRED).
 id: I-04
 log: I-04
-notes: "notes/interface.md#i-04"
-headline: "Reprocessing one recording under two conditions: the second condition is applied to the first condition's output"
+notes: notes/interface.md#i-04
+headline: >-
+  Reprocessing one recording under two conditions applies the second condition to the first condition's output
 severity: med
 origin: upstream
-origin_note: "The offline path (mexLibrary.cpp case 5 and audapterCallback) is unchanged from upstream 2.1.5 (reading; same lines in upstream). The export ran on the blab build only."
-status: [H]
-effect:
-  setup: >
-    Offline reprocessing the way <code>test_audapter.m</code> and <code>audapterDemo_triphthong.m</code> do it: the stored signal is cut into
-    frames with <code>sigInCell = makecell(sigIn, frameLen*downFact)</code>, then <code>Audapter('runFrame', sigInCell{n})</code> runs for every frame.
-    One stored 1.0 s /a/ is processed under condition 1 (1D field, F1 +20 %) and then condition 2 (F1 −20 %), once with the same
-    <code>sigInCell</code> for both conditions, as a parameter sweep over one cell array would, and once with fresh frames per condition.
-  expected: "Condition 2 lowers the recording's F1: heard {F1_c2_fresh_hz:.0f} Hz from an input of {F1_in_hz:.0f} Hz ({r_fresh:.2f}×), as with fresh frames."
-  observed: "After condition 1, sigInCell holds condition 1's output (max change {cell_max_change:.2f}). Condition 2 therefore processes an already raised F1 (it tracks {logged_F1_c2_reused_hz:.0f} Hz, not {logged_F1_c2_fresh_hz:.0f} Hz) and the two shifts nearly cancel: heard F1 {F1_c2_reused_hz:.0f} Hz ({r_reused:.2f}× the input). Its signalIn starts with {lead0_c2_reused_in} zero samples ({lead0_ms:.0f} ms), condition 1's output delay. Condition 1 itself is {c1_same} between the two runs."
-  matters: >
-    Offline reprocessing is how labs check perturbation settings, rebuild feedback for analysis, or run a stimulus through several conditions.
-    If a cell array of frames (or any variable passed to <code>runFrame</code> or <code>AudapterIO('process')</code>) is reused, every later run
-    processes the previous run's output, silently. The data returned by <code>getData</code> are consistent with that wrong input, so nothing looks
-    off: <code>signalIn</code> is the previous output. Two signs give it away: <code>signalIn</code> differs from the stored recording, and it starts with
-    a run of exact zeros (the output delay of each earlier pass). Live ASIO experiments are not affected; there the buffer belongs to the audio driver.
-  numbers:
-    - ["F1 heard (independent LPC, 0.35–0.85 s): input", "{F1_in_hz:.0f} Hz"]
-    - ["Condition 1 output (F1 +20 %)", "{F1_c1_hz:.0f} Hz ({r_c1:.2f}×)"]
-    - ["Condition 2 output (F1 −20 %), fresh frames / reused sigInCell", "{F1_c2_fresh_hz:.0f} / {F1_c2_reused_hz:.0f} Hz"]
-    - ["Condition 2 logged fmts F1 / sfmts F1: fresh", "{logged_F1_c2_fresh_hz:.0f} / {logged_sF1_c2_fresh_hz:.0f} Hz"]
-    - ["Condition 2 logged fmts F1 / sfmts F1: reused", "{logged_F1_c2_reused_hz:.0f} / {logged_sF1_c2_reused_hz:.0f} Hz"]
-    - ["Leading zero samples in condition 2's signalIn: fresh / reused", "{lead0_c2_fresh_in} / {lead0_c2_reused_in}"]
-    - ["Largest change runFrame made to sigInCell", "{cell_max_change:.3f}"]
+status:
+- H
+what: >-
+  <code>Audapter('runFrame', x)</code> writes its output back into the array it is given. A script that runs the same stored frames through Audapter twice, for two
+  conditions, feeds the first condition's output into the second.
+scope: >-
+  Affects offline reprocessing that reuses the same MATLAB variables, for example the cell array of frames in <code>test_audapter.m</code>, and anything else sharing
+  that data. Scripts that build fresh frames for each run are unaffected. Live experiments are unaffected.
+example: >-
+  One stored /a/ (F1 {F1_in_hz:.0f} Hz) processed as condition 1 (F1 +20 %) and then condition 2 (F1 −20 %) from the same cell array. Condition 2 is heard at {F1_c2_reused_hz:.0f}
+  Hz instead of {F1_c2_fresh_hz:.0f} Hz, because it lowered F1 of an already raised vowel. Its logged input starts with {lead0_c2_reused_in} zero samples, the first
+  condition's output delay.
+figure_caption: >-
+  Two runs of the same stored recording, one after the other: condition 1, then condition 2 from the same frames (observed) or from fresh frames (expected).
+table:
+- - synthetic
+  - 'Condition 2 heard F1: fresh frames / reused frames'
+  - '{F1_c2_fresh_hz:.0f} / {F1_c2_reused_hz:.0f} Hz'
+- - synthetic
+  - 'Condition 2 logged F1 (tracker): fresh / reused'
+  - '{logged_F1_c2_fresh_hz:.0f} / {logged_F1_c2_reused_hz:.0f} Hz'
+- - synthetic
+  - 'Leading zero samples in condition 2''s logged input: fresh / reused'
+  - '{lead0_c2_fresh_in} / {lead0_c2_reused_in}'
 sketch: i04
 asset_dir: i-04
 audio:
-  - {file: input.wav, role: input}
-  - {file: cond1_output.wav, role: observed}
-  - {file: cond2_output_fresh.wav, role: expected}
-  - {file: cond2_output_reused.wav, role: observed}
-audio_note: "All clips share one playback gain, so level differences are real. 16 kHz, 16-bit, as recorded by Audapter (signalIn, signalOut). Compare the two condition-2 clips: with fresh frames the vowel is darker (F1 lowered); from the reused cell array it sounds much like the input, because it lowers the already raised F1 of condition 1. No in-browser panel: the WASM interface copies each input frame before processing (audit/wasm/src/audapter_c.cpp, aud_process), so it cannot show this."
+- file: input.wav
+  role: input
+  label: 'Input: /a/'
+- file: cond1_output.wav
+  role: observed
+  label: 'Condition 1: F1 +20 %'
+- file: cond2_output_fresh.wav
+  role: expected
+  label: 'Condition 2 from fresh frames: F1 −20 %'
+- file: cond2_output_reused.wav
+  role: observed
+  label: 'Condition 2 from the reused frames: the shifts cancel'
+audio_note: All clips share one playback gain. 16 kHz, 16-bit, as recorded by Audapter.
 cause:
-  summary: >
-    Case 5 of the MEX gateway (<code>runFrame</code>) passes the pointer to MATLAB's input array straight to <code>audapterCallback</code>, which
-    calls <code>handleBuffer</code> with the same pointer as input and output buffer. <code>handleBuffer</code> writes the processed frame into its
-    output pointer at the end, so the caller's array now holds the output. MEX inputs are meant to be read-only, and MATLAB shares an array's data
-    between variables until one is modified, so every variable sharing that data changes too. This is the mechanism behind the methods note on
-    "identical trials that diverged" (NEG-1): our own harness was feeding outputs back in until we copied each frame.
+  summary: >-
+    The MEX gateway passes the pointer to MATLAB's input array straight to <code>audapterCallback</code>, which calls <code>handleBuffer</code> with the same pointer
+    as input and output. MATLAB arrays that share data with the variable are changed too.
   refs:
-    - {repo: blab-mex, path: TransShiftMex/mexLibrary.cpp, lines: [361, 364], hl: [361, 364], expect: "data_ptr = (double*)mxGetPr(prhs[1]);", note: "The MATLAB input array (prhs[1]) is handed over as the audio buffer, without a copy."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [74, 77], hl: [77], expect: "handleBuffer((dtype *)buffer, (dtype *)buffer, buffer_size, true)", note: "Input and output are the same buffer."}
-    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2256, 2259], hl: [2258], expect: "outFrame_ptr[n] = outputBuf[n];", note: "The processed frame overwrites it."}
-    - {repo: blab-matlab, path: mcode/test_audapter.m, lines: [103, 105], hl: [104], expect: "Audapter('runFrame', sigInCell{n});", note: "The pattern in the bundled scripts (also audapterDemo_triphthong.m:90, time_domain_shift_demo.m:109): fine once, wrong if sigInCell is used again."}
-  upstream_refs:
-    - {repo: upstream-mex, path: TransShiftMex/mexLibrary.cpp, lines: [360, 363], expect: "audapterCallback((char *)data_ptr"}
-    - {repo: upstream-mex, path: TransShiftMex/Audapter.cpp, lines: [77, 77], expect: "(dtype *)buffer, (dtype *)buffer, buffer_size, true"}
-  fix: "In case 5, copy <code>prhs[1]</code> into a scratch buffer (or <code>mxDuplicateArray</code>) and process that; return the output as <code>plhs[0]</code> if callers want it. Until then, pass <code>sigInCell{n} + 0</code> or rebuild the cell array for every condition."
+  - repo: blab-mex
+    path: TransShiftMex/mexLibrary.cpp
+    lines:
+    - 361
+    - 364
+    hl:
+    - 361
+    - 364
+    expect: data_ptr = (double*)mxGetPr(prhs[1]);
+    note: The MATLAB input array (prhs[1]) is handed over as the audio buffer, without a copy.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 74
+    - 77
+    hl:
+    - 77
+    expect: handleBuffer((dtype *)buffer, (dtype *)buffer, buffer_size, true)
+    note: Input and output are the same buffer.
+  - repo: blab-mex
+    path: TransShiftMex/Audapter.cpp
+    lines:
+    - 2256
+    - 2259
+    hl:
+    - 2258
+    expect: outFrame_ptr[n] = outputBuf[n];
+    note: The processed frame overwrites it.
+  - repo: blab-matlab
+    path: mcode/test_audapter.m
+    lines:
+    - 103
+    - 105
+    hl:
+    - 104
+    expect: Audapter('runFrame', sigInCell{n});
+    note: >-
+      The pattern in the bundled scripts (also audapterDemo_triphthong.m:90, time_domain_shift_demo.m:109): fine once, wrong if sigInCell is used again.
+  fix: >-
+    Copy the input in the gateway before processing, and return the output as a result. Workaround: pass a copy, e.g. <code>Audapter('runFrame', frame + 0)</code>,
+    or rebuild the frames for each condition.
 verify:
-  - {kind: H, what: "harness test", name: "t_inplace.m", test: "runFrame leaves input variable untouched"}
-  - {kind: H, what: "determinism with input copies (NEG-1)", name: "t_repeat.m", test: "repeat: identical signalOut"}
-  - {kind: H, what: "report export: two conditions, fresh vs reused frames", name: "report_i04.m", detail: "condition 2 on the reused cell array tracks condition 1's output"}
-  - {kind: H, what: "interface check", name: "scratch/interface/t_iface.m T4", detail: "the input and an alias of it were both modified"}
-reproduce: "cd audit/harness && ./run-oct.sh report_i04.m"
+- kind: H
+  what: harness test
+  name: t_inplace.m
+  test: runFrame leaves input variable untouched
+- kind: H
+  what: determinism with input copies (NEG-1)
+  name: t_repeat.m
+  test: 'repeat: identical signalOut'
+- kind: H
+  what: 'report export: two conditions, fresh vs reused frames'
+  name: report_i04.m
+  detail: condition 2 on the reused cell array tracks condition 1's output
+- kind: H
+  what: interface check
+  name: scratch/interface/t_iface.m T4
+  detail: the input and an alias of it were both modified
+reproduce: cd audit/harness && ./run-oct.sh report_i04.m

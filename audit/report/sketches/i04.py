@@ -11,9 +11,7 @@ def sketch(d, up):
                      sub="condition 2, sfmts")
     a, b = 0.35, 0.85
     s.band(a, b, ys, ys + 80, "")
-    s.parts.append(f'<text class="sk-note" x="{s.x(0.12):.1f}" y="{sy(d["logged_sF1_c2_reused_hz"]) - 6:.1f}">same sigInCell: {d["logged_sF1_c2_reused_hz"]:.0f} Hz (blue)</text>')
-    s.parts.append(f'<text class="sk-note" x="{s.x(0.12):.1f}" y="{sy(d["logged_sF1_c2_fresh_hz"]) + 16:.1f}">fresh frames: {d["logged_sF1_c2_fresh_hz"]:.0f} Hz (thin line)</text>')
-    s.parts.append(f'<text class="sk-note" x="{s.x(0.12):.1f}" y="{yf + 14:.1f}">the tracker sees condition 1\'s raised F1</text>')
+    s.lane([(0.12, f"target from the reused frames: {d['logged_sF1_c2_reused_hz']:.0f} Hz (blue); from fresh frames: {d['logged_sF1_c2_fresh_hz']:.0f} Hz (thin line). The tracker sees condition 1's raised F1.", "start")])
     s.axis([0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
     return s.svg("Run on the reused cell array, condition 2 tracks F1 at %.0f Hz (condition 1's output) instead of %.0f Hz and targets %.0f Hz instead of %.0f Hz; "
                  "the heard F1 is %.0f Hz, close to the unshifted input (%.0f Hz), instead of %.0f Hz."

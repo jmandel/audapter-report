@@ -3,7 +3,7 @@
 # pinned SHA with `git show`, and its `expect:` text must appear in the excerpt (guards against line drift).
 
 report:
-  title: "Audapter, blab-lab fork: what a headless audit found"
+  title: "Does Audapter do what experimenters think it does? An audit of the blab-lab version"
   date: "2026-09-27"
   # public repo holding audit/ (notes, harness, patches); links to audit files point here
   repo_url: "https://github.com/jmandel/audapter-report/blob/main"
@@ -22,13 +22,13 @@ table:
   - {id: OST-F1, sev: high, origin: upstream, status: H F, text: "OST state leaks across trials: an offset in trial B is detected 1.2 s late after a longer trial A"}
   - {id: OST-F2, sev: high, origin: upstream, status: H F, text: "maxIOI timeout writes the onset of the wrong state; ELAPSED_TIME fires after 2 ms instead of 100 ms, and without an OST reload the timeout drifts 0.2 → 0.4 → 0.6 s"}
   - {id: I-01,   sev: high, origin: blab-amplified, status: H, text: "Masking noise shorter than 10 s is followed by silence until the 10 s buffer wraps"}
-  - {id: CORPUS-10, sev: high, origin: upstream, status: H, text: "After a frameLen/nDelay change, runFrame can hang forever at 100 % CPU (found on real speech); live, this freezes the audio callback"}
+  - {id: CORPUS-10, sev: high, origin: upstream, status: H, text: "After a frameLen/nDelay change, runFrame can hang forever at 100 % CPU; live, this freezes the audio callback and MATLAB"}
   - {id: LIVE-1 / LIVE-2, sev: high, origin: upstream, status: D, text: "Changing OST/PCF files or DSP parameters while audio runs (always-on designs) crashes MATLAB or reads freed memory"}
   - {id: OST-F4, sev: high, origin: upstream, status: H, text: "PCF with fewer rows than OST states reads past the perturbation arrays; heap contents decide whether to perturb"}
   - {id: FMT-F1, sev: high, origin: blab, status: H, text: "Clamp trajectory setters copy 2048 values whatever length MATLAB passes"}
   - {id: CORPUS-8, sev: high, origin: upstream, status: H, text: "With the default frame settings the logged pitch is wrong below about 140 Hz (typical adult men): 90 Hz logs as about 229 Hz"}
   - {id: PT-5,   sev: high, origin: upstream, status: H F, text: "Phase vocoder plays 3.5 dB loud at 0 st, and the level changes when a pitch shift starts"}
-  - {id: LIVE-3, sev: med, origin: upstream, status: D, text: "reset() while the participant is voicing can emit a clipped burst, +17 to +61 dB so far (about 1 in 1000–2000 resets during voicing, in simulation)"}
+  - {id: LIVE-3, sev: med, origin: upstream, status: D, text: "reset() while the participant is speaking can send a clipped click: +17 to +61 dB over three simulated runs, about 1 in 1000–2000 resets during voicing"}
   - {id: LIVE-6, sev: med, origin: upstream, status: D, text: "If the sound card's buffer size differs from Audapter's frame size, the participant hears the raw microphone an octave up, with gaps"}
   - {id: CORPUS-11, sev: med, origin: upstream, status: H, text: "Shifted formant targets are unbounded: old mel-unit parameters under today's ratio default give targets up to 130 kHz and +24 dB clipped output"}
   - {id: COORD-1, sev: med, origin: upstream, status: H, text: "A PCF loaded in an earlier experiment survives AudapterIO('init') and silently overrides a later field-mode shift (435 frames shifted fresh, 0 after)"}
@@ -36,205 +36,369 @@ table:
   - {id: I-02,   sev: med,  origin: blab, status: H, text: "fb mode 5 applies dScale twice to the speech-modulated component"}
   - {id: F6,     sev: med,  origin: blab, status: H, text: "Dropout fix re-arms the perturbation on every field re-entry; minVowelLen no longer has any effect"}
   - {id: I-03,   sev: med,  origin: upstream, status: H, text: "Recorder wraps after 30 s without warning; a 35 s trial returns only its last 5.0 s"}
-  - {id: OST-F8, sev: low,  origin: blab, status: H, text: "Blab AND_RATIO rules take the hold from field 5, where the manual puts {}; clear on synthetic input, not clean on real /sh/ onsets"}
+  - {id: OST-F8, sev: low,  origin: blab, status: H, text: "AND_RATIO OST rules take the hold from field 5, where the manual puts {}; clear on synthetic input, not clean on real /sh/ onsets"}
 
 
 # Full cards, in report order (cards/<ID>.yaml)
 cards: [OST-F1, OST-F2, I-01, CORPUS-10, LIVE-1 / LIVE-2, CORPUS-8, PT-5, OST-F4, FMT-F1, LIVE-3, LIVE-6, CORPUS-11, COORD-1, I-04, I-02, F6, I-03, OST-F8]
 
-# Short cards: effect, one excerpt at the pinned SHA, how verified. `notes` must name an existing heading.
+# Short cards: what happens, when it matters, the code, the fix, how we know.
 short:
   - id: H2 / PT-1
-    notes: "notes/pitch-time.md#pt-1"
+    notes: notes/pitch-time.md#pt-1
     sev: low
     origin: upstream
     status: H F
-    title: "The first output frame of every trial, and one frame every 108 s, is read from outside the delay buffer"
-    text: >
-      The read pointer into the output delay ring uses <code>&gt; 0</code> where <code>&gt;= 0</code> is needed. When the write position minus the
-      delay is exactly 0 (the first frame after <code>reset</code> with delayFrames 0, and every wrap of the 108 s ring), the frame is read
-      past the end of the voice's buffer: usually zeros, so a silent 2 ms frame; in continuous sessions a glitch every 108 s.
-      The pitch-shift "back zeroing" uses a negative <code>%</code> on the same pointer and writes before the buffer.
+    title: >-
+      The first output frame of each trial, and one frame every 108 s, is read from outside the delay buffer
     refs:
-      - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2110, 2116], hl: [2111], expect: "p.delayFrames[h0] * p.frameLen > 0"}
-    verify: "UBSan on every harness run under build-asan: index 1728000 out of bounds at Audapter.cpp:2124. Formal (CBMC on the verbatim source, FORMAL-2 and FORMAL-4): the read goes out of bounds exactly at frame delayFrames of every trial and once per 108 s lap; the pvoc back zeroing writes out of bounds exactly when circPtr < delayFrames·frameLen + pvocHop. Both fixes, `>= 0` and a positive modulo, are proven in bounds for all parameters and to read or write the same sample as the original wherever the original was valid."
+    - repo: blab-mex
+      path: TransShiftMex/Audapter.cpp
+      lines:
+      - 2110
+      - 2116
+      hl:
+      - 2111
+      expect: p.delayFrames[h0] * p.frameLen > 0
+    verify: >-
+      UBSan reports the read on every harness run (Audapter.cpp:2124). CBMC on the verbatim source gives the exact conditions and proves both fixes.
+    what: >-
+      The read position in the output delay ring uses <code>&gt; 0</code> where <code>&gt;= 0</code> is needed. When the write position minus the delay is exactly 0,
+      the frame is read past the end of the buffer. The pitch-shift "back zeroing" on the same ring can also write before the start of the buffer.
+    scope: >-
+      The read happens at frame <code>delayFrames</code> of every trial and once per 108 s lap. At a trial start the wrongly read frame is near-silent, so it is benign;
+      in continuous sessions longer than 108 s without a reset it gives a 2 ms glitch. The back-zeroing write happens only with pitch shifting when the write position
+      is below <code>delayFrames·frameLen + pvocHop</code>.
+    fix: >-
+      Use <code>&gt;= 0</code> in the read-pointer test and a positive modulo in the back zeroing; both are proven to stay in bounds for every setting and to address
+      the same samples wherever the original was valid.
   - id: PT-2 / I-15
-    notes: "notes/pitch-time.md#pt-2"
+    notes: notes/pitch-time.md#pt-2
     sev: med
     origin: upstream
     status: H
-    title: "The RMS-clip loudness protection mutes a stale 2 ms slot instead of the loud frame"
-    text: >
-      When the frame RMS exceeds <code>rmsClipThresh</code>, the code zeroes <code>outFrameBuf[0 .. frameLen)</code>, the start of the circular buffer,
-      not the current frame at <code>outFrameBuf_circPtr</code>. In the harness, output RMS was unchanged with the threshold exceeded. It is off by default
-      on the MATLAB side, and blab's MATLAB setters for it are commented out, so <code>data.params</code> reports the C++ default (on), not what the
-      experiment script asked for.
+    title: The RMS-clip loudness protection mutes a stale 2 ms slot instead of the loud frame
     refs:
-      - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1955, 1958], hl: [1957], expect: "outFrameBuf[n]=0;"}
-    verify: "Harness (scratch/pitch-time/rmsclip.m): threshold 0.01, 0.5-amplitude sine, output unchanged."
+    - repo: blab-mex
+      path: TransShiftMex/Audapter.cpp
+      lines:
+      - 1955
+      - 1958
+      hl:
+      - 1957
+      expect: outFrameBuf[n]=0;
+    verify: 'Harness (scratch/pitch-time/rmsclip.m): threshold 0.01, a 0.5-amplitude sine; output unchanged.'
+    what: >-
+      When the frame RMS exceeds <code>rmsClipThresh</code>, the code zeroes the start of the circular output buffer instead of the current frame, so loud output passes
+      through unchanged.
+    scope: >-
+      Matters only for experiments that rely on <code>bRMSClip</code> for participant safety. It is off by default on the MATLAB side, and the MATLAB setters for it
+      are commented out, so <code>data.params</code> reports the C++ default (on), not what the experiment script asked for.
+    fix: >-
+      Zero the frame at <code>outFrameBuf_circPtr</code>, and restore the MATLAB setters. Do not rely on this protection until then.
   - id: PT-3
-    notes: "notes/pitch-time.md#pt-3"
+    notes: notes/pitch-time.md#pt-3
     sev: med
     origin: upstream
     status: H
-    title: "The time-domain pitch-shift schedule counts only above-threshold time, so onsets drift later after every pause"
-    text: >
-      The shifter is called only on frames above the RMS threshold, and its clock <code>totalLen</code> advances only inside those calls. A schedule
-      written in trial time therefore runs late by the total time spent below threshold: a 168 ms dip moved a 1.04 s onset to 1.20 s.
-      Frames below threshold pass through unshifted.
+    title: >-
+      The time-domain pitch-shift schedule runs on voiced time only, so shift onsets come later after every pause
     refs:
-      - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1896, 1902], hl: [1896], expect: "above_rms && p.bTimeDomainShift"}
-      - {repo: blab-mex, path: TransShiftMex/time_domain_shifter.cpp, lines: [243, 243], hl: [243], expect: "nowSec = static_cast<dtype>(totalLen) / sr"}
-    verify: "Harness (scratch/pitch-time/tdsched.m)."
+    - repo: blab-mex
+      path: TransShiftMex/Audapter.cpp
+      lines:
+      - 1896
+      - 1902
+      hl:
+      - 1896
+      expect: above_rms && p.bTimeDomainShift
+    - repo: blab-mex
+      path: TransShiftMex/time_domain_shifter.cpp
+      lines:
+      - 243
+      - 243
+      hl:
+      - 243
+      expect: nowSec = static_cast<dtype>(totalLen) / sr
+    verify: Harness (scratch/pitch-time/tdsched.m).
+    what: >-
+      The time-domain shifter's schedule clock advances only on frames above the RMS threshold. A schedule written in trial time runs late by the total time spent below
+      threshold, and frames below threshold pass through unshifted.
+    scope: >-
+      Affects time-domain pitch shifting with a time-varying schedule on speech with pauses. A 168 ms dip below threshold moved a 1.04 s onset to 1.20 s.
+    fix: Advance the schedule clock on every frame, or document that the schedule is in voiced time.
   - id: PT-4
-    notes: "notes/pitch-time.md#pt-4"
+    notes: notes/pitch-time.md#pt-4
     sev: med
     origin: upstream
     status: H
-    title: "The logged pitchShiftRatio is wrong whenever the time-domain shifter is used"
-    text: >
-      The data column logs <code>p.pitchShiftRatio[0]</code>, which the time-domain shifter never uses (it follows its own schedule). During a
-      +100 cent time-domain shift the log says 1.0. With a PCF loaded, the PCF's pitch values are logged although the shifter ignores them.
+    title: The logged pitchShiftRatio is wrong whenever the time-domain shifter is used
     refs:
-      - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2096, 2097], hl: [2097], expect: "data_recorder[offs][data_counter] = p.pitchShiftRatio[0];"}
-    verify: "Harness (pitch-time agent): column value during a scheduled shift."
+    - repo: blab-mex
+      path: TransShiftMex/Audapter.cpp
+      lines:
+      - 2096
+      - 2097
+      hl:
+      - 2097
+      expect: data_recorder[offs][data_counter] = p.pitchShiftRatio[0];
+    verify: 'Harness: the logged column during a scheduled +100 cent shift.'
+    what: >-
+      The <code>pitchShiftRatio</code> data column logs <code>p.pitchShiftRatio[0]</code>, which the time-domain shifter does not use; it follows its own schedule.
+      During a +100 cent time-domain shift the log says 1.0.
+    scope: >-
+      Affects every analysis that reads the logged ratio from time-domain pitch-shift sessions. With a PCF loaded, the PCF's pitch values are logged although the shifter
+      ignores them.
+    fix: Log the ratio the shifter actually applies.
   - id: PT-6
-    notes: "notes/pitch-time.md#pt-6"
+    notes: notes/pitch-time.md#pt-6
     sev: med
     origin: upstream
     status: R
-    title: "A PCF with both a pitch shift and a time warp silently drops the warp"
-    text: >
-      The third branch repeats the first branch's condition (<code>warp &gt; 0 &amp;&amp; !bIsPitchShift</code>), so
-      <code>TIME_WARP_WITH_FIXED_PITCH_SHIFT</code> is unreachable and "warp plus pitch" falls through to pitch-shift-only.
+    title: A PCF with both a pitch shift and a time warp silently drops the warp
     refs:
-      - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [3195, 3203], hl: [3201], expect: "pertCfg.warpCfg.size() > 0 && !bIsPitchShift"}
-    verify: "By reading."
+    - repo: blab-mex
+      path: TransShiftMex/Audapter.cpp
+      lines:
+      - 3195
+      - 3203
+      hl:
+      - 3201
+      expect: pertCfg.warpCfg.size() > 0 && !bIsPitchShift
+    verify: By reading.
+    what: >-
+      When a PCF specifies both a pitch shift and a time warp, the phase vocoder is set to pitch-shift-only: the mode that combines both cannot be reached, because
+      its condition repeats another branch's.
+    scope: Affects PCFs that combine pitch shift and time warp. The warp is not applied and nothing warns.
+    fix: Change the third condition to <code>warp &gt; 0 &amp;&amp; bIsPitchShift</code>.
   - id: OST-F5
-    notes: "notes/ost-pcf.md#f5"
+    notes: notes/ost-pcf.md#f5
     sev: med
     origin: upstream
     status: R
-    title: "A PCF pitch shift overwrites the user's pitchShiftRatio, which stays shifted after the PCF is cleared"
-    text: >
-      With a PCF loaded, every frame writes <code>p.pitchShiftRatio[0] = 2^(pitchShift[stat]/12)</code>. After <code>Audapter('pcf', '', 0)</code> the
-      phase vocoder uses the last written value, so a later "no PCF" run is pitch-shifted unless the script sets <code>pitchShiftRatio</code> again,
-      and <code>data.params</code> reports the mutated value.
+    title: >-
+      A PCF pitch shift overwrites the user's pitchShiftRatio, which stays shifted after the PCF is unloaded
     refs:
-      - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1970, 1974], hl: [1972], expect: "p.pitchShiftRatio[0] = pow(2.0, pertCfg.pitchShift[stat] / 12.0);"}
-    verify: "By reading; a harness test is proposed in the notes."
+    - repo: blab-mex
+      path: TransShiftMex/Audapter.cpp
+      lines:
+      - 1970
+      - 1974
+      hl:
+      - 1972
+      expect: p.pitchShiftRatio[0] = pow(2.0, pertCfg.pitchShift[stat] / 12.0);
+    verify: By reading; a harness test is proposed in the notes.
+    what: >-
+      With a PCF loaded, every frame writes the PCF's current pitch shift into <code>p.pitchShiftRatio[0]</code>. After <code>Audapter('pcf', '', 0)</code> the phase
+      vocoder keeps using the last written value.
+    scope: >-
+      Affects sessions that run a PCF pitch experiment and then a run without a PCF: the later run is pitch-shifted unless the script sets <code>pitchShiftRatio</code>
+      again, and <code>data.params</code> reports the overwritten value.
+    fix: >-
+      Keep the PCF's ratio in a separate variable. Workaround: set <code>pitchShiftRatio</code> explicitly after unloading a PCF.
   - id: OST-F6
-    notes: "notes/ost-pcf.md#f6"
+    notes: notes/ost-pcf.md#f6
     sev: med
     origin: upstream
     status: D
-    title: "Reloading an OST file that has no maxIOI section crashes MATLAB in the audio callback"
-    text: >
-      Loading a new OST frees the maxIOI arrays, but when the new file has no trailing <code>n = ...</code> section the parser returns early without
-      setting <code>maxIOICfg.n = 0</code>. The next frame dereferences the freed (NULL) arrays. <code>gen_multi_pert_pcf.m</code> writes files like this.
+    title: Reloading an OST file that has no maxIOI section crashes MATLAB
     refs:
-      - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [261, 262], hl: [262], expect: "if (++lit == ostLines_1.end())"}
-      - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [723, 725], hl: [725], expect: "maxIOICfg.stat0[i]"}
-    verify: "Standalone ost.cpp driver (scratch/ost-pcf/t): segfault on the first osTrack call after the reload."
+    - repo: blab-mex
+      path: TransShiftMex/ost.cpp
+      lines:
+      - 261
+      - 262
+      hl:
+      - 262
+      expect: if (++lit == ostLines_1.end())
+    - repo: blab-mex
+      path: TransShiftMex/ost.cpp
+      lines:
+      - 723
+      - 725
+      hl:
+      - 725
+      expect: maxIOICfg.stat0[i]
+    verify: 'Standalone ost.cpp driver (scratch/ost-pcf/t): segfault on the first frame after the reload.'
+    what: >-
+      Loading a new OST frees the maxIOI arrays. If the new file has no maxIOI section, the parser returns without setting their count to 0, and the next frame dereferences
+      the freed arrays.
+    scope: >-
+      Affects sessions that load one OST with a maxIOI section and then one without; <code>gen_multi_pert_pcf.m</code> writes files without it.
+    fix: >-
+      Set <code>maxIOICfg.n = 0</code> before returning. Workaround: always end OST files with an <code>n = 0</code> maxIOI section.
   - id: I-06 / I-07
-    notes: "notes/interface.md#i-06"
+    notes: notes/interface.md#i-06
     sev: med
     origin: upstream
     status: H
-    title: "An oversized tone count is accepted and overwrites neighbouring parameters"
-    text: >
-      The <code>tsgNTones</code> range check reads the value <em>before</em> it is assigned, so 100 is accepted (maximum 64) and the next tone-sequence
-      setter writes past the tone arrays into neighbouring members of <code>p</code> (stereoMode, bShift2D, clamp settings). Separately, the tone-sequence
-      recorder <code>tsg_wf</code> has no bound and overruns after 10 s.
+    title: An oversized tone count is accepted and overwrites neighbouring parameters
     refs:
-      - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [855, 865], hl: [858, 860], expect: "ptr = (void *)&p.tsgNTones;"}
-    verify: "Harness (scratch/interface/t_iface.m T5) for the check order; the overflow by reading."
+    - repo: blab-mex
+      path: TransShiftMex/Audapter.cpp
+      lines:
+      - 855
+      - 865
+      hl:
+      - 858
+      - 860
+      expect: ptr = (void *)&p.tsgNTones;
+    verify: Harness (scratch/interface/t_iface.m T5) for the check order; the overflow by reading.
+    what: >-
+      The <code>tsgNTones</code> range check reads the value before it is assigned, so 100 is accepted although the maximum is 64. The next tone-sequence setter then
+      writes past the tone arrays into neighbouring parameters (stereoMode, bShift2D, clamp settings). The tone-sequence recorder also has no bound and overruns after
+      10 s.
+    scope: Affects scripts that set more than 64 tones or play tone sequences longer than 10 s.
+    fix: Check the new value, not the old one, and bound the recorder.
   - id: FMT-F3
-    notes: "notes/formant.md#f3"
+    notes: notes/formant.md#f3
     sev: med
     origin: blab
     status: R
-    title: "The 2D perturbation field uses the lower-left grid cell, not interpolation"
-    text: >
-      The comments say linear interpolation, but the 2D lookup takes <code>floor</code> of both grid positions and ignores the fractional parts, so the
-      perturbation is piecewise constant and biased by up to one grid step toward lower F1/F2; the last row and column are never used. Rows are F1 and
-      columns F2, consistently (no transposition bug).
+    title: The 2D perturbation field uses the lower-left grid cell, not interpolation
     refs:
-      - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1845, 1848], hl: [1846, 1847], expect: "p.pertAmp2D[locintf1][locintf2]"}
-    verify: "By reading."
+    - repo: blab-mex
+      path: TransShiftMex/Audapter.cpp
+      lines:
+      - 1845
+      - 1848
+      hl:
+      - 1846
+      - 1847
+      expect: p.pertAmp2D[locintf1][locintf2]
+    verify: By reading.
+    what: >-
+      The 2D field lookup rounds both grid positions down and ignores the fractional part, although the comments say linear interpolation. The perturbation is piecewise
+      constant, biased by up to one grid step toward lower F1/F2, and the last row and column are never used.
+    scope: >-
+      Affects 2D-field experiments whose fields change noticeably between grid points. Rows are F1 and columns F2 consistently.
+    fix: Interpolate bilinearly, or document the nearest-lower-cell rule.
   - id: FMT-F4
-    notes: "notes/formant.md#f4"
+    notes: notes/formant.md#f4
     sev: med
     origin: blab
     status: R
-    title: "Clamped formants are logged during silence, where no filtering happened"
-    text: >
-      The blab clamp branch sets <code>during_trans</code> without checking <code>above_rms</code>. Logged <code>sfmts</code> then show clamp targets in
-      silent and unvoiced frames where the formant filter did not run, and the clamp trajectory index advances through silence.
+    title: Clamped formants are logged during silence, where no filtering happened
     refs:
-      - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1814, 1819], hl: [1814, 1817], expect: "p.bClampFormants && stat >= p.clamp_osts[0]"}
-    verify: "By reading."
+    - repo: blab-mex
+      path: TransShiftMex/Audapter.cpp
+      lines:
+      - 1814
+      - 1819
+      hl:
+      - 1814
+      - 1817
+      expect: p.bClampFormants && stat >= p.clamp_osts[0]
+    verify: By reading.
+    what: >-
+      The clamp branch turns the perturbation on without checking that the frame is voiced. The logged <code>sfmts</code> show clamp targets in silent and unvoiced
+      frames where the formant filter did not run, and the clamp trajectory advances through silence.
+    scope: >-
+      Affects clamped-formant experiments; analyses that read <code>sfmts</code> as "what was applied" count silent frames.
+    fix: >-
+      Check <code>above_rms</code> in the clamp branch, and advance the trajectory only on voiced frames if that is the intent.
   - id: I-09
-    notes: "notes/interface.md#i-09"
+    notes: notes/interface.md#i-09
     sev: med
     origin: upstream
     status: R
-    title: "Changing ndelay, frameLen or nWin does not rebuild the formant tracker"
-    text: >
-      These setters do not set <code>bRemakeFmtTracker</code>, so the tracker keeps its old analysis window length. <code>AudapterIO('init')</code> works only
-      because fn1/fn2 also change there and trigger a rebuild; a direct <code>Audapter(3, 'ndelay', …)</code> leaves a stale window.
+    title: Changing ndelay, frameLen or nWin does not rebuild the formant tracker
     refs:
-      - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [758, 770], hl: [765, 768], expect: "ns == string(\"ndelay\")"}
-    verify: "By reading."
-
+    - repo: blab-mex
+      path: TransShiftMex/Audapter.cpp
+      lines:
+      - 758
+      - 770
+      hl:
+      - 765
+      - 768
+      expect: ns == string("ndelay")
+    verify: By reading; see CORPUS-10 for a consequence.
+    what: These setters do not mark the formant tracker for rebuilding, so it keeps its old analysis window.
+    scope: >-
+      <code>AudapterIO('init')</code> usually also changes fn1/fn2, which triggers a rebuild, but a direct <code>Audapter(3, 'ndelay', …)</code> leaves a stale window,
+      and in one real case a stale tracker caused a hang (CORPUS-10).
+    fix: Set <code>bRemakeFmtTracker</code> in these setters.
   - id: CORPUS-3
-    notes: "notes/corpus.md#corpus-3"
+    notes: notes/corpus.md#corpus-3
     sev: med
     origin: upstream
     status: H
-    title: "There is no preset for young children: the female preset underestimates their F2 by about 12 %"
-    text: >
-      On 8 recordings of 6–7-year-olds (speechocean762, F0 217–315 Hz) the female preset (<code>nLPC 15</code>) tracked F2 11.9 % low on average, with gross errors
-      on 18 % of frames where Praat and an independent LPC agree (worst clip −22 %). With <code>nLPC 11</code> the error was 1.7–2.0 %. The 10–12-year-olds in the
-      Hillenbrand data are fine. A field or shift indexed by F2 is then applied at the wrong place in the vowel space for young children.
+    title: 'There is no preset for young children: the female preset underestimates their F2 by about 12 %'
     refs:
-      - {repo: blab-matlab, path: mcode/getAudapterDefaultParams.m, lines: [3, 12], hl: [4, 8], expect: "p.nLPC          = 15;"}
-    verify: "Harness on real speech (harness/oct/corpus_track.m, nLPC sweep); reference = frames where Praat and an independent LPC agree, not hand measurements."
+    - repo: blab-matlab
+      path: mcode/getAudapterDefaultParams.m
+      lines:
+      - 3
+      - 12
+      hl:
+      - 4
+      - 8
+      expect: p.nLPC          = 15;
+    verify: >-
+      Harness on 8 real child recordings (harness/oct/corpus_track.m, nLPC sweep); reference = frames where Praat and an independent LPC agree.
+    what: >-
+      For 6–7-year-old children the female preset (<code>nLPC 15</code>) tracks F2 11.9 % low on average, with gross errors on 18 % of frames. With <code>nLPC 11</code>
+      the error is 1.7–2.0 %.
+    scope: >-
+      Affects formant experiments with young children (F0 above about 220 Hz); a field or shift indexed by F2 is applied at the wrong place in the vowel space. Children
+      aged 10–12 are tracked well with the female preset.
+    fix: >-
+      Add a child preset with nLPC 11, or document the choice. Workaround: set nLPC to 11 for young children.
   - id: CORPUS-4
-    notes: "notes/corpus.md#corpus-4"
+    notes: notes/corpus.md#corpus-4
     sev: low
     origin: upstream
     status: H
-    title: "The male preset can report F3 as F2 for a whole vowel"
-    text: >
-      On a sustained /a/ from the Perceptual Voice Qualities Database (F1 632, F2 about 1000 Hz), the male preset (<code>nLPC 17</code>) logged F2 at 2494 Hz on every frame;
-      <code>nLPC 15</code> tracked it correctly. It happened on 1 of 4 male /a/ tokens. Any F2-indexed field or F2 shift is then computed from F3.
+    title: The male preset can report F3 as F2 for a whole vowel
     refs:
-      - {repo: blab-matlab, path: mcode/getAudapterDefaultParams.m, lines: [3, 4], hl: [4], expect: "p.nLPC          = 17;"}
-    verify: "Harness on real speech (harness/oct/corpus_track.m)."
+    - repo: blab-matlab
+      path: mcode/getAudapterDefaultParams.m
+      lines:
+      - 3
+      - 4
+      hl:
+      - 4
+      expect: p.nLPC          = 17;
+    verify: Harness on real speech (harness/oct/corpus_track.m).
+    what: >-
+      On a sustained /a/ with F2 near 1000 Hz, the male preset (<code>nLPC 17</code>) logged F2 at 2494 Hz on every frame; <code>nLPC 15</code> tracked it correctly.
+    scope: Seen on 1 of 4 male /a/ tokens. Any F2-indexed field or F2 shift is then computed from F3.
+    fix: >-
+      Check tracked formants against the expected vowel space during setup. Workaround: try nLPC 15 for male speakers with low F2.
   - id: CORPUS-7
-    notes: "notes/corpus.md#corpus-7"
+    notes: notes/corpus.md#corpus-7
     sev: low
     origin: upstream
     status: H
-    title: "With pitch shifting on, low frequencies are boosted beyond the +3.5 dB offset: +7 dB at 30 Hz"
-    text: >
-      At 0 st the phase vocoder adds +3.52 dB from 150 Hz up (PT-5), but more below: +3.6 dB at 100 Hz, +4.0 at 80, +5.7 at 50 and +7.0 dB at 30 Hz. Real bus noise in a
-      VoiceBank-DEMAND recording gained +7.4 dB against +3.6 dB for the speech, so low-frequency room noise is about 4 dB louder relative to the voice at the ear.
-      Consistent with the formal result that content below the first FFT bin gets 5/2 (FORMAL-7).
+    title: 'With pitch shifting on, low frequencies are boosted more than the rest: +7 dB at 30 Hz'
     refs:
-      - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [218, 220], hl: [219], expect: "X_magn[i] = 2.0"}
-    verify: "Harness (harness/oct/corpus_pvoc_lf.m): sine sweep and a real noisy recording."
+    - repo: blab-mex
+      path: TransShiftMex/phase_vocoder.cpp
+      lines:
+      - 218
+      - 220
+      hl:
+      - 219
+      expect: X_magn[i] = 2.0
+    verify: 'Harness (harness/oct/corpus_pvoc_lf.m): a sine sweep and a real noisy recording.'
+    what: >-
+      At 0 semitones the phase vocoder adds +3.5 dB above 150 Hz (PT-5) and more below: +3.6 dB at 100 Hz, +4.0 at 80, +5.7 at 50 and +7.0 dB at 30 Hz.
+    scope: >-
+      Affects pitch-shift sessions in rooms with low-frequency noise: in a recording with bus noise, the noise gained +7.4 dB against +3.6 dB for the speech, so the
+      noise is about 4 dB louder relative to the voice at the ear.
+    fix: >-
+      Halve the magnitude of the lowest bin in the phase vocoder, as the formal analysis of the gain shows.
 
 # Other findings: one row each (low severity or narrow conditions). loc = file:line at the pinned blab SHA.
 compact:
   - {id: OST-F3, sev: med, origin: upstream, status: H, notes: "notes/ost-pcf.md#f3", loc: "TransShiftMex/ost.cpp:360-365", text: "stat0[i+1] is read past the end on every frame once the last rule is reached; harmless with a trailing OST_END, a silent behaviour change without one"}
   - {id: OST-F7, sev: med, origin: upstream, status: D, notes: "notes/ost-pcf.md#f7", loc: "TransShiftMex/ost.cpp:256", text: "Sparse or mis-numbered OST states write past statOnsetIndices (sized 4·n); state numbers are never range-checked"}
-  - {id: OST-F9, sev: med, origin: upstream, status: R, notes: "notes/ost-pcf.md#f9", loc: "TransShiftMex/ost.cpp:531-552", text: "INTENSITY_FALL: code, blab comment and manual disagree on the rule; the current frame is never examined"}
+  - {id: OST-F9, sev: med, origin: upstream, status: R, notes: "notes/ost-pcf.md#f9", loc: "TransShiftMex/ost.cpp:531-552", text: "INTENSITY_FALL: the code, its comment and the manual disagree on the rule; the current frame is never examined"}
   - {id: OST-F10, sev: med, origin: upstream, status: D, notes: "notes/ost-pcf.md#f10", loc: "TransShiftMex/ost.cpp:195", text: "Truncated OST/PCF files dereference end() instead of raising a syntax error; failed reloads leave half-built state"}
   - {id: OST-F11, sev: low, origin: upstream, status: R, notes: "notes/ost-pcf.md#f11", loc: "TransShiftMex/pcf.cpp:484", text: "PCF time warp indexes statOnsetIndices[ostInitState] without a NULL or range check"}
   - {id: OST-F12, sev: low, origin: upstream, status: D, notes: "notes/ost-pcf.md#f12", loc: "TransShiftMex/ost.cpp:382", text: "Hold durations differ by one frame between OST modes; RATIO modes use floor without rounding"}
-  - {id: OST-F13, sev: low, origin: blab, status: R, notes: "notes/ost-pcf.md#f13", loc: "TransShiftMex/ost.cpp:644", text: "Blab RMS_FLOOR mode hard-codes an absolute RMS floor of 0.0003 and does not set lastStatEnd"}
+  - {id: OST-F13, sev: low, origin: blab, status: R, notes: "notes/ost-pcf.md#f13", loc: "TransShiftMex/ost.cpp:644", text: "The RMS_FLOOR OST mode hard-codes an absolute RMS floor of 0.0003 and does not set lastStatEnd"}
   - {id: OST-F14, sev: low, origin: upstream, status: R, notes: "notes/ost-pcf.md#f14", loc: "TransShiftMex/Audapter.cpp:1727", text: "RMS ratio is NaN or Inf in digital silence; ratio rules then never trigger"}
   - {id: I-05, sev: low, origin: upstream, status: H, notes: "notes/interface.md#i-05", loc: "TransShiftMex/Audapter.cpp:3027", text: "rms_slope is NaN for the first 14 frames of every trial and is fed to slope-based OST rules"}
   - {id: OST-F16, sev: low, origin: upstream, status: R, notes: "notes/ost-pcf.md#f16", loc: "TransShiftMex/Audapter.cpp:1797", text: "With nWin > 1, osTrack runs nWin times per frame on the same counters"}
@@ -260,7 +424,7 @@ compact:
   - {id: PT-9, sev: low, origin: upstream, status: D, notes: "notes/pitch-time.md#pt-9", loc: "TransShiftMex/time_domain_shifter.cpp:296-302", text: "Time-domain shifter scratch overrun: up to a +21 dB burst after long zero-crossing-free input or strong pitch-down"}
   - {id: PT-10, sev: low, origin: upstream, status: D, notes: "notes/pitch-time.md#pt-10", loc: "TransShiftMex/time_domain_shifter.cpp:163-165", text: "Time-domain shifter minor defects: y[0] for y[i], stale audio on resume, ±13 cent quantisation at high F0"}
   - {id: PT-11, sev: low, origin: upstream, status: R, notes: "notes/pitch-time.md#pt-11", loc: "TransShiftMex/phase_vocoder.cpp:109", text: "Phase-vocoder parameter checks broken (L & hop != 0); hop < frameLen divides by zero"}
-  - {id: PT-12, sev: low, origin: blab, status: R, notes: "notes/pitch-time.md#pt-12", loc: "TransShiftMex/Audapter.cpp:748-756", text: "Blab's resampling filter is chosen by sr, not downFact (aliasing for sr 32000 with downFact 3)"}
+  - {id: PT-12, sev: low, origin: blab, status: R, notes: "notes/pitch-time.md#pt-12", loc: "TransShiftMex/Audapter.cpp:748-756", text: "The resampling filter is chosen by sr, not downFact (aliasing for sr 32000 with downFact 3)"}
   - {id: PT-13, sev: low, origin: upstream, status: R, notes: "notes/pitch-time.md#pt-13", loc: "TransShiftMex/Audapter.cpp:1896-1902", text: "Time-domain shifting silently discards formant perturbation and changes the LPC input"}
   - {id: FORMAL-1, sev: low, origin: upstream, status: F, notes: "formal/README.md#ring", loc: "TransShiftMex/Audapter.cpp:2119-2127", text: "pvocFrameLen smaller than frameLen writes before outFrameBufSum on every frame, even with pitch shift off, corrupting the ring pointer; MATLAB segfaults. Practically unreachable: it also needs pvocHop ≥ frameLen, which the broken parameter check lets through (PT-11)"}
   - {id: FORMAL-3, sev: low, origin: upstream, status: F, notes: "formal/README.md#ring", loc: "TransShiftMex/Audapter.cpp:2225-2228", text: "The output ring pointer resets to 0 instead of wrapping, so a frameLen that does not divide 1,728,000 writes past the buffer once per 108 s lap and shifts DAF alignment. Very unlikely: every common frameLen divides it, and it needs 108 s without a reset"}

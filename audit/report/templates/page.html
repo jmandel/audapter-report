@@ -10,263 +10,45 @@
 <a class="skip" href="#findings">Skip to the findings</a>
 <header class="masthead">
   <div class="wrap">
+    <nav class="topnav" aria-label="Report sections"><a href="#intro">Overview</a><a href="#findings">Findings</a><a href="#methods">Methods</a><a href="#credits">Credits</a><a href="playground/">Playground</a></nav>
     <h1>{{TITLE}}</h1>
-    <p class="dek">We read the C++ core and the MATLAB wrapper of the blab-lab Audapter fork (b2.5), then ran the real code on synthetic
-      speech without MATLAB or a sound card, and checked what a participant would hear against what Audapter logs. Each finding below comes with the audio,
-      the exact lines of code and a command that reproduces it.</p>
     <dl class="pins">
       <div><dt>By</dt><dd>Claude (Anthropic), at the request of Josh Mandel</dd></div>
-      <div><dt>Reviewed</dt><dd><a href="{{URL:blab-mex}}">blab-lab/audapter_mex @{{SHA:blab-mex}}</a> and <a href="{{URL:blab-matlab}}">blab-lab/audapter_matlab @{{SHA:blab-matlab}}</a></dd></div>
+      <div><dt>Code examined</dt><dd><a href="{{URL:blab-mex}}">blab-lab/audapter_mex @{{SHA:blab-mex}}</a> and <a href="{{URL:blab-matlab}}">blab-lab/audapter_matlab @{{SHA:blab-matlab}}</a></dd></div>
       <div><dt>Date</dt><dd>{{DATE}}</dd></div>
-      <div><dt>Compared with</dt><dd><a href="{{URL:upstream-mex}}">shanqing-cai/audapter_mex 2.1.5 @{{SHA:upstream-mex}}</a></dd></div>
     </dl>
   </div>
 </header>
 
 <main class="wrap">
-<section id="brief" class="prose">
-  <h2>In brief</h2>
-  <p>Most of what an experiment depends on works as intended, on synthetic signals and on 80 real recordings. On the six configurations we compared (passthrough, formant shift with a 1D field and with a PCF,
-    phase-vocoder pitch shift, PCF pitch shift, 100 ms DAF), the blab core produces output that is bit-for-bit identical to upstream 2.1.5.
-    The one difference we found is the intended formant-dropout fix. Formant shifts deliver what they log: for ±20 % shifts, the logged
-    <code>sfmts/fmts</code> ratio equals the command exactly, and an independent LPC estimate on the output audio agrees within measurement error.
-    Pitch shifts are accurate to within 2 cents.</p>
-  <p>What we did find are mostly <em>silent</em> timing and state problems, and most are inherited from upstream. OST state
-    carries over from one trial to the next (<a href="#OST-F1">OST-F1</a>), and the maxIOI timeout keeps the wrong clock (<a href="#OST-F2">OST-F2</a>). Masking noise shorter than the new 10 s buffer is followed by
-    silence (<a href="#I-01">I-01</a>). The phase vocoder changes loudness as a pitch perturbation starts (<a href="#PT-5">PT-5</a>).
-    Several array parameters are read past their end when a shorter array is passed (<a href="#FMT-F1">FMT-F1</a>, <a href="#OST-F4">OST-F4</a>). On the live audio path, changing files or
-    parameters while audio runs can crash MATLAB (<a href="#LIVE-1--LIVE-2">LIVE-1 / LIVE-2</a>), and a <code>reset</code> during speech can produce a loud click (<a href="#LIVE-3">LIVE-3</a>).
-    Apart from those crashes, none of these print a warning. Several do show up in data you already log, and each card says where to look.
-    Where a fix is small, the card includes a patch and lets you run the released and patched code side by side in your browser.</p>
-</section>
-
-<section id="scope" class="prose">
-  <h2>What we looked at, and why</h2>
-  <p>Audapter drives perturbation experiments whose results are published, so we looked first for bugs that would not announce themselves:
-    wrong perturbation size or direction, wrong onset timing, logged data that differ from what the participant heard, state leaking between trials,
-    uninitialised or out-of-bounds memory, and NaN or Inf values that don't crash. Crashes came second.</p>
+<section id="intro" class="prose">
+  <h2>What we looked at</h2>
+  <p>Audapter shifts a speaker's formants or pitch, or plays masking noise, in real time for altered-auditory-feedback experiments. We examined the blab-lab version, its C++ core and MATLAB code, and asked: does it do what experimenters think it does, trial after trial?</p>
+  <h2>How</h2>
   <ul>
-    <li><strong>C++ core</strong> (<code>TransShiftMex/</code>), in four parallel reviews: OST/PCF state machine, formant tracking and shifting, pitch and time shifting, and the MEX interface.</li>
-    <li><strong>MATLAB side</strong> (<code>mcode/</code>): <code>AudapterIO.m</code>, <code>getAudapterDefaultParams.m</code>, and the example experiment scripts, insofar as they configure the MEX.</li>
-    <li><strong>Blab changes first.</strong> <code>git diff upstream/master origin/master</code> lists what blab added: the 2D field, formant clamping, fb mode 5, six OST rules, the 480000-sample buffers and the dropout fix. This code has had the least outside scrutiny.</li>
+    <li>We ran the real code without MATLAB or audio hardware, fed it synthetic voices and <a href="#realspeech">80 real voice recordings</a>, and measured what came out (<a href="#method">method</a>).</li>
+    <li>We checked for memory errors with standard sanitizers, and <a href="#live">simulated the live sound-card path</a>, including its two threads.</li>
+    <li>We <a href="#formal">proved</a> a few pieces of logic correct or incorrect for all settings.</li>
+    <li>A <a href="#wasm">browser build</a> lets you rerun several findings on this page, with and without a fix.</li>
   </ul>
-</section>
-
-<section id="method" class="method">
-  <h2>How we ran Audapter without MATLAB or a sound card</h2>
-  <ol class="chain">
-    <li><h3>Synthetic and real input</h3><p>Klatt-style cascade vowels with known formants and F0, noise, the lab's own <code>mtbabble48k.wav</code>, and 80 real recordings from open corpora, all at the 48 kHz device rate.</p></li>
-    <li><h3>The lab's MATLAB code, unmodified</h3><p><code>getAudapterDefaultParams.m</code> and <code>AudapterIO('init')</code> configure the MEX exactly as in an experiment, running in GNU Octave.</p></li>
-    <li><h3>The real C++ core</h3><p>Compiled as a MEX with Octave's <code>mkoctfile</code> in Docker, with portability patches only. Each 3 × 32-sample frame goes through <code>Audapter('runFrame')</code>, which calls the same <code>handleBuffer</code> as the ASIO callback.</p></li>
-    <li><h3>What Audapter logged</h3><p><code>AudapterIO('getData')</code>: <code>signalIn</code>, <code>signalOut</code>, <code>fmts</code>, <code>sfmts</code>, <code>ost_stat</code>, <code>rms</code>.</p></li>
-    <li><h3>Independent checks</h3><p>Our own LPC formant and autocorrelation F0 estimators on the output audio, output level in 20 ms blocks, and a bit-exact comparison with upstream.</p></li>
-  </ol>
-  <div class="method-cols">
-    <div class="prose">
-      <h3>Three builds of the same harness</h3>
-      <table class="plain">
-        <tr><th scope="row"><code>build-oct</code></th><td>blab, -O2: what the lab runs, apart from the compiler</td></tr>
-        <tr><th scope="row"><code>build-upstream</code></th><td>upstream 2.1.5, for the differential and for deciding the origin of each finding</td></tr>
-        <tr><th scope="row"><code>build-asan</code></th><td>blab with AddressSanitizer and UBSan, which report out-of-bounds reads and writes at the line where they happen</td></tr>
-      </table>
-      <p>The portability patches are <code>(sizeof dtype)</code> → <code>(sizeof(dtype))</code> and memcpy → memmove in <code>DSPF_dp_blk_move</code>.
-        MSVC's memcpy already handles overlapping ranges as memmove does, so the second patch matches the Windows binary.</p>
-    </div>
-    <div class="prose">
-      <h3>How each finding was verified</h3>
-      <dl class="vlegend">
-        <div><dt><span class="vk-l">H</span></dt><dd>Reproduced in the full harness: the MATLAB wrapper plus the C++ core.</dd></div>
-        <div><dt><span class="vk-l">D</span></dt><dd>Reproduced by a standalone driver that compiles only the relevant .cpp files.</dd></div>
-        <div><dt><span class="vk-l">R</span></dt><dd>By reading the code; not yet executed.</dd></div>
-        <div><dt><span class="vk-l">F</span></dt><dd>Formal analysis: model check (CBMC) or machine-checked proof (Lean).</dd></div>
-      </dl>
-    </div>
-  </div>
-</section>
-
-<section id="controls" class="prose">
-  <h2>Controls that ruled things out</h2>
-  <p>Some things looked like bugs and were not. We list them because they show what the harness can and cannot tell apart.</p>
-  <h3>The blab core matches upstream 2.1.5 bit-for-bit</h3>
-  <p>The same parameters and input were fed to both builds, and the output audio and every logged column were compared exactly.</p>
-  <table class="plain diff"><thead><tr><th>Scenario</th><th>Result</th><th>Detail</th></tr></thead><tbody>{{DIFF}}</tbody></table>
-  <h3>An apparent +25 % F1 overshoot was our estimator's bias</h3>
-  <p>At F0 = 200 Hz, our LPC measurement of the output audio suggested that F1 had moved further than commanded, an apparent overshoot of about 25 %. A control vowel synthesised directly at the target
-    formant showed the same bias, so the discrepancy was in our measurement. Audapter's applied shift matches its logged shift. Formant checks now use F0 = 120 Hz, where the bias is small.</p>
-  <h3>"Identical trials diverge" turned out to be a harness artifact, and led to a real bug</h3>
-  <p>Two runs of the same input first gave different formant tracks. The cause: <code>Audapter('runFrame', x)</code> writes its output back into
-    the array it is given (<a href="#I-04">I-04</a>). Our frame loop passed slices of the stored input, which Octave can share with the original, so the stored input
-    itself was overwritten and the second run processed the first run's output. With copied frames, repeated trials are bit-identical and show no leakage in
-    default settings. In MATLAB the same thing happens to any reprocessing script that passes a stored frame, such as a cell of frames reused for a second condition.</p>
-  <h3>Also checked and found correct</h3>
+  <h2>What we found</h2>
+  <p>The core works: formant shifts deliver what they log, and pitch shifts land within a few cents. The problems, by what they do to an experiment:</p>
   <ul>
-    <li>The formant tracker agrees with an independent LPC estimator within 5 % on /a/, /i/, /u/ and /æ/.</li>
-    <li>Phase-vocoder pitch shift is accurate to within 2 cents at ±2 st.</li>
-    <li>The 2D-field MATLAB → C packing has no row/column-major mix-up, and the <code>getData</code> column layout matches between C++ and <code>AudapterIO</code>.</li>
-    <li>Blab already includes the Kearney/GuentherLab time-domain pitch-shift fix, via blab PR #6.</li>
-    <li>The tracker's <code>static last_f[]</code> survives across trials in the code, but an abrupt /i/→/a/ switch between trials showed no observable effect (FMT-F9).</li>
-    <li>Audapter compiled to WebAssembly reproduces the native build bit for bit when both use the same maths library; the in-browser panels below rely on that.</li>
+    <li><strong>State carries over between trials.</strong> After a longer trial, a perturbation meant to end at the speech offset can stay on about 1.2 s too long (<a href="#OST-F1">OST-F1</a>, <a href="#OST-F2">OST-F2</a>).</li>
+    <li><strong>What the participant hears is wrong.</strong> Masking noise goes silent for up to 5 s (<a href="#I-01">I-01</a>); a pitch shift changes loudness when it starts (<a href="#PT-5">PT-5</a>); a <code>reset</code> during speech can click loudly (<a href="#LIVE-3">LIVE-3</a>).</li>
+    <li><strong>Data are silently wrong.</strong> Logged pitch is wrong for low voices (<a href="#CORPUS-8">CORPUS-8</a>); trials over 30 s lose their start (<a href="#I-03">I-03</a>); a leftover PCF switches off a later experiment (<a href="#COORD-1">COORD-1</a>).</li>
+    <li><strong>Sessions crash or hang.</strong> Reloading files while audio runs crashes MATLAB (<a href="#LIVE-1--LIVE-2">LIVE-1 / LIVE-2</a>); a frame-setting change can hang it (<a href="#CORPUS-10">CORPUS-10</a>).</li>
   </ul>
-</section>
-
-<section id="realspeech" class="prose">
-  <h2>Checked on real speech</h2>
-  <p>Synthetic vowels make effects easy to see, but experiments run on real voices. Every main finding was therefore re-run on <strong>80 real recordings</strong>
-    (197 s in total) from openly licensed corpora: adult men and women, children aged 6–7, singers, dysphonic voices, sentences in real background noise, and the three
-    real Audapter session recordings shipped with Audapter. All 80 clips may be redistributed, and a script re-fetches every original from pinned URLs and rebuilds the
-    set byte for byte (<code>audit/corpus/</code>). Cards covered by this work have an “On real speech” section with the real-speech numbers and, where useful, a real input/output
-    pair; the sources are credited at the end of the report.</p>
-  <h3>What real speech confirmed</h3>
-  <ul>
-    <li><strong>The formant tracker is accurate.</strong> Against the hand-corrected formants of Hillenbrand et al. (1995), 576 vowels from men, women, boys and girls, the median
-      error was 1.9–2.0 % for F1 and 1.3–1.7 % for F2 with the default presets. (That data set may not be redistributed, so only the numbers appear here.)</li>
-    <li><strong>Formant shifts deliver what they log.</strong> On 78 clips and three shift patterns, the logged <code>sfmts/fmts</code> equalled the command exactly, and the shift
-      measured in the output audio was within a median 2–3 % of the command.</li>
-    <li><strong>Blab matches upstream.</strong> On the 80 clips, the blab core is bit-identical to upstream 2.1.5 in 7 of 8 scenarios (tracking, 1D field, PCF formant, phase vocoder,
-      PCF pitch, time-domain shift, delayed feedback); the eighth is the intended dropout change (<a href="#F6">F6</a>).</li>
-    <li><strong>No new memory errors.</strong> AddressSanitizer and UBSan over 480 clip-scenarios found only the known out-of-bounds read of H2.</li>
-    <li><strong>Old sessions replay.</strong> The three 2008–2013 Audapter session recordings, replayed with their original parameters, reproduce the formant tracks logged online
-      within 0.2–0.4 % (1–4 Hz).</li>
-  </ul>
-  <h3>What real speech changed</h3>
-  <ul>
-    <li><a href="#OST-F1">OST-F1</a> reproduces in 4 of 6 real trial pairs, but the example OST shipped with Audapter does <em>not</em> leak.</li>
-    <li><a href="#PT-5">PT-5</a>: the loudness step at a real pitch-shift onset is 1.2–7.3 dB, larger on average than on the synthetic vowel.</li>
-    <li><a href="#OST-F8">OST-F8</a> does not cleanly reproduce on real fricative onsets; the card is softened accordingly.</li>
-    <li><a href="#F6">F6</a>: across the corpus, blab perturbs about twice as many frames as upstream, differing on 61 of 80 clips.</li>
-    <li>Three new findings came from real speech: the <a href="#CORPUS-10">runFrame hang</a>, the <a href="#CORPUS-8">pitch tracker on low voices</a> and the
-      <a href="#CORPUS-11">unbounded formant target</a>, plus three short ones.</li>
-  </ul>
-  <p><strong>Coverage gap.</strong> No voice in the set is above about 350 Hz F0 (no high child or soprano voices), and none of the redistributable clips has hand-measured
-    formants; high-pitched voices remain untested.</p>
-</section>
-
-<section id="live" class="prose">
-  <h2>The live audio path</h2>
-  <p>Most of this report runs Audapter offline, through <code>runFrame</code>. In an experiment, audio arrives through <code>audioIO.cpp</code> and RtAudio
-    from an ASIO driver, on a separate audio thread. To test that path without Windows or a sound card, a separate line of work compiled the real, unmodified
-    <code>audioIO.cpp</code> and RtAudio 3.0.3 (with the Windows ASIO backend, as in <code>audioIO.vcxproj</code>) together with Audapter and the real
-    <code>mexLibrary.cpp</code>. It drove them from a simulated ASIO driver that calls back at real period boundaries, and cross-checked with a real JACK server.
-    Two results establish trust in both the offline method and the default flow:</p>
-  <ul>
-    <li><strong>Live equals offline.</strong> For passthrough, F1 shift with an OST/PCF, phase-vocoder pitch shift and the time-domain shifter,
-      <code>signalIn</code>, <code>signalOut</code>, <code>rms</code>, <code>fmts</code>, <code>sfmts</code>, <code>ost_stat</code> and <code>pitchShiftRatio</code>
-      from the live path are bit-identical to the offline run, once the offline input is delayed by one device buffer (RtAudio calls the callback before it copies
-      the new input). What the participant hears equals the offline output delayed by two device buffers, to within 32-bit integer conversion (5·10<sup>−10</sup>).
-      Everything the offline cards show therefore applies to real sessions.</li>
-    <li><strong>The default flow has no data races.</strong> <code>reset</code> → <code>start</code> → <code>stop</code> → <code>getData</code>, once per trial, ran
-      300 cycles under ThreadSanitizer and 3 000 plain cycles with no race inside Audapter and no hang. The only report is inside RtAudio, where the first period
-      after <code>start</code> can be skipped, which is benign.</li>
-  </ul>
-  <p>The problems appear when parameters, OST/PCF files or <code>reset</code> are changed <em>while audio runs</em> (always-on designs, or a MATLAB call during a
-    trial), and when the device does not deliver what Audapter expects. Those findings have their own cards (LIVE-*). <strong>Fidelity limits:</strong> the ASIO driver is modelled,
-    not real; the build uses GCC on Linux, not MSVC on Windows; thread scheduling is Linux's. Race and burst <em>rates</em> are therefore indicative, not Windows-exact.
-    The mechanisms, and the lines of code they come from, are the same.</p>
-</section>
-
-<section id="wasm" class="prose">
-  <h2>Running Audapter in your browser</h2>
-  <p>Several cards have a “Run it in your browser” panel. It runs the real Audapter C++ core, compiled to WebAssembly from the same pinned commit,
-    on the card's own inputs, once as released and once with a small patch for that finding. The patch is shown next to the panel and is in
-    <code>audit/report/patches/</code>. Each patched build was checked two ways: it is bit-identical to the released build on reference scenarios the
-    patch should not affect, and it removes the finding's effect (<code>audit/report/wasm/check-patches.mjs</code>).</p>
-  <p>The WebAssembly build is bit-identical to a native build that uses the same maths library, and differs from the MATLAB MEX build by at most about
-    3·10<sup>−11</sup> (about −195 dB), which comes from the maths library alone. The browser builds keep 10 s of recording instead of 30 s to save memory; all other buffers have their shipped sizes.
-    Panels load on click (about 0.4 MB per build), work offline and from a saved copy of this page, and need no install. Each run starts fresh copies of the Audapter core, about 150–300 MB of memory; on a phone, run one panel at a time.</p>
-</section>
-
-<section id="formal" class="prose">
-  <h2>Formal analysis</h2>
-  <p>Tests show that a bug happens for the settings that were tried. For a few findings we also wanted to know <em>for which settings exactly</em>
-    it happens, and whether the proposed fix works <em>for all settings</em>. A separate line of work (<code>audit/formal/</code>) answered that with three tools,
-    each chosen for the kind of question:</p>
-  <ul>
-    <li><strong>CBMC</strong>, a bounded model checker for C, for the ring-buffer, recorder and grid-lookup index arithmetic. It runs on the
-      <em>verbatim</em> lines of <code>Audapter.cpp</code>, copied by a script and pinned by SHA-256 hash, so a changed source refuses to check. CBMC models C's
-      integer rules exactly, including the negative <code>%</code> that is the bug in PT-1, and IEEE doubles including NaN and infinity.</li>
-    <li><strong>Lean 4</strong>, a proof assistant, for the OST state machine. "A trial never depends on earlier trials" is a statement about unboundedly many trials,
-      which needs a proof by induction rather than a bounded search.</li>
-    <li><strong>Exact algebra</strong> in rational arithmetic for the phase-vocoder gain, cross-checked by running the real <code>phase_vocoder.cpp</code>.</li>
-  </ul>
-  <h3>What was proven</h3>
-  <ul>
-    <li><strong>OST state across trials</strong> (<a href="#OST-F1">OST-F1</a>, <a href="#OST-F2">OST-F2</a>). With the maxIOI write fixed (<code>[j]</code>) and
-      <code>ostTab.reset()</code> called at trial start, every trial's frame-by-frame state sequence equals the one on a freshly loaded OST, whatever came before. This holds for
-      every well-formed OST table, every rule setting and every input, NaN included (theorem <code>trial_independent</code>). Clearing the onset table is not needed.
-      Machine-checked counterexamples show that each fix alone is insufficient.</li>
-    <li><strong>Phase-vocoder loudness</strong> (<a href="#PT-5">PT-5</a>). At 0 semitones the gain is exactly 3/2 (+3.52 dB) for every ratio of frame length to hop of 3 or more,
-      independent of frame length, hop and sample rate; a factor 2/3 at <code>phase_vocoder.cpp:467</code> gives unity. New: at a ratio of 2 the gain swings between 1× and 2× at the
-      hop rate, and content below the first FFT bin gets 5/2 (FORMAL-7).</li>
-    <li><strong>Buffer indices</strong> (<a href="#h2-pt-1">H2 / PT-1</a>, I-12). The exact conditions under which the delay-ring read and the pitch-shift back zeroing go out of bounds,
-      and proofs that the <code>&gt;= 0</code> and positive-modulo fixes are in bounds for every setting while reading the same samples wherever the original was valid.
-      The recorder overruns exactly when frameLen does not divide 480000 and a trial reaches about 30 s; of the common frame lengths only 512 is affected. Two new, very
-      unlikely configurations are listed in the table of other findings (FORMAL-1, FORMAL-3).</li>
-    <li><strong>Grid lookup</strong> (FMT-F7). For every perturbation-field grid, sorted or not, the lookup returns NaN or a valid row, so unsorted grids are memory safe but meaningless.</li>
-  </ul>
-  <h3>How far to trust it</h3>
-  <p>The CBMC results are about the actual source text at the pinned commit, for every enumerated frame length (0 failures in the sweep so far). The Lean model is a
-    <em>hand translation</em> of <code>osTrack</code>, branch by branch with line citations, and treats the audio measurements as abstract values: it proves the model,
-    not the compiled code. The harness and WASM runs on the real code agree with it on every case we compared.</p>
-  <h3>What was not done, and why</h3>
-  <ul>
-    <li>The whole <code>handleBuffer</code> was not model-checked: FFT, LPC and filters in floating point are far beyond these tools. Only the index-carrying statements were.</li>
-    <li>The masking-noise loop (I-01) is a semantic bug, not an index bug; the harness already shows it exactly.</li>
-    <li>The time-domain shifter's loud bursts (PT-9) are a loudness question that needs a signal model; its indices are all taken modulo the buffer length.</li>
-    <li>A fully symbolic frame length is intractable for CBMC; frame lengths were enumerated instead, which is complete for the values enumerated.</li>
-  </ul>
-  <p>Everything re-checks with <code>audit/formal/run.sh</code> (a few minutes; the full frame-length sweep takes hours).</p>
-</section>
-
-<section id="who" class="prose">
-  <h2>Who did this and how</h2>
-  <p>This audit was carried out by Claude, an AI model made by Anthropic, working with a team of AI sub-agents, at the request of
-    Josh Mandel. The agents read the code, built the harness, ran every test and wrote this report. We say this plainly so you can weigh it:
-    nothing here asks to be taken on trust. Every finding links the exact lines at a pinned commit, shows the recording or data it rests on, and gives a
-    one-line command that reproduces it from the public repositories. Where something was only read and not executed, the card says so (<span class="vk-l">R</span>).
-    Josh Mandel commissioned the work and decided what to publish; he did not independently re-derive each finding.</p>
-  <p><strong>Reproduced from scratch.</strong> The whole pipeline, from a fresh <code>git clone --recurse-submodules</code> through the harness, WebAssembly, formal,
-    live-path and report stages, was re-run end to end (<code>./reproduce.sh</code>). Of the 17 full cards the report had then, 13 rebuilt byte-identical, as did everything outside the cards. The 4
-    that differ measure quantities that are nondeterministic by nature: the size of the LIVE-3 burst, the LIVE-1 / LIVE-2 crash counts, the time before the CORPUS-10
-    hang was killed, and the heap garbage values of FMT-F1.</p>
-</section>
-
-<section id="limits" class="prose">
-  <h2>Limitations</h2>
-  <ul>
-    <li><strong>Octave, not MATLAB.</strong> The MEX API is the same, but copy-on-write and argument passing can differ in corner cases. I-04 behaves the same in MATLAB, by reading of its documented MEX semantics.</li>
-    <li><strong>Mostly the offline path.</strong> Findings and figures use <code>runFrame</code>, which runs the same <code>handleBuffer</code> as the audio callback.
-      The live path (audio thread, RtAudio, ASIO) was tested in simulation, with a modelled ASIO driver; see “The live audio path”.</li>
-    <li><strong>GCC on Linux, not MSVC on Windows.</strong> Undefined behaviour, such as the out-of-bounds reads, can produce different garbage on the Windows heap. A sanitizer report means the code is wrong. It does not predict the exact wrong value you will get.</li>
-    <li><strong>Real speech, but not every voice.</strong> Findings were checked on 80 real recordings as well as synthetic signals, but no voice above about 350 Hz F0 was available, and the tests use recordings, not a live talker hearing the feedback.</li>
-    <li><strong>Severity is our judgement</strong> of experimental impact, and you know your paradigms better than we do.</li>
-  </ul>
-</section>
-
-<section id="legend" class="legend-sec">
-  <h2>Reading the finding cards</h2>
-  <div class="legend-grid">
-    <div class="prose">
-      <p>Each card starts with the effect on an experiment, then gives the evidence and finally the cause. Figures stack tiers on one time axis, like a Praat TextGrid.
-        The same four encodings are used throughout:</p>
-      <ul class="enc">
-        <li><svg viewBox="0 0 44 18" aria-hidden="true"><path class="sk-input" d="M0,18 L4,10 L10,6 L18,8 L26,5 L34,9 L40,12 L44,18 Z"/></svg><span><strong>Input</strong>: the signal fed to Audapter</span></li>
-        <li><svg viewBox="0 0 44 18" aria-hidden="true"><rect class="sk-expected" x="1" y="2" width="42" height="14" rx="2"/></svg><span><strong>Expected</strong>: what the configuration asks for, or a control run</span></li>
-        <li><svg viewBox="0 0 44 18" aria-hidden="true"><rect class="sk-observed" x="1" y="2" width="42" height="14" rx="2"/></svg><span><strong>Observed</strong>: what Audapter did (or logged)</span></li>
-        <li><svg viewBox="0 0 44 18" aria-hidden="true"><rect class="sk-disc" x="0" y="0" width="44" height="18"/></svg><span><strong>Discrepancy</strong>: the span where the two differ</span></li>
-      </ul>
-    </div>
-    <div class="prose">
-      <p>Play a clip and a playhead follows it on the figure. Code excerpts are copied at build time from the pinned commits, and every link opens those exact lines on GitHub.
-        “Inherited from upstream” means the same code and the same behaviour are in 2.1.5. “Blab-amplified” means upstream code whose effect a blab change made worse.</p>
-    </div>
-  </div>
+  <p>None of these warn. Several are detectable in data you already have, and many cards include a fix you can try on this page.</p>
+  <h2>Reading a card</h2>
+  <p>Each card gives what happens, when it matters, a worked example with figure and audio, the size of the effect, the cause, the fix and the evidence. In figures, grey is the input, <span class="lg lg-e">outlined</span> is what should happen and <span class="lg lg-o">solid blue</span> is what happens; orange marks the difference.</p>
 </section>
 
 <section id="findings">
-  <h2>Findings at a glance</h2>
-  <p class="prose">Ranked by experimental impact. The first group has full cards with figures, audio and code; the second group has short cards. A further table of low-severity findings follows the cards.</p>
+  <h2>Findings</h2>
+  <p class="lead">Ordered by severity, which reflects the consequence for an experiment. Full cards first, then short cards; low-severity items are in a table after the cards.</p>
   <div class="tscroll"><table class="findings">
-    <thead><tr><th scope="col">ID</th><th scope="col">Severity</th><th scope="col">Finding</th><th scope="col">Origin</th><th scope="col">Verified</th></tr></thead>
+    <thead><tr><th scope="col">ID</th><th scope="col">Severity</th><th scope="col">Finding</th><th scope="col">Verified</th><th scope="col">Since</th></tr></thead>
     <tbody>{{TABLE}}</tbody>
   </table></div>
 </section>
@@ -275,20 +57,85 @@
 
 <section id="short" class="short-sec">
   <h2>Further findings</h2>
-  <p class="lead">Each of these affects some configurations, but more narrowly. Each gets its cause at the pinned commit and how it was verified.</p>
+  <p class="lead">Narrower effects, each with its cause and fix.</p>
   {{SHORT}}
 </section>
 
 <section id="other" class="other-sec">
   <h2>Other findings</h2>
-  <p class="lead">Low severity or narrow conditions. Details and test ideas for every row are in the audit notes.</p>
+  <p class="lead">Low severity or narrow conditions. Details are in the audit notes.</p>
   <div class="tscroll"><table class="findings compact">
-    <thead><tr><th scope="col">ID</th><th scope="col">Severity</th><th scope="col">Finding</th><th scope="col">Origin</th><th scope="col">Verified</th><th scope="col">Where</th></tr></thead>
+    <thead><tr><th scope="col">ID</th><th scope="col">Severity</th><th scope="col">Finding</th><th scope="col">Verified</th><th scope="col">Where</th><th scope="col">Since</th></tr></thead>
     <tbody>{{COMPACT}}</tbody>
   </table></div>
 </section>
 
-
+<section id="methods" class="prose">
+  <h2>Methods</h2>
+  <section id="method">
+    <h3>Running the real code without MATLAB or audio hardware</h3>
+    <p>The C++ core is compiled as a MEX file for GNU Octave, which implements MATLAB's MEX interface, and driven through the lab's own MATLAB code
+      (<code>getAudapterDefaultParams.m</code>, <code>AudapterIO.m</code>), unmodified. Audio goes in frame by frame through <code>Audapter('runFrame')</code>, which runs the
+      same processing function as the live audio callback. We then read back what Audapter logged and measured the output audio independently: formants with our own LPC,
+      F0 by autocorrelation, and level in 20 ms blocks. The only source changes are two portability edits, one of which makes GCC behave like the Windows compiler.
+      A second build with AddressSanitizer and UBSan reports out-of-bounds memory access at the exact line.</p>
+  </section>
+  <section id="controls">
+    <h3>Checks on the test setup</h3>
+    <ul>
+      <li>Repeated identical trials give bit-identical output, and the tracker agrees with an independent LPC within 5 % on four vowels.</li>
+      <li>An apparent 25 % overshoot of F1 shifts at F0 200 Hz was a bias of our LPC measurement: vowels synthesised at the target formant show the same bias. Formant checks use F0 120 Hz.</li>
+      <li>We ran the original Audapter 2.1.5 through the same harness, on synthetic input and on the real recordings. Output and logged data matched bit for bit, except for the
+        field re-entry rule in <a href="#F6">F6</a>.</li>
+      <li>The WebAssembly build matches a native build with the same maths library bit for bit, and the MATLAB-compiled build within 3·10<sup>−11</sup>.</li>
+    </ul>
+  </section>
+  <section id="realspeech">
+    <h3>Real speech</h3>
+    <p>Every main finding was repeated on 80 openly licensed recordings (197 s): adult men and women, children aged 6–7, singers, voices with dysphonia, speech in real
+      background noise, and three session recordings shipped with Audapter. A script re-fetches each original from pinned sources and rebuilds the set byte for byte.
+      On these recordings the formant tracker's median error against the hand-corrected measurements of Hillenbrand et al. (1995) is 1.3–2.0 %; formant shifts are logged exactly
+      and measured in the output within 2–3 % of the command; the old sessions replay within 0.2–0.4 % of what was logged online; and the sanitizers found nothing new
+      in 480 clip-scenarios. No voice in the set is above about 350 Hz F0, so high voices are untested.</p>
+  </section>
+  <section id="live">
+    <h3>The live audio path</h3>
+    <p>To test the path used in experiments, the real audio code (<code>audioIO.cpp</code> and RtAudio with its ASIO backend) was built with Audapter and driven by a simulated
+      ASIO driver that calls back at real period boundaries, and cross-checked against a JACK server. Live processing matches offline processing bit for bit, with two
+      buffers of delay, so the offline cards apply to real sessions. The usual reset–start–stop–getData flow per trial showed no data races in 300 runs under ThreadSanitizer.
+      The driver is modelled and the build is GCC on Linux, so crash and click rates are indicative, not Windows figures.</p>
+  </section>
+  <section id="formal">
+    <h3>Proofs</h3>
+    <p>For a few pieces of logic we asked for which settings a bug occurs and whether the fix works for all settings. CBMC, a model checker for C, runs on the verbatim,
+      hash-pinned buffer-index code and was checked for every frame length Audapter accepts (1–120) and six common larger ones, with no failures. It gives the exact conditions
+      for the delay-buffer and recorder overruns and proves their fixes. Lean 4 proves, on a line-by-line model of the OST state machine, that with the OST-F1 and OST-F2 fixes
+      no trial depends on earlier trials, and that neither fix alone suffices; the proof is about the model, not the compiled code. Exact algebra gives the phase vocoder's
+      3/2 gain (<a href="#PT-5">PT-5</a>) for every hop ratio of 3 or more. The whole signal-processing chain was not model-checked.</p>
+  </section>
+  <section id="wasm">
+    <h3>Running Audapter in the browser</h3>
+    <p>Panels on several cards run the real C++ core, compiled to WebAssembly from the same commit, on the card's inputs, with and without a small patch. Each patch is
+      bit-identical to the current code on reference scenarios it should not affect and removes the finding's effect (<code>audit/report/wasm/check-patches.mjs</code>).
+      Panels load on click, work offline, and use 150–300 MB of memory per run; on a phone, run one panel at a time.</p>
+  </section>
+  <section id="who">
+    <h3>Who did this, and reproducing it</h3>
+    <p>The audit was carried out by Claude, an AI model made by Anthropic, with AI sub-agents, at the request of Josh Mandel, who commissioned it and decided what to publish.
+      Nothing here needs to be taken on trust: every finding links the code at a pinned commit and gives a reproduce command. The whole pipeline was rebuilt from a fresh clone;
+      of the 17 full cards the report then had, 13 rebuilt byte-identical, and the other 4 measure quantities that vary by nature (a click's size, crash counts, time to a
+      hang, memory contents). Requires Docker: <code>./reproduce.sh</code> at the repository root rebuilds everything.</p>
+  </section>
+  <section id="limits">
+    <h3>Limitations</h3>
+    <ul>
+      <li>Octave, not MATLAB; GCC on Linux, not MSVC on Windows. Out-of-bounds reads can return different values on Windows.</li>
+      <li>The live path is simulated with a modelled ASIO driver.</li>
+      <li>Recordings, not a live talker hearing the feedback; no voices above about 350 Hz F0.</li>
+      <li>Severity is our judgement of experimental impact.</li>
+    </ul>
+  </section>
+</section>
 
 <section id="credits" class="prose">
   <h2>Corpus credits</h2>
@@ -310,11 +157,6 @@
   </ul>
 </section>
 
-<section id="repro" class="prose">
-  <h2>Reproducing everything</h2>
-  <p>Requires Docker. From <code>audit/harness</code>: <code>./build-all.sh</code> builds the three MEX variants, <code>./run-tests.sh</code> runs the whole suite
-    (a FAIL there is a confirmed bug), and <code>python3 ../report/build.py --export</code> regenerates every figure, clip and number in this report from fresh runs.</p>
-</section>
 </main>
 <footer class="wrap foot"><p>Generated by <code>audit/report/build.py</code> from <code>findings.yaml</code> and <code>cards/</code>. Figures and audio come from harness runs, not from illustrations.</p><p>Report text, figures and audio © 2026 Josh Mandel, licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Code, including the WebAssembly builds of Audapter, is licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a>. See <a href="LICENSE.md">LICENSE.md</a>.</p></footer>
 <script>{{JS}}</script>

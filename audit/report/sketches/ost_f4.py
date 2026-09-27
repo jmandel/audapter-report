@@ -5,9 +5,10 @@ def sketch(d, up):
     t, T1, n, ns = d["t"], 1.2, d["pcf_n"], d["n_states"]
     s = Sketch("sk-ost-f4", 0, T1, "PCF rows allocated vs OST states read, and when the out-of-bounds reads happen")
     # --- array-extent diagram: one cell per OST state index, same classes as the timeline tiers
-    cw, h = 96, 30
+    s.header("Memory: the PCF's arrays and the entries read (not a time axis)")
+    cw, h = (X1 - X0) / max(ns, 5), 30
     def cells(label, sub, idx, kind, txt):
-        y = s.y; s.label(y, h, label, sub)
+        y = s._row(); s.label(y, h, label, sub)
         for i in idx:
             x = X0 + i * cw
             s.parts.append(f'<rect class="sk-{kind}" x="{x + 1}" y="{y + 3}" width="{cw - 2}" height="{h - 6}" rx="2">'
@@ -23,10 +24,11 @@ def sketch(d, up):
     yr = cells("fmtPertAmp[stat]", "read at Audapter.cpp:1811", range(ns), "observed", lambda i: f"state {i}")
     xa, xb = X0 + n * cw, X0 + ns * cw
     s.bands.append(f'<rect class="sk-disc" x="{xa}" y="{ya}" width="{xb - xa}" height="{yr + h - ya}"><title>read past the end</title></rect>')
-    s.parts.append(f'<text class="sk-note" x="{xa + 4}" y="{ya - 5}">past the end: no row for state {n}' + (f"–{ns - 1}" if ns - 1 > n else "") + '</text>')
+    s.lane([((xa - X0) / (X1 - X0) * (s.t1 - s.t0) + s.t0, f"past the end: no row for state {n}" + (f"–{ns - 1}" if ns - 1 > n else ""), "start")])
     s.parts.append(f'<line class="sk-guide" x1="{xa}" x2="{xa}" y1="{ya - 14}" y2="{yr + h}"/>')
     s.gap(14)
     # --- timeline: when those indices are read
+    s.header("One trial: when those entries are read")
     s.envelope("Input", t, db(d["rms"]), -60, -10, marks=[(d["vowel_on_s"] + 0.02, "/a/")])
     ivs = state_ivs(t, d["stat"], "observed", T1)
     yo = s.intervals("OST state", ivs, sub="ost_stat")

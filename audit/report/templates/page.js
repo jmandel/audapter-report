@@ -3,6 +3,8 @@
   // Playhead: a playing clip draws a vertical line on its card's sketch at the clip's current time.
   document.querySelectorAll('audio[data-sketch]').forEach(function (a) {
     var svg = document.getElementById(a.dataset.sketch);
+    var narrow = document.getElementById(a.dataset.sketch + '-n');
+    if (narrow && svg && svg.getBoundingClientRect().width === 0) svg = narrow;   // phone layout
     if (!svg) return;
     var ph = svg.querySelector('.sk-playhead');
     var t0 = +svg.dataset.t0, t1 = +svg.dataset.t1, x0 = +svg.dataset.x0, x1 = +svg.dataset.x1;

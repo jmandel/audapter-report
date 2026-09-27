@@ -10,13 +10,13 @@ def sketch(d, up):
                     sub="median over the vowel")
     bad = [r["f0"] for r in a["sweep"] if r["within5"] < 0.5]
     if bad:
-        s.band(min(bad) - 3, max(bad) + 5, y, y + 200, f"default window: wrong below {max(bad) + 10} Hz", anchor="end", ty=y + 190)
+        s.band(min(bad) - 3, max(bad) + 5, y, y + 200, "")
     for r in a["sweep"]:
         s.parts.append(f'<circle class="sk-dot-a" cx="{s.x(r["f0"]):.1f}" cy="{sy(r["median_hz"]):.1f}" r="4"><title>F0 {r["f0"]} Hz: logged {r["median_hz"]:.0f} Hz, {100*r["within5"]:.0f} % of frames within 5 %</title></circle>')
-    s.parts.append(f'<text class="sk-note" x="{s.x(200):.1f}" y="{sy(250):.1f}">frameLen {b["frameLen"]} / nDelay {b["nDelay"]} and the true F0 (ink lines) coincide</text>')
+    s.lane([(80, f"default window: wrong below {max(bad) + 10} Hz (shaded); frameLen {b['frameLen']} / nDelay {b['nDelay']} (ink) lies on the true F0", "start")])
     s.lines("Frames within 5 %", [([r["f0"] for r in b["sweep"]], [100 * r["within5"] for r in b["sweep"]], "expected"),
                                   (F, [100 * r["within5"] for r in a["sweep"]], "observed")], 0, 105, [0, 50, 100], " %", h=90)
-    s.axis([80, 100, 120, 140, 160, 180, 200, 220, 240, 260], "{:g} Hz")
+    s.axis([80, 120, 160, 200, 240] if NARROW else [80, 100, 120, 140, 160, 180, 200, 220, 240, 260], "{:g} Hz", label="true F0 of the synthetic vowel (Hz)")
     return s.svg("With the default frameLen 32 / nDelay 5 the logged pitch is right from about 140 Hz up and wrong below: 90 Hz is logged as about 229 Hz. "
                  "With frameLen 64 / nDelay 7 it follows the true F0 everywhere tested.")
 
