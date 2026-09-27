@@ -4,11 +4,20 @@
 set -euo pipefail
 R=$(cd "$(dirname "$0")" && pwd); H=$R/../harness
 cd "$H"
-mkdir -p oct/out/report/{ost-f1,ost-f2,i-01,pt-5,ost-f4,fmt-f1,i-04,ost-f8,i-02,i-03,f6,corpus-8,corpus-10,corpus-11,coord-1}   # some scripts write at <id>/ level before report_outdir runs
+rm -rf oct/out/report/{ost-f1,coord-1,ost-f5}/blab oct/out/report/{ost-f1,coord-1,ost-f5,i-01,pt-5}/meas   # rewritten exports: no stale files
+mkdir -p oct/out/report/{ost-f1,ost-f2,i-01,pt-5,ost-f4,fmt-f1,i-04,ost-f8,i-02,i-03,f6,corpus-8,corpus-10,corpus-11,coord-1,ost-f5,labscripts,carryover}   # some scripts write at <id>/ level before report_outdir runs
 UP="build-upstream upstream/audapter_matlab"
 run()  { echo "export: $*"; ./run-oct.sh "$@" > /dev/null; }
 runu() { echo "export (upstream): $1"; VARIANT=upstream ./run-oct.sh "$1" $UP > /dev/null; }
-run report_ost_f1.m;  runu report_ost_f1.m
+# OST-F1: expected trials each run in a fresh process (the first trial after the MEX loads), then the observed session
+for d in safe leak; do for k in 1 2 3 4 5 6 7 8; do SCEN="fresh $d $k" ./run-oct.sh report_ost_f1.m > /dev/null; done; done
+SCEN=same ./run-oct.sh report_ost_f1.m > /dev/null
+run report_ost_f1.m
+run report_ost_f5.m
+run report_i01_session.m; runu report_i01_session.m
+# section prose numbers: the lab's public VSA scripts (EXP-4/5) and blab's real switching methods (EXP-6)
+echo "export: exp_vsa_field.m, exp_mixed.m S1 S2"; ./run-oct.sh exp_vsa_field.m > oct/out/report/labscripts/exp_vsa_field.log 2>&1 || true
+(SCEN=S1 ./run-oct.sh exp_mixed.m; SCEN=S2 ./run-oct.sh exp_mixed.m) 2>&1 | grep -v "Set param" > oct/out/report/carryover/exp_mixed.log || true
 run report_ost_f2.m;  runu report_ost_f2.m
 run report_i01.m;     runu report_i01.m
 run report_pt5.m

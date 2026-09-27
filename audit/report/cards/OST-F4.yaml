@@ -4,7 +4,12 @@ log: OST-F4
 notes: notes/ost-pcf.md#f4
 headline: >-
   A PCF with fewer rows than the OST has states makes Audapter read past its arrays, and memory contents decide whether formants are shifted
-severity: high
+severity: med
+reach_kind: robust
+reach: >-
+  Not triggered: blab's PCFs have one row per OST state. Affects any PCF with fewer rows than the OST has states.
+settings:
+  source: 'Hypothetical design: a plausible design, not one blab runs; blab''s default settings (getAudapterDefaultParams) unless listed.'
 origin: upstream
 status:
 - H

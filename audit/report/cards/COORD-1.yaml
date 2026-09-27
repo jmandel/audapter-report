@@ -1,112 +1,70 @@
 # Full finding card COORD-1. Sections follow the fixed template (build.py REQUIRED).
 id: COORD-1
 log: COORD-1
-notes: FINDINGS-LOG.md
+notes: notes/blab-experiments.md
 headline: >-
-  A PCF loaded for one experiment stays loaded through AudapterIO('init') and silently switches off a later field-mode formant shift
+  A PCF loaded earlier in the session stays loaded through AudapterIO('init') and overrides a later field-mode experiment:
+  shift trials are not shifted, or no-shift trials are
 severity: med
 origin: upstream
-status:
-- H
+status: [H]
+reach_kind: safe
+reach: >-
+  blab's runners are protected: every blab field-mode runner we inspected clears the OST and PCF before
+  <code>AudapterIO('init')</code>. Affects any runner that leaves out those two lines, for example a copy of a runner
+  or a new experiment run in the same MATLAB session after an OST/PCF block.
 what: >-
-  Loading an OST/PCF pair makes Audapter take its formant perturbation from the PCF instead of from the perturbation-field parameters. <code>AudapterIO('init')</code>
-  sets every parameter but does not unload the OST/PCF. A field-mode experiment run later in the same MATLAB session is then driven by the leftover PCF.
+  An OST or PCF stays loaded until <code>Audapter('ost', '', 0)</code> and <code>Audapter('pcf', '', 0)</code> clear it.
+  <code>Audapter('reset')</code> and <code>AudapterIO('init', p)</code> do not. While a PCF is loaded, it decides every
+  formant shift, and the perturbation field set with <code>pertAmp</code>/<code>pertPhi</code> is ignored. Every blab formant
+  session starts with the measureFormants calibration block, which loads an OST and an all-zero PCF, so a field-mode
+  experiment that follows it without clearing them delivers no shift at all.
 scope: >-
-  Affects any session that runs a PCF-based experiment (pitch shift, OST-timed formant shift, time warp) and later a field-mode formant experiment without <code>clear
-  Audapter</code> or <code>Audapter('pcf', '', 0)</code>. With a PCF whose formant rows are zero, the field shift disappears; with non-zero rows, the PCF's shifts
-  replace the field's. The logged parameters still show the field settings.
+  Matters when a field-mode block follows any block that loaded an OST/PCF in the same MATLAB session. With the calibration's
+  all-zero PCF, the whole experiment is silently unperturbed; after a block with a nonzero PCF (for example a bedhead hold
+  block), "noShift" trials are perturbed at that block's strength. <strong>Safe if</strong> the runner calls
+  <code>Audapter('ost', '', 0); Audapter('pcf', '', 0);</code> before <code>AudapterIO('init', p)</code>, as blab's attentionComp,
+  coAdapt, uhdapter, VSA and template runners do. These two lines are load-bearing.
 example: >-
-  A field experiment raises F1 by 20 % on a vowel. In a fresh session it shifts {fresh} frames and the heard F1 goes from {F1_in:.0f} to {F1_fresh:.0f} Hz. Run after
-  a pitch experiment with Audapter's <code>example_data/pitch_pert.pcf</code> and <code>AudapterIO('init')</code>, it shifts {after} frames and the heard F1 stays
-  at {F1_after:.0f} Hz. No warning is printed.
+  The measureFormants calibration (two trials), then an attentionComp-style field experiment: 125 mel F1 shift set per trial with
+  <code>pertAmp</code>/<code>pertPhi</code>, noShift trials interleaved, fb 3 with the bundled babble. With the clear lines, trial 3
+  is heard with F1 raised ({t3_exp_pct}). Without them, trial 3 is heard unchanged ({t3_obs_pct}) and the log shows no shifted
+  frame ({obs_shift_s:.3f} s instead of {exp_shift_s:.3f} s).
+settings:
+  source: "blab's attentionComp experiment (field mode, per-trial pertAmp/pertPhi, 125 mel, fb 3 with the bundled babble at 0.02), after free-speech's measureFormants calibration block; the only change is removing the runner's two clear lines."
+  key_params: [bShift, bRatioShift, bMelShift, fb, fb3Gain]
+  details:
+  - "The OST and PCF shown are measureFormants.ost/.pcf from the calibration block, which stay loaded in the observed session. The Playground link loads the field experiment only."
 figure_caption: >-
-  Session 1 runs the PCF experiment, then AudapterIO('init'), then the field experiment, on one time axis. Session 2 runs the field experiment in a fresh session,
-  drawn under it.
+  One session: two calibration trials, then the experiment block. Expected: the runner clears the OST and PCF before
+  <code>AudapterIO('init')</code>. Observed: it does not. Values are F1 measured on the audio.
 table:
-- - synthetic
-  - 'Frames shifted: fresh session / after the PCF experiment'
-  - '{fresh} / {after}'
-- - synthetic
-  - 'Heard F1: input / fresh / after'
-  - '{F1_in:.0f} / {F1_fresh:.0f} / {F1_after:.0f} Hz'
-- - real speech
-  - 'Frames shifted on a sentence: fresh / after'
-  - '{r_fresh} / {r_after}'
+- [synthetic, 'Shift trial, F1 heard vs spoken: with / without the clear lines', '{t3_exp_pct} / {t3_obs_pct}']
+- [synthetic, 'Logged shifted time on a shift trial: with / without', '{exp_shift_s:.3f} / {obs_shift_s:.3f} s']
+- [synthetic, 'After a bedhead hold block: a noShift trial without / with the clear lines', 'shifted {simon_nc_s:.3f} s at {simon_nc_mel:+.0f} mel / {simon_c_s:.3f} s']
 sketch: coord1
 asset_dir: coord-1
 audio:
-- file: input.wav
-  role: input
-  label: 'Input: a vowel'
-- file: output_fresh.wav
-  role: expected
-  label: 'Field experiment in a fresh session: F1 +20 %'
-- file: output_after_pcf.wav
-  role: observed
-  label: 'The same experiment after a PCF experiment: unshifted'
-real:
-  dir: coord-1
-  clips:
-  - file: input.wav
-    role: input
-    label: Input, "I had faith in them."
-    sources:
-    - arctic_bdl_a0030
-  - file: output_fresh.wav
-    role: expected
-    label: Field experiment, fresh session (F1 +20 %)
-    sources:
-    - arctic_bdl_a0030
-  - file: output_after_pcf.wav
-    role: observed
-    label: Same experiment after a PCF experiment (unshifted)
-    sources:
-    - arctic_bdl_a0030
+- {file: t3_input.wav, src: meas/t3_in.wav, role: input, title: 'Input, trial 3', label: 'a "head"-like vowel', panel: exp, trial: 3}
+- {file: t3_expected.wav, src: meas/exp_t3_out.wav, role: expected, title: 'Expected, trial 3', label: 'F1 raised ({t3_exp_pct})', panel: exp, trial: 3}
+- {file: t3_observed.wav, src: meas/obs_t3_out.wav, role: observed, title: 'Observed, trial 3', label: 'not shifted ({t3_obs_pct})', panel: obs, trial: 3}
+- {file: t3_ab.wav, src: [meas/exp_t3_out.wav, meas/obs_t3_out.wav], gap_s: 0.4, role: ab, title: 'A/B, trial 3', label: 'expected, then observed', no_playhead: true}
 cause:
   summary: >-
-    With a PCF loaded (<code>pertCfg.n &gt; 0</code>), the formant branch takes the on/off decision, amplitude and phase from the PCF row of the current OST state.
-    Only <code>Audapter('pcf', '', 0)</code> unloads a PCF, and <code>AudapterIO('init')</code> never calls it.
+    With a PCF loaded (<code>pertCfg.n &gt; 0</code>), the formant branch takes the on/off decision, amplitude and phase from the
+    PCF row of the current OST state. Only <code>Audapter('pcf', '', 0)</code> unloads a PCF, and <code>AudapterIO('init')</code>
+    never calls it.
   refs:
-  - repo: blab-mex
-    path: TransShiftMex/Audapter.cpp
-    lines:
-    - 1806
-    - 1812
-    hl:
-    - 1811
-    expect: during_trans = (pertCfg.fmtPertAmp[stat] != 0);
-    note: >-
-      With a PCF loaded, the PCF row decides whether to shift at all; pitch_pert.pcf's formant amplitude is 0, so never.
-  - repo: blab-mex
-    path: TransShiftMex/Audapter.cpp
-    lines:
-    - 1838
-    - 1843
-    hl:
-    - 1840
-    - 1841
-    - 1842
-    expect: That using ost and pcf files overrides the perturbation field
-    note: '...and supplies amplitude and phase, as the comment intends for OST/PCF experiments.'
-  - repo: blab-matlab
-    path: mcode/AudapterIO.m
-    lines:
-    - 427
-    - 434
-    hl:
-    - 429
-    expect: Audapter(9, params);
-    note: Only this action loads or clears a PCF; the 'init' case (lines 8–415) never calls it.
+  - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1806, 1812], hl: [1811], expect: 'during_trans = (pertCfg.fmtPertAmp[stat] != 0);', note: "With a PCF loaded, the PCF row decides whether to shift at all; measureFormants.pcf's rows are all zero, so never."}
+  - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1838, 1843], hl: [1840, 1841, 1842], expect: That using ost and pcf files overrides the perturbation field, note: '...and supplies amplitude and phase, as the comment intends for OST/PCF experiments.'}
+  - {repo: blab-matlab, path: mcode/AudapterIO.m, lines: [427, 434], hl: [429], expect: 'Audapter(9, params);', note: "Only this action loads or clears a PCF; the 'init' case (lines 8–415) never calls it."}
   fix: >-
-    Unload the OST and PCF in <code>AudapterIO('init')</code> unless the caller asks to keep them, or warn when a PCF is loaded while field parameters are set. Workaround:
-    call <code>Audapter('ost', '', 0)</code> and <code>Audapter('pcf', '', 0)</code>, or <code>clear Audapter</code>, between experiments.
+    <strong>Safe pattern:</strong> keep <code>Audapter('ost', '', 0); Audapter('pcf', '', 0);</code> at the top of every field-mode
+    runner, before <code>AudapterIO('init', p)</code>. <strong>Fix:</strong> unload the OST and PCF in <code>AudapterIO('init')</code>
+    unless the caller asks to keep them, or warn when a PCF is loaded while field parameters are set.
+    <strong>Check past data:</strong> field-mode trials whose <code>sfmts</code> equal <code>fmts</code> on every frame were not shifted.
 verify:
-- kind: H
-  what: harness test (added to run-tests.sh)
-  name: t_pcf_persist.m
-  detail: 'FAIL as expected: shifted frames fresh 435, after an earlier PCF experiment 0'
-- kind: H
-  what: report export (synthetic and real speech)
-  name: harness/oct/report_coord1.m
-  detail: a vowel and a real sentence, fresh and after a PCF experiment
-reproduce: cd audit/harness && ./run-oct.sh t_pcf_persist.m
+- {kind: H, what: report export (calibration block, then field experiment, with and without the clear lines), name: report_coord1.m}
+- {kind: H, what: realistic session with blab's files, name: exp_mixed.m SCEN=S3, detail: 'EXP-7: 0.000 s vs 0.442 s shifted; noShift trials +125 mel after a bedhead block'}
+- {kind: H, what: harness test, name: t_pcf_persist.m, detail: 'FAIL as expected: shifted frames fresh 435, after an earlier PCF experiment 0'}
+reproduce: cd audit/harness && ./run-oct.sh report_coord1.m

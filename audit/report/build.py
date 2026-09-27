@@ -9,11 +9,12 @@ Inputs:  findings.yaml, ../FINDINGS-LOG.md (id check), ../harness/logs-summary.t
          ../harness/oct/out/report/<asset_dir>/<build>/{*.wav,data.json}, pinned git SHAs (code excerpts).
 Outputs: prototype/index.html, prototype/assets/<asset_dir>/..., prototype/build-manifest.json
 """
-import base64, html, json, os, re, shutil, subprocess, sys
+import base64, html, json, math, os, re, shutil, subprocess, sys
 import yaml
 import importlib
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from sketchlib import rows2
+import settings_panel
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 AUDIT = os.path.dirname(HERE)
@@ -88,7 +89,7 @@ SINCE_LINE = {"upstream": "Present since at least Audapter 2.1.5.", "both": "Pre
               "blab": "Introduced in the blab-lab fork.", "blab-intended": "Introduced in the blab-lab fork."}
 SEV_ORDER = {"high": 0, "med": 1, "low": 2}
 KIND = {"H": "Harness", "D": "Driver", "R": "Reading", "F": "Formal"}
-ROLE = {"input": "Input", "expected": "Expected", "observed": "Observed"}
+ROLE = {"input": "Input", "expected": "Expected", "observed": "Observed", "ab": "A/B"}
 
 def code_block(repos, ref, compact=False):
     lines, url = excerpt(repos, ref)
@@ -113,16 +114,59 @@ def load_real(card):
     p = os.path.normpath(os.path.join(EXPORTS, r["dir"], "real", r.get("data", "data.json")))
     return r, json.load(open(p))
 
-def clip_li(card, a, m, src_rel, sketch_id=None, credit=None):
+def clip_li(card, a, m, src_rel, sketch_id=None, credit=None, fmt=None):
+    """One clip. Clips tied to an expected-vs-observed figure carry `panel` (exp/obs) and `trial`: the playhead is drawn on
+    that trial of that panel, and the label names both ("Expected, trial 4")."""
+    fmt = fmt or (lambda t: t)
     warn_t = a.get("warn") or m.get("warn")
     warn = f'<p class="warn"><span aria-hidden="true">!</span> {E(warn_t)}</p>' if warn_t else ""
-    label = re.sub(r"^(Input|Output):\s*", "", a.get("label", m.get("label", "")))
+    label = fmt(re.sub(r"^(Input|Output):\s*", "", a.get("label", m.get("label", ""))))
+    title = a.get("title") or ROLE[a["role"]]
     dur = f' <span class="dur">{m["dur_s"]:.1f} s</span>' if m.get("dur_s") else ""
-    ds = f' data-sketch="{sketch_id}" data-offset="{a.get("offset", 0)}"' if sketch_id else ""
+    ds = ""
+    if sketch_id and a.get("panel"):
+        ds = f' data-sketch="{sketch_id}-{a["panel"]}" data-trial="{a.get("trial", "")}" data-offset="{a.get("offset", 0)}"'
+    elif sketch_id and not a.get("no_playhead"):
+        ds = f' data-sketch="{sketch_id}" data-offset="{a.get("offset", 0)}"'
     cr = f'<p class="credit">{credit}</p>' if credit else ""
     return (f'<li class="clip role-{a["role"]}"><span class="swatch" aria-hidden="true"></span><div>'
-            f'<p class="clip-l" data-file="{E(a["file"])}"><strong>{ROLE[a["role"]]}.</strong> {E(label)}{dur}</p>'
+            f'<p class="clip-l" data-file="{E(a["file"])}"><strong>{E(title)}.</strong> {E(label)}{dur}</p>'
             f'<audio controls preload="none" src="{src_rel}/{a["file"]}"{ds}></audio>{warn}{cr}</div></li>')
+
+
+def meas_clips(card, exp_dir, dst):
+    """Published clips cut from the export's meas/ WAVs (audio items with `src`), with ONE shared gain for the card,
+    as harness/oct/report_wavgroup.m does: loudest clip's active RMS to -20 dBFS, capped so no clip peaks above -1 dBFS.
+    src: a file under <export>/ or a list of files joined with `gap_s` of silence (A/B clips); a, b: excerpt in seconds."""
+    import numpy as np, wave
+    import measure as MS
+    items = [a for a in card.get("audio", []) if a.get("src")]
+    if not items:
+        return []
+    sigs = []
+    for a in items:
+        srcs = a["src"] if isinstance(a["src"], list) else [a["src"]]
+        parts = []
+        for i, f in enumerate(srcs):
+            fs, x = MS.load(os.path.join(exp_dir, f))
+            lo, hi = a.get("a", 0), a.get("b")
+            x = x[int(round(lo * fs)): (int(round(hi * fs)) if hi else len(x))]
+            if i: parts.append(np.zeros(int(round(a.get("gap_s", 0.5) * fs))))
+            parts.append(x)
+        sigs.append((fs, np.concatenate(parts)))
+    def act(x, fs):
+        w = int(0.02 * fs); n = len(x) // w
+        b = np.sqrt((x[:n * w].reshape(n, w) ** 2).mean(1)); a_ = x[:n * w].reshape(n, w)[b > 1e-3]
+        return float(np.sqrt((a_ ** 2).mean())) if a_.size else 0.0
+    g = 10 ** (-20 / 20) / max(act(x, fs) for fs, x in sigs)
+    g = min(g, 10 ** (-1 / 20) / max(float(np.abs(x).max()) for fs, x in sigs))
+    man = []
+    for a, (fs, x) in zip(items, sigs):
+        y = np.clip(np.round(g * x * 32767), -32768, 32767).astype("<i2")
+        with wave.open(os.path.join(dst, a["file"]), "wb") as w:
+            w.setnchannels(1); w.setsampwidth(2); w.setframerate(fs); w.writeframes(y.tobytes())
+        man.append({"file": a["file"], "label": a.get("label", ""), "dur_s": len(x) / fs, "gain_db": 20 * math.log10(g), "warn": a.get("warn", "")})
+    return man
 
 def card_html(repos, card, tests, data, up, asset_rel, variants):
     missing = [k for k in REQUIRED if not card.get(k)] + [f"cause.{k}" for k in ("summary", "refs", "fix") if not card.get("cause", {}).get(k)]
@@ -145,14 +189,17 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
             rv.update(mod.derive_real(rd))
         v.update({"r_" + k: x for k, x in rv.items()})
     fmt = lambda t: t.format(**v)
+    pre = re.sub(r"[^A-Za-z0-9]", "", card["id"]) + "_"     # card values for section prose, e.g. [[I01_n_gaps]]
+    SECVALS.update({pre + k: x for k, x in v.items() if isinstance(x, (int, float, str)) and not k.startswith("_")})
     sev, sevc = SEV[card["severity"]]
     rows = "".join(f'<tr><td class="grp">{E(g)}</td><th scope="row">{E(fmt(c))}</th><td>{E(fmt(x))}</td></tr>' for g, c, x in card["table"])
     badges = "".join(f'<li class="vk vk-{k}"><span class="vk-l">{k}</span> {KIND[k]}</li>' for k in card["status"])
     sid = "sk-" + anchor(card["id"]).lower()
     clips = []
+    mc = {m["file"]: m for m in meas_clips(card, data["_dir"], os.path.join(OUT, asset_rel))}
     for a in card.get("audio", []):
-        m = next(x for x in data["audio"] if x["file"] == a["file"])
-        clips.append(clip_li(card, a, m, asset_rel, sid))
+        m = mc.get(a["file"]) or next(x for x in data["audio"] if x["file"] == a["file"])
+        clips.append(clip_li(card, a, m, asset_rel, sid, fmt=fmt))
     rclips = []
     if r:
         dst = os.path.join(OUT, "assets", card["asset_dir"], "real"); os.makedirs(dst, exist_ok=True)
@@ -184,7 +231,13 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
         ver.append(f'<li><span class="vk-l">{x["kind"]}</span> {E(x["what"])}: {file_link(x["name"])}{res}</li>')
     wide = mod.sketch(data, up)
     narrow = narrow_sketch(card, data, up)
-    cap = f'<p class="figcap">{card["figure_caption"]}</p>' if card.get("figure_caption") else ""
+    cap = f'<p class="figcap">{fmt(card["figure_caption"])}</p>' if card.get("figure_caption") else ""
+    setp = ""
+    if data.get("settings") or card.get("settings"):
+        S = dict(data.get("settings") or {}); S.update(card.get("settings", {}).get("override", {}))
+        setp = settings_panel.panel_html(card, S, asset_rel)
+        json.dump(settings_panel.settings_json(card, S), open(os.path.join(OUT, asset_rel, "settings.json"), "w"), indent=1)
+    reach = f'<p class="reach reach-{card.get("reach_kind", "none")}">{fmt(card["reach"])}</p>' if card.get("reach") else ""
     return f'''
 <article class="card" id="{anchor(card["id"])}" aria-labelledby="{anchor(card["id"])}-h">
   <aside class="rail">
@@ -195,12 +248,14 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
   </aside>
   <div class="main">
     <h3 id="{anchor(card["id"])}-h">{E(card["headline"])}</h3>
+    {reach}
     <h4>What happens</h4>
     <p>{fmt(card["what"])}</p>
     <h4>When it matters</h4>
     <p>{fmt(card["scope"])}</p>
     <h4>Example</h4>
     <p>{fmt(card["example"])}</p>
+    {setp}
     <figure class="fig">{cap}<div class="sk-wide-wrap">{wide}</div><div class="sk-narrow-wrap">{narrow}</div></figure>
     {listen}
     {interactive_html(card, variants)}
@@ -214,7 +269,7 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
       <p class="since">{card.get("since", SINCE_LINE[card["origin"]])}</p>
     </section>
     <section class="fix-sec" aria-label="Fix">
-      <h4>{E(card["cause"].get("fix_label", "Fix and workaround"))}</h4>
+      <h4>{E(card["cause"].get("fix_label", "Safe pattern and fix"))}</h4>
       <p>{card["cause"]["fix"]}</p>
     </section>
     <section class="verify" aria-label="Verification">
@@ -370,20 +425,89 @@ def compact_html(repos, rows):
                    f'<td><a class="permalink" href="{url}">{E(path.split("/")[-1])}:{E(ln)}</a></td><td class="t-since">{SINCE[r["origin"]]}</td></tr>')
     return "".join(out)
 
-def table_html(rows, short=()):
-    out = []
-    for r in sorted(rows, key=lambda r: SEV_ORDER[r["sev"]]):
+def table_html(rows, short=(), sections=()):
+    """Findings at a glance, grouped by report section (full cards first, then short cards, each by severity)."""
+    byid = {r["id"]: r for r in rows}; sh = {r["id"]: r for r in short}
+    def row(r, href, text):
         sev, sevc = SEV[r["sev"]]
-        idc = f'<a href="#{anchor(r["id"])}">{E(r["id"])}</a>' if r.get("card") else E(r["id"])
-        out.append(f'<tr><td class="t-id">{idc}</td><td><span class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev}</span></td>'
-                   f'<td>{E(r["text"])}</td><td><span class="vk-l">{r["status"]}</span></td><td class="t-since">{SINCE[r["origin"]]}</td></tr>')
-    if short:
-        out.append('<tr class="group"><td colspan="5">Short cards</td></tr>')
-        for r in sorted(short, key=lambda r: SEV_ORDER[r["sev"]]):
-            sev, sevc = SEV[r["sev"]]
-            out.append(f'<tr><td class="t-id"><a href="#{slug(r["id"])}">{E(r["id"])}</a></td><td><span class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev}</span></td>'
-                       f'<td>{E(r["title"])}</td><td><span class="vk-l">{r["status"]}</span></td><td class="t-since">{SINCE[r["origin"]]}</td></tr>')
+        return (f'<tr><td class="t-id"><a href="#{href}">{E(r["id"])}</a></td><td><span class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev}</span></td>'
+                f'<td>{E(text)}</td><td><span class="vk-l">{r["status"]}</span></td><td class="t-since">{SINCE[r["origin"]]}</td></tr>')
+    out = []
+    for sec in sections:
+        items = [byid[i] for i in sec.get("cards", []) if i in byid]
+        shs = [sh[i] for i in sec.get("short", []) if i in sh]
+        if not items and not shs and not sec.get("table_rows"):
+            continue
+        out.append(f'<tr class="group"><td colspan="5"><a href="#{sec["id"]}">{E(sec["title"])}</a></td></tr>')
+        for r in sorted(items, key=lambda r: SEV_ORDER[r["sev"]]):
+            out.append(row(r, anchor(r["id"]), r["text"]))
+        for r in sec.get("table_rows", []):
+            out.append(row(r, r.get("href", sec["id"]), r["text"]))
+        for r in sorted(shs, key=lambda r: SEV_ORDER[r["sev"]]):
+            out.append(row(r, slug(r["id"]), r["title"]))
     return "".join(out)
+
+SECVALS = {}
+def section_text(t):
+    """Section prose with [[name]] or [[name:fmt]] values filled from harness logs (parse_section_values).
+    'file:<name>' reads templates/<name>."""
+    if t.startswith("file:"):
+        t = open(os.path.join(HERE, "templates", t[5:].strip())).read()
+    def rep(m):
+        k, _, f = m.group(1).partition(":")
+        if k not in SECVALS:
+            fail(f"section value [[{k}]] not found in the parsed logs")
+        v = SECVALS[k]
+        return format(v, f) if f else str(v)
+    return re.sub(r"\[\[([A-Za-z0-9_]+(?::[^\]]+)?)\]\]", rep, t)
+
+def parse_section_values():
+    """Numbers quoted in section prose, read from the harness logs that produced them (no hand-typed numbers)."""
+    v = {}
+    lab = os.path.join(EXPORTS, "labscripts", "exp_vsa_field.log")
+    if os.path.exists(lab):
+        txt = open(lab).read()
+        blocks = re.split(r"\n=== ", txt)
+        for b in blocks[1:]:
+            name = b.split(" ", 1)[0]
+            for m in re.finditer(r"scale (\d\.\d)\s+(\w+): produced F1/F2\s+(\d+)/\s*(\d+) Hz \| heard shift\s+([+-][\d.]+)/\s*([+-][\d.]+) mel \(intended\s+([+-][\d.]+)/\s*([+-][\d.]+)\) \| toward centre ([+-]?[\d.]+) \(intended ([\d.]+)\), off-axis\s+([\d.]+) mel", b):
+                sc, vw = m.group(1).replace(".", ""), m.group(2)
+                key = f"{name}_{vw}_{sc}"
+                v[key + "_d1"], v[key + "_d2"] = float(m.group(5)), float(m.group(6))
+                v[key + "_i1"], v[key + "_i2"] = float(m.group(7)), float(m.group(8))
+                v[key + "_tc"], v[key + "_off"] = float(m.group(9)), float(m.group(11))
+        m = re.search(r"output RMS ([\d.]+); with fb4GainDB=20log10\(0.98\) -> ([\d.]+); difference \+([\d.]+) dB", txt)
+        if m:
+            v["fb4_rms_set"], v["fb4_rms_db"], v["fb4_diff_db"] = float(m.group(1)), float(m.group(2)), float(m.group(3))
+        for name in ("vsaCentralize", "vsaGeneralize", "vsaSentence"):
+            tcs = [v[k] for k in v if k.startswith(name + "_") and k.endswith("_05_tc")]
+            if tcs:
+                v[name + "_wrongdir"] = sum(1 for x in tcs if x < 0); v[name + "_n"] = len(tcs)
+                v[name + "_tc_min"], v[name + "_tc_max"] = min(tcs), max(tcs)
+                v[name + "_tc_away"] = -min(tcs)
+            offs = [v[k] for k in v if k.startswith(name + "_") and k.endswith("_05_off")]
+            if offs: v[name + "_off_min"], v[name + "_off_max"] = min(offs), max(offs)
+            g0 = [math.hypot(v[k[:-3] + "_d1"], v[k[:-3] + "_d2"]) for k in v if k.startswith(name + "_") and k.endswith("_00_tc")]
+            if g0: v[name + "_s0_min"], v[name + "_s0_max"] = min(g0), max(g0)
+    mix = os.path.join(EXPORTS, "carryover", "exp_mixed.log")
+    if os.path.exists(mix):
+        txt = open(mix).read()
+        s1 = re.findall(r"fb3 trial \d+ \((\w+), [^)]*\): shifted ([\d.]+) s, logged dF1 ([+-][\d.]+) mel, output/input F1 ([\d.]+) \| fwd==rev logged: (\d)", txt)
+        catch = [x for x in s1 if x[0] == "noShift"]
+        v["s1_n"], v["s1_catch_n"] = len(s1), len(catch)
+        v["s1_catch_shift_max"] = max(float(x[1]) for x in catch) if catch else float("nan")
+        v["s1_catch_ratio_min"] = min(float(x[3]) for x in catch) if catch else float("nan")
+        v["s1_catch_ratio_max"] = max(float(x[3]) for x in catch) if catch else float("nan")
+        v["s1_pert_mel"] = max(abs(float(x[2])) for x in s1 if x[0] != "noShift")
+        v["s1_same"] = sum(int(x[4]) for x in s1[1:])
+        v["s1_same_n"] = len(s1) - 1
+        fb1 = re.findall(r"fb1 trial \d+: fwd==rev signalOut bit-identical: (\d)", txt)
+        v["s1_fb1_same"], v["s1_fb1_n"] = sum(int(x) for x in fb1), len(fb1)
+        s2 = re.findall(r"trial \d+ \((shift|level/catch)\): .*?\| shifted ([\d.]+) s .*?fwd==rev logged: (\d)", txt)
+        v["s2_n"] = len(s2); v["s2_catch_n"] = sum(1 for x in s2 if x[0] != "shift")
+        v["s2_catch_shift_max"] = max((float(x[1]) for x in s2 if x[0] != "shift"), default=float("nan"))
+        v["s2_same"] = sum(int(x[2]) for x in s2[1:]); v["s2_same_n"] = len(s2) - 1
+    return v
 
 def fonts_css():
     """Charis SIL (OFL, a Charter derivative), Latin subset, inlined so the report renders the same offline."""
@@ -482,6 +606,7 @@ def main():
     y = yaml.safe_load(open(os.path.join(HERE, "findings.yaml")))
     global AUDIT_URL
     AUDIT_URL = y["report"]["repo_url"] + "/audit"
+    y["cards"] = [c for sec in y["sections"] for c in sec.get("cards", [])]
     allc = {}
     for f in sorted(os.listdir(os.path.join(HERE, "cards"))):
         if f.endswith(".yaml"):
@@ -503,9 +628,10 @@ def main():
     repos = y["repos"]
     check_log_ids([c["log"] for c in y["cards"]] + [p for r in y["table"] for p in r["id"].split(" / ")])
     tests = test_results()
+    SECVALS.update(parse_section_values())
     variants = load_variants()
     os.makedirs(OUT, exist_ok=True)
-    cards, manifest = [], {"cards": {}}
+    cards, manifest = {}, {"cards": {}}
     only = os.environ.get("CARDS")   # e.g. CARDS=OST-F2,OST-F8 python3 build.py : render only these (for quick iteration)
     for c in y["cards"]:
         if only and c["id"] not in only.split(","):
@@ -513,14 +639,17 @@ def main():
         src = os.path.join(EXPORTS, c["asset_dir"], "blab")
         if not os.path.exists(os.path.join(src, "data.json")):
             fail(f"missing export for {c['id']}: run build.py --export")
-        dst = os.path.join(OUT, "assets", c["asset_dir"]); os.makedirs(dst, exist_ok=True)
+        dst = os.path.join(OUT, "assets", c["asset_dir"])
+        shutil.rmtree(dst, ignore_errors=True); os.makedirs(dst, exist_ok=True)   # no stale files from earlier builds
         for f in os.listdir(src):
-            shutil.copy2(os.path.join(src, f), dst)
+            if os.path.isfile(os.path.join(src, f)):
+                shutil.copy2(os.path.join(src, f), dst)
         data = json.load(open(os.path.join(src, "data.json")))
+        data["_dir"] = os.path.join(EXPORTS, c["asset_dir"])
         upf = os.path.join(EXPORTS, c["asset_dir"], "upstream", "data.json")
         up = json.load(open(upf)) if os.path.exists(upf) else None
         try:
-            cards.append(card_html(repos, c, tests, data, up, f"assets/{c['asset_dir']}", variants))
+            cards[c["id"]] = card_html(repos, c, tests, data, up, f"assets/{c['asset_dir']}", variants)
         except (KeyError, ValueError, IndexError) as e:
             fail(f"card {c['id']}: {type(e).__name__} {e}")
         manifest["cards"][c["id"]] = {"assets": sorted(os.listdir(dst)), "upstream_export": bool(up)}
@@ -530,10 +659,34 @@ def main():
     js = "\n".join([open(os.path.join(HERE, "templates", "page.js")).read(), open(os.path.join(HERE, "templates", "widgets", "panel.js")).read()]
                    + [open(os.path.join(pdir, f)).read() for f in sorted(os.listdir(pdir)) if f.endswith(".js")] + ["AudPanels.wire();"])
     shas = {k: v["sha"][:7] for k, v in repos.items()}
+    shorts = {r["id"]: r for r in y.get("short", [])}
+    placed = set(); body = []
+    for sec in y["sections"]:
+        blocks = [f'<section id="{sec["id"]}" class="fsec"><h2>{E(sec["title"])}</h2>']
+        if sec.get("lead"):
+            blocks.append(f'<div class="prose sec-lead">{section_text(sec["lead"])}</div>')
+        for cid in sec.get("cards", []):
+            placed.add(cid)
+            if cid in cards:
+                blocks.append(cards[cid])
+        sh = [shorts[i] for i in sec.get("short", []) if i in shorts]
+        placed.update(r["id"] for r in sh)
+        if sh:
+            blocks.append(f'<div class="short-sec"><h3 class="short-h">{E(sec.get("short_title", "Shorter findings in this group"))}</h3>{short_html(repos, sh)}</div>')
+        comp = [r for r in y.get("compact", []) if r.get("section", "pitfalls") == sec["id"]]
+        if comp:
+            blocks.append(f'<div class="other-sec"><h3 class="short-h">{E(sec.get("compact_title", "Further items (low severity or narrow conditions)"))}</h3><div class="tscroll"><table class="findings compact">'
+                          '<thead><tr><th scope="col">ID</th><th scope="col">Severity</th><th scope="col">Finding</th><th scope="col">Verified</th><th scope="col">Where</th><th scope="col">Since</th></tr></thead>'
+                          f'<tbody>{compact_html(repos, comp)}</tbody></table></div></div>')
+        blocks.append('</section>')
+        body.append("".join(blocks))
+    unplaced = [c["id"] for c in y["cards"] if c["id"] not in placed] + [i for i in shorts if i not in placed]
+    if unplaced:
+        fail(f"cards or short cards not placed in any section: {unplaced}")
     page = (tpl.replace("{{CSS}}", css).replace("{{JS}}", js).replace("{{TITLE}}", E(y["report"]["title"]))
-               .replace("{{DATE}}", y["report"]["date"]).replace("{{TABLE}}", table_html(y["table"], y.get("short", [])))
-               .replace("{{SHORT}}", short_html(repos, y.get("short", []))).replace("{{COMPACT}}", compact_html(repos, y.get("compact", [])))
-               .replace("{{CARDS}}", "\n".join(cards)).replace("{{DIFF}}", diff_html(tests)))
+               .replace("{{DATE}}", y["report"]["date"]).replace("{{TABLE}}", table_html(y["table"], y.get("short", []), y["sections"]))
+               .replace("{{SECTIONS}}", "\n".join(body)).replace("{{DIFF}}", diff_html(tests))
+               .replace("{{INTRO_FOUND}}", section_text(y["intro_found"])))
     for k, s in shas.items():
         page = page.replace("{{SHA:" + k + "}}", s).replace("{{URL:" + k + "}}", f'{repos[k]["url"]}/tree/{repos[k]["sha"]}')
     page = re.sub(r"(?<=\d) %", "\u00a0%", page)
@@ -548,6 +701,7 @@ def main():
             p = os.path.join(OUT, m.group(1))
             return 'src="data:audio/wav;base64,' + base64.b64encode(open(p, "rb").read()).decode() + '"'
         open(os.path.join(OUT, "index.single.html"), "w").write(re.sub(r'src="(assets/[^"]+\.wav)"', inline, page))
+    manifest["values"] = {k: (round(x, 4) if isinstance(x, float) else x) for k, x in SECVALS.items() if isinstance(x, (int, float, str))}
     json.dump(manifest, open(os.path.join(OUT, "build-manifest.json"), "w"), indent=1)
     print("wrote", os.path.join(OUT, "index.html"))
 

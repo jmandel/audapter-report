@@ -3,8 +3,14 @@ id: F6
 log: F6
 notes: notes/formant.md#f6
 headline: >-
-  A field perturbation switches on again every time the formants re-enter the field, and minVowelLen has no effect
+  An undocumented blab change that vsaSentence depends on: a field perturbation switches on again every time the formants re-enter
+  the field (and minVowelLen has no effect)
 severity: med
+reach_kind: current
+reach: >-
+  Touches blab's current experiments: vsaSentence depends on this behaviour, and the other VSA experiments use the same restricted field. It is an undocumented behaviour change, not a defect for blab; it matters for anyone running these designs on Audapter 2.1.5 or another fork.
+settings:
+  source: 'Hypothetical field: a restricted field that raises F1 20 % above 600 Hz, standing in for vsaSentence''s restricted 2-D centralisation field (the same re-entry rule applies to both).'
 origin: blab-intended
 since: >-
   Introduced deliberately in the blab-lab fork (commit deab341, "Formant dropout fix v1", 2020), so that a brief tracker excursion out of the field no longer ends
@@ -12,7 +18,9 @@ since: >-
 status:
 - H
 what: >-
-  In perturbation-field mode, Audapter perturbs every stretch of speech whose formants fall inside the field, each time they enter it, for the whole trial. The parameter
+  This is a question about documentation, not a defect: blab changed the rule deliberately (the "formant dropout fix", 2020), and
+  vsaSentence's sentence design needs it, because its field excludes consonants, so with the original one-shot rule only the first
+  vowel of each sentence would be perturbed. In perturbation-field mode, Audapter perturbs every stretch of speech whose formants fall inside the field, each time they enter it, for the whole trial. The parameter
   <code>minVowelLen</code>, which looks like it controls how long a stretch must be, has no effect and cannot even be changed.
 scope: >-
   Affects field-mode experiments without an OST/PCF. On multi-syllable stimuli, diphthongs and glides, later syllables and returns to the target vowel are perturbed

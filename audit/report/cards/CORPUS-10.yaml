@@ -3,7 +3,21 @@ id: CORPUS-10
 log: CORPUS-10
 notes: notes/corpus.md#corpus-10
 headline: After a change of frameLen or nDelay in the same session, runFrame can hang forever at 100 % CPU
-severity: high
+severity: med
+reach_kind: pitfall
+reach: >-
+  Not triggered by blab's runners: they change frameLen only together with the sample rate, followed by AudapterIO('init'), which rebuilds the tracker. Affects designs that change frameLen or nDelay at a fixed sample rate in one MATLAB session.
+settings:
+  source: 'Hypothetical design: a session that switches from the default frame settings to the longer window recommended for low voices.'
+  override:
+    params:
+      bTimeDomainShift: 1
+      frameLen: 32, then 64
+      nDelay: 5, then 7
+    switching: one trial, then AudapterIO('init') with the new frame settings, then the same clip again
+    input: vocadito_4 (sung phrase, CC BY 4.0)
+  playground: false
+  playground_why: the Playground runs every trial in a fresh instance unless you run a session, where the hang would freeze the page.
 origin: upstream
 status:
 - H

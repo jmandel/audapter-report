@@ -1,0 +1,44 @@
+{
+ "card": "I-03",
+ "source": "Hypothetical design: a plausible design, not one blab runs; blab's default settings (getAudapterDefaultParams) unless listed.",
+ "preset": "female",
+ "build": "shipped",
+ "params": {
+  "rmsThresh": 0.005,
+  "trialLen": 34,
+  "rampLen": 0.05
+ },
+ "setparam": {},
+ "ost": "rmsSlopeWin = 0.030000\n\nn = 3\n0 ELAPSED_TIME 10 NaN {}\n1 ELAPSED_TIME 22 NaN {}\n2 OST_END NaN NaN {}\n\nn = 0\n",
+ "pcf": "0\n\n3\n0, 0, 0, 0, 0\n1, 0, 0, 0, 0\n2, 0, 0, 0, 0\n",
+ "sequence": [],
+ "switching": "one 35 s trial",
+ "input": "synthetic vowels over 35 s",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {
+   "rmsthr": 0.005,
+   "triallen": 34,
+   "ramplen": 0.05
+  },
+  "shift": {
+   "formant": {
+    "on": false
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "custom",
+   "ost": "rmsSlopeWin = 0.030000\n\nn = 3\n0 ELAPSED_TIME 10 NaN {}\n1 ELAPSED_TIME 22 NaN {}\n2 OST_END NaN NaN {}\n\nn = 0\n",
+   "pcf": "0\n\n3\n0, 0, 0, 0, 0\n1, 0, 0, 0, 0\n2, 0, 0, 0, 0\n"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": []
+}

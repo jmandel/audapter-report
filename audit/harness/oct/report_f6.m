@@ -87,5 +87,6 @@ if ~UP
   audiowrite(fullfile(od, 'dev_glide_48k.wav'), xg, fs, 'BitsPerSample', 16);
   audiowrite(fullfile(od, 'dev_dip_48k.wav'), xd, fs, 'BitsPerSample', 16);
 end
+if ~strcmp(getenv('VARIANT'), 'upstream'), r.settings = report_settings(p, 'female', 'switching', 'one trial per input; no OST or PCF (field mode)', 'input', 'synthetic 1 s /a/ -> /i/ -> /a/ glide, and a steady /a/ with a brief F1 dip'); end
 report_json(fullfile(od, 'data.json'), r);
 

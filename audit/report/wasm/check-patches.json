@@ -87,8 +87,8 @@
   "target": {
    "shippedBug": true,
    "variantBug": false,
-   "shipped": "trial B state 2 at 0.504 s first, 1.722 s after A",
-   "variant": "trial B state 2 at 0.504 s first, 0.504 s after A"
+   "shipped": "offset detected in trials 1-5 at 0.544 s, 0.594 s, 1.444 s, 1.466 s, 1.488 s",
+   "variant": "offset detected in trials 1-5 at 0.544 s, 0.594 s, 1.444 s, 0.544 s, 0.644 s"
   }
  },
  "fix-i-01": {

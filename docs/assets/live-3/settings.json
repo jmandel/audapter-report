@@ -1,0 +1,28 @@
+{
+ "card": "LIVE-3",
+ "source": "Hypothetical always-on design, simulated on the live audio path.",
+ "params": {},
+ "switching": "reset() about every 62 ms for 120 s while audio runs",
+ "input": "a looped vowel",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {},
+  "shift": {
+   "formant": {
+    "on": false
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": []
+}

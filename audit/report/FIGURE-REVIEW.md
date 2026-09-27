@@ -52,3 +52,28 @@ Screenshots of every figure at desktop, 390 px light and 390 px dark are produce
 | I-01, PT-5, I-02 panels | kept | Single-trial rows on a trial axis; they already fit the panel width | Tick labels now render at CSS size (the row width is taken from the panel) |
 
 The short cards and the compact table have no graphics. The methods section has no figures; the earlier five-step diagram was replaced by prose.
+
+## Rework for realistic designs (REPORT-26, PLAN.md section 14)
+
+Trial and session figures of the reworked cards now use the expected-vs-observed language (`sketches/evlib.py`):
+- **Two aligned panels**, "Expected" (what the design should do) and "Observed" (what Audapter did), with the same tiers and the
+  same time scale. They are stacked, not side by side: the card column is about 850 px wide, and a session of 4–5 trials side by
+  side would halve the time resolution. On phones each panel wraps into one row block per trial on a shared trial-time axis.
+- **Minimal tiers**: trial label, the words as grey boxes, the perturbation as a block with its size (hollow outline = expected,
+  solid blue = observed), a marker row only where it explains the difference (OST-F1: "offset detected"), and values measured on
+  the WAV files (report/measure.py) under the words. Orange marks the difference, with a one-line callout in its own lane.
+- **Session axis** with dashed reset() rules and labelled events between blocks (COORD-1: clear lines or not; OST-F5: how catch
+  trials are made). Partial sessions (I-01 trials 5–7) keep true session-time tick labels.
+- **Tied to the audio**: each clip names its panel and trial ("Expected, trial 4"), and playing it draws the playhead inside that
+  trial's box of that panel (`g.ev-trial` in the SVG; `templates/page.js`). A/B clips have no playhead.
+- **Settings**: every card now has a "Settings used" panel above its figure; the figure caption points to it.
+
+| Figure | Verdict | Checked | Notes |
+|---|---|---|---|
+| OST-F1 | redrawn | desktop, 390 px dark | Mixed design, trials 1–5 of 8; trial 3 (long catch) highlighted; offset markers; +18 % on word 2 of trials 4–5 only in Observed |
+| COORD-1 | redrawn | desktop, 390 px dark | Calibration trials, then the experiment block; the event note differs per panel. The first draft's callout collided with the event note: the callout now has its own lane |
+| OST-F5 (new card) | new | desktop, 390 px dark | Four trials; catch trials hollow/none in Expected, "+2 st left over" in Observed; values in cents |
+| I-01 | redrawn | desktop, 390 px dark | Trials 5–7 of the simonSingleWord v2 masking session; the 16 ms gap is widened in the drawing (stated in the caption); first draft labelled the axis 0–6 s, now true session time |
+| PT-5 | redrawn | desktop, 390 px dark | timeAdapt settings, four trials; level re input under each trial; the long sentence label is dropped where it does not fit (grey box only) |
+| OST-F2, F6 | kept (earlier design) | desktop | Already session/trial timelines from REPORT-25; converting them to two panels is left for a follow-up (F6's comparison is two rules, not expected vs observed in time) |
+| Other cards | kept | — | Not trial-sequence figures (memory diagrams, sweeps, live-path timelines) |

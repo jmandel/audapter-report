@@ -3,73 +3,54 @@ id: I-01
 log: I-01
 notes: notes/interface.md#i-01
 headline: >-
-  Playback loops at the fixed 10 s buffer length, not at the loaded noise length, so any noise shorter than 10 s is followed by silence
+  Since b2.4 (April 2026), masking noise drops out for 16 ms about once every 10 s, in about one of every five or six trials of a blab masking phase
 severity: high
 origin: blab-amplified
 since: >-
-  Wrapping at the buffer size is long-standing; the buffer grew from 4.8 s to 10 s in the blab-lab fork (commit 3c90a3a), which is when noise files shorter than 10
-  s started to leave a silent stretch.
-status:
-- H
+  Only since blab b2.4 (commit 3c90a3a, 6 April 2026), which enlarged the playback buffer from 230,400 to 480,000 samples. Data
+  collected with earlier versions are not affected: the bundled babble was truncated to the old buffer and looped seamlessly.
+status: [H]
+reach_kind: current
+reach: >-
+  Affects blab's current experiments: every runner that plays the bundled babble through free-speech's get_noiseSource in fb 2 or 3,
+  on b2.4 and later (since April 2026). Data collected before April 2026 are unaffected.
 what: >-
-  In feedback modes 2 to 5 Audapter plays the loaded <code>datapb</code> waveform, such as masking noise, in a loop. The loop point is the end of the 480000-sample
-  (10 s) buffer, not the end of the loaded waveform, and the rest of the buffer is filled with zeros. A shorter noise file therefore plays once and is followed by
-  silence until the 10 s mark.
+  In feedback modes 2–5 Audapter plays the loaded noise (<code>datapb</code>) in a loop. It loops at the end of its 480,000-sample
+  (10 s) buffer, not at the end of the noise that was loaded, and the unused end of the buffer is silence. The bundled babble is
+  479,230 samples, 770 short of the buffer, so once per 10 s of running time the participant hears 16 ms of silence instead of
+  noise. The noise position carries on from trial to trial (<code>reset</code> does not rewind it), so the dropout lands at a
+  different point in each affected trial. A noise file much shorter than 10 s gives a correspondingly longer silence.
 scope: >-
-  Affects every fb 2–5 condition whose playback waveform is shorter than 10 s at 48 kHz: masking noise, noise plus voice, and speech-modulated noise. <code>Audapter('reset')</code>
-  does not rewind the playback position, so the silent stretch falls at a different point in each trial. The bundled 10 s babble file is 770 samples short and leaves
-  a 16 ms dropout every 10 s.
+  Matters whenever masking noise is meant to be continuous, most of all in fb 2 masking phases (transfer or noise-baseline phases),
+  where the noise is all the participant hears and a dropout briefly unmasks their own voice. In fb 3 phases the babble is
+  quiet (fb3Gain 0.02) and a 16 ms dropout is less noticeable. <strong>Safe if</strong> the loaded noise is exactly 480,000
+  samples, or on versions before b2.4.
 example: >-
-  Voice plus masking noise (fb 3) with the first 5 s of the bundled babble, loaded the way <code>runExperiment.m</code> loads noise, over a 12 s trial: the noise
-  plays from 0 to 5 s, stops from 5 to 10 s, and resumes at 10 s. During the gap the participant hears their own voice unmasked.
-figure_caption: One 12 s trial. The expected row shows the 5 s file looping; the observed row shows what is played.
+  The masking phase of blab's simonSingleWord v2 experiment (fb 2, fb2Gain 0.16, 1.8 s trials, <code>AudapterIO('init')</code>
+  every trial, the bundled babble loaded once with get_noiseSource). Over {n_trials} trials the current build plays
+  {n_gaps} silences of {gap_ms_min:.0f} ms, in trials {gap_trials}, at {gap_times} into the trial. With the pre-b2.4 buffer the
+  same session plays none.
+settings:
+  source: "blab's simonSingleWord v2 experiment, masking (transfer) phase: fb 2 at fb2Gain 0.16, 1.8 s trials, init every trial, the bundled babble via free-speech get_noiseSource."
+  key_params: [fb, fb2Gain, bShift, bRatioShift, bMelShift]
+  build: "Observed: blab-lab audapter_mex as shipped (@169cadf, buffer 480,000). Expected: the same session with the pre-b2.4 buffer (230,400), which get_noiseSource then truncates the babble to."
+figure_caption: >-
+  Trials 5–7 of the session, end to end (the gap in trial 6 is widened in the drawing so it is visible). Silence is detected on the
+  audio of each trial.
 table:
-- - synthetic
-  - Noise gap in a 12 s trial, 5 s noise file
-  - '{gaps_text}'
-- - synthetic
-  - 'Second trial after reset(): the noise stops at'
-  - '{trial2_gap_start_s:.1f} s into the trial'
-- - synthetic
-  - Bundled babble (479230 samples)
-  - 16 ms of silence every 10 s
-- - real speech
-  - Noise gap, real sentences as the voice
-  - '{r_noise_gap_start_s:.1f}–{r_noise_gap_end_s:.1f} s'
+- [simonSingleWord v2, 'Silent gaps in 24 masking trials (current build)', '{n_gaps}, each {gap_ms_min:.0f} ms, in trials {gap_trials}']
+- [simonSingleWord v2, 'Same session, pre-b2.4 buffer', '{up_gaps} gaps']
+- [simonSingleWord v2, 'How often', 'every {every_s:.1f} s of running time: about 1 in {one_in:.1f} trials of 1.8 s']
+- [general case, 'A 5 s noise file in a 12 s trial', 'no noise {gaps_text}']
 sketch: i01
 asset_dir: i-01
 audio:
-- file: input_vowels.wav
-  role: input
-- file: output_fb3_voice_plus_noise.wav
-  role: observed
-- file: output_fb2_bundled_babble_zoom.wav
-  role: observed
-  offset: 8.5
-real:
-  dir: i-01
-  clips:
-  - file: input.wav
-    role: input
-    label: 'Input: six real sentences'
-    sources:
-    - arctic_bdl_a0005
-    - arctic_slt_a0018
-    - libri_84-121123-0000
-    - arctic_rms_a0036
-    - so762_0003_0
-    - libri_2078-142845-0026
-  - file: output_fb3.wav
-    role: observed
-    label: 'Output fb 3: voice + 5 s masking noise'
-    warn: The noise stops abruptly at 5 s and resumes at 10 s.
-    sources:
-    - arctic_bdl_a0005
-    - arctic_slt_a0018
-    - libri_84-121123-0000
-    - arctic_rms_a0036
-    - so762_0003_0
-    - libri_2078-142845-0026
+- {file: t6_expected.wav, src: meas/upstream_t6.wav, a: 0.6, b: 1.4, offset: 0.6, role: expected, title: 'Expected, trial 6', label: '0.6–1.4 s, pre-b2.4 buffer: no silence', panel: exp, trial: 6}
+- {file: t6_observed.wav, src: meas/blab_t6.wav, a: 0.6, b: 1.4, offset: 0.6, role: observed, title: 'Observed, trial 6', label: '0.6–1.4 s, current build: {gap_ms_min:.0f} ms of silence at 0.98 s', panel: obs, trial: 6, warn: 'A 16 ms dropout at 0.38 s into the clip; listen closely.'}
+- {file: t6_ab.wav, src: [meas/upstream_t6.wav, meas/blab_t6.wav], a: 0.6, b: 1.4, gap_s: 0.4, role: ab, title: 'A/B, trial 6', label: 'expected, then observed', no_playhead: true}
+audio_note: >-
+  These clips share one playback gain and are the masking noise alone, as heard in fb 2 (the participant also hears their own voice
+  through bone conduction). The dropout is short: listen on headphones.
 interactive:
   id: i-01
   variants:
@@ -92,7 +73,7 @@ interactive:
     fb3gain: 0.05
     dscale: 1
   text: >-
-    This runs a 12 s trial through the real Audapter C++ core compiled to WebAssembly from the pinned commit, once as released and once with the noise looping at
+    The general case, beyond the bundled babble: a noise file shorter than 10 s. This runs a 12 s trial through the real Audapter C++ core compiled to WebAssembly from the pinned commit, once as released and once with the noise looping at
     the length that was loaded. Both builds keep the shipped 480000-sample playback buffer. Pick the length of the noise file, cut from the bundled babble and loaded
     as <code>runExperiment.m</code> does it (zero mean, unit RMS). The page ships only every third sample of the babble, the only samples the fb 2–5 loop reads, and
     rebuilds the 48 kHz buffer from them, so Audapter reads the same values it would read from the full-rate file. The bars come from a noise-only run (fb 2), and
@@ -140,16 +121,27 @@ cause:
     - 325
     expect: getMaxPBLen
     note: Callers truncate to the maximum but never pass the actual length to the playback loop.
+  fix_label: Workaround and fix
   fix: >-
-    Store the loaded length when <code>datapb</code> is set and wrap there (<code>report/patches/i-01-datapb-loop-length.patch</code>); rewind <code>pbCounter</code>
-    in <code>reset()</code>. Workaround: tile the noise to exactly 480000 samples before loading it.
+    <strong>Workaround for current sessions:</strong> make the noise exactly 480,000 samples long before loading it, for example by
+    padding the bundled babble with its own first 770 samples, or truncate it to a length that ends at a quiet point and tile it to
+    480,000 samples. <strong>Fix:</strong> store the loaded length when <code>datapb</code> is set and wrap there
+    (<code>report/patches/i-01-datapb-loop-length.patch</code>), and rewind <code>pbCounter</code> in <code>reset()</code>.
+    <strong>Check past data:</strong> if <code>signalOut</code> was saved for fb 2–5 trials, look for runs of exact zeros; otherwise
+    the gap's position can be reconstructed from the trial durations, since the noise position runs on across trials.
 verify:
 - kind: H
   what: interface check
   name: scratch/interface/t_iface.m T1
   detail: 'fb 2: mean |out| 0.100 for 0–4.9 s, 0.000 for 5.1–9.9 s'
 - kind: H
-  what: report export
+  what: report export (simonSingleWord v2 masking phase, 24 trials, both buffer sizes)
+  name: report_i01_session.m
+- kind: H
+  what: real session structure
+  name: exp_noise_session.m
+  detail: 'EXP-3: 4 gaps of 16 ms in 24 trials on the current build, none with the pre-b2.4 buffer'
+- kind: H
+  what: report export (generic case, a 5 s noise file)
   name: report_i01.m
-  detail: 12 s trials with a 5 s noise file
-reproduce: cd audit/harness && ./run-oct.sh report_i01.m
+reproduce: cd audit/harness && ./run-oct.sh report_i01_session.m

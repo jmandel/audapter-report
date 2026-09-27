@@ -4,6 +4,11 @@ log: OST-F8
 notes: notes/ost-pcf.md#f8
 headline: Written the way the manual describes, the INTENSITY_AND_RATIO OST rules have no hold time
 severity: low
+reach_kind: pitfall
+reach: >-
+  Not triggered: no blab OST we inspected uses the AND_RATIO rules. Affects OSTs written with the manual's {{}} placeholder in field 5.
+settings:
+  source: 'Hypothetical design: a plausible design, not one blab runs; blab''s default settings (getAudapterDefaultParams) unless listed.'
 origin: blab
 since: Introduced in the blab-lab fork with modes 40 and 45 (commit 9039c07).
 status:
@@ -21,7 +26,7 @@ example: >-
   frames and state 2 starts at {hold_state2_s:.3f} s; with <code>{{}}</code> it holds {braces_frames} frame and starts at {braces_state2_s:.3f} s. A 20 ms click before
   the word triggers state 2 at {click_braces_state2_s:.3f} s with <code>{{}}</code>; with the hold, the click is ignored.
 figure_caption: >-
-  One trial per setting: OST state with field 5 = 0.05 (expected) and with {} (observed), without and with a click before the word.
+  One trial per setting: OST state with field 5 = 0.05 (expected) and with {{}} (observed), without and with a click before the word.
 table:
 - - synthetic
   - 'State 2 onset: field 5 = 0.05 / {{}}'
@@ -46,10 +51,10 @@ audio:
   label: 'Field 5 = 0.05: +10 dB from the /s/'
 - file: output_click_braces.wav
   role: observed
-  label: 'Field 5 = {}: +10 dB from the click'
+  label: 'Field 5 = {{}}: +10 dB from the click'
 - file: output_braces.wav
   role: observed
-  label: 'Field 5 = {}, no click: +10 dB 48 ms early'
+  label: 'Field 5 = {{}}, no click: +10 dB 48 ms early'
 audio_note: All clips share one playback gain. 16 kHz, 16-bit, as recorded by Audapter.
 real:
   dir: ost-f8

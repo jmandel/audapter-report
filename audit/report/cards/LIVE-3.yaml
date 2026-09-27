@@ -4,6 +4,17 @@ log: LIVE-3
 notes: live/README.md#live-3
 headline: reset() while the participant is speaking can send a loud, clipped click to the headphones
 severity: med
+reach_kind: pitfall
+reach: >-
+  Not triggered by blab's per-trial flow, which calls reset() while audio is stopped. Affects designs that call reset() with audio running while the participant may be speaking.
+settings:
+  source: Hypothetical always-on design, simulated on the live audio path.
+  override:
+    params: {}
+    switching: reset() about every 62 ms for 120 s while audio runs
+    input: a looped vowel
+  playground: false
+  playground_why: this needs the live audio path.
 origin: upstream
 status:
 - D

@@ -1,0 +1,75 @@
+{
+ "card": "OST-F1",
+ "source": "Hypothetical design: a plausible design, not one blab runs. Settings are blab's standard runner settings; the onset rule is blab's own (it is used in blab's timeWrap experiment, where the FALL follows a rise-and-hold rule and is safe).",
+ "preset": "female",
+ "build": "shipped",
+ "params": {
+  "bShift": 1,
+  "bRatioShift": 0,
+  "bMelShift": 1,
+  "fb": 3,
+  "fb3Gain": 0.02
+ },
+ "setparam": {
+  "datapb": "bundled babble mtbabble48k.wav, loaded with free-speech get_noiseSource (479,230 samples)"
+ },
+ "ost": "rmsSlopeWin = 0.030000\n\nn = 3\n0 INTENSITY_RATIO_ABOVE_THRESH_WITH_RMS_FLOOR 0.2 0.02 {}\n2 INTENSITY_FALL 0.01 0.02 {}\n3 OST_END NaN NaN {}\n\nn = 0\n",
+ "pcf": "0\n\n4\n0, 0.0, 0, 0, 0\n1, 0.0, 0, 0, 0\n2, 0.0, 0, 125, 0\n3, 0.0, 0, 0, 0\n",
+ "sequence": [
+  "shift (word 1 0.30 s)",
+  "shift (word 1 0.35 s)",
+  "catch (word 1 1.20 s)",
+  "shift (word 1 0.30 s)",
+  "shift (word 1 0.40 s)",
+  "catch (word 1 0.90 s)",
+  "shift (word 1 0.35 s)",
+  "shift (word 1 0.30 s)"
+ ],
+ "switching": "OST loaded once; PCF reloaded before every trial (the shift PCF, or the zero PCF on catch trials); reset() before every trial",
+ "ost_safe": "rmsSlopeWin = 0.030000\n\nn = 3\n0 INTENSITY_RISE_HOLD_POS_SLOPE 0.01 0.05 {}\n2 INTENSITY_FALL 0.01 0.02 {}\n3 OST_END NaN NaN {}\n\nn = 0\n",
+ "pcf_catch": "0\n\n4\n0, 0.0, 0, 0, 0\n1, 0.0, 0, 0, 0\n2, 0.0, 0, 0, 0\n3, 0.0, 0, 0, 0\n",
+ "input": "synthetic two-word trials: word 1 = /ae/-like vowel (F0 210 Hz, formants [731 2058 2979 4000] Hz), word 2 = /e/-like vowel 0.5 s (F0 200 Hz, formants [500 1500 2600 4000] Hz); 0.15 s silence before word 1, 0.25 s pause",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {
+   "bshift": 1,
+   "bratioshift": 0,
+   "bmelshift": 1,
+   "fb": 3,
+   "fb3gain": 0.02
+  },
+  "shift": {
+   "formant": {
+    "on": true,
+    "units": "mel",
+    "f1": 0,
+    "f2": 0,
+    "field": "all"
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "custom",
+   "ost": "rmsSlopeWin = 0.030000\n\nn = 3\n0 INTENSITY_RATIO_ABOVE_THRESH_WITH_RMS_FLOOR 0.2 0.02 {}\n2 INTENSITY_FALL 0.01 0.02 {}\n3 OST_END NaN NaN {}\n\nn = 0\n",
+   "pcf": "0\n\n4\n0, 0.0, 0, 0, 0\n1, 0.0, 0, 0, 0\n2, 0.0, 0, 125, 0\n3, 0.0, 0, 0, 0\n"
+  },
+  "hear": {
+   "fb": 3,
+   "noise": {
+    "type": "pink",
+    "seconds": 10,
+    "level": -20,
+    "gain": 0.02
+   }
+  }
+ },
+ "playground_left_out": [
+  "the masking noise: the Playground plays its own generated pink noise, not the lab's babble file",
+  "the trial sequence: the link loads one trial's settings; run several trials as one session in the Playground to see carry-over",
+  "the catch-trial PCF (shown above)"
+ ]
+}

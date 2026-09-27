@@ -316,3 +316,68 @@ body { overflow-wrap: break-word; }
 .topnav { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: -40px 0 28px; font-size: 0.92rem; }
 .topnav a { text-decoration: none; color: var(--ink-2); border-bottom: 1.5px solid transparent; }
 .topnav a:hover, .topnav a:focus-visible { color: var(--ink); border-bottom-color: var(--observed); }
+
+/* ---- rework (REPORT-26): sections, reach line, settings panel, expected-vs-observed panels, rules boxes */
+.fsec { margin-top: 5rem; }
+.fsec > h2 { font-size: 2rem; letter-spacing: -0.015em; border-top: 4px double var(--ink); padding-top: 18px; margin-bottom: 0.6rem; }
+.sec-lead { max-width: 78ch; }
+.sec-lead h3 { margin: 1.6rem 0 0.4rem; font-size: 1.2rem; }
+.short-h { font-size: 1.25rem; margin: 3rem 0 0.4rem; }
+.reach { font-size: 0.95rem; border-left: 4px solid var(--rule-2); padding: 4px 0 4px 12px; margin: -0.2rem 0 1.1rem; max-width: 76ch; color: var(--ink-2); }
+.reach-current { border-left-color: var(--sev-high); color: var(--ink); }
+.reach-safe { border-left-color: var(--pass); }
+.reach-pitfall { border-left-color: var(--sev-med); }
+.settings { background: var(--tint); border-radius: 4px; padding: 10px 14px 8px; margin: 0.8rem 0 1rem; max-width: 100%; }
+.settings h4 { margin: 0 0 6px; font-size: 1rem; }
+.setsum { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 14px; margin: 0 0 6px; font-size: 0.92rem; }
+.setsum dt { font-weight: 700; color: var(--ink-2); }
+.setsum dd { margin: 0; }
+.setdet summary { cursor: pointer; font-size: 0.92rem; color: var(--ink-2); }
+.setdet[open] summary { margin-bottom: 6px; }
+.settab { font-size: 0.85rem; margin: 2px 0 10px; }
+.settab th { text-align: left; font-weight: 400; padding-right: 16px; }
+.setnote { font-size: 0.88rem; color: var(--ink-2); margin: 6px 0 2px; }
+.setcode { margin: 6px 0 10px; }
+.setcode figcaption { font-size: 0.85rem; font-weight: 700; color: var(--ink-2); }
+.setcode pre { margin: 2px 0 0; overflow-x: auto; background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; padding: 6px 8px; }
+.setcode code { background: none; padding: 0; font-size: 0.8rem; }
+.setcode .ln { display: grid; grid-template-columns: minmax(18ch, max-content) minmax(24ch, 1fr); gap: 0 18px; }
+.setcode .sc { white-space: pre; }
+.setcode .sg { font-family: var(--serif); font-size: 0.95rem; color: var(--ink-2); white-space: normal; }
+.setlinks { font-size: 0.9rem; margin: 4px 0 2px; }
+.ev-panel { margin: 0 0 6px; }
+.ev-panel + .ev-panel { margin-top: 10px; border-top: 1px dashed var(--rule-2); padding-top: 8px; }
+.ev-head { margin: 0 0 2px; font-size: 0.92rem; color: var(--ink-2); }
+.ev-h { font-weight: 700; color: var(--ink); }
+.ev-obs .ev-h { color: var(--observed); }
+.sk-val { font-size: 13px; font-weight: 700; fill: var(--ink); }
+.sketch.sk-narrow .sk-val { font-size: 15px; }
+.sk-mark { fill: var(--ink); }
+.clip.role-ab .swatch { background: linear-gradient(90deg, var(--surface) 50%, var(--observed) 50%); border: 1.25px solid var(--ink-2); }
+.carry td, .carry th, .labq td, .labq th { vertical-align: top; font-size: 0.92rem; }
+.carry, .labq { margin: 0.6rem 0 1rem; }
+.labq th[scope="row"] { white-space: nowrap; }
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin: 0.6rem 0 1rem; }
+.rule { border: 1px solid var(--rule); border-top: 3px solid var(--sev-med); border-radius: 4px; padding: 8px 12px; font-size: 0.92rem; }
+.rule p { margin: 0 0 6px; }
+.rule-h { font-weight: 700; }
+@media (max-width: 700px) {
+  .setsum { grid-template-columns: minmax(0, 1fr); } .setsum dt { margin-top: 4px; }
+  .setcode .ln { grid-template-columns: minmax(0, 1fr); margin-bottom: 4px; } .setcode .sc { white-space: pre-wrap; word-break: break-all; }
+  .fsec > h2 { font-size: 1.55rem; }
+}
+@media print { .setdet { display: block; } .setdet > * { display: block; } }
+.sec-lead .tscroll, .sec-lead .rules { max-width: none; }
+.sec-lead { max-width: none; } .sec-lead > p, .sec-lead > h3 { max-width: 78ch; }
+@media (max-width: 700px) {
+  table.labq, table.carry, table.labq tbody, table.carry tbody, table.labq tr, table.carry tr, table.labq td, table.carry td, table.labq th, table.carry th { display: block; width: auto; }
+  table.labq thead, table.carry thead { display: none; }
+  table.labq tr, table.carry tr { border-top: 1px solid var(--rule-2); padding: 8px 0; }
+  table.labq td, table.carry td { padding: 3px 0; border: 0; }
+  table.labq td:nth-of-type(1)::before { content: "What the public code does: "; font-weight: 700; }
+  table.labq td:nth-of-type(2)::before { content: "What a participant would hear: "; font-weight: 700; }
+  table.labq td:nth-of-type(3)::before { content: "How to check: "; font-weight: 700; }
+  table.carry td:nth-of-type(2)::before { content: "Used by: "; font-weight: 700; }
+  table.carry td:nth-of-type(3)::before { content: "Result: "; font-weight: 700; }
+  table.carry td:nth-of-type(1) { font-weight: 700; }
+}

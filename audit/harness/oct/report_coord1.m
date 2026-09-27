@@ -1,40 +1,62 @@
-% Report asset export for COORD-1 (a loaded OST/PCF persists across AudapterIO('init') and overrides later field-mode
-% experiments). Same design as t_pcf_persist.m: a 1D-field F1 +20 % experiment in a fresh session, then an earlier PCF
-% experiment (example_data pitch_pert.pcf with a one-state OST), then the same field experiment again after init only.
-% Synthetic /a/ plus one real sentence from the corpus (ARCTIC bdl "I had faith in them.").
-% Usage: ./run-oct.sh report_coord1.m      Output: out/report/coord-1/blab/{*.wav,data.json}, out/report/coord-1/real/
-g = linspace(0, 5000, 257);
-field = @(p) setfield(setfield(setfield(setfield(setfield(setfield(setfield(setfield(setfield(setfield(setfield(setfield(setfield(p, ...
-  'bShift', 1), 'bRatioShift', 1), 'bMelShift', 0), 'F1Min', 0), 'F1Max', 5000), 'F2Min', 0), 'F2Max', 5000), 'LBk', 0), 'LBb', 0), ...
-  'pertF2', g), 'pertAmp', 0.2*ones(1,257)), 'pertPhi', zeros(1,257)), 'pertF1', g);
-PCF = '/a/blab/audapter_matlab/example_data/pitch_pert.pcf';
-function r = pair(p, q, x, PCF, fr)
-  Audapter('ost', '', 0); Audapter('pcf', '', 0);            % a genuinely fresh start for the control
-  d0 = run_trial(q, x);                                        % field experiment, no PCF ever loaded
-  run_trial(p, x, 'ost', 'cfg/one.ost', 'pcf', PCF);           % an earlier PCF experiment in the same session
-  d1 = run_trial(q, x);                                        % the field experiment again: AudapterIO('init') only
-  r.d0 = d0; r.d1 = d1; r.fresh = nnz(d0.sfmts(:,1)); r.after = nnz(d1.sfmts(:,1)); r.frame_s = fr;
-  k = 1:2:size(d0.sfmts, 1); r.t = round((k-1) * fr * 1e4) / 1e4;
-  r.sh0 = double(d0.sfmts(k,1)' > 0); r.sh1 = double(d1.sfmts(k,1)' > 0); r.rms = round(d0.rms(k,1)' * 1e4) / 1e4;
-  F0 = est_formants(d0.signalOut, q.sr); F1 = est_formants(d1.signalOut, q.sr); Fi = est_formants(d0.signalIn, q.sr);
-  r.F1_in = median(Fi(:,1), 'omitnan'); r.F1_fresh = median(F0(:,1), 'omitnan'); r.F1_after = median(F1(:,1), 'omitnan');
-  Audapter('ost', '', 0); Audapter('pcf', '', 0);
+% Report asset export for COORD-1 (an OST/PCF loaded earlier in the session survives AudapterIO('init') and overrides a
+% later field-mode experiment), with blab's own files and session structure (FINDINGS-LOG EXP-7, exp_mixed.m S3):
+%   every blab formant session starts with free-speech's measureFormants calibration block (measureFormants.ost/.pcf,
+%   an all-zero PCF), then runs the experiment. A field-mode experiment like attentionComp (pertAmp/pertPhi set per
+%   trial, 125 mel, fb 3 with the bundled babble at 0.02) clears the OST and PCF before AudapterIO('init') with
+%   Audapter('ost', '', 0); Audapter('pcf', '', 0). Expected = with those two lines, observed = without them.
+%   Second arm (numbers only): a SimOn hold block (bedhead OST, 125 mel PCF) followed by a field "noShift" trial.
+% Usage: ./run-oct.sh report_coord1.m      Output: out/report/coord-1/blab/data.json, out/report/coord-1/meas/*.wav
+addpath('/a/other/blab-experiments/free-speech/experiment_helpers', '-end');
+R = '/a/other/blab-experiments';
+MF_OST = [R '/free-speech/experiment_helpers/measureFormants.ost']; MF_PCF = [R '/free-speech/experiment_helpers/measureFormants.pcf'];
+p = getAudapterDefaultParams('female'); p.downFact = 3; p.sr = 16000; p.frameLen = 32;
+p.bShift = 1; p.bRatioShift = 0; p.bMelShift = 1; p.fb = 3; p.fb3Gain = 0.02;
+pc = p; pc.bShift = 0;                                             % calibration block: no shift
+fs = p.sr * p.downFact; w = get_noiseSource(p);
+EH = [731 2058 2979 4000]; BW = [80 100 150 200]; randn('seed', 5);
+G1 = 0.35; WD = 0.40; TAIL = 0.6;
+word = @(f0) [1e-4*randn(round(G1*fs),1); synth_vowel(fs, WD, f0, EH, BW, 'onset', 0, 'offset', 0, 'amp', 0.3, 'ramp', 0.04); 1e-4*randn(round(TAIL*fs),1)];
+seq = {'calibration', 'calibration', 'shift', 'noShift', 'shift'}; f0s = [205 212 210 208 206];
+X = arrayfun(@(k) word(f0s(k)), 1:numel(seq), 'UniformOutput', false);
+md = '/h/oct/out/report/coord-1/meas'; if ~exist(md, 'dir'), mkdir(md); end
+wr = @(f, y) audiowrite(fullfile(md, f), y / 1.5, p.sr, 'BitsPerSample', 16);
+r = struct('g1', G1, 'wd', WD, 'trial_s', numel(X{1}) / fs, 'sequence', {seq});
+for arm = {'exp', 'obs'}
+  Audapter('setParam', 'datapb', w, 1);
+  Audapter('ost', MF_OST, 0); Audapter('pcf', MF_PCF, 0); AudapterIO('init', pc);        % calibration block
+  for k = 1:numel(seq)
+    if k == 3                                                                              % experiment block starts
+      if strcmp(arm{1}, 'exp'), Audapter('ost', '', 0); Audapter('pcf', '', 0); end        % the runner's two clear lines
+      AudapterIO('init', p);
+    end
+    if k >= 3
+      a = 125 * strcmp(seq{k}, 'shift');
+      Audapter('setParam', 'pertAmp', a * ones(1, 257)); Audapter('setParam', 'pertPhi', zeros(1, 257));
+    end
+    PP = {pc, p}; q = exp_trial(PP{1 + (k >= 3)}, X{k});
+    r.(arm{1}).shift_s(k) = q.shift_s; r.(arm{1}).on(k) = q.on; r.(arm{1}).off(k) = q.off; r.(arm{1}).dF1mel(k) = q.dF1mel;
+    wr(sprintf('%s_t%d_out.wav', arm{1}, k), q.d.signalOut); wr(sprintf('t%d_in.wav', k), q.d.signalIn);
+    printf('%s trial %d (%s): shifted %.3f s (%.3f-%.3f), logged dF1 %+.1f mel, output/input F1 %.3f\n', arm{1}, k, seq{k}, q.shift_s, q.on, q.off, q.dF1mel, q.outF1);
+  end
 end
-p = defparams('female'); fs = p.sr * p.downFact; fr = p.frameLen / p.sr;
-x = synth_vowel(fs, 0.8, 120, [850 1220 2810 3800], [80 100 150 200]);
-R = pair(p, field(p), x, PCF, fr);
-printf('synthetic: shifted frames fresh %d, after PCF experiment %d; F1 heard in %.0f fresh %.0f after %.0f Hz\n', R.fresh, R.after, R.F1_in, R.F1_fresh, R.F1_after);
+% second arm: SimOn hold block (bedhead OST, PCF 125 mel in every row), then a field "noShift" trial
+pcf = 'cfg/report_coord1_hold.pcf'; fid = fopen(pcf, 'w'); fprintf(fid, '0\n\n9\n'); for s = 0:8, fprintf(fid, '%d, 0.0, 0, 125, 0\n', s); end; fclose(fid);
+for cl = [0 1]
+  Audapter('ost', [R '/simonSingleWord/experiment scripts/bedheadMaster.ost'], 0); Audapter('pcf', pcf, 0); AudapterIO('init', p);
+  q = exp_trial(p, X{3});                                                                  % a hold trial
+  if cl, Audapter('ost', '', 0); Audapter('pcf', '', 0); end
+  AudapterIO('init', p); Audapter('setParam', 'pertAmp', zeros(1, 257)); Audapter('setParam', 'pertPhi', zeros(1, 257));
+  q = exp_trial(p, X{4});
+  r.simon.(ifelse_str(cl, 'cleared', 'not_cleared')) = struct('shift_s', q.shift_s, 'dF1mel', q.dF1mel);
+  printf('after a SimOn hold block, field noShift trial, clear lines %d: shifted %.3f s, logged dF1 %+.1f mel\n', cl, q.shift_s, q.dF1mel);
+end
+Audapter('ost', '', 0); Audapter('pcf', '', 0);
+r.settings = report_settings(p, 'female', 'ost', fileread(MF_OST), 'pcf', fileread(MF_PCF), ...
+  'setparam', struct('pertAmp', '125 (all 257 values) on shift trials, 0 on noShift trials', 'pertPhi', '0 (all 257 values): F1 up', ...
+                     'datapb', 'bundled babble mtbabble48k.wav, loaded with free-speech get_noiseSource'), ...
+  'sequence', {seq}, 'switching', 'calibration block with measureFormants.ost/.pcf (bShift 0); then AudapterIO(''init'', p) and field-mode pertAmp/pertPhi set before every trial; reset() before every trial. Expected: the runner clears the OST and PCF first; observed: it does not', ...
+  'input', sprintf('synthetic "head"-like /E/ vowel, %.2f s, F0 205-212 Hz, formants %s Hz', WD, mat2str(EH)), ...
+  'field', struct('f1', 125, 'f2', 0), 'pg_drop', {{'ost', 'pcf'}});
 od = report_outdir('coord-1');
-c = struct('name', {'input', 'output_fresh', 'output_after_pcf'}, 'x', {R.d0.signalIn, R.d0.signalOut, R.d1.signalOut}, ...
-  'label', {'Input: synthetic /a/', 'Field experiment in a fresh session: F1 +20 %', 'The same field experiment after an earlier PCF experiment and AudapterIO(''init'')'}, 'warn', {'', '', ''});
-out = rmfield(R, {'d0', 'd1'}); out.audio = report_wavgroup(od, p.sr, c); out.pcf = fileread(PCF);
-report_json(fullfile(od, 'data.json'), out);
-% real speech
-M = corpus_index(); m = M(strcmp({M.id}, 'arctic_bdl_a0030')); xr = corpus_wav(m); pm = defparams(corpus_preset(m));
-Q = pair(pm, field(pm), xr, PCF, pm.frameLen / pm.sr);
-printf('real %s: shifted frames fresh %d, after %d\n', m.id, Q.fresh, Q.after);
-rd = fullfile('/h/oct/out/report/coord-1/real'); if ~exist(rd, 'dir'), mkdir(rd); end
-c = struct('name', {'input', 'output_fresh', 'output_after_pcf'}, 'x', {Q.d0.signalIn, Q.d0.signalOut, Q.d1.signalOut}, ...
-  'label', {'Input', 'Fresh session: F1 +20 %', 'After an earlier PCF experiment'}, 'warn', {'', '', ''});
-o2 = rmfield(Q, {'d0', 'd1'}); o2.clip = m.id; o2.audio = report_wavgroup(rd, pm.sr, c);
-report_json(fullfile(rd, 'data.json'), o2);
+report_json(fullfile(od, 'data.json'), r);
+

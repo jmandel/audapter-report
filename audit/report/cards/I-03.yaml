@@ -4,7 +4,12 @@ log: I-03
 notes: notes/interface.md#i-03
 headline: >-
   A trial longer than 30 s loses its beginning, and the OST, trialLen mute and onset ramp restart at 30 s
-severity: med
+severity: low
+reach_kind: pitfall
+reach: >-
+  Not triggered: blab's longest recorded trials are 4.5 s (vsaSentence). Affects trials longer than 30 s, for example sustained phonation or passage reading with an OST.
+settings:
+  source: 'Hypothetical design: a plausible design, not one blab runs; blab''s default settings (getAudapterDefaultParams) unless listed.'
 origin: upstream
 since: >-
   Present since at least Audapter 2.1.5; the recorder grew from 14.4 s to 30 s in the blab-lab fork (commit 3c90a3a).

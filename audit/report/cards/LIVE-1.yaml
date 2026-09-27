@@ -3,7 +3,18 @@ id: LIVE-1 / LIVE-2
 log: LIVE-1
 notes: live/README.md#live-1
 headline: Reloading OST/PCF files or rebuilding DSP objects while audio runs can crash MATLAB
-severity: high
+severity: med
+reach_kind: pitfall
+reach: >-
+  Not triggered by blab's runners: every one stops audio before loading files or changing parameters (stop, load, reset, start), which we found race-free. Affects always-on designs that change settings while audio runs.
+settings:
+  source: Hypothetical always-on design, simulated on the live audio path (real audioIO and RtAudio code, simulated ASIO driver).
+  override:
+    params: {}
+    switching: OST/PCF reloaded or parameters set every 20 or 250 ms while audio runs
+    input: a looped vowel
+  playground: false
+  playground_why: this needs the live audio path.
 origin: upstream
 status:
 - D

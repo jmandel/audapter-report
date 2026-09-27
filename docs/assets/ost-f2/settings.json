@@ -1,0 +1,54 @@
+{
+ "card": "OST-F2",
+ "source": "Hypothetical design: a plausible design, not one blab runs; blab's default settings (getAudapterDefaultParams) unless listed.",
+ "preset": "female",
+ "build": "shipped",
+ "params": {
+  "rmsThresh": 0.005,
+  "bShift": 1,
+  "pertF1": "257 values, 0 to 5000",
+  "pertF2": "257 values, 0 to 5000"
+ },
+ "setparam": {},
+ "ost": "rmsSlopeWin = 0.030000\n\nn = 3\n0 INTENSITY_RISE_HOLD 0.02 0.02 {}\n2 ELAPSED_TIME 0.1 NaN {}\n3 OST_END NaN NaN {}\n\nn = 1\n0 0.2 2\n",
+ "pcf": "0\n\n4\n0, 0, 0, 0, 0\n1, 0, 0, 0, 0\n2, 0, 0, 0, 0\n3, 0, 0, 0.3, 0\n",
+ "sequence": [
+  "trial 1",
+  "trial 2",
+  "trial 3"
+ ],
+ "switching": "OST and PCF loaded once; reset() before every trial",
+ "input": "synthetic soft vowel that never reaches the onset threshold",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {
+   "rmsthr": 0.005,
+   "bshift": 1
+  },
+  "shift": {
+   "formant": {
+    "on": true,
+    "units": "pct",
+    "f1": 0,
+    "f2": 0,
+    "field": "all"
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "custom",
+   "ost": "rmsSlopeWin = 0.030000\n\nn = 3\n0 INTENSITY_RISE_HOLD 0.02 0.02 {}\n2 ELAPSED_TIME 0.1 NaN {}\n3 OST_END NaN NaN {}\n\nn = 1\n0 0.2 2\n",
+   "pcf": "0\n\n4\n0, 0, 0, 0, 0\n1, 0, 0, 0, 0\n2, 0, 0, 0, 0\n3, 0, 0, 0.3, 0\n"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": [
+  "the trial sequence: the link loads one trial's settings; run several trials as one session in the Playground to see carry-over"
+ ]
+}

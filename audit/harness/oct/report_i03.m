@@ -81,4 +81,5 @@ if ~UP
     'warn', {'At 30.00 s the onset ramp restarts (a 50 ms fade-in mid-vowel), and the output is not muted at 34 s.'});
   r.audio = {report_wavgroup(od, p.sr, c)};   % cell: jsonencode keeps a one-clip list a list
 end
+if ~UP, r.settings = report_settings(p, 'female', 'ost', fileread('cfg/report_i03.ost'), 'pcf', fileread('cfg/report_i03.pcf'), 'switching', 'one 35 s trial', 'input', 'synthetic vowels over 35 s'); end
 report_json(fullfile(od, 'data.json'), r);

@@ -78,4 +78,5 @@ h1 = struct('first_zero', R(2).first_zero, 'n_nonzero_beyond', R(2).n_nonzero_be
 if isempty(H), H = h1; else, H = [H(:); h1]; end
 report_json(hf, H); r.history = H; r.n_runs = numel(H);
 r.audio = struct('file', {}, 'label', {}, 'dur_s', {}, 'active_rms_dbfs', {}, 'peak_dbfs', {}, 'warn', {});
+if ~UP, r.settings = report_settings(p, 'female', 'switching', 'one trial per clamp array length', 'input', 'synthetic vowel'); end
 report_json(fullfile(od, 'data.json'), r);

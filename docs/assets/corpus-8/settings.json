@@ -1,0 +1,44 @@
+{
+ "card": "CORPUS-8",
+ "source": "Hypothetical design: time-domain pitch shifting as in Audapter's time_domain_shift_demo, with blab's male defaults.",
+ "preset": "male",
+ "params": {
+  "bTimeDomainShift": 1,
+  "bCepsLift": 1,
+  "pitchLowerBoundHz": 70,
+  "pitchUpperBoundHz": 300,
+  "frameLen": "32 (default) or 64",
+  "nDelay": "5 (default) or 7"
+ },
+ "setparam": {
+  "timeDomainPitchShiftSchedule": "[0, 2^(1/12); 100, 2^(1/12)] (+1 semitone throughout)"
+ },
+ "switching": "each F0 in a fresh session",
+ "input": "synthetic vowels of known F0, 85-250 Hz; real speech in the table",
+ "playground": {
+  "v": 1,
+  "preset": "male",
+  "build": "lite",
+  "raw": {
+   "btimedomainshift": 1,
+   "bcepslift": 1
+  },
+  "shift": {
+   "formant": {
+    "on": false
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": [
+  "the setParam value timeDomainPitchShiftSchedule"
+ ]
+}

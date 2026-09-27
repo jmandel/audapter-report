@@ -1,45 +1,63 @@
-from sketchlib import *
+"""I-01 in blab's simonSingleWord v2 masking phase (report_i01_session.m, both builds): expected = blab before b2.4
+(buffer 230400, babble truncated to it, seamless), observed = current blab (buffer 480000, 16 ms silence every 9.98 s)."""
+import json, os
+import measure as M
+from sketchlib import rows2
+from sketches import evlib
+
+FIG = [5, 6, 7]
+
+
+def _sess(d, tag):
+    s = json.load(open(os.path.join(d["_dir"], "meas", f"session_{tag}.json")))
+    s["gaps"] = rows2(s.get("gaps") or [])
+    return s
+
+
+def measured(d):
+    """Silent runs (exact zeros, >= 2 ms) found on each build's WAV of every trial, independently of the export's own scan."""
+    md = os.path.join(d["_dir"], "meas"); out = {}
+    for tag in ("blab", "upstream"):
+        n = _sess(d, tag)["n_trials"]
+        out[tag] = {k: M.silent_runs(os.path.join(md, f"{tag}_t{k}.wav"), 0, 1.8) for k in range(1, n + 1)}
+    return out
+
+
+def spec(d):
+    m = measured(d); S = _sess(d, "blab"); T = S["trial_s"]; trials = []
+    for k in FIG:
+        tr = {"n": k, "tag": "fb 2", "dur": T, "hl": bool(m["blab"][k]), "words": []}
+        tr["exp"] = {"pert": [(0, T, "babble")], "vals_at": [(a + 0.4, "no silence") for a, b in m["blab"][k]] or [(T / 2, "")]}
+        gaps = m["blab"][k]; segs, t0 = [], 0
+        for a, b in gaps:
+            segs.append((t0, a, "babble")); t0 = b
+        segs.append((t0, T, "babble"))
+        tr["obs"] = {"pert": segs, "vals_at": [(a + 0.4, f"{(b - a) * 1000:.0f} ms silent") for a, b in gaps]}
+        if gaps:
+            tr["obs"]["diff"] = [(a - 0.03, b + 0.03) for a, b in gaps]
+        trials.append(tr)
+    return {"sid": "sk-i-01", "trials": trials, "gap": 0.3, "t_session0": (FIG[0] - 1) * (T + 0.3),
+            "rows": {"words": None, "pert": "Masking babble", "vals": "Silence in the output"},
+            "heads": {"exp": "blab before b2.4 (buffer 230,400 samples): the babble loops seamlessly",
+                      "obs": "blab since b2.4 (buffer 480,000 samples): what Audapter plays now"},
+            "callout": "16 ms of silence in trial 6: the participant's voice is unmasked", "callout_t": 1.8 + 0.3 + 1.0, "callout_anchor": "start"}
+
 
 def sketch(d, up):
-    d["gaps"] = rows2(d["gaps"])
-    dt, T1 = d["env_dt"], 12.0
-    t = [i * dt for i in range(len(d["env_out"]))]
-    s = Sketch("sk-i-01", 0, T1, "Masking noise over a 12 s trial: expected loop and what is played")
-    s.envelope("Input", t, d["env_in"], -60, -10, h=26, sub="vowels")
-    L = d["noise_len_samples"] / d["fs_device"]
-    exp = []; a = 0; k = 1
-    while a < T1:
-        exp.append((a, min(a + L, T1), f"noise, pass {k}", "expected")); a += L; k += 1
-    s.intervals("Noise, 5 s file", exp, sub="expected")
-    on = runs(t, d["noise_on"], lambda v: v > 0)
-    yo = s.intervals("Noise played", [(a, b, "noise", "observed") for a, b in on], sub="observed")
-    for g0, g1 in d["gaps"]:
-        s.band(g0, g1, yo, yo + 26, f"no noise for {g1-g0:.1f} s: voice unmasked", ty=yo + 17)
-    s.envelope("Output", t, d["env_out"], -60, -10, h=34, cls="sk-output", sub="what is heard")
-    s.axis([0, 2, 4, 6, 8, 10, 12])
-    main = s.svg("With a 5 s noise file, noise plays from 0 to 5 s and from 10 s on, when the 10 s buffer wraps; nothing from 5 to 10 s.")
-    # inset: bundled babble dropout
-    z, t0, zdt = d["babble_zoom"], d["babble_zoom_t0"], d["babble_zoom_dt"]
-    zi = Sketch("sk-i-01-zoom", t0, t0 + len(z) * zdt, "Bundled babble around 9.98 s")
-    y = zi._row(); h = 60; zi.label(y, h, "Bundled babble", "fb 2, 9.90–10.06 s"); zi.frame(y, h)
-    pk = max(abs(v) for v in z) or 1
-    pts = " L".join(f"{zi.x(t0 + i*zdt):.1f},{y + h/2 - v/pk*(h/2-3):.1f}" for i, v in enumerate(z))
-    zi.parts.append(f'<path class="sk-line-wave" d="M{pts}"/>')
-    b0, b1 = d["babble_dropout"]
-    zi.band(b0, b1 + 1/16000, y, y + h, f"{(b1-b0)*1000+1/16:.0f} ms of silence", anchor="start", ty=y + 12)
-    zi.y += h + 8
-    zi.axis([9.90, 9.94, 9.98, 10.02, 10.06], "{:.2f} s")
-    inset = zi.svg("The full-length bundled babble (479230 samples) plays silence from 9.984 to 10.000 s before wrapping.")
-    return main + inset
+    return evlib.render(spec(d))
 
 
 def derive(d, up):
+    m = measured(d); S, U = _sess(d, "blab"), _sess(d, "upstream")
     for x in (d, up):
         if x and "gaps" in x: x["gaps"] = rows2(x["gaps"])
-    fmt = lambda g: ", ".join(f"{a:.2f}–{b:.2f} s" for a, b in g) if g else "none"
-    return {"gaps_text": fmt(d["gaps"]), "up_maxPBLen": up["maxPBLen"] if up else "?",
-            "up_gaps_text": fmt(up["gaps"]) if up else "not run"}
-
-
-def derive_real(rd):
-    return {}
+    g = [(k, a, b) for k, runs in m["blab"].items() for a, b in runs]
+    v = {"n_gaps": len(g), "n_trials": S["n_trials"], "trial_s": S["trial_s"], "gap_trials": ", ".join(str(k) for k, a, b in g),
+         "gap_times": ", ".join(f"{a:.2f} s" for k, a, b in g), "gap_ms_min": min((b - a) * 1000 for k, a, b in g) if g else 0,
+         "gap_ms_max": max((b - a) * 1000 for k, a, b in g) if g else 0,
+         "up_gaps": sum(len(r) for r in m["upstream"].values()), "maxpb": S["maxPBLen"], "up_maxpb": U["maxPBLen"],
+         "noise_len": S["noise_len"], "up_noise_len": U["noise_len"], "every_s": S["maxPBLen"] / 48000 * 1.0,
+         "one_in": (S["maxPBLen"] / 48000) / S["trial_s"]}
+    fmt = lambda gg: ", ".join(f"{a:.2f}–{b:.2f} s" for a, b in gg) if gg else "none"
+    v["gaps_text"] = fmt(d.get("gaps", []))
+    return v

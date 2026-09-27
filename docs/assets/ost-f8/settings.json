@@ -1,0 +1,41 @@
+{
+ "card": "OST-F8",
+ "source": "Hypothetical design: a plausible design, not one blab runs; blab's default settings (getAudapterDefaultParams) unless listed.",
+ "preset": "female",
+ "build": "shipped",
+ "params": {
+  "rmsThresh": 0.005
+ },
+ "setparam": {},
+ "ost": "rmsSlopeWin = 0.030000\n\nn = 2\n0 INTENSITY_AND_RATIO_ABOVE_THRESH 0.01 1.5 {}\n2 OST_END NaN NaN {}\n\nn = 0\n",
+ "pcf": "0\n\n3\n0, 0, 0, 0, 0\n1, 0, 0, 0, 0\n2, 0, 10, 0, 0\n",
+ "sequence": [],
+ "switching": "one trial per OST variant",
+ "ost_safe": "rmsSlopeWin = 0.030000\n\nn = 2\n0 INTENSITY_AND_RATIO_ABOVE_THRESH 0.01 1.5 0.05\n2 OST_END NaN NaN {}\n\nn = 0\n",
+ "input": "synthetic /s/-like noise onset followed by a vowel",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {
+   "rmsthr": 0.005
+  },
+  "shift": {
+   "formant": {
+    "on": false
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "custom",
+   "ost": "rmsSlopeWin = 0.030000\n\nn = 2\n0 INTENSITY_AND_RATIO_ABOVE_THRESH 0.01 1.5 {}\n2 OST_END NaN NaN {}\n\nn = 0\n",
+   "pcf": "0\n\n3\n0, 0, 0, 0, 0\n1, 0, 0, 0, 0\n2, 0, 10, 0, 0\n"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": []
+}

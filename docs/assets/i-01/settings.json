@@ -1,0 +1,25 @@
+{
+ "card": "I-01",
+ "source": "blab's simonSingleWord v2 experiment, masking (transfer) phase: fb 2 at fb2Gain 0.16, 1.8 s trials, init every trial, the bundled babble via free-speech get_noiseSource.",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {},
+  "shift": {
+   "formant": {
+    "on": false
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": []
+}

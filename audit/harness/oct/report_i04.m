@@ -52,4 +52,5 @@ cl = struct('name', {'input', 'cond1_output', 'cond2_output_fresh', 'cond2_outpu
   'label', {'Input: stored /a/ recording', 'Output, condition 1 (F1 +20 %)', 'Output, condition 2 (F1 −20 %), fresh frames', 'Output, condition 2 (F1 −20 %), same sigInCell reused'}, ...
   'warn', {'', '', '', ''});
 r.audio = report_wavgroup(od, p.sr, cl);
+r.settings = report_settings(p, 'female', 'switching', 'offline: the same frame array passed to runFrame for two conditions', 'input', 'synthetic vowel');
 report_json(fullfile(od, 'data.json'), r);

@@ -52,11 +52,8 @@ seg = db.signalOut(round(9.90*p.sr):round(10.06*p.sr));
 r.babble_zoom = round(seg(1:4:end)' * 1e4) / 1e4; r.babble_zoom_t0 = 9.90; r.babble_zoom_dt = 4 / p.sr;
 printf('maxPBLen %d; 5 s noise gaps (s): %s; bundled babble dropout: %s s\n', maxPB, mat2str(r.gaps, 3), mat2str(r.babble_dropout, 4));
 od = report_outdir('i-01');
-c = struct('name', {'input_vowels', 'output_fb3_voice_plus_noise', 'output_fb2_bundled_babble_zoom'}, ...
-  'x', {d3.signalIn, d3.signalOut, db.signalOut(round(8.5*p.sr):round(11*p.sr))}, ...
-  'label', {'Input: vowels, one every second', 'What the participant hears: voice + 5 s masking noise (fb 3)', 'Bundled babble, 8.5-11.0 s, noise only (fb 2)'}, ...
-  'warn', {'', 'The noise stops abruptly at 5 s and resumes at 10 s.', 'A 16 ms dropout near 9.98 s; listen closely.'});
-r.audio = report_wavgroup(od, p.sr, c);
+% (the card's clips now come from report_i01_session.m; this script keeps the numbers and the panel inputs)
+
 % Inputs for the in-browser panel (templates/panels/i-01.js), kept small: (1) the bundled babble after runExperiment's
 % zero-mean / unit-RMS / getMaxPBLen steps, keeping only every downFact-th sample: the fb 2-5 loop advances pbCounter by
 % downFact and reads nothing else, so for loop lengths that are multiples of downFact a 48 kHz datapb rebuilt by

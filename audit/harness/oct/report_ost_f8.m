@@ -65,4 +65,5 @@ cl = struct('name', {'input_click', 'output_click_hold', 'output_click_braces', 
 r.audio = report_wavgroup(od, p.sr, cl);
 r.params = struct('sr', p.sr, 'downFact', p.downFact, 'frameLen', p.frameLen, 'rmsThresh', p.rmsThresh, ...
   'ost_hold', fileread('cfg/report_andratio_hold.ost'), 'ost_braces', fileread('cfg/report_andratio_braces.ost'), 'pcf', fileread('cfg/report_andratio.pcf'));
+r.settings = report_settings(p, 'female', 'ost', fileread('cfg/report_andratio_braces.ost'), 'ost_safe', fileread('cfg/report_andratio_hold.ost'), 'pcf', fileread('cfg/report_andratio.pcf'), 'switching', 'one trial per OST variant', 'input', 'synthetic /s/-like noise onset followed by a vowel');
 report_json(fullfile(od, 'data.json'), r);

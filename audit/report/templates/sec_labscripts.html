@@ -1,0 +1,48 @@
+<p>These are not Audapter bugs. Reading the lab's public experiment scripts, we noticed three settings that look different from
+what the design describes, so we ran each script's exact parameter sequence through Audapter (the lab's own
+<code>calc_pertField</code>, synthetic vowels at the lab's default corner-vowel means) to see what a participant would hear.
+We offer them as questions. The runner that collected the data may differ from the committed one (vsaCentralize's experiment
+script calls a runner that is not in the repository), and the lab's logged data can settle each question directly: in field mode
+Audapter logs the shifted formants (<code>sfmts</code>) next to the produced ones (<code>fmts</code>) on every frame.</p>
+<div class="tscroll"><table class="plain labq">
+<thead><tr><th scope="col">Script</th><th scope="col">What the public code does</th><th scope="col">What a participant would hear, as committed</th><th scope="col">How to check</th></tr></thead>
+<tbody>
+<tr><th scope="row">vsaSentence (reference)</th>
+<td>Sends the lab's mel-scale field grid after <code>AudapterIO('init')</code>
+(<a class="permalink" href="https://github.com/blab-lab/vsaSentence/blob/c01942f1381237fd8c205e06e7c1472d72e4e685/run_vsaSentence_audapter.m#L67-L71">run_vsaSentence_audapter.m lines 67–71 @c01942f</a>).</td>
+<td>As designed: at strength 0.5 every vowel is moved [[vsaSentence_tc_min:.2f]]–[[vsaSentence_tc_max:.2f]] of the way to the centre (intended 0.50), within [[vsaSentence_off_max:.0f]] mel of the intended direction.</td>
+<td>—</td></tr>
+<tr><th scope="row">vsaCentralize</th>
+<td>Re-sends the lower-case grids <code>pertf1</code>/<code>pertf2</code> after init
+(<a class="permalink" href="https://github.com/blab-lab/vsaCentralize/blob/9beb9a7767418cae5d681b35fb1e0cc010331d02/run_vsaAdapt2_audapter.m#L61-L65">run_vsaAdapt2_audapter.m lines 61–65 @9beb9a7</a>).
+Those are the Hz grids the experiment script stores
+(<a class="permalink" href="https://github.com/blab-lab/vsaCentralize/blob/9beb9a7767418cae5d681b35fb1e0cc010331d02/run_vsaAdapt2_expt.m#L113-L114">run_vsaAdapt2_expt.m lines 113–114</a>),
+while the field and the formants are in mel.</td>
+<td>The field is looked up at the wrong place. At strength 0.5, [[vsaCentralize_wrongdir]] of [[vsaCentralize_n]] vowels are moved
+<em>away</em> from the centre (by up to [[vsaCentralize_tc_away:.2f]] of their distance to it), the others toward it by up to
+[[vsaCentralize_tc_max:.2f]] (intended: all toward it by 0.50), and every shift points [[vsaCentralize_off_min:.0f]]–[[vsaCentralize_off_max:.0f]] mel
+off the intended direction.</td>
+<td>In the logs, <code>sfmts − fmts</code> on hold trials should point toward the vowel-space centre.</td></tr>
+<tr><th scope="row">vsaGeneralize (field)</th>
+<td>Re-sends the same Hz grids, and scales only the one-dimensional <code>pertAmp</code>, which is all zeros
+(<a class="permalink" href="https://github.com/blab-lab/vsaGeneralize/blob/0ec575ae1cde8402628b6cb5cd756467a95dd11d/run_vsaGeneralize_audapter.m#L74-L77">run_vsaGeneralize_audapter.m lines 74–77</a>,
+<a class="permalink" href="https://github.com/blab-lab/vsaGeneralize/blob/0ec575ae1cde8402628b6cb5cd756467a95dd11d/run_vsaGeneralize_audapter.m#L117-L118">117–118 @0ec575a</a>),
+while <code>calc_pertField</code> has switched on the full-strength two-dimensional field.</td>
+<td>Every fb 3 trial gets the unscaled field on the wrong grid, including the baseline-training trials meant to be unperturbed
+(strength 0): logged shifts of [[vsaGeneralize_s0_min:.0f]]–[[vsaGeneralize_s0_max:.0f]] mel, [[vsaGeneralize_wrongdir]] of
+[[vsaGeneralize_n]] vowels away from the centre (up to [[vsaGeneralize_tc_away:.2f]] of their distance to it), the others toward it by
+up to [[vsaGeneralize_tc_max:.2f]].</td>
+<td>The public data on OSF (project 78z93) include <code>fmts</code> and <code>sfmts</code>: baseline-training trials with
+<code>sfmts ≠ fmts</code> would confirm it.</td></tr>
+<tr><th scope="row">vsaGeneralize (noise)</th>
+<td>Sets <code>p.fb4Gain = 0.98</code> for its fb 4 phases
+(<a class="permalink" href="https://github.com/blab-lab/vsaGeneralize/blob/0ec575ae1cde8402628b6cb5cd756467a95dd11d/run_vsaGeneralize_audapter.m#L64-L66">lines 64–66</a>).
+<code>AudapterIO('init')</code> only forwards <code>fb4GainDB</code>
+(<a class="permalink" href="https://github.com/blab-lab/audapter_matlab/blob/e1695f146a0ecc3014ffe34b2b3cbc578edcd4b2/mcode/AudapterIO.m#L163-L164">blab MATLAB AudapterIO.m lines 163–164 @e1695f1</a>)
+and ignores unknown fields without a warning.</td>
+<td>The speech-modulated masking noise plays at the default level: [[fb4_diff_db:.1f]] dB louder than the 0.98 the script asks for.</td>
+<td>Check the <code>fb4GainDB</code> value in the saved <code>data.params</code>.</td></tr>
+</tbody></table></div>
+<p>Audapter accepts all of these silently. Three warnings would have caught them: a field grid outside <code>F1Min..F1Max</code>,
+<code>bShift2D = 1</code> with an all-zero two-dimensional field, and fields of <code>p</code> that <code>AudapterIO</code> does not
+forward. Evidence: <code>audit/harness/oct/exp_vsa_field.m</code> (re-run for this report; log entries EXP-4 and EXP-5).</p>

@@ -1,46 +1,90 @@
-from sketchlib import *
+"""OST-F1 in a mixed "shift the first word" design with catch trials (report_ost_f1.m): expected vs observed panels."""
+import math, os
+import measure as M
+from sketches import evlib
+
+FIG_TRIALS = 5          # the figure shows trials 1-5; the table covers all 8
+
+
+def _words(d, k):
+    g1, w1, p12, w2 = d["g1"], d["w1"][k], d["p12"], d["w2"]
+    return [(g1, g1 + w1), (g1 + w1 + p12, g1 + w1 + p12 + w2)]
+
+
+def _pct(o, i):
+    return None if not (o == o and i == i and i) else 100 * (o / i - 1)
+
+
+def _f(x):
+    return "n/a" if x is None else f"{x:+.0f} %".replace("+0 %", "0 %").replace("-0 %", "0 %")
+
+
+def measured(d):
+    """Per-word F1 in (input) and out (expected, observed), measured on the WAVs in out/report/ost-f1/meas/."""
+    md = os.path.join(d["_dir"], "meas"); out = {}
+    for k in range(len(d["w1"])):
+        for j, (a, b) in enumerate(_words(d, k)):
+            fi = M.span(os.path.join(md, f"leak_t{k+1}_in.wav"), a, b, "F1")
+            fe = M.span(os.path.join(md, f"leak_t{k+1}_exp.wav"), a, b, "F1")
+            fo = M.span(os.path.join(md, f"leak_t{k+1}_obs.wav"), a, b, "F1")
+            out[(k, j)] = (fi, fe, fo)
+    return out
+
+
+def _num(x):
+    return None if x is None or (isinstance(x, float) and math.isnan(x)) else x
+
+
+def spec(d):
+    m = measured(d); L = d["leak"]; trials = []
+    for k in range(FIG_TRIALS):
+        ws = _words(d, k); catch = d["catch"][k]
+        tr = {"n": k + 1, "tag": "catch" if catch else "shift", "dur": d["trial_s"][k], "hl": k == 2,
+              "words": [(a, b, f"word {j+1}") for j, (a, b) in enumerate(ws)]}
+        for key, on, off, t3 in (("exp", L["on_exp"], L["off_exp"], L["t3_exp"]), ("obs", L["on_obs"], L["off_obs"], L["t3_obs"])):
+            P = {"vals": [_f(_pct(m[(k, j)][1 if key == "exp" else 2], m[(k, j)][0])) for j in range(2)],
+                 "none": "no shift (catch)" if catch else "none"}
+            a, b = _num(on[k]), _num(off[k])
+            P["pert"] = [] if a is None else [(a, b, "+125 mel")]
+            t = _num(t3[k]); P["marks"] = [(t, "offset")] if t is not None else [(None, "never detected")]
+            tr[key] = P
+        e, o = _num(L["off_exp"][k]), _num(L["off_obs"][k])
+        if e is not None and o is not None and o > e + 0.05:
+            tr["obs"]["diff"] = [(e, o)]
+        trials.append(tr)
+    return {"sid": "sk-ost-f1", "trials": trials, "gap": 0.35,
+            "rows": {"words": "Speech", "pert": "F1 +125 mel", "marks": "Offset detected", "vals": "F1 heard vs spoken"},
+            "callout": "After the long catch trial 3, the shift runs on through word 2 in trials 4 and 5",
+            "callout_anchor": "end"}
 
 
 def sketch(d, up):
-    t, TT = d["t"], 2.0                     # each trial is 2.0 s; the session is trial A then trial B
-    tb = [x + TT for x in t]
-    a2, bf, ba = d["state2_A_s"], d["state2_B_fresh_s"], d["state2_B_after_A_s"]
-    s = Sketch("sk-ost-f1", 0, 2 * TT, "One session: trial A, reset(), trial B; below, trial B in a session of its own")
-    s.header("Session 1: trial A, then reset(), then trial B")
-    s.lane([(TT, "reset(): OST state not cleared", "start")])
-    y0 = s.y
-    s.envelope("Input", t + tb, db(d["rms_A"]) + db(d["rms_B"]), -60, -10, h=34, marks=[(0.03, "A: one vowel"), (TT + 0.03, "B: word 1, word 2")])
-    yst = s.intervals("OST state", state_ivs(t, d["stat_A"], "context", TT) + state_ivs(tb, d["stat_B_after_A"], "observed", 2 * TT))
-    shA = runs(t, d.get("sF1_A", [0] * len(t)), lambda v: v > 0)   # trial A is shifted in its own state 1, as intended
-    sha = runs(t, d["sF1_B_after_A"], lambda v: v > 0)
-    ysh = s.intervals("F1 +30 % applied", [(a, b, "shifted", "context") for a, b in shA] +
-                      [(a + TT, b + TT, "shifted", "observed") for a, b in sha])
-    s.band(TT + bf, TT + ba, yst, ysh + 30, "")
-    s.event(TT, y0 - 20, ysh + 30, "")
-    s.guide(a2, yst, yst + 30)
-    s.guide(TT + a2, yst, ysh + 30, dashed=True)
-    s.lane([(a2, f"A reaches state 2 at {a2:.2f} s", "end"),
-            (TT + bf, f"B reaches state 2 only at +{ba:.2f} s, the same frame count as A (dashed): word 2 is shifted", "start")])
-    s.header("Session 2: trial B on its own, drawn under trial B")
-    y2 = s.intervals("OST state", [(0, TT, "", "none")] + state_ivs(tb, d["stat_B_fresh"], "expected", 2 * TT))
-    shf = runs(t, d["sF1_B_fresh"], lambda v: v > 0)
-    s.intervals("F1 +30 % applied", [(a + TT, b + TT, "shifted", "expected") for a, b in shf])
-    s.lane([(TT + bf, f"state 2 at +{bf:.2f} s, right after word 1", "start")])
-    s.axis([0, 1, 2, 3, 4], label="time in the session (s); trial B starts at 2 s")
-    return s.svg(f"Session 1: trial A, one long vowel, reaches state 2 at {a2:.2f} s. After reset(), trial B's offset is only detected "
-                 f"{ba:.2f} s into trial B, so the F1 shift also covers word 2. In a fresh session, trial B reaches state 2 at {bf:.2f} s.")
+    return evlib.render(spec(d))
 
 
 def derive(d, up):
-    v = {"overrun": d["state2_B_after_A_s"] - d["state2_B_fresh_s"]}
-    r = [a / b for a, b, t in zip(d["sF1_B_after_A"], d["F1_B"], d["t"]) if 0.75 <= t <= 1.15 and b > 0]
-    v["logged_ratio"] = sum(r) / len(r)
+    m = measured(d); L, S = d["leak"], d["safe"]; v = {}
+    for k in range(len(d["w1"])):
+        for j in range(2):
+            fi, fe, fo = m[(k, j)]
+            v[f"t{k+1}w{j+1}_in"] = fi; v[f"t{k+1}w{j+1}_exp"] = fe; v[f"t{k+1}w{j+1}_obs"] = fo
+            v[f"t{k+1}w{j+1}_exp_pct"] = _f(_pct(fe, fi)); v[f"t{k+1}w{j+1}_obs_pct"] = _f(_pct(fo, fi))
+    t = lambda x: "never" if _num(x) is None else f"{x:.2f} s"
+    for k in range(len(d["w1"])):
+        v[f"t{k+1}_off_exp"] = t(L["t3_exp"][k]); v[f"t{k+1}_off_obs"] = t(L["t3_obs"][k])
+        v[f"t{k+1}_word1_end"] = d["g1"] + d["w1"][k]
+    v["t4_extra_s"] = L["off_obs"][3] - L["off_exp"][3]
+    v["t5_extra_s"] = L["off_obs"][4] - L["off_exp"][4]
+    v["n_never"] = sum(1 for k, x in enumerate(L["t3_obs"]) if _num(x) is None and not d["catch"][k])
+    v["n_pert"] = sum(1 for c in d["catch"] if not c)
+    v["n_late"] = sum(1 for k in range(len(d["w1"])) if not d["catch"][k] and (_num(L["t3_obs"][k]) is None or L["t3_obs"][k] > L["t3_exp"][k] + 0.05))
+    v["safe_same"] = all(abs(a - b) < 1e-9 for a, b in zip(S["t3_obs"], S["t3_exp"]) if _num(a) is not None)
+    v["safe_after_w1"] = max(S["t3_exp"][k] - (d["g1"] + d["w1"][k]) for k in range(len(d["w1"])))
+    sm = d["same_t3"]; w2on = d["g1"] + d["w1"][0] + d["p12"]
+    v["same_first"], v["same_step_ms"] = sm[0], 1000 * (sm[7] - sm[0]) / 7
+    v["same_w2_trial"] = next((k + 1 for k, x in enumerate(sm) if _num(x) is None or x > w2on), "none of the 10")
+    v["same_last"] = t(sm[-1])
+    rl = d.get("reload_t3", [])
+    v["reload_never"] = sum(1 for k, x in enumerate(rl) if _num(x) is None and not d["catch"][k])
+    v["reload_first"] = t(rl[0]) if rl else "n/a"
     return v
-
-
-def derive_real(rd):
-    P = rd["pairs"]
-    ch = [p for p in P if p["fall_fresh_s"] != p["fall_afterA_s"]]
-    late = sorted(p["fall_afterA_s"] - p["fall_fresh_s"] for p in ch if p["fall_afterA_s"] is not None and p["fall_fresh_s"] is not None)
-    return {"n_pairs": len(P), "n_changed": len(ch), "late_min": min(late), "late_max": max(late),
-            "n_never": sum(1 for p in ch if p["fall_afterA_s"] is None)}

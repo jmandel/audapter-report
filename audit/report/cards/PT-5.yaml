@@ -3,55 +3,56 @@ id: PT-5
 log: PT-5
 notes: notes/pitch-time.md#pt-5
 headline: >-
-  With the phase vocoder on, output is 3.5 dB louder than the input, and loudness changes when a pitch shift starts
+  With the phase vocoder on, the voice is played up to 6 dB louder, depending on whether a time-warp section is loaded, so mixing
+  warp and no-warp trials gives a loudness cue
 severity: high
 origin: upstream
-status:
-- H
-- D
-- F
+status: [H, D, F]
+reach_kind: current
+reach: >-
+  Touches blab's time-warp experiments, whose settings turn the vocoder on (timeAdapt, timeWrap). blab's timeWrap keeps a
+  zero-length warp row on its control trials, so its trials all play at the same, correct level. Any design that drops the warp
+  section on some trials, or runs the vocoder without a warp section, is affected.
 what: >-
-  When pitch shifting is on (<code>bPitchShift = 1</code>), the phase vocoder plays the voice 3.5 dB louder than the input, even at 0 semitones. When a shift is applied,
-  the level changes again by an amount that depends on the voice's F0 and vowel, and it fluctuates from frame to frame.
+  With <code>bPitchShift = 1</code> the phase vocoder processes the voice even at 0 semitones. Without a time-warp section in the
+  PCF, it plays the voice louder than it came in: +3.5 dB at the default 16 kHz / frameLen 32, and +6.0 dB at the 24 kHz / frameLen 48
+  settings blab uses for time warping. With a warp section loaded, even a zero-length one, the vocoder runs in its warp mode for the
+  whole trial, at a different level: 0.0 dB at 24 kHz / frameLen 48, −2.5 dB at 16 kHz / frameLen 32. When a pitch shift starts,
+  the level changes again, by an amount that depends on F0 and vowel.
 scope: >-
-  Affects every experiment that uses the phase vocoder. A design that switches from no shift to a shift, for example through a PCF, gives the participant a loudness
-  change at the same moment as the pitch change. Conditions with and without <code>bPitchShift</code> differ by 3.5 dB. The switch meant to correct this, <code>bPvocAmpNorm</code>,
-  cannot be turned on, and if its name is corrected it outputs NaN.
+  Matters when trials or phases differ in whether a warp section is loaded (a loudness cue that tells the participant which trials
+  are perturbed), when the vocoder is on in some phases and off in others (for example a calibration at <code>bPitchShift = 0</code>),
+  and for pitch-shift onsets. <strong>Safe if</strong> every trial carries a warp section (a zero-length row on control trials), as in
+  blab's timeWrap experiment.
 example: >-
-  A sustained vowel at 120 Hz with a PCF that switches from 0 to +2 semitones at 0.6 s. The F0 step is accurate ({f0_cents:.0f} cents). Relative to the same input
-  with <code>bPitchShift = 0</code>, the level is {gain_before_db:+.1f} dB before the step and averages {gain_after_db:+.1f} dB after it.
+  A time-warp experiment with blab's timeAdapt settings (24 kHz, frameLen 48, vocoder on): perturbed trials slow the speech down
+  and catch up, control trials do not. If control trials keep a zero-length warp row, both kinds play at the spoken level
+  (control {exp_t1_txt}, warp {exp_t2_txt}). If control trials drop the warp section, they play at {obs_t1_txt}: {cue_db:.1f} dB
+  louder than the warp trials around them.
+settings:
+  source: "blab's timeAdapt settings (free-speech run_measureDuration_audapter.m: 24 kHz, downFact 2, frameLen 48, bPitchShift 1 \"needed if time warping is used\"); the warp timing here is illustrative. blab's timeWrap experiment keeps a zero-length warp row on control trials (the expected panel). fb 1 so the speech level can be measured without the babble."
+  key_params: [sr, downFact, frameLen, bPitchShift, fb]
 figure_caption: >-
-  One trial: F0 and output level of the phase vocoder against the same input with pitch shifting off. The lower chart shows how the level change at +2 st depends
-  on F0 and vowel.
+  One session of four trials. Expected: control trials keep a zero-length warp row. Observed: control trials drop the warp
+  section. Values are the output level measured on the audio, relative to the spoken input.
 table:
-- - synthetic
-  - Level at 0 st, relative to bPitchShift = 0
-  - '{gain_before_db:+.2f} dB'
-- - synthetic
-  - Mean level after the 0 → +2 st step
-  - '{gain_after_db:+.2f} dB'
-- - synthetic
-  - Level change 0 → +2 st, F0 100–260 Hz, /a/ and /i/
-  - '{sweep_min:.1f} to {sweep_max:.1f} dB quieter'
-- - real speech
-  - Level at 0 st, {r_n_clean} clips
-  - '{r_g0_lo:+.2f} to {r_g0_hi:+.2f} dB'
-- - real speech
-  - Steady level change 0 → +2 st
-  - >-
-    {r_st_lo:.1f} to {r_st_hi:.1f} dB quieter; medians men {r_med_m:.1f}, women {r_med_f:.1f}, children {r_med_c:.1f} dB
-- - real speech
-  - Loudness step at a mid-utterance onset, {r_n_utt} clips
-  - '{r_on_lo:.1f} to {r_on_hi:.1f} dB (median {r_on_med:.1f} dB)'
+- [timeAdapt settings, 'Level, control trial without a warp section', '{obs_t1_txt}']
+- [timeAdapt settings, 'Level, control trial with a zero-length warp row / warp trial', '{exp_t1_txt} / {exp_t2_txt}']
+- [timeAdapt settings, 'Loudness cue, no-warp control vs warp trial', '{cue_db:.1f} dB']
+- [blab defaults, 'Level with no warp section / zero-length row / warp (16 kHz, frameLen 32)', '{w16_none:+.1f} / {w16_zero:+.1f} / {w16_warp:+.1f} dB']
+- [pitch onset, 'Level change 0 → +2 st, synthetic, F0 100–260 Hz, /a/ and /i/', '{sweep_min:.1f} to {sweep_max:.1f} dB quieter']
+- [real speech, 'Level at 0 st, no warp section, {r_n_clean} clips (16 kHz)', '{r_g0_lo:+.2f} to {r_g0_hi:+.2f} dB']
+- [real speech, 'Loudness step at a mid-utterance pitch onset, {r_n_utt} clips', '{r_on_lo:.1f} to {r_on_hi:.1f} dB (median {r_on_med:.1f} dB)']
 sketch: pt5
 asset_dir: pt-5
 audio:
-- file: input_vowel.wav
-  role: input
-- file: output_bypass.wav
-  role: expected
-- file: output_pitch_step.wav
-  role: observed
+- {file: warp_input.wav, src: meas/warp_in.wav, role: input, title: 'Input', label: 'the same sentence on every trial', panel: exp, trial: 1}
+- {file: t1_expected.wav, src: meas/warp_exp_t1_out.wav, role: expected, title: 'Expected, trial 1', label: 'control, zero-length warp row ({exp_t1_txt})', panel: exp, trial: 1}
+- {file: t1_observed.wav, src: meas/warp_obs_t1_out.wav, role: observed, title: 'Observed, trial 1', label: 'control, no warp section ({obs_t1_txt})', panel: obs, trial: 1}
+- {file: t2_warp.wav, src: meas/warp_obs_t2_out.wav, role: observed, title: 'Observed, trial 2', label: 'warp trial ({obs_t2_txt})', panel: obs, trial: 2}
+- {file: t12_ab.wav, src: [meas/warp_obs_t1_out.wav, meas/warp_obs_t2_out.wav], gap_s: 0.4, role: ab, title: 'A/B, trials 1 and 2 as observed', label: 'control, then warp trial: the loudness cue', no_playhead: true}
+audio_note: >-
+  These clips share one playback gain, so the level differences you hear are real. 24 kHz, 16-bit, as recorded by Audapter.
 real:
   dir: pt-5
   clips:
@@ -85,13 +86,14 @@ interactive:
     bpitchshift: 1
     pitchshiftratio: 1
   text: >-
-    This runs the card's trial (the same vowel, OST and PCF) through the real Audapter C++ core compiled to WebAssembly from the pinned commit, once as released and
+    The pitch-onset part of this finding: a sustained /a/ at 120 Hz whose PCF steps from 0 to +2 semitones at 0.6 s (16 kHz defaults). This runs that trial through the real Audapter C++ core compiled to WebAssembly from the pinned commit, once as released and
     once with the overlap-add normalised. Pick the size of the step. Each trace is the output level in 20 ms blocks relative to the same input run with <code>bPitchShift
     = 0</code>, so 0 dB is the level a participant should hear.
 cause:
   summary: >-
     Analysis and synthesis both use a Hann window with a hop of a quarter frame. Overlap-adding the squared window sums to 1.5, and the synthesis scaling does not
-    divide this out, so the output is 1.5 times the input at any shift ratio. With a shift, each frequency bin is resynthesised with fresh phase, so the level then
+    divide this out, so the output is 1.5 times the input at any shift ratio (2 times at frameLen 48, measured; we have not located the extra factor in the code, EXP-11).
+    Once a PCF has a warp section, the vocoder runs in its time-warp mode for the whole trial, and that mode has a different gain (measured, COORD-4). With a shift, each frequency bin is resynthesised with fresh phase, so the level then
     depends on the signal. The normalisation switch is registered under a misspelt name, and its code divides by a quantity that is always zero.
   refs:
   - repo: blab-mex
@@ -140,10 +142,14 @@ cause:
     expect: ms_out / ms_in
     note: >-
       If the name is corrected, this divides by <code>ms_in</code>, a local set to 0 at line 1978 and never updated. In our test build the output became NaN.
+  fix_label: Safe pattern and fix
   fix: >-
-    Divide the pitch-shift overlap-add by 1.5 (<code>report/patches/pt-5-ola-normalise.patch</code>; time-warp modes unchanged). That gives unity gain at 0 st but
-    not a constant level after a shift, which needs a running level match. Fixing only the parameter name is not safe. Workaround: calibrate pitch-shift conditions
-    with <code>bPitchShift = 1</code> at 0 st, and treat loudness as a covariate at shift onsets.
+    <strong>Safe pattern:</strong> in a warp design, give every trial a warp section, a zero-length one on control trials, as blab's
+    timeWrap experiment does; then all trials play at the same level. Calibrate loudness with the vocoder in the mode the experiment
+    uses, not with <code>bPitchShift = 0</code>. <strong>Fix:</strong> divide the pitch-shift overlap-add by its actual window sum.
+    <code>report/patches/pt-5-ola-normalise.patch</code> divides by 1.5, which gives unity gain at frameLen 32 and 64; at frameLen 48
+    the sum is 2, and the patch leaves +2.5 dB (checked in the browser build). A shift still changes the level, which needs a running
+    level match. Fixing only the parameter name is not safe (the code then outputs NaN).
 verify:
 - kind: H
   what: harness test

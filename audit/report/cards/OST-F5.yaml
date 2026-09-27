@@ -1,0 +1,66 @@
+# Full finding card OST-F5. Sections follow the fixed template (build.py REQUIRED).
+id: OST-F5
+log: OST-F5
+notes: notes/ost-pcf.md#f5
+headline: >-
+  Pitch catch trials made by clearing the PCF can be heard at the full pitch shift, when the trial before ended while shifted
+severity: med
+origin: upstream
+status: [H, R]
+reach_kind: pitfall
+reach: >-
+  Not triggered by any blab design we inspected: blab's pitch experiments (pitchAdaptPD, pitchComp) re-run
+  <code>AudapterIO('init', p)</code> before every trial, which restores the pitch setting. Affects pitch designs that make catch
+  trials with <code>Audapter('pcf', '', 0)</code> and do not re-run init.
+what: >-
+  While a PCF is loaded, Audapter writes the PCF's pitch shift for the current OST state into the user parameter
+  <code>pitchShiftRatio</code> on every frame. Clearing the PCF with <code>Audapter('pcf', '', 0)</code> leaves the last value
+  there, and with no PCF the phase vocoder uses <code>pitchShiftRatio</code> for the whole trial. If the previous trial ended in a
+  shifted state (the participant was still voicing when the trial stopped), every following "unperturbed" trial is shifted by the
+  full amount, and <code>data.params.pitchShiftRatio</code> logs the shifted value.
+scope: >-
+  Matters for pitch-perturbation designs with interleaved catch or control trials made by clearing the PCF, when a perturbed trial
+  can end before the OST returns to an unshifted state: sustained-vowel designs, or trials cut off mid-word. If the perturbed trial
+  ends after the shift is switched off, the catch trial is clean. <strong>Safe if</strong> catch trials load an all-zero PCF, or
+  <code>AudapterIO('init', p)</code> runs before every trial (it re-sends <code>pitchShiftRatio</code>), or the script sets
+  <code>pitchShiftRatio</code> after clearing the PCF.
+example: >-
+  A sustained-vowel pitch design: +2 semitones from the detected voice onset until the level falls, phase vocoder, catch trials
+  interleaved. The participant is still voicing when each perturbed trial stops. With catch trials made by loading an all-zero
+  PCF, trial 2 is heard at {t2_exp_txt}. Made with <code>Audapter('pcf', '', 0)</code>, trial 2 is heard at {t2_obs_txt}, the
+  whole perturbation, and <code>data.params.pitchShiftRatio</code> logs {obs_ratio:.4f}.
+settings:
+  source: "Hypothetical design: a plausible pitch design, not one blab runs. blab's defaults (female preset, 16 kHz, frameLen 32) with the phase vocoder on."
+  key_params: [bShift, bPitchShift, fb]
+figure_caption: >-
+  One session of four trials. Expected: catch trials made with an all-zero PCF (the safe pattern). Observed: catch trials made by
+  clearing the PCF. Values are F0 measured on the audio, in cents re the spoken F0.
+table:
+- [synthetic, 'Catch trial after a trial that ended while shifted: F0 heard', '{t2_obs_txt} (all-zero PCF: {t2_exp_txt})']
+- [synthetic, 'Logged data.params.pitchShiftRatio on that catch trial', '{obs_ratio:.4f} (all-zero PCF: {exp_ratio:.4f})']
+- [synthetic, "Same, with AudapterIO('init', p) before every trial", 'catch trials within {reinit_catch:.0f} cents of the spoken F0']
+- [synthetic, 'Catch trial after a trial that ended after the shift was switched off', 'clean (EXP-8)']
+sketch: ost_f5
+asset_dir: ost-f5
+audio:
+- {file: t2_input.wav, src: meas/t2_in.wav, role: input, title: 'Input, trial 2', label: 'sustained vowel (catch trial)', panel: exp, trial: 2}
+- {file: t2_expected.wav, src: meas/exp_t2_out.wav, role: expected, title: 'Expected, trial 2', label: 'not shifted ({t2_exp_txt})', panel: exp, trial: 2}
+- {file: t2_observed.wav, src: meas/obs_t2_out.wav, role: observed, title: 'Observed, trial 2', label: 'shifted up ({t2_obs_txt})', panel: obs, trial: 2}
+- {file: t2_ab.wav, src: [meas/exp_t2_out.wav, meas/obs_t2_out.wav], gap_s: 0.4, role: ab, title: 'A/B, trial 2', label: 'expected, then observed', no_playhead: true}
+cause:
+  summary: >-
+    With a PCF loaded, each frame overwrites <code>p.pitchShiftRatio[0]</code> with the current state's pitch shift. After
+    <code>Audapter('pcf', '', 0)</code>, <code>pertCfg.n</code> is 0, the overwrite stops, and the vocoder keeps using the last
+    value written. <code>data.params</code> reports the overwritten value.
+  refs:
+  - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1970, 1974], hl: [1972], expect: 'p.pitchShiftRatio[0] = pow(2.0, pertCfg.pitchShift[stat] / 12.0);', note: The PCF writes into the user parameter; nothing restores it.}
+  fix: >-
+    <strong>Safe pattern:</strong> make catch trials by loading an all-zero PCF, or re-run <code>AudapterIO('init', p)</code> before
+    every trial as blab's pitch experiments do. <strong>Fix:</strong> keep the PCF's ratio in a separate variable, so that clearing
+    the PCF returns to the user's <code>pitchShiftRatio</code>. <strong>Check past data:</strong> catch trials whose
+    <code>data.params.pitchShiftRatio</code> is not 1 were shifted.
+verify:
+- {kind: H, what: report export (mixed pitch session, both catch-trial methods), name: report_ost_f5.m}
+- {kind: H, what: mixed-design harness, name: exp_mixed.m SCEN=S4b, detail: 'EXP-8: +200 cents on the catch trial; clean with a zero PCF'}
+- {kind: R, what: reading, name: notes/ost-pcf.md, detail: 'F5'}
+reproduce: cd audit/harness && ./run-oct.sh report_ost_f5.m

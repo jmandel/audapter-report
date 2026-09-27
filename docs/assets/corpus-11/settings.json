@@ -1,0 +1,82 @@
+{
+ "card": "CORPUS-11",
+ "source": "Audapter's own 2008 example trial (example_data diao1_female), replayed with its saved parameters merged into today's defaults.",
+ "preset": "female",
+ "build": "shipped",
+ "params": {
+  "nLPC": 11,
+  "fn1": 646,
+  "fn2": 1511,
+  "downFact": 4,
+  "frameLen": 16,
+  "dScale": 1,
+  "sr": 12000,
+  "nDelay": 7,
+  "frameShift": 16,
+  "bufLen": 208,
+  "anaLen": 208,
+  "bCepsLift": 1,
+  "cepsWinWidth": 28,
+  "rmsThresh": 0.010489510395982716,
+  "rmsRatioThresh": 1.3,
+  "rmsMeanPeak": 0.041958041583930863,
+  "bShift": 1,
+  "trialLen": 2.5,
+  "rampLen": 0.25,
+  "F2Min": 1000,
+  "F2Max": 2000,
+  "F1Min": 507.82427459462417,
+  "F1Max": 1336.9600331825186,
+  "pertF2": "257 values, 1000 to 2000",
+  "pertAmp": "257 values, -9.09495e-13 to 163.787"
+ },
+ "setparam": {},
+ "ost": "",
+ "pcf": "",
+ "sequence": [],
+ "switching": "one trial per shift mode",
+ "input": "blab_diao1_female",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {
+   "nlpc": 11,
+   "downfact": 4,
+   "framelen": 16,
+   "scale": 1,
+   "srate": 12000,
+   "ndelay": 7,
+   "bcepslift": 1,
+   "cepswinwidth": 28,
+   "rmsthr": 0.010489510395982716,
+   "rmsratio": 1.3,
+   "bshift": 1,
+   "triallen": 2.5,
+   "ramplen": 0.25,
+   "f2min": 1000,
+   "f2max": 2000,
+   "f1min": 507.82427459462417,
+   "f1max": 1336.9600331825186
+  },
+  "shift": {
+   "formant": {
+    "on": true,
+    "units": "pct",
+    "f1": 0,
+    "f2": 0,
+    "field": "all"
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": []
+}

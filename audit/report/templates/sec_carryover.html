@@ -1,0 +1,44 @@
+<p>Carrie Niziolek asked whether, in designs where perturbed trials are followed by unperturbed ones, one trial's lingering state
+can affect the next. <strong>As blab runs its experiments, it does not.</strong> With other OST rules or other ways of switching
+conditions, it can, and the effect is large and silent. This section shows both.</p>
+<h3>blab's switching methods: no carry-over</h3>
+<p>We ran each method the lab uses to change the condition between trials, with the lab's own settings and OST files, in mixed
+sessions of perturbed and catch trials, once in order and once in reverse order.</p>
+<div class="tscroll"><table class="plain carry">
+<thead><tr><th scope="col">How the condition changes between trials</th><th scope="col">Used by</th><th scope="col">Result</th></tr></thead>
+<tbody>
+<tr><td>Field mode: <code>setParam pertAmp/pertPhi</code> before each trial (0 on catch trials); OST and PCF cleared at the start</td>
+<td>attentionComp, coAdapt, uhdapter, the VSA experiments, the free-speech template</td>
+<td>Catch trials: [[s1_catch_shift_max:.3f]] s shifted; F1 heard/spoken [[s1_catch_ratio_min:.3f]]–[[s1_catch_ratio_max:.3f]].
+Perturbed trials: exactly ±[[s1_pert_mel:.0f]] mel logged. Reversing the trial order changes nothing: [[s1_same]] of [[s1_same_n]] trials identical in
+the log, [[s1_fb1_same]] of [[s1_fb1_n]] in the audio.</td></tr>
+<tr><td>PCF rewritten and reloaded before each trial, OST loaded once</td>
+<td>simonMultisyllable (seven/sever, pedigree), simonSingleWord v2</td>
+<td>Catch trials: [[s2_catch_shift_max:.3f]] s shifted. The shift ends at the detected vowel offset on every perturbed trial.
+[[s2_same]] of [[s2_same_n]] trials identical in either order.</td></tr>
+<tr><td><code>AudapterIO('init', p)</code> before each trial</td>
+<td>simonSingleWord v2; blab's pitch experiments (pitchAdaptPD, pitchComp)</td>
+<td>Re-sends every parameter, including <code>pitchShiftRatio</code>, so the pitch carry-over below cannot occur.</td></tr>
+</tbody></table></div>
+<p>Across all 69 OST files in blab's public and unpublished experiment code, every one of the 57 <code>INTENSITY_FALL</code> rules comes after a rule in the same trial that refreshes the stored time, so none can read the previous trial's value (blab's timeWrap uses the RMS-floor rule for a burst onset, but a rise-and-hold rule runs before its FALL). No blab OST has a maxIOI
+timeout. The one remaining difference between trials is cosmetic: the first trial after MATLAB starts logs
+slightly different formants for its first 36 ms of voicing (the tracker's memory; the audio is identical).
+Evidence: <code>exp_mixed.m</code> (S1, S2), <code>exp_simon_session.m</code>; log entries EXP-2, EXP-6, EXP-10.</p>
+<h3>What to avoid: when carry-over does happen</h3>
+<div class="rules">
+<div class="rule"><p class="rule-h"><a href="#OST-F1">OST-F1</a> · offset detected later every trial</p>
+<p><strong>Affected if</strong> an <code>INTENSITY_FALL</code> rule has no refreshing rule before it in the same trial: the only rules before it are <code>ELAPSED_TIME</code>, the RMS-floor rule (<code>…_WITH_RMS_FLOOR</code>, mode 32) or the ratio rules (<code>INTENSITY_RATIO_RISE</code>, <code>INTENSITY_RATIO_FALL_HOLD</code>). These do not refresh the stored time; every other rule does. Reloading the OST or re-running init does not help.</p>
+<p><strong>Safe if</strong> any rise-and-hold, slope, stretch, FALL or AND_RATIO rule runs before the FALL in the same trial, as in every blab OST.</p></div>
+<div class="rule"><p class="rule-h"><a href="#COORD-1">COORD-1</a> · a PCF left loaded from an earlier block</p>
+<p><strong>Affected if</strong> a field-mode block follows any block that loaded an OST/PCF (every blab session starts with the
+measureFormants calibration) and does not clear them. <code>AudapterIO('init')</code> does not.</p>
+<p><strong>Safe if</strong> the runner calls <code>Audapter('ost', '', 0); Audapter('pcf', '', 0);</code> first, as every blab
+field-mode runner does.</p></div>
+<div class="rule"><p class="rule-h"><a href="#OST-F5">OST-F5</a> · pitch catch trials shifted</p>
+<p><strong>Affected if</strong> pitch catch trials are made with <code>Audapter('pcf', '', 0)</code> after a trial that ended while
+shifted, without re-running init.</p>
+<p><strong>Safe if</strong> catch trials load an all-zero PCF, or init runs before every trial.</p></div>
+<div class="rule"><p class="rule-h"><a href="#OST-F2">OST-F2</a> · maxIOI timeout drifts</p>
+<p><strong>Affected if</strong> the OST has a maxIOI (timeout) section and is loaded once for many trials.</p>
+<p><strong>Safe if</strong> there is no maxIOI section (all blab OSTs), or the OST is reloaded before every trial.</p></div>
+</div>

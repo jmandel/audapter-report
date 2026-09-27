@@ -1,0 +1,48 @@
+{
+ "card": "F6",
+ "source": "Hypothetical field: a restricted field that raises F1 20 % above 600 Hz, standing in for vsaSentence's restricted 2-D centralisation field (the same re-entry rule applies to both).",
+ "preset": "female",
+ "build": "shipped",
+ "params": {
+  "rmsThresh": 0.005,
+  "bShift": 1,
+  "F1Min": 600,
+  "pertF2": "257 values, 0 to 5000",
+  "pertAmp": "0.2 (all 257 values)"
+ },
+ "setparam": {},
+ "ost": "",
+ "pcf": "",
+ "sequence": [],
+ "switching": "one trial per input; no OST or PCF (field mode)",
+ "input": "synthetic 1 s /a/ -> /i/ -> /a/ glide, and a steady /a/ with a brief F1 dip",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {
+   "rmsthr": 0.005,
+   "bshift": 1,
+   "f1min": 600
+  },
+  "shift": {
+   "formant": {
+    "on": true,
+    "units": "pct",
+    "f1": 0,
+    "f2": 0,
+    "field": "all"
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": []
+}

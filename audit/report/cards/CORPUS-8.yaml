@@ -3,7 +3,27 @@ id: CORPUS-8
 log: CORPUS-8
 notes: notes/corpus.md#corpus-8
 headline: With the default frame settings, the logged pitch is wrong for voices below about 140 Hz
-severity: high
+severity: med
+reach_kind: pitfall
+reach: >-
+  Not triggered by any blab design we inspected: none uses time-domain pitch shifting, the only mode that logs pitch. Affects time-domain pitch experiments with low voices at the default frame settings.
+settings:
+  source: 'Hypothetical design: time-domain pitch shifting as in Audapter''s time_domain_shift_demo, with blab''s male defaults.'
+  override:
+    preset: male
+    params:
+      bTimeDomainShift: 1
+      bCepsLift: 1
+      pitchLowerBoundHz: 70
+      pitchUpperBoundHz: 300
+      frameLen: 32 (default) or 64
+      nDelay: 5 (default) or 7
+    setparam:
+      timeDomainPitchShiftSchedule: '[0, 2^(1/12); 100, 2^(1/12)] (+1 semitone throughout)'
+    switching: each F0 in a fresh session
+    input: synthetic vowels of known F0, 85-250 Hz; real speech in the table
+  playground: false
+  playground_why: the Playground does not log pitchHz.
 origin: upstream
 status:
 - H

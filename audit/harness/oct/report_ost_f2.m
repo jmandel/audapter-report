@@ -63,4 +63,5 @@ r.audio = report_wavgroup(od, p.sr, c);
 r.params = struct('sr', p.sr, 'downFact', p.downFact, 'frameLen', p.frameLen, 'rmsThresh', p.rmsThresh, ...
   'ost', fileread('cfg/report_ioi.ost'), 'pcf', fileread('cfg/report_ioi.pcf'), 'ost_ctrl', fileread('cfg/report_ioi_ctrl.ost'));
 audiowrite(fullfile(od, 'dev_vowel_48k.wav'), x, fs, 'BitsPerSample', 16);
+if ~UP, r.settings = report_settings(p, 'female', 'ost', fileread('cfg/report_ioi.ost'), 'pcf', fileread('cfg/report_ioi.pcf'), 'sequence', {{'trial 1', 'trial 2', 'trial 3'}}, 'switching', 'OST and PCF loaded once; reset() before every trial', 'input', 'synthetic soft vowel that never reaches the onset threshold'); end
 report_json(fullfile(od, 'data.json'), r);

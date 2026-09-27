@@ -5,6 +5,17 @@ notes: live/README.md#live-6
 headline: >-
   If the sound card's buffer is not exactly frameLen × downFact samples, the participant hears their raw voice an octave up, chopped
 severity: med
+reach_kind: pitfall
+reach: >-
+  Could affect any rig, including blab's: it happens whenever the sound card's buffer size differs from frameLen × downFact (96 samples at blab's settings). blab's Audapter README warns that newer Focusrite drivers crash MATLAB; whether that is related is untested.
+settings:
+  source: 'blab''s default frame settings (frameLen 32, downFact 3: 96 samples per buffer) on a sound card that delivers 128-sample buffers, simulated on the live audio path.'
+  override:
+    params: {}
+    switching: one trial
+    input: a vowel
+  playground: false
+  playground_why: this needs the live audio path.
 origin: upstream
 status:
 - D

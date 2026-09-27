@@ -17,30 +17,67 @@ repos:
   blab-matlab:  {url: "https://github.com/blab-lab/audapter_matlab",  sha: "e1695f146a0ecc3014ffe34b2b3cbc578edcd4b2", local: "blab/audapter_matlab"}
   upstream-mex: {url: "https://github.com/shanqing-cai/audapter_mex", sha: "f547196483fd2e68ef33f8a6fa7ed532eefd5af5", local: "upstream/audapter_mex"}
 
-# Findings at a glance: full cards (rows link to the card when cards/<ID>.yaml exists) in rank order.
+# Findings at a glance: one row per full card (text shown in the grouped table). Severity = realistic reach x impact.
 table:
-  - {id: OST-F1, sev: high, origin: upstream, status: H F, text: "OST state leaks across trials: an offset in trial B is detected 1.2 s late after a longer trial A"}
-  - {id: OST-F2, sev: high, origin: upstream, status: H F, text: "maxIOI timeout writes the onset of the wrong state; ELAPSED_TIME fires after 2 ms instead of 100 ms, and without an OST reload the timeout drifts 0.2 → 0.4 → 0.6 s"}
-  - {id: I-01,   sev: high, origin: blab-amplified, status: H, text: "Masking noise shorter than 10 s is followed by silence until the 10 s buffer wraps"}
-  - {id: CORPUS-10, sev: high, origin: upstream, status: H, text: "After a frameLen/nDelay change, runFrame can hang forever at 100 % CPU; live, this freezes the audio callback and MATLAB"}
-  - {id: LIVE-1 / LIVE-2, sev: high, origin: upstream, status: D, text: "Changing OST/PCF files or DSP parameters while audio runs (always-on designs) crashes MATLAB or reads freed memory"}
-  - {id: OST-F4, sev: high, origin: upstream, status: H, text: "PCF with fewer rows than OST states reads past the perturbation arrays; heap contents decide whether to perturb"}
-  - {id: FMT-F1, sev: high, origin: blab, status: H, text: "Clamp trajectory setters copy 2048 values whatever length MATLAB passes"}
-  - {id: CORPUS-8, sev: high, origin: upstream, status: H, text: "With the default frame settings the logged pitch is wrong below about 140 Hz (typical adult men): 90 Hz logs as about 229 Hz"}
-  - {id: PT-5,   sev: high, origin: upstream, status: H F, text: "Phase vocoder plays 3.5 dB loud at 0 st, and the level changes when a pitch shift starts"}
-  - {id: LIVE-3, sev: med, origin: upstream, status: D, text: "reset() while the participant is speaking can send a clipped click: +17 to +61 dB over three simulated runs, about 1 in 1000–2000 resets during voicing"}
+  - {id: I-01,   sev: high, origin: blab-amplified, status: H, text: "Since b2.4 (April 2026), masking noise drops out for 16 ms about every 10 s: about 1 in 5.5 trials of blab's fb 2 masking phases"}
+  - {id: PT-5,   sev: high, origin: upstream, status: H F, text: "The phase vocoder plays the voice +3.5 dB (16 kHz) or +6.0 dB (timeAdapt settings) loud unless a warp section is loaded; mixing warp and no-warp trials gives a 6 dB cue"}
+  - {id: F6,     sev: med,  origin: blab, status: H, text: "Undocumented blab change that vsaSentence depends on: the field perturbation re-arms on every vowel; minVowelLen has no effect"}
+  - {id: OST-F1, sev: high, origin: upstream, status: H F, text: "With FALL after ELAPSED_TIME, the RMS-floor rule or a ratio rule, the detected offset creeps later every trial and jumps after long ones; perturbations run into the next word"}
+  - {id: COORD-1, sev: med, origin: upstream, status: H, text: "A PCF from an earlier block survives AudapterIO('init') and overrides a later field experiment; blab's runners clear it"}
+  - {id: OST-F5, sev: med,  origin: upstream, status: H R, text: "Pitch catch trials made by clearing the PCF get the full shift when the previous trial ended while shifted"}
+  - {id: OST-F2, sev: med,  origin: upstream, status: H F, text: "maxIOI timeout: the next ELAPSED_TIME lasts one frame, and without an OST reload the timeout drifts 0.2 s later per trial"}
+  - {id: CORPUS-8, sev: med, origin: upstream, status: H, text: "Time-domain pitch tracking at the default frame settings logs pitch wrongly below about 140 Hz (typical adult men)"}
+  - {id: CORPUS-10, sev: med, origin: upstream, status: H, text: "Changing frameLen/nDelay at a fixed sample rate within a session can hang runFrame (and the audio callback) at 100 % CPU"}
+  - {id: LIVE-1 / LIVE-2, sev: med, origin: upstream, status: D, text: "Loading OST/PCF files or changing DSP parameters while audio runs (always-on designs) crashes MATLAB or reads freed memory"}
+  - {id: LIVE-3, sev: med, origin: upstream, status: D, text: "reset() while the participant is speaking can send a clipped click: +17 to +61 dB, about 1 in 1000–2000 resets during voicing"}
   - {id: LIVE-6, sev: med, origin: upstream, status: D, text: "If the sound card's buffer size differs from Audapter's frame size, the participant hears the raw microphone an octave up, with gaps"}
-  - {id: CORPUS-11, sev: med, origin: upstream, status: H, text: "Shifted formant targets are unbounded: old mel-unit parameters under today's ratio default give targets up to 130 kHz and +24 dB clipped output"}
-  - {id: COORD-1, sev: med, origin: upstream, status: H, text: "A PCF loaded in an earlier experiment survives AudapterIO('init') and silently overrides a later field-mode shift (435 frames shifted fresh, 0 after)"}
-  - {id: I-04,   sev: med,  origin: upstream, status: H, text: "runFrame writes its output into the caller's input array"}
-  - {id: I-02,   sev: med,  origin: blab, status: H, text: "fb mode 5 applies dScale twice to the speech-modulated component"}
-  - {id: F6,     sev: med,  origin: blab, status: H, text: "Dropout fix re-arms the perturbation on every field re-entry; minVowelLen no longer has any effect"}
-  - {id: I-03,   sev: med,  origin: upstream, status: H, text: "Recorder wraps after 30 s without warning; a 35 s trial returns only its last 5.0 s"}
-  - {id: OST-F8, sev: low,  origin: blab, status: H, text: "AND_RATIO OST rules take the hold from field 5, where the manual puts {}; clear on synthetic input, not clean on real /sh/ onsets"}
+  - {id: CORPUS-11, sev: med, origin: upstream, status: H, text: "Shifted formant targets are unbounded: old mel-unit parameters under today's ratio default give targets up to 130 kHz and clipped output"}
+  - {id: I-04,   sev: low,  origin: upstream, status: H, text: "runFrame writes its output into the caller's input array, so reprocessing the same frames feeds processed audio back in"}
+  - {id: I-02,   sev: low,  origin: blab, status: H, text: "fb mode 5 applies dScale twice to the speech-modulated component"}
+  - {id: I-03,   sev: low,  origin: upstream, status: H, text: "The recorder wraps after 30 s without warning; a 35 s trial returns only its last 5 s"}
+  - {id: OST-F8, sev: low,  origin: blab, status: H, text: "AND_RATIO OST rules take the hold from field 5, where the manual puts {}"}
+  - {id: OST-F4, sev: med,  origin: upstream, status: H, text: "A PCF with fewer rows than OST states reads past its arrays; heap contents decide whether to perturb"}
+  - {id: FMT-F1, sev: med,  origin: blab, status: H, text: "Clamp trajectory setters copy 2048 values whatever length MATLAB passes"}
 
+# Report sections, in order. Each lists its full cards and short cards; compact rows carry `section:` (default pitfalls).
+sections:
+  - id: current
+    title: "What affects blab's current experiments"
+    lead: >-
+      <p>These three findings touch experiments the lab runs now, with the lab's own settings. The first is a defect introduced with
+      b2.4 in April 2026; the second is a level offset of the phase vocoder that blab's time-warp design already avoids; the third is a
+      blab change that one of the lab's designs depends on.</p>
+    cards: [I-01, PT-5, F6]
+    short: [FMT-F3, CORPUS-7]
+    short_title: "Also relevant to current experiments (small effects)"
+  - id: labscripts
+    title: "Questions for the lab, from the public experiment code"
+    lead: file:sec_labscripts.html
+  - id: carryover
+    title: "Trial-to-trial carry-over in mixed designs"
+    lead: file:sec_carryover.html
+    cards: [OST-F1, COORD-1, OST-F5, OST-F2]
+  - id: pitfalls
+    title: "Pitfalls for future designs"
+    lead: >-
+      <p>None of these is triggered by the blab designs we inspected. Each can affect a plausible design, so each card states the
+      settings that trigger it, the safe pattern, and the fix. Examples use the most plausible settings a lab would choose and are
+      marked as hypothetical.</p>
+    cards: [CORPUS-8, CORPUS-10, LIVE-1 / LIVE-2, LIVE-3, LIVE-6, CORPUS-11, I-04, I-02, I-03, OST-F8]
+    short: [PT-2 / I-15, PT-3, PT-4, PT-6, FMT-F4, I-09, CORPUS-3, CORPUS-4, LIVE-4, LIVE-5, LIVE-7, LIVE-8]
+    short_title: "Further pitfalls"
+  - id: robust
+    title: "Robustness"
+    lead: >-
+      <p>Memory reads and writes past the end of an array, and similar defects that need a malformed file or parameter, or an
+      unusual build, to show up. None changes what a participant hears with well-formed settings; each is worth fixing because
+      the failure, when it happens, is silent or a crash.</p>
+    cards: [OST-F4, FMT-F1]
+    short: [H2 / PT-1, I-06 / I-07, OST-F6, COORD-5]
+    short_title: "Further robustness items"
+    compact_title: "Other robustness items"
 
-# Full cards, in report order (cards/<ID>.yaml)
-cards: [OST-F1, OST-F2, I-01, CORPUS-10, LIVE-1 / LIVE-2, CORPUS-8, PT-5, OST-F4, FMT-F1, LIVE-3, LIVE-6, CORPUS-11, COORD-1, I-04, I-02, F6, I-03, OST-F8]
+intro_found: file:intro_found.html
 
 # Short cards: what happens, when it matters, the code, the fix, how we know.
 short:
@@ -171,31 +208,6 @@ short:
       its condition repeats another branch's.
     scope: Affects PCFs that combine pitch shift and time warp. The warp is not applied and nothing warns.
     fix: Change the third condition to <code>warp &gt; 0 &amp;&amp; bIsPitchShift</code>.
-  - id: OST-F5
-    notes: notes/ost-pcf.md#f5
-    sev: med
-    origin: upstream
-    status: R
-    title: >-
-      A PCF pitch shift overwrites the user's pitchShiftRatio, which stays shifted after the PCF is unloaded
-    refs:
-    - repo: blab-mex
-      path: TransShiftMex/Audapter.cpp
-      lines:
-      - 1970
-      - 1974
-      hl:
-      - 1972
-      expect: p.pitchShiftRatio[0] = pow(2.0, pertCfg.pitchShift[stat] / 12.0);
-    verify: By reading; a harness test is proposed in the notes.
-    what: >-
-      With a PCF loaded, every frame writes the PCF's current pitch shift into <code>p.pitchShiftRatio[0]</code>. After <code>Audapter('pcf', '', 0)</code> the phase
-      vocoder keeps using the last written value.
-    scope: >-
-      Affects sessions that run a PCF pitch experiment and then a run without a PCF: the later run is pitch-shifted unless the script sets <code>pitchShiftRatio</code>
-      again, and <code>data.params</code> reports the overwritten value.
-    fix: >-
-      Keep the PCF's ratio in a separate variable. Workaround: set <code>pitchShiftRatio</code> explicitly after unloading a PCF.
   - id: OST-F6
     notes: notes/ost-pcf.md#f6
     sev: med
@@ -391,20 +403,45 @@ short:
       Halve the magnitude of the lowest bin in the phase vocoder, as the formal analysis of the gain shows.
 
 # Other findings: one row each (low severity or narrow conditions). loc = file:line at the pinned blab SHA.
+  - id: COORD-5
+    notes: notes/pitch-time.md
+    sev: low
+    origin: upstream
+    status: H R
+    title: >-
+      A rejected time-warp row terminates the process on Linux, macOS and WebAssembly builds (portability)
+    refs:
+    - repo: blab-mex
+      path: TransShiftMex/pcf.cpp
+      lines: [265, 280]
+      hl: [267, 279]
+      expect: throw(overlappingWarpIntervalsError)
+    verify: >-
+      Harness: a PCF warp row with rate 1 (a "null warp") terminated Octave on Linux; reading of the exception specification.
+    what: >-
+      <code>PERT_CFG::addWarpCfg</code> declares that it throws only <code>overlappingWarpIntervalsError</code>, but it also throws
+      <code>warpCfgInitError</code> when a warp rate is outside its range (rate1 not in (0, 1), or rate2 not above 1). GCC and clang
+      enforce the declaration and terminate the process; MSVC ignores it, so on the lab's Windows rigs MATLAB reports
+      "Failed to initialize time-warping event" instead.
+    scope: >-
+      Not a crash on Windows. It matters for Linux, macOS and browser builds, and for anyone who writes a rate-1 warp row to mean
+      "no warp": that row is rejected rather than treated as a no-op. Use a zero-length warp row instead.
+    fix: Drop the dynamic exception specification (it is deprecated since C++11), or declare both exception types.
+
 compact:
-  - {id: OST-F3, sev: med, origin: upstream, status: H, notes: "notes/ost-pcf.md#f3", loc: "TransShiftMex/ost.cpp:360-365", text: "stat0[i+1] is read past the end on every frame once the last rule is reached; harmless with a trailing OST_END, a silent behaviour change without one"}
-  - {id: OST-F7, sev: med, origin: upstream, status: D, notes: "notes/ost-pcf.md#f7", loc: "TransShiftMex/ost.cpp:256", text: "Sparse or mis-numbered OST states write past statOnsetIndices (sized 4·n); state numbers are never range-checked"}
+  - {id: OST-F3, section: robust, sev: med, origin: upstream, status: H, notes: "notes/ost-pcf.md#f3", loc: "TransShiftMex/ost.cpp:360-365", text: "stat0[i+1] is read past the end on every frame once the last rule is reached; harmless with a trailing OST_END, a silent behaviour change without one"}
+  - {id: OST-F7, section: robust, sev: med, origin: upstream, status: D, notes: "notes/ost-pcf.md#f7", loc: "TransShiftMex/ost.cpp:256", text: "Sparse or mis-numbered OST states write past statOnsetIndices (sized 4·n); state numbers are never range-checked"}
   - {id: OST-F9, sev: med, origin: upstream, status: R, notes: "notes/ost-pcf.md#f9", loc: "TransShiftMex/ost.cpp:531-552", text: "INTENSITY_FALL: the code, its comment and the manual disagree on the rule; the current frame is never examined"}
-  - {id: OST-F10, sev: med, origin: upstream, status: D, notes: "notes/ost-pcf.md#f10", loc: "TransShiftMex/ost.cpp:195", text: "Truncated OST/PCF files dereference end() instead of raising a syntax error; failed reloads leave half-built state"}
-  - {id: OST-F11, sev: low, origin: upstream, status: R, notes: "notes/ost-pcf.md#f11", loc: "TransShiftMex/pcf.cpp:484", text: "PCF time warp indexes statOnsetIndices[ostInitState] without a NULL or range check"}
+  - {id: OST-F10, section: robust, sev: med, origin: upstream, status: D, notes: "notes/ost-pcf.md#f10", loc: "TransShiftMex/ost.cpp:195", text: "Truncated OST/PCF files dereference end() instead of raising a syntax error; failed reloads leave half-built state"}
+  - {id: OST-F11, section: robust, sev: low, origin: upstream, status: R, notes: "notes/ost-pcf.md#f11", loc: "TransShiftMex/pcf.cpp:484", text: "PCF time warp indexes statOnsetIndices[ostInitState] without a NULL or range check"}
   - {id: OST-F12, sev: low, origin: upstream, status: D, notes: "notes/ost-pcf.md#f12", loc: "TransShiftMex/ost.cpp:382", text: "Hold durations differ by one frame between OST modes; RATIO modes use floor without rounding"}
   - {id: OST-F13, sev: low, origin: blab, status: R, notes: "notes/ost-pcf.md#f13", loc: "TransShiftMex/ost.cpp:644", text: "The RMS_FLOOR OST mode hard-codes an absolute RMS floor of 0.0003 and does not set lastStatEnd"}
   - {id: OST-F14, sev: low, origin: upstream, status: R, notes: "notes/ost-pcf.md#f14", loc: "TransShiftMex/Audapter.cpp:1727", text: "RMS ratio is NaN or Inf in digital silence; ratio rules then never trigger"}
   - {id: I-05, sev: low, origin: upstream, status: H, notes: "notes/interface.md#i-05", loc: "TransShiftMex/Audapter.cpp:3027", text: "rms_slope is NaN for the first 14 frames of every trial and is fed to slope-based OST rules"}
   - {id: OST-F16, sev: low, origin: upstream, status: R, notes: "notes/ost-pcf.md#f16", loc: "TransShiftMex/Audapter.cpp:1797", text: "With nWin > 1, osTrack runs nWin times per frame on the same counters"}
-  - {id: FMT-F2, sev: med, origin: blab, status: H, notes: "notes/formant.md#f2", loc: "TransShiftMex/Audapter.cpp:930-953", text: "pertf1 and the 2D fields ignore the MATLAB size; non-257×257 matrices are read out of bounds (part of FMT-F1 / I-08)"}
+  - {id: FMT-F2, section: robust, sev: med, origin: blab, status: H, notes: "notes/formant.md#f2", loc: "TransShiftMex/Audapter.cpp:930-953", text: "pertf1 and the 2D fields ignore the MATLAB size; non-257×257 matrices are read out of bounds (part of FMT-F1 / I-08)"}
   - {id: FMT-F5, sev: low, origin: blab, status: R, notes: "notes/formant.md#f5", loc: "TransShiftMex/Audapter.cpp:1654", text: "clampIx is a function static that reset() does not clear"}
-  - {id: FMT-F7, sev: low, origin: blab, status: F, notes: "notes/formant.md#f7", loc: "TransShiftMex/Audapter.cpp:2675-2701", text: "Two equal neighbouring grid points make locateF1/locateF2 return NaN, used as an INT_MIN array index; proven otherwise memory safe for every grid, sorted or not (FORMAL-9)"}
+  - {id: FMT-F7, section: robust, sev: low, origin: blab, status: F, notes: "notes/formant.md#f7", loc: "TransShiftMex/Audapter.cpp:2675-2701", text: "Two equal neighbouring grid points make locateF1/locateF2 return NaN, used as an INT_MIN array index; proven otherwise memory safe for every grid, sorted or not (FORMAL-9)"}
   - {id: FMT-F8, sev: low, origin: blab, status: R, notes: "notes/formant.md#f8", loc: "TransShiftMex/Audapter.cpp:1816", text: "A zero clamp F2 with nonzero F1 moves the F2 pole to DC"}
   - {id: FMT-F9, sev: low, origin: upstream, status: H, notes: "notes/formant.md#f9", loc: "TransShiftMex/lpc_formant.cpp:816", text: "The tracker's static last_f[] survives trials; no observable effect in our /i/→/a/ test (negative result)"}
   - {id: FMT-F10, sev: low, origin: upstream, status: R, notes: "notes/formant.md#f10", loc: "TransShiftMex/lpc_formant.cpp:833-838", text: "trackPhi reads stale root candidates when fewer complex roots exist than it expects"}
@@ -414,21 +451,21 @@ compact:
   - {id: FMT-F14, sev: low, origin: upstream, status: R, notes: "notes/formant.md#f14", loc: "TransShiftMex/Audapter.cpp:2453-2454", text: "gainAdapt/gainPerturb keep static gain and lastSample across trials"}
   - {id: I-10, sev: med, origin: upstream, status: D, notes: "notes/interface.md#i-10", loc: "TransShiftMex/Audapter.cpp:67-90", text: "No locking between the audio callback and the MATLAB thread; reset() now zeroes about 190 MB. Confirmed and measured on the live path: see LIVE-1 / LIVE-2 and LIVE-3"}
   - {id: I-11, sev: low, origin: upstream, status: R, notes: "notes/interface.md#i-11", loc: "TransShiftMex/Audapter.cpp:1667-1668", text: "A device buffer-size mismatch makes handleBuffer silently do nothing"}
-  - {id: I-12, sev: low, origin: both, status: F, notes: "notes/interface.md#i-12", loc: "TransShiftMex/Audapter.cpp:1651", text: "outputBuf[maxFrameLen] overflows for large frameLen·downFact. The recorder overruns when frameLen does not divide 480000 and a trial reaches about 30 s; proven exact set, of common sizes only 512 (FORMAL-5)"}
+  - {id: I-12, section: robust, sev: low, origin: both, status: F, notes: "notes/interface.md#i-12", loc: "TransShiftMex/Audapter.cpp:1651", text: "outputBuf[maxFrameLen] overflows for large frameLen·downFact. The recorder overruns when frameLen does not divide 480000 and a trial reaches about 30 s; proven exact set, of common sizes only 512 (FORMAL-5)"}
   - {id: I-13, sev: low, origin: upstream, status: R, notes: "notes/interface.md#i-13", loc: "TransShiftMex/Audapter.cpp:1303-1307", text: "Parameter validation runs after assignment, so a rejected value stays live"}
   - {id: I-14, sev: low, origin: upstream, status: R, notes: "notes/interface.md#i-14", loc: "TransShiftMex/Audapter.cpp:522-680", text: "Further state not reset between trials: pbCounter, wgTime, intShiftRatio, function statics (see OST-F1, I-01)"}
   - {id: I-16, sev: low, origin: both, status: R, notes: "notes/interface.md#i-16", loc: "mcode/getAudapterDefaultParams.m:24-26", repo: blab-matlab, text: "MATLAB side: p.downfact typo; closedLoopGain also sets mouthMicDist; nFB/nfb mismatch; datapb and rmsFF_fb not logged in data.params"}
   - {id: I-17, sev: low, origin: blab, status: R, notes: "notes/interface.md#i-17", loc: "mcode/genRandScript.m:26-31", repo: blab-matlab, text: "genRandScript.m rewrite: inverted checks and an undefined variable"}
   - {id: PT-7, sev: low, origin: upstream, status: R, notes: "notes/pitch-time.md#pt-7", loc: "TransShiftMex/Audapter.cpp:2275", text: "stereoMode 2 'simulated TTL' channel for pitch shifts is always 0"}
   - {id: PT-8, sev: low, origin: upstream, status: D, notes: "notes/pitch-time.md#pt-8", loc: "TransShiftMex/time_domain_shifter.cpp:112-130", text: "Time-domain shifter PP_PEAKS/VALLEYS reads about 42 ms stale samples when F0 rises"}
-  - {id: PT-9, sev: low, origin: upstream, status: D, notes: "notes/pitch-time.md#pt-9", loc: "TransShiftMex/time_domain_shifter.cpp:296-302", text: "Time-domain shifter scratch overrun: up to a +21 dB burst after long zero-crossing-free input or strong pitch-down"}
+  - {id: PT-9, section: robust, sev: low, origin: upstream, status: D, notes: "notes/pitch-time.md#pt-9", loc: "TransShiftMex/time_domain_shifter.cpp:296-302", text: "Time-domain shifter scratch overrun: up to a +21 dB burst after long zero-crossing-free input or strong pitch-down"}
   - {id: PT-10, sev: low, origin: upstream, status: D, notes: "notes/pitch-time.md#pt-10", loc: "TransShiftMex/time_domain_shifter.cpp:163-165", text: "Time-domain shifter minor defects: y[0] for y[i], stale audio on resume, ±13 cent quantisation at high F0"}
-  - {id: PT-11, sev: low, origin: upstream, status: R, notes: "notes/pitch-time.md#pt-11", loc: "TransShiftMex/phase_vocoder.cpp:109", text: "Phase-vocoder parameter checks broken (L & hop != 0); hop < frameLen divides by zero"}
+  - {id: PT-11, section: robust, sev: low, origin: upstream, status: R, notes: "notes/pitch-time.md#pt-11", loc: "TransShiftMex/phase_vocoder.cpp:109", text: "Phase-vocoder parameter checks broken (L & hop != 0); hop < frameLen divides by zero"}
   - {id: PT-12, sev: low, origin: blab, status: R, notes: "notes/pitch-time.md#pt-12", loc: "TransShiftMex/Audapter.cpp:748-756", text: "The resampling filter is chosen by sr, not downFact (aliasing for sr 32000 with downFact 3)"}
   - {id: PT-13, sev: low, origin: upstream, status: R, notes: "notes/pitch-time.md#pt-13", loc: "TransShiftMex/Audapter.cpp:1896-1902", text: "Time-domain shifting silently discards formant perturbation and changes the LPC input"}
-  - {id: FORMAL-1, sev: low, origin: upstream, status: F, notes: "formal/README.md#ring", loc: "TransShiftMex/Audapter.cpp:2119-2127", text: "pvocFrameLen smaller than frameLen writes before outFrameBufSum on every frame, even with pitch shift off, corrupting the ring pointer; MATLAB segfaults. Practically unreachable: it also needs pvocHop ≥ frameLen, which the broken parameter check lets through (PT-11)"}
-  - {id: FORMAL-3, sev: low, origin: upstream, status: F, notes: "formal/README.md#ring", loc: "TransShiftMex/Audapter.cpp:2225-2228", text: "The output ring pointer resets to 0 instead of wrapping, so a frameLen that does not divide 1,728,000 writes past the buffer once per 108 s lap and shifts DAF alignment. Very unlikely: every common frameLen divides it, and it needs 108 s without a reset"}
+  - {id: FORMAL-1, section: robust, sev: low, origin: upstream, status: F, notes: "formal/README.md#ring", loc: "TransShiftMex/Audapter.cpp:2119-2127", text: "pvocFrameLen smaller than frameLen writes before outFrameBufSum on every frame, even with pitch shift off, corrupting the ring pointer; MATLAB segfaults. Practically unreachable: it also needs pvocHop ≥ frameLen, which the broken parameter check lets through (PT-11)"}
+  - {id: FORMAL-3, section: robust, sev: low, origin: upstream, status: F, notes: "formal/README.md#ring", loc: "TransShiftMex/Audapter.cpp:2225-2228", text: "The output ring pointer resets to 0 instead of wrapping, so a frameLen that does not divide 1,728,000 writes past the buffer once per 108 s lap and shifts DAF alignment. Very unlikely: every common frameLen divides it, and it needs 108 s without a reset"}
   - {id: FORMAL-7, sev: low, origin: upstream, status: F, notes: "formal/README.md#ola", loc: "TransShiftMex/phase_vocoder.cpp:467", text: "Beyond PT-5: with pvocHop = pvocFrameLen/2 the phase-vocoder gain swings between 1× and 2× at the hop rate (audible amplitude modulation), and content below the first FFT bin gets 5/2 (+8 dB) at every hop ratio. Needs a non-default hop"}
-  - {id: H1, sev: low, origin: upstream, status: H, notes: "notes/harness-findings.md#h1", loc: "TransShiftMex/DSPF.cpp:15", text: "DSPF_dp_blk_move uses memcpy on overlapping ranges (undefined behaviour; works with MSVC's memcpy)"}
-  - {id: WASM-1, sev: low, origin: upstream, status: H, notes: "notes/wasm.md", loc: "TransShiftMex/lpc_formant.cpp:168", text: "The LPC-coefficient columns of the raw data matrix log uninitialised heap memory until the first voiced frame"}
-  - {id: WASM-4, sev: low, origin: upstream, status: R, notes: "notes/wasm.md", loc: "TransShiftMex/Audapter.h:552-638", text: "Members declared with an extra Audapter:: qualification: MSVC and GCC accept it, clang (macOS, WASM) rejects it"}
+  - {id: H1, section: robust, sev: low, origin: upstream, status: H, notes: "notes/harness-findings.md#h1", loc: "TransShiftMex/DSPF.cpp:15", text: "DSPF_dp_blk_move uses memcpy on overlapping ranges (undefined behaviour; works with MSVC's memcpy)"}
+  - {id: WASM-1, section: robust, sev: low, origin: upstream, status: H, notes: "notes/wasm.md", loc: "TransShiftMex/lpc_formant.cpp:168", text: "The LPC-coefficient columns of the raw data matrix log uninitialised heap memory until the first voiced frame"}
+  - {id: WASM-4, section: robust, sev: low, origin: upstream, status: R, notes: "notes/wasm.md", loc: "TransShiftMex/Audapter.h:552-638", text: "Members declared with an extra Audapter:: qualification: MSVC and GCC accept it, clang (macOS, WASM) rejects it"}

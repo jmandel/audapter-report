@@ -29,4 +29,5 @@ c = struct('name', {'input', 'output_mel', 'output_ratio'}, 'x', {D.mel.signalIn
   'label', {'Input: the 2008 recording (Mandarin syllable)', 'Output with mel shift, as in the 2008 session', 'Output with the same parameters under today''s ratio default'}, ...
   'warn', {'', '', 'Very loud: the ratio-mode output is about +24 dB and clips; the clip is scaled down so its peak is at -1 dBFS.'});
 r.audio = report_wavgroup(od, p.sr, c);
+r.settings = report_settings(p, corpus_preset(m), 'switching', 'one trial per shift mode', 'input', m.id);
 report_json(fullfile(od, 'data.json'), r);

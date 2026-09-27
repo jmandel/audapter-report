@@ -1,0 +1,34 @@
+{
+ "card": "CORPUS-10",
+ "source": "Hypothetical design: a session that switches from the default frame settings to the longer window recommended for low voices.",
+ "params": {
+  "bTimeDomainShift": 1,
+  "frameLen": "32, then 64",
+  "nDelay": "5, then 7"
+ },
+ "switching": "one trial, then AudapterIO('init') with the new frame settings, then the same clip again",
+ "input": "vocadito_4 (sung phrase, CC BY 4.0)",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {
+   "btimedomainshift": 1
+  },
+  "shift": {
+   "formant": {
+    "on": false
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": []
+}

@@ -10,7 +10,7 @@
 <a class="skip" href="#findings">Skip to the findings</a>
 <header class="masthead">
   <div class="wrap">
-    <nav class="topnav" aria-label="Report sections"><a href="#intro">Overview</a><a href="#findings">Findings</a><a href="#methods">Methods</a><a href="#credits">Credits</a><a href="playground/">Playground</a></nav>
+    <nav class="topnav" aria-label="Report sections"><a href="#intro">Overview</a><a href="#findings">Findings</a><a href="#current">Current experiments</a><a href="#carryover">Carry-over</a><a href="#pitfalls">Pitfalls</a><a href="#methods">Methods</a><a href="#credits">Credits</a><a href="playground/">Playground</a></nav>
     <h1>{{TITLE}}</h1>
     <dl class="pins">
       <div><dt>By</dt><dd>Claude (Anthropic), at the request of Josh Mandel</dd></div>
@@ -32,43 +32,21 @@
     <li>A <a href="#wasm">browser build</a> lets you rerun several findings on this page, with and without a fix.</li>
   </ul>
   <h2>What we found</h2>
-  <p>The core works: formant shifts deliver what they log, and pitch shifts land within a few cents. The problems, by what they do to an experiment:</p>
-  <ul>
-    <li><strong>State carries over between trials.</strong> After a longer trial, a perturbation meant to end at the speech offset can stay on about 1.2 s too long (<a href="#OST-F1">OST-F1</a>, <a href="#OST-F2">OST-F2</a>).</li>
-    <li><strong>What the participant hears is wrong.</strong> Masking noise goes silent for up to 5 s (<a href="#I-01">I-01</a>); a pitch shift changes loudness when it starts (<a href="#PT-5">PT-5</a>); a <code>reset</code> during speech can click loudly (<a href="#LIVE-3">LIVE-3</a>).</li>
-    <li><strong>Data are silently wrong.</strong> Logged pitch is wrong for low voices (<a href="#CORPUS-8">CORPUS-8</a>); trials over 30 s lose their start (<a href="#I-03">I-03</a>); a leftover PCF switches off a later experiment (<a href="#COORD-1">COORD-1</a>).</li>
-    <li><strong>Sessions crash or hang.</strong> Reloading files while audio runs crashes MATLAB (<a href="#LIVE-1--LIVE-2">LIVE-1 / LIVE-2</a>); a frame-setting change can hang it (<a href="#CORPUS-10">CORPUS-10</a>).</li>
-  </ul>
-  <p>None of these warn. Several are detectable in data you already have, and many cards include a fix you can try on this page.</p>
+{{INTRO_FOUND}}
   <h2>Reading a card</h2>
-  <p>Each card gives what happens, when it matters, a worked example with figure and audio, the size of the effect, the cause, the fix and the evidence. In figures, grey is the input, <span class="lg lg-e">outlined</span> is what should happen and <span class="lg lg-o">solid blue</span> is what happens; orange marks the difference.</p>
+  <p>Each card says what happens, when it matters, and gives an example with the exact settings it used (from a named blab experiment where one exists), a figure, recordings, the size of the effect, the cause, the safe pattern or fix, and the evidence. Figures show two aligned panels: <strong>Expected</strong>, what the design should do, and <strong>Observed</strong>, what Audapter did. Grey boxes are the spoken words, <span class="lg lg-e">outlined</span> blocks are the intended perturbation, <span class="lg lg-o">solid blue</span> blocks are the perturbation Audapter applied, and orange marks the difference. Numbers under the words are measured on the audio you can play, not taken from Audapter's logs.</p>
 </section>
 
 <section id="findings">
-  <h2>Findings</h2>
-  <p class="lead">Ordered by severity, which reflects the consequence for an experiment. Full cards first, then short cards; low-severity items are in a table after the cards.</p>
+  <h2>Findings at a glance</h2>
+  <p class="lead">Grouped as in the report. Severity is our judgement of realistic reach (how likely a real design is to trigger it) times impact on an experiment.</p>
   <div class="tscroll"><table class="findings">
     <thead><tr><th scope="col">ID</th><th scope="col">Severity</th><th scope="col">Finding</th><th scope="col">Verified</th><th scope="col">Since</th></tr></thead>
     <tbody>{{TABLE}}</tbody>
   </table></div>
 </section>
 
-{{CARDS}}
-
-<section id="short" class="short-sec">
-  <h2>Further findings</h2>
-  <p class="lead">Narrower effects, each with its cause and fix.</p>
-  {{SHORT}}
-</section>
-
-<section id="other" class="other-sec">
-  <h2>Other findings</h2>
-  <p class="lead">Low severity or narrow conditions. Details are in the audit notes.</p>
-  <div class="tscroll"><table class="findings compact">
-    <thead><tr><th scope="col">ID</th><th scope="col">Severity</th><th scope="col">Finding</th><th scope="col">Verified</th><th scope="col">Where</th><th scope="col">Since</th></tr></thead>
-    <tbody>{{COMPACT}}</tbody>
-  </table></div>
-</section>
+{{SECTIONS}}
 
 <section id="methods" class="prose">
   <h2>Methods</h2>

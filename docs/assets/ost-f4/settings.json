@@ -1,0 +1,46 @@
+{
+ "card": "OST-F4",
+ "source": "Hypothetical design: a plausible design, not one blab runs; blab's default settings (getAudapterDefaultParams) unless listed.",
+ "preset": "female",
+ "build": "shipped",
+ "params": {
+  "rmsThresh": 0.005,
+  "bShift": 1
+ },
+ "setparam": {},
+ "ost": "rmsSlopeWin = 0.030000\n\nn = 4\n0 INTENSITY_RISE_HOLD 0.01 0.02 {}\n2 ELAPSED_TIME 0.25 NaN {}\n3 INTENSITY_FALL 0.01 0.02 {}\n4 OST_END NaN NaN {}\n\nn = 0\n",
+ "pcf": "0\n\n3\n0, 0, 0, 0, 0\n1, 0, 0, 0, 0\n2, 0, 0, 0.3, 0\n",
+ "sequence": [],
+ "switching": "one trial",
+ "input": "synthetic vowel",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {
+   "rmsthr": 0.005,
+   "bshift": 1
+  },
+  "shift": {
+   "formant": {
+    "on": true,
+    "units": "pct",
+    "f1": 0,
+    "f2": 0,
+    "field": "all"
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "custom",
+   "ost": "rmsSlopeWin = 0.030000\n\nn = 4\n0 INTENSITY_RISE_HOLD 0.01 0.02 {}\n2 ELAPSED_TIME 0.25 NaN {}\n3 INTENSITY_FALL 0.01 0.02 {}\n4 OST_END NaN NaN {}\n\nn = 0\n",
+   "pcf": "0\n\n3\n0, 0, 0, 0, 0\n1, 0, 0, 0, 0\n2, 0, 0, 0.3, 0\n"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": []
+}

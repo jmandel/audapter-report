@@ -45,4 +45,5 @@ k = 1:5:numel(st); r.t = round((k-1) * fr * 1e4) / 1e4;
 r.stat = st(k)'; r.rms = round(d.rms(k,1)' * 1e4) / 1e4; r.sF1 = round(d.sfmts(k,1))';
 r.params = struct('ost', fileread('cfg/report_f4.ost'), 'pcf', fileread('cfg/report_f4.pcf'));
 od = report_outdir('ost-f4');
+r.settings = report_settings(p, 'female', 'ost', fileread('cfg/report_f4.ost'), 'pcf', fileread('cfg/report_f4.pcf'), 'switching', 'one trial', 'input', 'synthetic vowel');
 report_json(fullfile(od, 'data.json'), r);

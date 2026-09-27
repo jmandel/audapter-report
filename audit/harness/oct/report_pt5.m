@@ -52,6 +52,50 @@ for iv = 1:2, for f0 = [100 120 150 180 220 260]
   sw(end+1,:) = [iv, f0, g]; printf('sweep /%s/ F0 %d: 0 st %+.2f dB, +2 st %+.2f dB, step %.2f dB\n', V(iv).name, f0, g(1), g(2), g(2)-g(1));
 end, end
 r.sweep = struct('vowel', {V(sw(:,1)).name}, 'f0', num2cell(sw(:,2))', 'gain0_db', num2cell(round(sw(:,3)*100)/100)', 'gain2_db', num2cell(round(sw(:,4)*100)/100)');
+
+% ---- Main example (EXP-11, COORD-4): a time-warp experiment at blab's timeAdapt settings (free-speech
+% run_measureDuration_audapter.m: sRate 48000, downFact 2 -> 24 kHz, frameLen 48, bPitchShift = 1 "needed if time warping
+% is used"). Perturbed trials carry a PCF time-warp section; control trials either keep a zero-length warp row (the way
+% blab's timeWrap experiment does) or drop the warp section. Same real sentence on every trial; PCF reloaded per trial.
+% fb 1 so that the speech level can be measured without the babble (the babble is added after the vocoder).
+M = corpus_index(); cw = 'arctic_clb_a0018'; xw = corpus_wav(M(strcmp({M.id}, cw))); xw = xw(1:min(end, round(1.75*48000)));
+pw = getAudapterDefaultParams('female'); pw.downFact = 2; pw.sr = 24000; pw.frameLen = 48; pw.bPitchShift = 1; pw.fb = 1;
+WARP = sprintf('1\n0.40, 0.5, 0.2, 0.0, 2.0\n\n1\n0, 0.0, 0, 0, 0\n');
+ZERO = sprintf('1\n0.40, 0.5, 0.0, 0.0, 2.0\n\n1\n0, 0.0, 0, 0, 0\n');
+NONE = sprintf('0\n\n1\n0, 0.0, 0, 0, 0\n');
+pc = {'warp', WARP; 'zero', ZERO; 'none', NONE};
+for i = 1:3, fid = fopen(sprintf('cfg/report_pt5_%s.pcf', pc{i,1}), 'w'); fprintf(fid, '%s', pc{i,2}); fclose(fid); end
+md = '/h/oct/out/report/pt-5/meas'; if ~exist(md, 'dir'), mkdir(md); end
+seqw = {'control', 'warp', 'control', 'warp'};
+for arm = {'exp', 'obs'}
+  AudapterIO('init', pw); Audapter('ost', 'cfg/one.ost', 0);
+  for k = 1:numel(seqw)
+    if strcmp(seqw{k}, 'warp'), f = 'warp'; elseif strcmp(arm{1}, 'exp'), f = 'zero'; else, f = 'none'; end
+    Audapter('pcf', sprintf('cfg/report_pt5_%s.pcf', f), 0);
+    d = run_trial(pw, xw, 'init', false);
+    audiowrite(fullfile(md, sprintf('warp_%s_t%d_out.wav', arm{1}, k)), d.signalOut, pw.sr, 'BitsPerSample', 16);
+    if k == 1, audiowrite(fullfile(md, 'warp_in.wav'), d.signalIn, pw.sr, 'BitsPerSample', 16); end
+    g = 20*log10(rms(d.signalOut(round(0.1*pw.sr):end)) / rms(d.signalIn(round(0.1*pw.sr):end)));
+    printf('warp session %s trial %d (%s, PCF %s): output re input %+.2f dB\n', arm{1}, k, seqw{k}, f, g);
+  end
+end
+Audapter('ost', '', 0); Audapter('pcf', '', 0);
+% the same comparison at the blab defaults (16 kHz, frameLen 32), numbers only
+p16 = getAudapterDefaultParams('female'); p16.bPitchShift = 1; p16.fb = 1; lv16 = struct();
+for f = {'none', 'zero', 'warp'}
+  AudapterIO('init', p16); Audapter('ost', 'cfg/one.ost', 0); Audapter('pcf', sprintf('cfg/report_pt5_%s.pcf', f{1}), 0);
+  d = run_trial(p16, xw, 'init', false);
+  lv16.(f{1}) = 20*log10(rms(d.signalOut(round(0.1*p16.sr):end)) / rms(d.signalIn(round(0.1*p16.sr):end)));
+end
+printf('16 kHz / frameLen 32: no warp section %+.2f dB, zero-length warp row %+.2f dB, warp %+.2f dB\n', lv16.none, lv16.zero, lv16.warp);
+Audapter('ost', '', 0); Audapter('pcf', '', 0);
+r.warp16 = lv16;
+q = pw; q.bPitchShift = 0; d = run_trial(q, xw);            % reference: no vocoder (e.g. the measureFormants calibration)
+audiowrite(fullfile(md, 'warp_ref_out.wav'), d.signalOut, pw.sr, 'BitsPerSample', 16);
+r.warp = struct('clip', cw, 'dur_s', numel(xw) / 48000, 'sequence', {seqw}, 'sr', pw.sr);
+r.settings = report_settings(pw, 'female', 'ost', fileread('cfg/one.ost'), 'pcf', WARP, 'pcf_control', ZERO, ...
+  'sequence', {seqw}, 'switching', 'PCF reloaded before every trial (the warp PCF on perturbed trials; on control trials either a zero-length warp row or no warp section); reset() before every trial', ...
+  'input', sprintf('real speech: CMU ARCTIC %s "There was a change now." (female), first %.2f s', cw, numel(xw) / 48000));
 od = report_outdir('pt-5');
 c = struct('name', {'input_vowel', 'output_bypass', 'output_pitch_step'}, ...
   'x', {dS.signalIn, d0.signalOut, dS.signalOut}, ...

@@ -1,0 +1,38 @@
+{
+ "card": "FMT-F1",
+ "source": "Hypothetical design: a plausible design, not one blab runs; blab's default settings (getAudapterDefaultParams) unless listed.",
+ "preset": "female",
+ "build": "shipped",
+ "params": {
+  "rmsThresh": 0.005
+ },
+ "setparam": {},
+ "ost": "",
+ "pcf": "",
+ "sequence": [],
+ "switching": "one trial per clamp array length",
+ "input": "synthetic vowel",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {
+   "rmsthr": 0.005
+  },
+  "shift": {
+   "formant": {
+    "on": false
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": []
+}

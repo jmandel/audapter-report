@@ -4,7 +4,12 @@ log: I-04
 notes: notes/interface.md#i-04
 headline: >-
   Reprocessing one recording under two conditions applies the second condition to the first condition's output
-severity: med
+severity: low
+reach_kind: pitfall
+reach: >-
+  Not triggered by blab's offline helpers (audapter_viewer, check_audapterLPC), which build fresh frames for every run. Affects offline reprocessing that reuses one frame array for several conditions.
+settings:
+  source: 'Hypothetical design: a plausible design, not one blab runs; blab''s default settings (getAudapterDefaultParams) unless listed.'
 origin: upstream
 status:
 - H

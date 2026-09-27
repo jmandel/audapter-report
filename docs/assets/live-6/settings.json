@@ -1,0 +1,28 @@
+{
+ "card": "LIVE-6",
+ "source": "blab's default frame settings (frameLen 32, downFact 3: 96 samples per buffer) on a sound card that delivers 128-sample buffers, simulated on the live audio path.",
+ "params": {},
+ "switching": "one trial",
+ "input": "a vowel",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {},
+  "shift": {
+   "formant": {
+    "on": false
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": []
+}

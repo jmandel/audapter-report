@@ -4,7 +4,12 @@ log: FMT-F1
 notes: notes/formant.md#f1
 headline: >-
   A clamp trajectory shorter than 2048 values is read as 2048: after it ends, the formant clamp follows whatever lies next in memory
-severity: high
+severity: med
+reach_kind: robust
+reach: >-
+  Not triggered by blab's public code, which does no formant clamping; the settings of blab's clamping experiment were not available to us. Affects clamp trajectories shorter than 2048 values.
+settings:
+  source: 'Hypothetical design: a plausible design, not one blab runs; blab''s default settings (getAudapterDefaultParams) unless listed.'
 origin: blab
 status:
 - H

@@ -4,7 +4,12 @@ log: I-02
 notes: notes/interface.md#i-02
 headline: >-
   In feedback mode 5, the speech-modulated noise is scaled by dScale twice, so the noise mix changes with the rig's calibration
-severity: med
+severity: low
+reach_kind: pitfall
+reach: >-
+  Not triggered: no blab experiment we inspected uses fb 5, which was added to blab in August 2026. Affects any fb 5 design with dScale other than 1.
+settings:
+  source: 'Hypothetical design: a plausible design, not one blab runs; blab''s default settings (getAudapterDefaultParams) unless listed.'
 origin: blab
 status:
 - H
