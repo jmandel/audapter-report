@@ -1,5 +1,5 @@
 M = corpus_index(); m = M(strcmp({M.id}, getenv('SCEN'))); [x, fs] = corpus_wav(m); p0 = defparams(corpus_preset(m)); g = linspace(0,5000,257);
-lo = 200; hi = 700;
+lo = 70; hi = 300;
 printf('passthrough\n'); fflush(stdout); d0 = run_trial(p0, x);
 printf('f0track in\n'); fflush(stdout); tic; fin = corpus_f0track(d0.signalIn, p0.sr, lo, hi); toc
 cases = {0.2, 0; 0.2, -pi/2; 0.2*sqrt(2), 3*pi/4};

@@ -36,8 +36,8 @@ if has live; then
 fi
 if has report; then
   step "report: WASM variants";   audit/report/wasm/build-variants.sh
-  step "report: patch checks";    node audit/report/wasm/check-patches.mjs
   step "report: export + render"; python3 audit/report/build.py --export --single
+  step "report: patch checks";    node audit/report/wasm/check-patches.mjs     # reads the exports above
   step "report: render check";    node audit/report/check-render.mjs
 fi
 if has publish; then

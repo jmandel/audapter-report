@@ -66,6 +66,10 @@ for m = M
     p.bTimeDomainShift = 1; p.pitchLowerBoundHz = lo; p.pitchUpperBoundHz = hi; p.bCepsLift = 1;
     p.timeDomainPitchShiftSchedule = [0, 2^(1/12); 100, 2^(1/12)];
     try
+      % frameLen/nDelay changes do not rebuild the formant tracker (FMT-F15); a stale tracker can feed NaN LPC
+      % coefficients to hqr_roots, which then never terminates (CORPUS finding, repro: corpus_tdshang.m).
+      % Force a rebuild by toggling bCepsLift in a throw-away init.
+      q = p; q.bCepsLift = 1 - p.bCepsLift; AudapterIO('init', q);
       d = run_trial(p, x);
       L = corpus_lag(d.signalIn, d.signalOut, p.sr); so = [d.signalOut(L+1:end); zeros(L, 1)];
       fout = corpus_f0track(so, p.sr, lo, hi * 1.1); nn = min(numel(fin), numel(fout)); fout = fout(1:nn); fi_ = fin(1:nn);
