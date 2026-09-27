@@ -245,10 +245,13 @@ theorem ioi_nonneg (fixed : Bool) (L : List IOI) (stat fc out : Int) (f : Int �
   | nil => simpa using ho
   | cons e L ih =>
     simp only [List.foldl]
-    unfold ioiStep
-    split
-    · rename_i h; exact ih _ _ (by omega)
-    · exact ih _ _ ho
+    by_cases hg : e.s0 ≤ stat ∧ stat < e.s1 ∧ e.exceeds (fc - f e.s0) = true
+    · have : ioiStep fixed stat fc (out, f) e = (e.s1, (ioiStep fixed stat fc (out, f) e).2) := by
+        simp only [ioiStep]; rw [if_pos hg]
+      rw [this]; exact ih _ _ (by omega)
+    · have : ioiStep fixed stat fc (out, f) e = (out, f) := by
+        simp only [ioiStep]; rw [if_neg hg]
+      rw [this]; exact ih _ _ ho
 
 /-- The fixed fold never writes an onset at or below `stat`. -/
 theorem ioi_keeps_low (L : List IOI) (stat fc out : Int) (f : Int → Int) (s : Int) (hs : s ≤ stat) :
@@ -261,7 +264,7 @@ theorem ioi_keeps_low (L : List IOI) (stat fc out : Int) (f : Int → Int) (s : 
     · have : ioiStep true stat fc (out, f) e =
           (e.s1, fun s => if stat < s ∧ s ≤ e.s1 then fc else f s) := by
         simp only [ioiStep]; rw [if_pos hg]; rfl
-      rw [this, ih]; simp only; rw [if_neg (by omega)]
+      rw [this, ih]; show (if stat < s ∧ s ≤ e.s1 then fc else f s) = f s; rw [if_neg (by omega)]
     · have : ioiStep true stat fc (out, f) e = (out, f) := by
         simp only [ioiStep]; rw [if_neg hg]
       rw [this]; exact ih _ _

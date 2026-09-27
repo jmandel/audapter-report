@@ -48,3 +48,9 @@ Be precise and skeptical; do not pad. Verify line numbers.
 - Docker is available (images: audapter-octave). You may pull or build other images, but keep total new
   disk use under ~6 GB (the disk is 97 % full) and remove large intermediate artifacts you no longer need.
 - Never git commit or push anything.
+
+## Standing rule (added 2026-09-27)
+- Do the work yourself, directly with your own tools. Do NOT spawn your own sub-agents or workflows. (A nested
+  sub-agent had all its shell commands blocked by the permission check; direct work has not been blocked.)
+- If a command of yours is denied, do not route it through another agent or disguise it. Stop that step,
+  record what was blocked and why it was needed in your notes, and report it to the coordinator.

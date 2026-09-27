@@ -5,7 +5,7 @@ Every snippet is copied byte-for-byte from the pinned source (blab audapter_mex 
 line range, and its SHA-256 is compared with the value recorded below, so any edit to the
 source makes this script fail instead of silently checking stale code.
 
-Three mechanical transforms may be applied (each is listed in the README):
+Four mechanical transforms may be applied (each is listed in the README):
   1. loop -> one nondeterministic iteration: `for (V = a; V < b; V++)` (or `<=`) becomes a
      loop that runs its body once, for an arbitrary V in the same range (and not at all if the
      range is empty).  Indices in these loops do not depend on earlier iterations, so checking
@@ -13,6 +13,7 @@ Three mechanical transforms may be applied (each is listed in the README):
   2. access recording ("char" variant): `outFrameBufPS[A][B]`, `outFrameBufSum[B]` become
      `(*ACC_PS(A, B))`, `(*ACC_SUM(B))`, which record the index before the access so a harness
      can state exactly when it is out of bounds.
+  4. C++ `static_cast<T>(x)` becomes the C cast `(T)(x)` (arithmetic types only).
   3. fixes ("fixed" variant): exact string replacements, each required to match exactly once.
 """
 import hashlib, os, re, sys
@@ -44,6 +45,8 @@ SNIPPETS = {
     # counter increments and the recorder wrap condition (the body calls sprintf/threads, so only
     # the condition line is taken; the harness supplies `{ frame_counter=0; data_counter=0; }`)
     'fc_step':       (2304, 2307, None, [], []),
+    # 2D/1D perturbation-field grid lookup (body of Audapter::locateF1, after the signature line)
+    'locateF1':      (2676, 2701, None, [], []),
 }
 
 HASHES_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'snippet-hashes.txt')
@@ -117,6 +120,8 @@ def main():
                 assert fixed.count(old) == 1, (name, old)
                 fixed = fixed.replace(old, new)
         for suffix, body in [('', verb), ('.fixed', fixed)]:
+            # transform 4: C++ `static_cast<T>(x)` -> C `(T)(x)` (same semantics for arithmetic types)
+            body = re.sub(r'static_cast<(\w+)>\(', r'(\1)(', body)
             t = nondet_loops(body, loopvars)
             open(os.path.join(OUT, f'{name}{suffix}.inc'), 'w').write(hdr + t)
             open(os.path.join(OUT, f'{name}{suffix}.char.inc'), 'w').write(hdr + record_accesses(t))

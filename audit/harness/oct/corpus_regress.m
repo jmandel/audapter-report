@@ -23,6 +23,9 @@ for m = M
   end
   d = run_trial(p, x);
   n = min(size(d.fmts, 1), size(G.fmts, 1)); A = d.fmts(1:n, 1:2); B = double(G.fmts(1:n, 1:2));
+  if ~any(B(:,1) > 0)
+    printf('SKIP  corpus regress %s: the online log has no formant track (saved rmsThresh = %g, so no frame passed the threshold online); its OST file is not shipped\n', m.id, G.params.rmsThresh); continue;
+  end
   % align: find frame lag maximizing agreement of the voiced masks
   best = -1; lag = 0;
   for L = -20:20
@@ -37,6 +40,16 @@ for m = M
     S = circshift(d.sfmts(1:n, 1:2), lag); So = double(G.sfmts(1:n, 1:2)); ok2 = S(:,1) > 0 & So(:,1) > 0;
     r1 = S(ok2,:) ./ A(ok2,:); r0 = So(ok2,:) ./ B(ok2,:);
     printf('    shift ratio sfmts/fmts: online median F1 %.3f F2 %.3f | replay F1 %.3f F2 %.3f (shifted frames online %d, replay %d)\n', median(r0), median(r1), nnz(So(:,1) > 0), nnz(S(:,1) > 0));
+  end
+  if isfield(G.params, 'bShift') && G.params.bShift
+    % the 2008 params carry no bRatioShift/bMelShift; merged into today's MATLAB defaults they mean "ratio".
+    % Replay under both interpretations (C++ defaults = mel/absolute, which the 2008 binary used).
+    for mode = {'ratio (MATLAB default)', 1, 0; 'mel (C++ default)', 0, 1}'
+      q = p; q.bRatioShift = mode{2}; q.bMelShift = mode{3}; dq = run_trial(q, x); k = dq.sfmts(:,1) > 0;
+      printf('    replay as %-22s: sfmts/fmts F1 %.3f, max sfmts F1 %.0f Hz, shifted frames %d (frames %d-%d), out/in level %+.1f dB, peak %.2f\n', mode{1}, ...
+        median(dq.sfmts(k,1) ./ dq.fmts(k,1)), max(dq.sfmts(:,1)), nnz(k), find(k, 1), find(k, 1, 'last'), 20*log10(rms(dq.signalOut)/rms(dq.signalIn)), max(abs(dq.signalOut)));
+    end
+    k = G.sfmts(:,1) > 0; printf('    online log (%-18s): sfmts/fmts F1 %.3f, shifted frames %d (frames %d-%d)\n', 'original session', median(G.sfmts(k,1) ./ G.fmts(k,1)), nnz(k), find(k, 1), find(k, 1, 'last'));
   end
   T(sprintf('corpus regress %s: replay tracks online F1/F2 within 5%% (median)', m.id), all(median(e) < 0.05), 'F1 %.1f%% F2 %.1f%%', 100*median(e));
 end

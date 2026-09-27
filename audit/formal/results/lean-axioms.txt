@@ -1,0 +1,4 @@
+'Ost.trial_independent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Ost.Cex.ce1_leak' depends on axioms: [propext]
+'Ost.Cex.ce2_bug_drift' depends on axioms: [propext]
+'Ost.ruleStep_shape' depends on axioms: [propext, Quot.sound]

@@ -244,10 +244,10 @@ int main(void) {
 
 #ifdef DEMO_FAIL    /* expected FAIL: original code, full parameter domain, with bounds checks on */
     if (sel == 1) {
-#include "extracted/pvoc_ola.inc"
+#include "extracted/pvoc_ola.char.inc"
     }
     if (sel == 2 && sumOK) {
-#include "extracted/optr_sum.inc"
+#include "extracted/optr_sum.char.inc"
     }
 #endif
     return 0;

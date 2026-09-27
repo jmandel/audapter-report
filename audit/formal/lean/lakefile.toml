@@ -1,5 +1,8 @@
 name = "ost"
-defaultTargets = ["Ost"]
+defaultTargets = ["Ost", "OstCex"]
 
 [[lean_lib]]
 name = "Ost"
+
+[[lean_lib]]
+name = "OstCex"
