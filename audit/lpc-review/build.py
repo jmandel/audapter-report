@@ -121,23 +121,26 @@ def spectro_png(tok, path):
 
 def score_svg(scores, preset, chosen, best):
     W, H, X0, Y0 = 720, 230, 46, 16; n = len(ORDERS); bw = (W - X0 - 10) / n
-    top = max(s["cost"] for s in scores.values()) * 1.12; y = lambda v: Y0 + (H - Y0 - 40) * (1 - v / top)
+    # scale to the orders that matter: cap at 4x the default's cost; taller bars are cut and marked
+    top = min(max(s["cost"] for s in scores.values()), 4 * scores[preset]["cost"]) * 1.12
+    y = lambda v: Y0 + (H - Y0 - 40) * (1 - min(v, top) / top)
     out = []
     for g in np.linspace(0, top, 5)[1:]:
-        out.append(f'<line class="sk-grid" x1="{X0}" x2="{W-10}" y1="{y(g):.1f}" y2="{y(g):.1f}"/><text class="sk-tick" x="{X0-6}" y="{y(g)+4:.1f}" text-anchor="end">{g:.0f}</text>')
+        out.append(f'<line class="sk-grid" x1="{X0}" x2="{W-10}" y1="{y(g):.1f}" y2="{y(g):.1f}"/><text class="sk-tick" x="{X0-6}" y="{y(g)+4:.1f}" text-anchor="end">{g:.1f}</text>')
     thr = MARGIN * scores[preset]["cost"]
     out.append(f'<line class="sk-thr" x1="{X0}" x2="{W-10}" y1="{y(thr):.1f}" y2="{y(thr):.1f}"/>'
-               f'<text class="sk-tick" x="{W-12}" y="{Y0-4}" text-anchor="end">dotted line: cost an order must beat to replace the preset (0.85 × preset)</text>')
+               f'<text class="sk-tick" x="{W-12}" y="{Y0-4}" text-anchor="end">dotted line: the cost an order must beat to replace the default (0.85 × default)</text>')
     for i, o in enumerate(ORDERS):
         s = scores[o]; x0 = X0 + i * bw + 4; acc = 0
         for part, cls in zip(s["parts"], ("sk-pA", "sk-pB", "sk-pC")):
             if part <= 0: continue
             out.append(f'<rect class="{cls}" x="{x0:.1f}" y="{y(acc + part):.1f}" width="{bw-8:.1f}" height="{y(acc) - y(acc + part):.1f}"/>'); acc += part
+        if s["cost"] > top: out.append(f'<text class="sk-tick" x="{x0 + (bw-8)/2:.1f}" y="{Y0+10}" text-anchor="middle">▲ {s["cost"]:.0f}</text>')
         cls = "sk-chosen" if o == chosen else ("sk-preset" if o == preset else "")
         if cls: out.append(f'<rect class="{cls}" x="{x0-2:.1f}" y="{y(acc)-2:.1f}" width="{bw-4:.1f}" height="{y(0)-y(acc)+4:.1f}" rx="2"/>')
         out.append(f'<text class="sk-tick" x="{x0 + (bw-8)/2:.1f}" y="{H-24}" text-anchor="middle">{o}</text>')
-        tag = "chosen" if o == chosen else ("preset" if o == preset else ("best" if o == best else ""))
-        if o == chosen and o == preset: tag = "preset, kept"
+        tag = "used" if o == chosen else ("default" if o == preset else ("best" if o == best else ""))
+        if o == chosen and o == preset: tag = "default, kept"
         if tag: out.append(f'<text class="sk-tag{" on" if o == chosen else ""}" x="{x0 + (bw-8)/2:.1f}" y="{H-8}" text-anchor="middle">{tag}</text>')
     out.append(f'<text class="sk-axlab" x="{X0}" y="{Y0-4}">cost (lower is better)</text>')
     return f'<svg class="sketch" viewBox="0 0 {W} {H}" role="img" aria-label="Cost of each LPC order">{"".join(out)}</svg>'
@@ -174,9 +177,11 @@ def build(runs):
         data[tid] = td
         rows = "".join(f'<tr class="{"chosen" if o == chosen else ""}{" preset" if o == preset else ""}"><td>{o}</td><td>{s["A"]:.1f}</td><td>{s["B"]:.1f}</td>'
                        f'<td>{"–" if s["C"] is None else f"{s["C"]:.1f}"}</td><td>{s["cost"]:.1f}</td></tr>' for o, s in scores.items())
-        verdict = (f"The preset ({preset}) is kept: the best order, {best}, is {gain:.0f}% better, short of the 15% needed." if chosen == preset and best != preset
-                   else f"The preset ({preset}) is already the best order." if chosen == preset
-                   else f"Order {chosen} replaces the preset ({preset}): it is {gain:.0f}% better.")
+        g = (re.search(r"perceived (female|male)", meta.get("note", "")) or [None, ""])[1]
+        dname = f"the {g} default ({preset})" if g else f"the default ({preset})"
+        verdict = (f"Keeps {dname}: order {best} scores {gain:.0f}% better, short of the 15% needed to switch." if chosen == preset and best != preset
+                   else f"Keeps {dname}: it is already the best order." if chosen == preset
+                   else f"Switches from {dname} to order {chosen}, which scores {gain:.0f}% better.")
         summary.append(f'<tr><td>{E(meta.get("name", talker))}</td><td>{E(str(meta.get("gender") or (re.search(r"perceived (female|male)", meta.get("note", "")) or [None, ""])[1]))}</td><td>{preset}</td><td>{best}</td>'
                        f'<td><b>{chosen}</b></td><td>{gain:.0f}%</td><td>{"yes" if chosen != preset else "no"}</td></tr>')
         tabs.append(f'<button type="button" data-t="{tid}"{" class=on" if not tabs else ""}>{E(meta.get("name", talker))}</button>')
@@ -189,16 +194,17 @@ is the order used.</p>
 {score_svg(scores, preset, chosen, best)}
 <p class="legend"><span class="lg pA"></span>tracking error against Praat (×0.5)
 <span class="lg pB"></span>track jumps (×0.25) <span class="lg pC"></span>vowel-cluster spread (×0.25)
-<span class="lg chosen"></span>used <span class="lg preset"></span>preset</p>
+<span class="lg chosen"></span>used <span class="lg preset"></span>default (from the male/female setting)</p>
 <details><summary>Scores by order</summary><table class="scores"><tr><th>order</th><th>A, error %</th><th>B, jumps %</th><th>C, spread %</th><th>cost</th></tr>{rows}</table></details>
 <h2>What each order does to the tracks</h2>
-<div class="orders" data-t="{tid}">{''.join(f'<button type="button" data-o="{o}" class="{"on" if o == chosen else ""}">{o}{" · preset" if o == preset else ""}{" · used" if o == chosen and o != preset else ""}</button>' for o in ORDERS)}</div>
-<p class="legend"><span class="lg trk"></span>Audapter's F1, F2 at the selected order <span class="lg ref"></span>Praat (independent reference)
+<div class="orders" data-t="{tid}">{''.join(f'<button type="button" data-o="{o}" class="{"on" if o == chosen else ""}">{o}{" · default" if o == preset else ""}{" · used" if o == chosen else ""}</button>' for o in ORDERS)}</div>
+<p class="legend"><span class="lg trk"></span>Audapter's F1, F2 at the selected order <span class="lg dft"></span>at the default order
+<span class="lg ref"></span>Praat (independent reference)
 <span class="lg nuc"></span>middle of the vowel (where accuracy is scored)</p>
 <div class="tokens" id="{tid}-tokens"></div>
 <h3>Vowel clusters at the selected order</h3>
 <div class="scatter" id="{tid}-scatter"></div>
-<p class="note">Re-running the preset order reproduces the tracks Audapter logged in the experiment to within {dev:.2g} Hz.</p>
+<p class="note">Re-running the default order reproduces the tracks Audapter logged in the experiment to within {dev:.2g} Hz.</p>
 </section>""")
     page = (TEMPLATE.replace("{{TABS}}", "".join(tabs)).replace("{{SECTIONS}}", "\n".join(sections))
             .replace("{{SUMMARY}}", "".join(summary)).replace("{{DATA}}", json.dumps(data, separators=(",", ":"))))
@@ -232,9 +238,9 @@ svg.sketch { width: 100%; height: auto; display: block; margin: 8px 0; font-fami
 .lg.pA { background: var(--pA); } .lg.pB { background: var(--pB); } .lg.pC { background: var(--pC); }
 .lg.chosen { border: 2.5px solid var(--observed); } .lg.preset { border: 1.5px dashed var(--ink-2); }
 .lg.trk { height: 0; border-top: 3px solid var(--observed); width: 18px; vertical-align: 3px; } .lg.ref { height: 0; border-top: 2px dashed var(--ink); width: 18px; vertical-align: 3px; }
-.lg.nuc { background: rgba(42,120,214,.12); }
+.lg.nuc { background: rgba(42,120,214,.12); } .lg.dft { height: 0; border-top: 3px solid #aab2bb; width: 18px; vertical-align: 3px; }
 table { border-collapse: collapse; font-size: .9em; margin: 10px 0; } th, td { border-top: 1px solid var(--rule); padding: 3px 14px 3px 0; text-align: left; }
-table.scores tr.chosen td { font-weight: 700; color: var(--observed); } table.scores tr.preset td:first-child::after { content: " (preset)"; font-weight: 400; color: var(--ink-3); }
+table.scores tr.chosen td { font-weight: 700; color: var(--observed); } table.scores tr.preset td:first-child::after { content: " (default)"; font-weight: 400; color: var(--ink-3); }
 details { margin: 8px 0; font-size: .9em; } summary { cursor: pointer; color: var(--ink-2); }
 .tokens { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
 .tok figcaption { font-size: .85em; color: var(--ink-2); display: flex; justify-content: space-between; align-items: center; }
@@ -247,19 +253,18 @@ details { margin: 8px 0; font-size: .9em; } summary { cursor: pointer; color: va
 <p><a href="../">← Audapter report</a> · <a href="../voices-demo/">coAdapt with realistic voices</a></p>
 <h1>How the LPC order was chosen for each simulated participant</h1>
 <p class="lede">Before an experiment, a blab experimenter checks the order of Audapter's formant tracker (the LPC order).
-The male/female preset gives a starting value; the experimenter then opens the lab's LPC-check tool on a few pretest
+The male/female setting, which the experimenter picks from the participant's apparent height, gives a default order (17 for male, 15 for female); the experimenter then opens the lab's LPC-check tool on a few pretest
 recordings, tries orders 10 to 20, and keeps the one whose formant tracks follow the formants and whose vowels form tight,
 separate clusters.</p>
 <p class="lede">Our simulated experimenter does this with a fixed rule, written down before it was run. For each order it
 scores three things: how far Audapter's F1 and F2 are from an independent Praat measurement over the middle of each
 vowel (half the weight), how often the tracks jump (a quarter), and how spread out each vowel's cluster is relative to
-the distance between vowels (a quarter). Like an experimenter, it keeps the preset unless another order is clearly
+the distance between vowels (a quarter). Like an experimenter, it keeps the default unless another order is clearly
 better: at least 15% lower cost. The talkers are AI-generated voices (OpenAI gpt-audio-1.5) saying the pretest words of
 the lab's coAdapt experiment.</p>
-<p class="lede">Use this page to judge whether the choices look right: pick a talker, step through the orders, and watch
-the blue tracks against the dashed Praat reference.</p>
+<p class="lede">Use this page to judge whether the choices look right: pick a talker, step through the orders, and compare the blue tracks with the grey default and the dashed Praat reference.</p>
 <h2>All talkers</h2>
-<table><tr><th>talker</th><th>gender</th><th>preset</th><th>lowest cost</th><th>used</th><th>best vs preset</th><th>changed?</th></tr>{{SUMMARY}}</table>
+<table><tr><th>talker</th><th>male/female setting</th><th>default order</th><th>lowest-cost order</th><th>order used</th><th>best vs default</th><th>changed from default?</th></tr>{{SUMMARY}}</table>
 <nav class="talkers">{{TABS}}</nav>
 {{SECTIONS}}
 <script>
@@ -276,7 +281,7 @@ function drawTokens(tid, o) {
     s.appendChild(el('rect', { x: tk.nucleus[0] / tk.dur * w, y: 0, width: (tk.nucleus[1] - tk.nucleus[0]) / tk.dur * w, height: h, fill: 'rgba(42,120,214,.07)' }));
     s.appendChild(el('rect', { x: tk.mid[0] / tk.dur * w, y: 0, width: (tk.mid[1] - tk.mid[0]) / tk.dur * w, height: h, fill: 'rgba(42,120,214,.12)' }));
     [1, 2].forEach(function (i) {
-      s.appendChild(el('path', { d: path(tk.praat, i, w, h, tk.dur), fill: 'none', stroke: '#1d2530', 'stroke-width': 1.6, 'stroke-dasharray': '5 3', 'vector-effect': 'non-scaling-stroke' }));
+      s.appendChild(el('path', { d: path(tk.praat, i, w, h, tk.dur), fill: 'none', stroke: '#1d2530', 'stroke-width': 1.6, 'stroke-dasharray': '5 3', 'vector-effect': 'non-scaling-stroke' }));      if (String(o) !== String(DATA[tid].preset)) s.appendChild(el('path', { d: path(tk.tracks[DATA[tid].preset], i, w, h, tk.dur), fill: 'none', stroke: '#aab2bb', 'stroke-width': 3, 'vector-effect': 'non-scaling-stroke' }));
       s.appendChild(el('path', { d: path(tk.tracks[o], i, w, h, tk.dur), fill: 'none', stroke: '#2a78d6', 'stroke-width': 2.4, 'vector-effect': 'non-scaling-stroke' }));
     });
     fig.querySelector('.plot').appendChild(s);
