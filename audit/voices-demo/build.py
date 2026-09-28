@@ -85,10 +85,25 @@ def lpc_formants(x, sr, hop, order=12):
     return t, F
 
 
+def replay_ok(t):
+    """Use the voice-only replay only if the heard mix minus the replay is pure masking noise: no trace of the voice
+    (|correlation with the replay| < 0.05) and no louder than the noise alone before the word (+2 dB; babble is not steady, so quieter is fine). Audapter's
+    own checks (identical input and formant logs) are made when the replay is recorded."""
+    v, y, x, sr = t["v"], t["y"], t["x"], t["sr"]
+    if v is None: return False
+    n = min(len(v), len(y)); v, y = v[:n], y[:n]; res = y - v
+    W = int(0.02 * sr); env = np.sqrt(np.convolve(x[:n] ** 2, np.ones(W) / W, "same")); voiced = env > env.max() * 0.1
+    first = np.argmax(voiced); quiet = slice(0, max(W, first - W))
+    if voiced.sum() < W or first < 3 * W: return False
+    c = abs(np.dot(res[voiced], v[voiced])) / (np.linalg.norm(res[voiced]) * np.linalg.norm(v[voiced]) + 1e-12)
+    lv = 20 * np.log10(np.sqrt(np.mean(res[voiced] ** 2)) / (np.sqrt(np.mean(y[quiet] ** 2)) + 1e-12))
+    return bool(c < 0.05 and lv < 2.0)
+
+
 def measured_shift(t):
     """F1 shift measured independently: LPC on the clean heard voice minus LPC on the spoken signal, over the frames
     Audapter shifted (or all tracked frames). None without a clean heard voice."""
-    if t["v"] is None: return None, None
+    if not replay_ok(t): return None, None
     sr, fl = t["sr"], t["fl"]; tf = (np.arange(len(t["fm"])) + 0.5) * fl / sr; ok = t["fm"][:, 0] > 0
     sh = ok & (t["sf"][:, 0] > 0) & (np.abs(t["sf"][:, 0] - t["fm"][:, 0]) > 0.5); sel = sh if sh.any() else ok
     ti, Fi = lpc_formants(t["x"], sr, fl / sr); to, Fo = lpc_formants(t["v"], sr, fl / sr); n = min(len(Fi), len(Fo))
@@ -153,8 +168,7 @@ def trial_png(t, path, prog, meas=None):
     vmax = 20 * np.log10(max(np.abs(x).max(), np.abs(y).max(), 1e-6))
     ok = t["fm"][:, 0] > 0
     sh = (t["sf"][:, 0] > 0) & ok & ((np.abs(t["sf"][:, 0] - t["fm"][:, 0]) > 0.5) | (np.abs(t["sf"][:, 1] - t["fm"][:, 1]) > 0.5))
-    hv = t["v"] if t["v"] is not None else y
-    for ax, sig, lab in ((axs[0], x, "spoken (into Audapter)"), (axs[1], hv, "heard voice (masking noise left out)" if t["v"] is not None else "heard")):
+    for ax, sig, lab in ((axs[0], x, "spoken (into Audapter)"), (axs[1], y, "heard")):
         ax.specgram(sig + 1e-7, NFFT=int(0.032 * sr), Fs=sr, noverlap=int(0.028 * sr), cmap="Greys", vmin=vmax - 100, vmax=vmax - 25)
         ax.set_ylim(0, 3500); ax.set_ylabel("Hz", fontsize=8)
         ax.text(0.01, 0.93, lab, transform=ax.transAxes, fontsize=8.5, va="top", family="serif",
@@ -172,7 +186,7 @@ def trial_png(t, path, prog, meas=None):
         if meas is not None:
             to, Fo = meas; keep = np.interp(to, tf, ok.astype(float)) > 0.5
             axs[1].plot(to[::4], np.where(keep, Fo[:, j], np.nan)[::4], "o", ms=3.6, mfc="white", mew=0.9, color="#17457f", zorder=5,
-                        label="measured on the heard voice" if j == 0 else None)
+                        label="measured independently (noise-free replay)" if j == 0 else None)
     for ax in axs:
         ax.legend(loc="upper right", markerscale=2.5, framealpha=0.9, prop=dict(family="serif", size=7.5))
         ax.tick_params(labelsize=7.5)
@@ -250,7 +264,6 @@ def build(runs):
             write_wav(os.path.join(OUT, "assets", base + "_out.wav"), t["y"], t["sr"])
             ms, mtrack = measured_shift(t)
             trial_png(t, os.path.join(OUT, "assets", base + ".png"), programmed(r), mtrack)
-            if t["v"] is not None: write_wav(os.path.join(OUT, "assets", base + "_voice.wav"), t["v"], t["sr"])
             pr = programmed(r); hs = applied_shift_mel(r); lv = num(r, "gain_dB")
             ok = t["fm"][:, 0] > 0; sh = ok & (t["sf"][:, 0] > 0) & (np.abs(t["sf"][:, 0] - t["fm"][:, 0]) > 0.5)
             fi = float(np.median(t["fm"][sh if sh.any() else ok, 0])) if ok.any() else None
@@ -258,7 +271,7 @@ def build(runs):
             stat = (f"F1 {fi:.0f} Hz spoken, {fo:.0f} Hz heard: Audapter shifted it {hs:+.0f} mel" if sh.any() else
                     (f"F1 {fi:.0f} Hz, not shifted" if fi else "No voice tracked"))
             stat += f' (programmed: {"no shift" if pr == 0 else f"{pr:+.0f} mel"})'
-            stat += f"; measured on the heard voice {ms:+.0f} mel." if ms is not None else "." 
+            stat += f"; measured independently {ms:+.0f} mel." if ms is not None else "." 
             if lv is not None: stat += f" Heard level {lv - ref:+.1f} dB relative to unshifted trials."
             flag = (hs is not None and abs(hs - pr) > SHIFT_TOL_MEL) or (lv is not None and abs(lv - ref) > LEVEL_TOL_DB)
             cards.append(f"""
@@ -268,7 +281,6 @@ def build(runs):
   <div class="audio">
     <label><span class="role input">spoken</span><audio controls preload="none" src="assets/{base}_in.wav"></audio></label>
     <label><span class="role observed">heard</span><audio controls preload="none" src="assets/{base}_out.wav"></audio></label>
-    {f'<label><span class="role observed">heard voice only</span><audio controls preload="none" src="assets/{base}_voice.wav"></audio></label>' if t["v"] is not None else ''}
   </div>
   <p class="meas{' flag' if flag else ''}">{E(stat)}</p>
 </figure>""")
@@ -285,15 +297,17 @@ programmed for it:</p>
 <p class="legend"><span class="lg exp"></span>expected <span class="lg obs"></span>observed
 <span class="lg disc"></span>differs from expected by more than {SHIFT_TOL_MEL:.0f} mel or {LEVEL_TOL_DB:.0f} dB</p>
 <table class="hold"><caption>Hold phase (full-strength shift), medians</caption>
-<tr><th>word</th><th>programmed</th><th>F1 shift applied</th><th>measured on the heard voice</th><th>heard level vs unshifted</th><th>trials</th></tr>
+<tr><th>word</th><th>programmed</th><th>F1 shift applied</th><th>measured independently</th><th>heard level vs unshifted</th><th>trials</th></tr>
 {''.join(summ)}</table>
 <details><summary>Audapter settings used</summary>{settings_html(load_trial(run, int(main[0]['k']))['params'])}</details>
 <h2>Individual trials</h2>
 <p>One trial per phase and word. In each figure, the top panel is what the participant said and the bottom panel what
 they heard; the grey band marks where Audapter shifted the formants. The solid blue formants are
-the ones Audapter logged producing. The hollow circles are an independent measurement on the heard voice with the masking
-noise left out (the trial replayed through Audapter with identical input and settings, voice only); expect it to scatter by
-some tens of mel on higher voices, whose harmonics are widely spaced.</p>
+the ones Audapter logged producing. The hollow circles are an independent check measured on the audio. Because the masking noise
+spoils formant measurement, the check uses a noise-free copy of the heard voice: the trial run through Audapter again with
+the same input and settings but no noise, and used only when that copy matches the heard audio apart from the noise. The
+figures and players always show what the participant actually heard. Expect the check to scatter by some tens of mel on
+higher voices, whose harmonics are widely spaced.</p>
 {''.join(cards)}
 </section>""")
     page = TEMPLATE.replace("{{TABS}}", "".join(tabs)).replace("{{SECTIONS}}", "\n".join(sections))
