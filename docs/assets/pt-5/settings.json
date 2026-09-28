@@ -1,6 +1,6 @@
 {
  "card": "PT-5",
- "source": "Hypothetical design (the settings of an unused Audapter runner in blab's cerebTypicalProduction folder; the experiment as wired records through Psychtoolbox and plays no Audapter feedback): 24 kHz, downFact 2, frameLen 32 (the default), nDelay 3, no OST or PCF; bPitchShift 0 in the baseline phase, 1 in later phases. fb 1 so the speech level can be measured without the babble. Part B of the figure uses blab's timeAdapt settings (24 kHz, frameLen 48); its settings are in the export's data.json (warp).",
+ "source": "blab's timeWrap and cerebTimeAdapt experiments (settings only): 24 kHz (sRate 48000, downFact 2), frameLen 32 (the default), nDelay 3; pre phase bPitchShift 0 and no PCF, later phases bPitchShift 1 and a PCF with a warp row on every trial (the warp timings here are illustrative). fb 1 so the speech level can be measured without the babble. Parts B and C use the timeAdapt and hypothetical settings in the export's data.json (warp, cereb).",
  "preset": "female",
  "build": "shipped",
  "params": {
@@ -10,14 +10,14 @@
   "bPitchShift": 1
  },
  "setparam": {},
- "ost": "",
- "pcf": "",
+ "ost": "# one state\nrmsSlopeWin = 0.030000\n\nn = 1\n0 OST_END NaN NaN {}\n\nn = 0\n",
+ "pcf": "1\n0.40, 0.5, 0.0, 0.0, 2.0\n\n1\n0, 0.0, 0, 0, 0\n",
  "sequence": [
-  "baseline: bPitchShift 0",
-  "later phases: bPitchShift 1"
+  "pre phase: bPitchShift 0, no PCF",
+  "later phases: bPitchShift 1 with a warp-row PCF"
  ],
- "switching": "phase change: bPitchShift 0 in the baseline, 1 afterwards; no OST or PCF",
- "input": "real speech: CMU ARCTIC arctic_clb_a0018 \"There was a change now.\" (female), first 1.75 s",
+ "switching": "pre phase: bPitchShift 0 and no PCF; later phases: bPitchShift 1 and a PCF with a warp row on every trial (zero-length on control trials)",
+ "input": "real speech: CMU ARCTIC arctic_clb_a0018 \"There was a change now.\" (female), first 1.75 s; clicks (Hann, 1 ms) for latency",
  "playground": {
   "v": 1,
   "preset": "female",
@@ -39,7 +39,9 @@
    }
   },
   "when": {
-   "mode": "always"
+   "mode": "custom",
+   "ost": "# one state\nrmsSlopeWin = 0.030000\n\nn = 1\n0 OST_END NaN NaN {}\n\nn = 0\n",
+   "pcf": "1\n0.40, 0.5, 0.0, 0.0, 2.0\n\n1\n0, 0.0, 0, 0, 0\n"
   },
   "hear": {
    "fb": 1

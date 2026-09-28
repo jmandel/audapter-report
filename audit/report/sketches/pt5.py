@@ -65,11 +65,34 @@ def cereb_spec(d):
             "between": {1: "phase change"}, "callout": "From the first vocoder phase on, the voice is played 3.5 dB louder", "callout_anchor": "end"}
 
 
+def tw_levels(d):
+    md = os.path.join(d["_dir"], "meas"); dur = d["warp"]["dur_s"]
+    lin = M.span(os.path.join(md, "tw_in.wav"), 0.1, dur, "level", inner=1.0)
+    return {k: M.span(os.path.join(md, f"tw_{f}_out.wav"), 0.1, dur, "level", inner=1.0) - lin for k, f in (("pre", "pre"), ("later", "later"), ("warp", "later_warp"))}
+
+
+def tw_spec(d):
+    lv = tw_levels(d); dur = d["warp"]["dur_s"]; trials = []
+    for n, (tag, key) in enumerate((("pre phase", "pre"), ("later phases", "later"))):
+        tr = {"n": n + 1, "tag": tag, "dur": dur, "words": [(0.12, dur - 0.1, "“There was a change now.”")]}
+        tr["exp"] = {"pert": [], "none": "same level in every phase", "vals": ["0.0 dB"]}
+        tr["obs"] = {"pert": [(0.02, dur - 0.02, "vocoder in warp mode")] if key == "later" else [], "none": "vocoder off (bPitchShift 0)", "vals": [_db(lv[key])]}
+        if key == "later" and abs(lv[key]) > 1:
+            tr["obs"]["diff"] = [(0.12, dur - 0.1)]
+        trials.append(tr)
+    return {"sid": "sk-pt-5t", "trials": trials, "gap": 0.4,
+            "rows": {"words": "Speech", "pert": "Phase vocoder", "vals": "Level heard vs spoken"},
+            "heads": {"exp": "the participant hears their voice at the same level in every phase",
+                      "obs": "timeWrap / cerebTimeAdapt settings: bPitchShift 0 in the pre phase; bPitchShift 1 and a warp-row PCF afterwards"},
+            "between": {1: "phase change"}, "callout": "From the first phase after pre onward the voice is played about 3 dB quieter, and 13 ms later", "callout_anchor": "end"}
+
+
 def sketch(d, up):
     import sketchlib as SL, html
     h = lambda t: f'<p class="ev-sub">{html.escape(t)}</p>'
-    return (h("A. A plausible design: vocoder switched on after a baseline phase (24 kHz, frameLen 32, nDelay 3)") + evlib.render(cereb_spec(d))
-            + h("B. Time-warp designs (timeAdapt settings): control trials with and without a warp section") + evlib.render(spec(d)))
+    return (h("A. blab's timeWrap and cerebTimeAdapt: pre phase with the vocoder off, later phases in warp mode (24 kHz, frameLen 32, nDelay 3)") + evlib.render(tw_spec(d))
+            + h("B. Time-warp designs at timeAdapt settings (24 kHz, frameLen 48): control trials with and without a warp section") + evlib.render(spec(d))
+            + h("C. A plausible design: vocoder switched on, without a PCF, after a baseline phase (24 kHz, frameLen 32, nDelay 3)") + evlib.render(cereb_spec(d)))
 
 
 def derive(d, up):
@@ -81,6 +104,9 @@ def derive(d, up):
             v[f"{arm}_t{k+1}_db"] = m[(arm, k)]; v[f"{arm}_t{k+1}_txt"] = _db(m[(arm, k)])
     cs = cereb_spec(d); v["cereb_b0"] = cs["trials"][0]["obs"]["vals"][0]; v["cereb_b1"] = cs["trials"][1]["obs"]["vals"][0]
     v["cereb_json_b1"] = d["cereb"]["b1_db"]
+    tl = tw_levels(d); v["tw_pre"], v["tw_later"], v["tw_warp"] = _db(tl["pre"]), _db(tl["later"]), _db(tl["warp"])
+    v["tw_later_db"] = tl["later"]; v["tw_lat_pre"] = d["timewrap"]["lat_pre_ms"]; v["tw_lat_later"] = d["timewrap"]["lat_later_ms"]
+    v["tw_lat_step"] = d["timewrap"]["lat_later_ms"] - d["timewrap"]["lat_pre_ms"]
     v["ref_db"] = m["ref"]; v["cue_db"] = m[("obs", 0)] - m[("obs", 1)]
     v["w16_none"], v["w16_zero"], v["w16_warp"] = d["warp16"]["none"], d["warp16"]["zero"], d["warp16"]["warp"]
     v["w16_cue"] = d["warp16"]["none"] - d["warp16"]["warp"]

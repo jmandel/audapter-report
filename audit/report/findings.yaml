@@ -24,7 +24,7 @@ repos:
 # Findings at a glance: one row per full card (text shown in the grouped table). Severity = realistic reach x impact.
 table:
   - {id: I-01,   sev: high, origin: blab-amplified, status: H, text: "Since b2.4 (April 2026), in runners that load the noise once per session, masking noise drops out for 16 ms every 10 s of trial time"}
-  - {id: PT-5,   sev: high, origin: upstream, status: H F, text: "The phase vocoder plays the voice 3.5 dB loud at 0 st (6 dB at timeAdapt settings) unless a warp section is loaded: a loudness step when a design switches it on or drops warp rows"}
+  - {id: PT-5,   sev: high, origin: upstream, status: H F, text: "timeWrap and cerebTimeAdapt: from the first phase after pre, the voice is played about 3 dB quieter and 13 ms later (vocoder in warp mode); timeAdapt is at about 0 dB"}
   - {id: F6,     sev: med,  origin: blab, status: H, text: "Undocumented blab change that vsaSentence depends on: the field perturbation re-arms on every vowel; minVowelLen has no effect"}
   - {id: LAB-1, sev: low, origin: blab, status: H, text: "Repository note: vsaCentralize ships an unused public runner that looks up the field on the wrong grid; the runner the experiment calls is correct"}
   - {id: LAB-2, sev: med, origin: blab, status: H, text: "Open question: as committed, the public vsaGeneralize runner (called by its experiment script) perturbs baseline trials and never scales the field; vsaGeneralize2 is wired correctly"}
@@ -51,9 +51,10 @@ sections:
   - id: current
     title: "What affects blab's current experiments"
     lead: >-
-      <p>These findings touch experiments the lab runs now, with the lab's own settings. The first is a defect introduced with
-      b2.4 in April 2026; the second is a blab change that one of the lab's designs depends on.</p>
-    cards: [I-01, F6]
+      <p>These findings touch experiments the lab runs now, with the lab's own settings: a masking-noise defect introduced with b2.4
+      in April 2026, a loudness and latency step between phases in two time-warp studies, and a blab change that one of the lab's
+      designs depends on.</p>
+    cards: [I-01, PT-5, F6]
     short: [FMT-F3, CORPUS-7]
     short_title: "Also relevant to current experiments (small effects)"
   - id: labscripts
@@ -70,7 +71,7 @@ sections:
       <p>None of these is triggered by the blab designs we inspected. Each can affect a plausible design, so each card states the
       settings that trigger it, the safe pattern, and the fix. Examples use the most plausible settings a lab would choose and are
       marked as hypothetical.</p>
-    cards: [PT-5, CORPUS-8, CORPUS-10, LIVE-1 / LIVE-2, LIVE-3, LIVE-6, CORPUS-11, I-04, I-02, I-03, OST-F8]
+    cards: [CORPUS-8, CORPUS-10, LIVE-1 / LIVE-2, LIVE-3, LIVE-6, CORPUS-11, I-04, I-02, I-03, OST-F8]
     short: [PT-2 / I-15, PT-3, PT-4, PT-6, FMT-F4, I-09, CORPUS-3, CORPUS-4, LIVE-4, LIVE-5, LIVE-7, LIVE-8]
     short_title: "Further pitfalls"
   - id: robust
