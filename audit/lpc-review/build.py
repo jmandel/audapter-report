@@ -169,10 +169,15 @@ def build(runs):
                 F = tok["tracks"][o]; tf = frame_times(tok, len(F)); m = (tf >= t0) & (tf <= t1)
                 trk[o] = [[round(float(a - t0), 4), round(float(f1), 1) if f1 > 0 else None, round(float(f2), 1) if f1 > 0 else None]
                           for a, f1, f2 in zip(tf[m], F[m, 0], F[m, 1])]
-            td["tokens"].append(dict(img=f"assets/{base}.png", wav=f"assets/{base}.wav", word=tok["word"], trial=tok["k"], dur=t1 - t0,
+            err = {}
+            for o in ORDERS:
+                pp = per_trial(tok, o)
+                err[o] = None if pp is None else round(100 * float(np.mean([abs(np.log(pp["aud"][i] / pp["ref"][i])) for i in (0, 1)])), 1)
+            td["tokens"].append(dict(err=err, img=f"assets/{base}.png", wav=f"assets/{base}.wav", word=tok["word"], trial=tok["k"], dur=t1 - t0,
                                      nucleus=[tok["nucleus"][0] - t0, tok["nucleus"][1] - t0], mid=[m_ - t0 for m_ in mid_half(tok)],
                                      praat=[[round(float(a - t0), 4), None if np.isnan(b) else round(float(b), 1), None if np.isnan(c) else round(float(c), 1)]
                                             for a, b, c in zip(pt[ps], p1[ps], p2[ps])], tracks=trk))
+        td["cost"] = {o: round(scores[o]["cost"], 2) for o in ORDERS}; td["best"] = best
         for o in ORDERS: td["scatter"][o] = scores[o]["scatter"]
         td["sane"] = [o for o in ORDERS if scores[o]["cost"] <= 2 * scores[preset]["cost"]]
         data[tid] = td
@@ -197,14 +202,14 @@ is the order used.</p>
 <span class="lg pB"></span>track jumps (×0.25) <span class="lg pC"></span>vowel-cluster spread (×0.25)
 <span class="lg chosen"></span>used <span class="lg preset"></span>default (from the male/female setting)</p>
 <details><summary>Scores by order</summary><table class="scores"><tr><th>order</th><th>A, error %</th><th>B, jumps %</th><th>C, spread %</th><th>cost</th></tr>{rows}</table></details>
-<h2>What each order does to the tracks</h2>
-<div class="orders" data-t="{tid}">{''.join(f'<button type="button" data-o="{o}" class="{"on" if o == chosen else ""}">{o}{" · default" if o == preset else ""}{" · used" if o == chosen else ""}</button>' for o in ORDERS)}</div>
-<p class="legend"><span class="lg trk"></span>Audapter's F1, F2 at the selected order <span class="lg dft"></span>at the default order
-<span class="lg ref"></span>Praat (independent reference)
-<span class="lg nuc"></span>middle of the vowel (where accuracy is scored)</p>
-<div class="tokens" id="{tid}-tokens"></div>
-<h3>Vowel clusters at the selected order</h3>
-<div class="scatter" id="{tid}-scatter"></div>
+<h2>Every order, every token</h2>
+<p>Each row is one LPC order and each column one pretest token. Read down a column to see how one token is tracked as
+the order changes, or along a row to see one order across all tokens. The number in each cell is that token's
+tracking error against Praat (%); the last column shows the vowel clusters for that order.</p>
+<p class="legend"><span class="lg trk"></span>Audapter's F1, F2 at that order <span class="lg ref"></span>Praat (independent reference)
+<span class="lg nuc"></span>middle of the vowel (where accuracy is scored) <span class="lg chosen"></span>order used
+<span class="lg preset"></span>default</p>
+<div class="gridwrap"><table class="grid" id="{tid}-grid"></table></div>
 <p class="note">Re-running the default order reproduces the tracks Audapter logged in the experiment to within {dev:.2g} Hz.</p>
 </section>""")
     page = (TEMPLATE.replace("{{TABS}}", "".join(tabs)).replace("{{SECTIONS}}", "\n".join(sections))
@@ -221,7 +226,7 @@ TEMPLATE = r"""<!doctype html>
   --pA:#4a5563; --pB:#8a939d; --pC:#c3cad2; --serif: "Charis SIL", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif; }
 @media (prefers-color-scheme: dark) { :root { --paper:#15181c; --ink:#e7eaee; --ink-2:#b9c1ca; --ink-3:#8f99a4; --rule:#2e353d; --observed:#3987e5;
   --context:#2a3037; --pA:#b9c1ca; --pB:#7d8792; --pC:#4a535d; } }
-body { font: 17px/1.55 var(--serif); color: var(--ink); background: var(--paper); max-width: 860px; margin: 0 auto; padding: 16px; }
+body { font: 17px/1.55 var(--serif); color: var(--ink); background: var(--paper); max-width: 1060px; margin: 0 auto; padding: 16px; }
 h1 { font-size: 1.55em; line-height: 1.2; margin: .3em 0; } h2 { font-size: 1.15em; margin: 1.6em 0 .4em; } h3 { font-size: 1em; margin: 1.2em 0 .3em; }
 a { color: var(--observed); } p { margin: .5em 0; } .lede { color: var(--ink-2); } .preview { border-left: 3px solid #eb6834; padding: 6px 10px; background: rgba(235,104,52,.08); font-size: .92em; }
 nav.talkers, .orders { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 6px; }
@@ -248,7 +253,20 @@ details { margin: 8px 0; font-size: .9em; } summary { cursor: pointer; color: va
 .tok .plot { position: relative; } .tok img { width: 100%; display: block; background: #fff; border: 1px solid var(--rule); }
 .tok svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .tok button { font: inherit; font-size: .8em; border: 1px solid var(--rule); background: transparent; color: var(--ink); border-radius: 10px; padding: 0 8px; cursor: pointer; }
-.scatter svg { max-width: 360px; width: 100%; }
+.gridwrap { overflow-x: auto; margin: 8px -16px; padding: 0 16px; }
+table.grid { border-collapse: separate; border-spacing: 3px; font-size: .78em; }
+table.grid th, table.grid td { border: none; padding: 0; vertical-align: middle; }
+table.grid thead th { text-align: center; font-weight: 400; color: var(--ink-2); padding-bottom: 2px; white-space: nowrap; }
+table.grid thead button { font: inherit; border: 1px solid var(--rule); background: transparent; color: var(--ink); border-radius: 10px; padding: 0 6px; margin-left: 4px; cursor: pointer; }
+table.grid td.lab { padding: 0 8px 0 4px; white-space: nowrap; text-align: right; line-height: 1.25; position: sticky; left: 0; z-index: 1; background: var(--paper); }
+table.grid td.lab b { font-size: 1.25em; } table.grid td.lab .tag { display: block; color: var(--ink-3); } table.grid tr.used td.lab .tag { color: var(--observed); font-weight: 700; }
+table.grid .cell { position: relative; width: 118px; height: 81px; } table.grid .cell img { width: 100%; height: 100%; display: block; background: #fff; }
+table.grid .cell svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+table.grid .cell .e { position: absolute; right: 2px; top: 1px; font-size: 10.5px; background: rgba(255,255,255,.85); color: #1d2530; padding: 0 2px; border-radius: 2px; }
+table.grid .cell .e.hi { color: #fff; background: #eb6834; }
+table.grid tr.used .cell, table.grid tr.used .vw { outline: 2.5px solid var(--observed); }
+table.grid tr.dflt .cell, table.grid tr.dflt .vw { outline: 1.5px dashed var(--ink-2); }
+table.grid .vw { width: 96px; height: 81px; background: var(--paper); border: 1px solid var(--rule); display: block; }
 .note { font-size: .85em; color: var(--ink-3); }
 </style></head><body>
 <p><a href="../">← Audapter report</a> · <a href="../voices-demo/">coAdapt with realistic voices</a></p>
@@ -263,9 +281,9 @@ vowel (half the weight), how often the tracks jump (a quarter), and how spread o
 the distance between vowels (a quarter). Like an experimenter, it keeps the default unless another order is clearly
 better: at least 15% lower cost. The talkers are AI-generated voices (OpenAI gpt-audio-1.5) saying the pretest words of
 the lab's coAdapt experiment.</p>
-<p class="lede">Use this page to judge whether the choices look right: pick a talker, step through the orders, and compare the blue tracks with the grey default and the dashed Praat reference.</p>
+<p class="lede">Use this page to judge whether the choices look right: pick a talker and scan the grid of every order against every token, comparing the blue tracks with the dashed Praat reference.</p>
 <h2>All talkers</h2>
-<table><tr><th>talker</th><th>male/female setting</th><th>default order</th><th>lowest-cost order</th><th>order used</th><th>best vs default</th><th>changed from default?</th></tr>{{SUMMARY}}</table>
+<div class="gridwrap"><table><tr><th>talker</th><th>male/female setting</th><th>default order</th><th>lowest-cost order</th><th>order used</th><th>best vs default</th><th>changed from default?</th></tr>{{SUMMARY}}</table></div>
 <p class="preview"><b>Preview, results provisional.</b> Two parts of the selection rule are being revised before it is
 used at scale: the Praat reference is wrong on some tokens (visible below, e.g. marin's "bat" tokens), so a quality check
 on the reference is being added; and the 15% margin will also require the better order to win on most tokens, since a
@@ -277,44 +295,46 @@ var DATA = {{DATA}}, FMAX = 3500;
 function el(t, a) { var e = document.createElementNS('http://www.w3.org/2000/svg', t); for (var k in a) e.setAttribute(k, a[k]); return e; }
 function path(pts, i, w, h, dur) { var d = '', pen = false; pts.forEach(function (p) { var v = p[i]; if (v == null) { pen = false; return; }
   d += (pen ? 'L' : 'M') + (p[0] / dur * w).toFixed(1) + ',' + (h - v / FMAX * h).toFixed(1); pen = true; }); return d; }
-function drawTokens(tid, o) {
-  var box = document.getElementById(tid + '-tokens'); box.innerHTML = '';
-  DATA[tid].tokens.forEach(function (tk) {
-    var fig = document.createElement('figure'); fig.className = 'tok';
-    fig.innerHTML = '<figcaption><span>trial ' + tk.trial + ' · “' + tk.word + '”</span><button type="button">play</button></figcaption><div class="plot"><img src="' + tk.img + '" alt=""></div>';
-    var s = el('svg', { viewBox: '0 0 320 220', preserveAspectRatio: 'none' }), w = 320, h = 220;
-    s.appendChild(el('rect', { x: tk.nucleus[0] / tk.dur * w, y: 0, width: (tk.nucleus[1] - tk.nucleus[0]) / tk.dur * w, height: h, fill: 'rgba(42,120,214,.07)' }));
-    s.appendChild(el('rect', { x: tk.mid[0] / tk.dur * w, y: 0, width: (tk.mid[1] - tk.mid[0]) / tk.dur * w, height: h, fill: 'rgba(42,120,214,.12)' }));
-    [1, 2].forEach(function (i) {
-      s.appendChild(el('path', { d: path(tk.praat, i, w, h, tk.dur), fill: 'none', stroke: '#1d2530', 'stroke-width': 1.6, 'stroke-dasharray': '5 3', 'vector-effect': 'non-scaling-stroke' }));      if (String(o) !== String(DATA[tid].preset)) s.appendChild(el('path', { d: path(tk.tracks[DATA[tid].preset], i, w, h, tk.dur), fill: 'none', stroke: '#aab2bb', 'stroke-width': 3, 'vector-effect': 'non-scaling-stroke' }));
-      s.appendChild(el('path', { d: path(tk.tracks[o], i, w, h, tk.dur), fill: 'none', stroke: '#2a78d6', 'stroke-width': 2.4, 'vector-effect': 'non-scaling-stroke' }));
-    });
-    fig.querySelector('.plot').appendChild(s);
-    var au = new Audio(tk.wav); fig.querySelector('button').onclick = function () { au.currentTime = 0; au.play(); };
-    box.appendChild(fig);
-  });
-  var sc = document.getElementById(tid + '-scatter'), pts = DATA[tid].scatter[o], W = 360, H = 260;
-  var m = function (f) { return 1127.01048 * Math.log(1 + f / 700); };
-  // axes fitted to the orders that track sensibly (cost within 2x the default's), so bad orders don't squash the view
-  var all = []; Object.keys(DATA[tid].scatter).forEach(function (k) { if (DATA[tid].sane.indexOf(+k) >= 0 || +k === +o) DATA[tid].scatter[k].forEach(function (p) { all.push(p); }); });
+function m(f) { return 1127.01048 * Math.log(1 + f / 700); }
+function drawGrid(tid) {
+  var D = DATA[tid], g = document.getElementById(tid + '-grid'), w = 118, h = 81;
+  var head = '<thead><tr><th></th>' + D.tokens.map(function (tk, j) { return '<th>“' + tk.word + '”<button type="button" data-j="' + j + '">play</button></th>'; }).join('') + '<th>vowels</th></tr></thead>';
+  g.innerHTML = head + '<tbody></tbody>';
+  var audios = D.tokens.map(function (tk) { return new Audio(tk.wav); });
+  g.querySelectorAll('thead button').forEach(function (b) { b.onclick = function () { var a = audios[+b.dataset.j]; a.currentTime = 0; a.play(); }; });
+  // vowel-plot axes fitted to the orders that track sensibly
+  var all = []; D.sane.forEach(function (k) { D.scatter[k].forEach(function (p) { all.push(p); }); });
   var x0 = Math.min.apply(null, all.map(function (p) { return m(p[2]); })) - 40, x1 = Math.max.apply(null, all.map(function (p) { return m(p[2]); })) + 40;
   var y0 = Math.min.apply(null, all.map(function (p) { return m(p[1]); })) - 40, y1 = Math.max.apply(null, all.map(function (p) { return m(p[1]); })) + 40;
-  var s2 = el('svg', { viewBox: '0 0 ' + W + ' ' + H }); s2.appendChild(el('rect', { x: 30, y: 4, width: W - 34, height: H - 34, fill: 'none', stroke: '#dde2e7' }));
-  var words = []; pts.forEach(function (p) { if (words.indexOf(p[0]) < 0) words.push(p[0]); });
-  pts.forEach(function (p) {
-    var cx = 30 + (x1 - m(p[2])) / (x1 - x0) * (W - 34), cy = 4 + (m(p[1]) - y0) / (y1 - y0) * (H - 34);
-    s2.appendChild(el('circle', { cx: cx, cy: cy, r: 4.5, fill: '#2a78d6', 'fill-opacity': .75 }));
-    var t = el('text', { x: cx + 7, y: cy + 4, 'font-size': 11, fill: '#4a5563' }); t.textContent = p[0]; s2.appendChild(t);
+  var tb = g.querySelector('tbody');
+  D.orders.forEach(function (o) {
+    var tr = document.createElement('tr'); if (o === D.chosen) tr.className = 'used'; else if (o === D.preset) tr.className = 'dflt';
+    var tags = []; if (o === D.chosen) tags.push('used'); if (o === D.preset) tags.push('default'); if (o === D.best && o !== D.chosen) tags.push('lowest cost');
+    tr.innerHTML = '<td class="lab"><b>' + o + '</b><span class="tag">' + (tags.join(', ') || '&nbsp;') + '</span><span class="tag">cost ' + D.cost[o].toFixed(1) + '</span></td>';
+    D.tokens.forEach(function (tk) {
+      var td = document.createElement('td'), c = document.createElement('div'); c.className = 'cell';
+      c.innerHTML = '<img src="' + tk.img + '" alt="" loading="lazy">';
+      var s = el('svg', { viewBox: '0 0 ' + w + ' ' + h, preserveAspectRatio: 'none' });
+      s.appendChild(el('rect', { x: tk.mid[0] / tk.dur * w, y: 0, width: (tk.mid[1] - tk.mid[0]) / tk.dur * w, height: h, fill: 'rgba(42,120,214,.13)' }));
+      [1, 2].forEach(function (i) {
+        s.appendChild(el('path', { d: path(tk.praat, i, w, h, tk.dur), fill: 'none', stroke: '#1d2530', 'stroke-width': 1.1, 'stroke-dasharray': '3 2' }));
+        s.appendChild(el('path', { d: path(tk.tracks[o], i, w, h, tk.dur), fill: 'none', stroke: '#2a78d6', 'stroke-width': 1.8 }));
+      });
+      c.appendChild(s);
+      var e = tk.err[o]; if (e != null) { var sp = document.createElement('span'); sp.className = 'e' + (e > 10 ? ' hi' : ''); sp.textContent = e.toFixed(0) + '%'; c.appendChild(sp); }
+      td.appendChild(c); tr.appendChild(td);
+    });
+    var tv = document.createElement('td'), sv = el('svg', { viewBox: '0 0 96 81', 'class': 'vw' });
+    D.scatter[o].forEach(function (p) {
+      var cx = 6 + (x1 - m(p[2])) / (x1 - x0) * 70, cy = 5 + (m(p[1]) - y0) / (y1 - y0) * 70;
+      if (cx < 0 || cx > 96 || cy < 0 || cy > 81) return;
+      sv.appendChild(el('circle', { cx: cx, cy: cy, r: 2.6, fill: '#2a78d6', 'fill-opacity': .8 }));
+      var t = el('text', { x: cx + 3.5, y: cy + 3, 'font-size': 7.5, fill: '#4a5563' }); t.textContent = p[0]; sv.appendChild(t);
+    });
+    tv.appendChild(sv); tr.appendChild(tv); tb.appendChild(tr);
   });
-  var a = el('text', { x: W - 4, y: H - 10, 'font-size': 11, 'text-anchor': 'end', fill: '#6f7985', 'font-style': 'italic' }); a.textContent = '← F2 (mel)   F1 (mel) ↓'; s2.appendChild(a);
-  sc.innerHTML = ''; sc.appendChild(s2);
 }
-document.querySelectorAll('.orders').forEach(function (bar) {
-  var tid = bar.dataset.t;
-  bar.querySelectorAll('button').forEach(function (b) { b.onclick = function () {
-    bar.querySelectorAll('button').forEach(function (o) { o.classList.toggle('on', o === b); }); drawTokens(tid, b.dataset.o); }; });
-  drawTokens(tid, DATA[tid].chosen);
-});
+Object.keys(DATA).forEach(drawGrid);
 document.querySelectorAll('nav.talkers button').forEach(function (b) {
   b.addEventListener('click', function () {
     document.querySelectorAll('nav.talkers button').forEach(function (o) { o.classList.toggle('on', o === b); });
