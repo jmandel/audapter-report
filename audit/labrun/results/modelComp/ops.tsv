@@ -1,0 +1,477 @@
+vtime	trial	running	op	args
+0.0000	0	0	ask:input	answer=n prompt=Does the participant appear to be above the height 5' 8"? (y/n):  rule=above the height|5' ?8
+2.0000	0	0	dbstop-ignored	args=if error
+2.0000	0	0	ask:input	answer=0 prompt=[Test mode only] Run LPC check pretest phase (1), or skip it (0)? (1/0):  rule=Run LPC check
+4.0000	0	0	rng	arg=shuffle seed=1001
+4.0030	0	0	rng	arg=shuffle seed=1002
+4.0060	0	0	dbstop-ignored	args=if error
+4.0060	0	0	ask:input	answer=run prompt=Run duration practice? (run/skip):  rule=\(([A-Za-z]+)/[A-Za-z/ ]+\)
+6.0090	0	0	deviceName	args=Focusrite USB
+6.0090	0	0	ost	file=
+6.0090	0	0	pcf	file=
+6.0090	0	0	getMaxPBLen	args=
+6.0090	0	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+6.0090	0	0	setParam	name=downfact value=3
+6.0090	0	0	setParam	name=srate value=16000
+6.0090	0	0	setParam	name=framelen value=32
+6.0090	0	0	setParam	name=ndelay value=5
+6.0090	0	0	setParam	name=nwin value=1
+6.0090	0	0	setParam	name=nlpc value=15
+6.0090	0	0	setParam	name=nfmts value=2
+6.0090	0	0	setParam	name=ntracks value=4
+6.0090	0	0	setParam	name=scale value=0.795271
+6.0090	0	0	setParam	name=preemp value=0.98
+6.0090	0	0	setParam	name=rmsthr value=0.011354
+6.0090	0	0	setParam	name=rmsratio value=0.7
+6.0090	0	0	setParam	name=rmsff value=0.95
+6.0090	0	0	setParam	name=dfmtsff value=0.93
+6.0090	0	0	setParam	name=bgainadapt value=0
+6.0090	0	0	setParam	name=bshift value=1
+6.0090	0	0	setParam	name=btrack value=1
+6.0090	0	0	setParam	name=bdetect value=1
+6.0090	0	0	setParam	name=avglen value=8
+6.0090	0	0	setParam	name=bweight value=1
+6.0090	0	0	setParam	name=minvowellen value=60
+6.0090	0	0	setParam	name=bratioshift value=0
+6.0090	0	0	setParam	name=bmelshift value=1
+6.0090	0	0	setParam	name=bcepslift value=0
+6.0090	0	0	setParam	name=cepswinwidth value=30
+6.0090	0	0	setParam	name=bbypassfmt value=0
+6.0090	0	0	setParam	name=f2min value=0
+6.0090	0	0	setParam	name=f2max value=5000
+6.0090	0	0	setParam	name=f1min value=0
+6.0090	0	0	setParam	name=f1max value=5000
+6.0090	0	0	setParam	name=lbk value=0
+6.0090	0	0	setParam	name=lbb value=0
+6.0090	0	0	setParam	name=pertf1 value=[257 x 0]
+6.0090	0	0	setParam	name=pertf2 value=[257 x 0]
+6.0090	0	0	setParam	name=pertamp value=[257 x 0]
+6.0090	0	0	setParam	name=pertphi value=[257 x 0]
+6.0090	0	0	setParam	name=pertamp2d value=[66049 x 0]
+6.0090	0	0	setParam	name=pertphi2d value=[66049 x 0]
+6.0090	0	0	setParam	name=fb value=3
+6.0090	0	0	setParam	name=nfb value=1
+6.0090	0	0	setParam	name=triallen value=0
+6.0090	0	0	setParam	name=ramplen value=0
+6.0090	0	0	setParam	name=afact value=1
+6.0090	0	0	setParam	name=bfact value=0.8
+6.0090	0	0	setParam	name=gfact value=1
+6.0090	0	0	setParam	name=fn1 value=675
+6.0090	0	0	setParam	name=fn2 value=1392
+6.0090	0	0	setParam	name=fb2gain value=1
+6.0090	0	0	setParam	name=fb3gain value=0.02
+6.0090	0	0	setParam	name=fb4gaindb value=10
+6.0090	0	0	setParam	name=fb5gaindb_speech value=0
+6.0090	0	0	setParam	name=fb5gain_playback value=1
+6.0090	0	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+6.0090	0	0	setParam	name=bpitchshift value=0
+6.0090	0	0	setParam	name=bshift2d value=0
+6.0090	0	0	setParam	name=pitchshiftratio value=1
+6.0090	0	0	setParam	name=pvocframelen value=256
+6.0090	0	0	setParam	name=pvochop value=64
+6.0090	0	0	setParam	name=bdownsampfilt value=1
+6.0090	0	0	setParam	name=stereomode value=1
+6.0090	0	0	setParam	name=delayFrames value=0
+6.0090	0	0	setParam	name=btimedomainshift value=0
+6.0090	0	0	setParam	name=pitchlowerboundhz value=0
+6.0090	0	0	setParam	name=pitchupperboundhz value=0
+6.0090	0	0	setParam	name=timedomainpitchshiftschedule value=1
+6.0090	0	0	setParam	name=timedomainpitchshiftalgorithm value=0
+6.0090	0	0	setParam	name=bclampformants value=0
+6.0090	0	0	setParam	name=clamposts value=[0 0]
+6.0090	0	0	setParam	name=clampf1 value=[2048 x 0]
+6.0090	0	0	setParam	name=clampf2 value=[2048 x 0]
+6.0090	0	0	keywait	fn=pause
+7.0090	0	0	key	key=space
+8.0090	0	0	setParam	name=pertAmp value=[257 x 0]
+8.0090	0	0	setParam	name=pertPhi value=[257 x 0]
+8.0090	0	0	reset	
+8.0090	0	0	start	
+9.9090	1	1	stop	
+9.9090	1	0	getData	
+12.0229	1	0	setParam	name=pertAmp value=[257 x 0]
+12.0229	1	0	setParam	name=pertPhi value=[257 x 0]
+12.0229	1	0	reset	
+12.0229	1	0	start	
+13.9229	2	1	stop	
+13.9229	2	0	getData	
+16.0092	2	0	setParam	name=pertAmp value=[257 x 0]
+16.0092	2	0	setParam	name=pertPhi value=[257 x 0]
+16.0092	2	0	reset	
+16.0092	2	0	start	
+17.9092	3	1	stop	
+17.9092	3	0	getData	
+19.6586	3	0	setParam	name=pertAmp value=[257 x 0]
+19.6586	3	0	setParam	name=pertPhi value=[257 x 0]
+19.6586	3	0	reset	
+19.6586	3	0	start	
+21.5586	4	1	stop	
+21.5586	4	0	getData	
+23.5457	4	0	setParam	name=pertAmp value=[257 x 0]
+23.5457	4	0	setParam	name=pertPhi value=[257 x 0]
+23.5457	4	0	reset	
+23.5457	4	0	start	
+25.4457	5	1	stop	
+25.4457	5	0	getData	
+27.5041	5	0	setParam	name=pertAmp value=[257 x 0]
+27.5041	5	0	setParam	name=pertPhi value=[257 x 0]
+27.5041	5	0	reset	
+27.5041	5	0	start	
+29.4041	6	1	stop	
+29.4041	6	0	getData	
+31.2399	6	0	setParam	name=pertAmp value=[257 x 0]
+31.2399	6	0	setParam	name=pertPhi value=[257 x 0]
+31.2399	6	0	reset	
+31.2399	6	0	start	
+33.1399	7	1	stop	
+33.1399	7	0	getData	
+35.2007	7	0	setParam	name=pertAmp value=[257 x 0]
+35.2007	7	0	setParam	name=pertPhi value=[257 x 0]
+35.2007	7	0	reset	
+35.2007	7	0	start	
+37.1007	8	1	stop	
+37.1007	8	0	getData	
+39.0195	8	0	setParam	name=pertAmp value=[257 x 0]
+39.0195	8	0	setParam	name=pertPhi value=[257 x 0]
+39.0195	8	0	reset	
+39.0195	8	0	start	
+40.9195	9	1	stop	
+40.9195	9	0	getData	
+43.1606	9	0	setParam	name=pertAmp value=[257 x 0]
+43.1606	9	0	setParam	name=pertPhi value=[257 x 0]
+43.1606	9	0	reset	
+43.1606	9	0	start	
+45.0606	10	1	stop	
+45.0606	10	0	getData	
+46.9630	10	0	setParam	name=pertAmp value=[257 x 0]
+46.9630	10	0	setParam	name=pertPhi value=[257 x 0]
+46.9630	10	0	reset	
+46.9630	10	0	start	
+48.8630	11	1	stop	
+48.8630	11	0	getData	
+50.4878	11	0	setParam	name=pertAmp value=[257 x 0]
+50.4878	11	0	setParam	name=pertPhi value=[257 x 0]
+50.4878	11	0	reset	
+50.4878	11	0	start	
+52.3878	12	1	stop	
+52.3878	12	0	getData	
+57.5597	12	0	dbstop-ignored	args=if error
+57.5597	12	0	ask:input	answer=redo prompt=Participant was successful on: 0/12 trials. Redo training? (redo/move on):  rule=\((redo|repeat)/(move on|continue)\)
+59.5627	12	0	deviceName	args=Focusrite USB
+59.5627	12	0	ost	file=
+59.5627	12	0	pcf	file=
+59.5627	12	0	getMaxPBLen	args=
+59.5627	12	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+59.5627	12	0	setParam	name=downfact value=3
+59.5627	12	0	setParam	name=srate value=16000
+59.5627	12	0	setParam	name=framelen value=32
+59.5627	12	0	setParam	name=ndelay value=5
+59.5627	12	0	setParam	name=nwin value=1
+59.5627	12	0	setParam	name=nlpc value=15
+59.5627	12	0	setParam	name=nfmts value=2
+59.5627	12	0	setParam	name=ntracks value=4
+59.5627	12	0	setParam	name=scale value=0.795271
+59.5627	12	0	setParam	name=preemp value=0.98
+59.5627	12	0	setParam	name=rmsthr value=0.011354
+59.5627	12	0	setParam	name=rmsratio value=0.7
+59.5627	12	0	setParam	name=rmsff value=0.95
+59.5627	12	0	setParam	name=dfmtsff value=0.93
+59.5627	12	0	setParam	name=bgainadapt value=0
+59.5627	12	0	setParam	name=bshift value=1
+59.5627	12	0	setParam	name=btrack value=1
+59.5627	12	0	setParam	name=bdetect value=1
+59.5627	12	0	setParam	name=avglen value=8
+59.5627	12	0	setParam	name=bweight value=1
+59.5627	12	0	setParam	name=minvowellen value=60
+59.5627	12	0	setParam	name=bratioshift value=0
+59.5627	12	0	setParam	name=bmelshift value=1
+59.5627	12	0	setParam	name=bcepslift value=0
+59.5627	12	0	setParam	name=cepswinwidth value=30
+59.5627	12	0	setParam	name=bbypassfmt value=0
+59.5627	12	0	setParam	name=f2min value=0
+59.5627	12	0	setParam	name=f2max value=5000
+59.5627	12	0	setParam	name=f1min value=0
+59.5627	12	0	setParam	name=f1max value=5000
+59.5627	12	0	setParam	name=lbk value=0
+59.5627	12	0	setParam	name=lbb value=0
+59.5627	12	0	setParam	name=pertf1 value=[257 x 0]
+59.5627	12	0	setParam	name=pertf2 value=[257 x 0]
+59.5627	12	0	setParam	name=pertamp value=[257 x 0]
+59.5627	12	0	setParam	name=pertphi value=[257 x 0]
+59.5627	12	0	setParam	name=pertamp2d value=[66049 x 0]
+59.5627	12	0	setParam	name=pertphi2d value=[66049 x 0]
+59.5627	12	0	setParam	name=fb value=3
+59.5627	12	0	setParam	name=nfb value=1
+59.5627	12	0	setParam	name=triallen value=0
+59.5627	12	0	setParam	name=ramplen value=0
+59.5627	12	0	setParam	name=afact value=1
+59.5627	12	0	setParam	name=bfact value=0.8
+59.5627	12	0	setParam	name=gfact value=1
+59.5627	12	0	setParam	name=fn1 value=675
+59.5627	12	0	setParam	name=fn2 value=1392
+59.5627	12	0	setParam	name=fb2gain value=1
+59.5627	12	0	setParam	name=fb3gain value=0.02
+59.5627	12	0	setParam	name=fb4gaindb value=10
+59.5627	12	0	setParam	name=fb5gaindb_speech value=0
+59.5627	12	0	setParam	name=fb5gain_playback value=1
+59.5627	12	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+59.5627	12	0	setParam	name=bpitchshift value=0
+59.5627	12	0	setParam	name=bshift2d value=0
+59.5627	12	0	setParam	name=pitchshiftratio value=1
+59.5627	12	0	setParam	name=pvocframelen value=256
+59.5627	12	0	setParam	name=pvochop value=64
+59.5627	12	0	setParam	name=bdownsampfilt value=1
+59.5627	12	0	setParam	name=stereomode value=1
+59.5627	12	0	setParam	name=delayFrames value=0
+59.5627	12	0	setParam	name=btimedomainshift value=0
+59.5627	12	0	setParam	name=pitchlowerboundhz value=0
+59.5627	12	0	setParam	name=pitchupperboundhz value=0
+59.5627	12	0	setParam	name=timedomainpitchshiftschedule value=1
+59.5627	12	0	setParam	name=timedomainpitchshiftalgorithm value=0
+59.5627	12	0	setParam	name=bclampformants value=0
+59.5627	12	0	setParam	name=clamposts value=[0 0]
+59.5627	12	0	setParam	name=clampf1 value=[2048 x 0]
+59.5627	12	0	setParam	name=clampf2 value=[2048 x 0]
+59.5627	12	0	keywait	fn=pause
+60.5627	12	0	key	key=space
+61.5627	12	0	setParam	name=pertAmp value=[257 x 0]
+61.5627	12	0	setParam	name=pertPhi value=[257 x 0]
+61.5627	12	0	reset	
+61.5627	12	0	start	
+63.4627	13	1	stop	
+63.4627	13	0	getData	
+65.3634	13	0	setParam	name=pertAmp value=[257 x 0]
+65.3634	13	0	setParam	name=pertPhi value=[257 x 0]
+65.3634	13	0	reset	
+65.3634	13	0	start	
+67.2634	14	1	stop	
+67.2634	14	0	getData	
+69.0845	14	0	setParam	name=pertAmp value=[257 x 0]
+69.0845	14	0	setParam	name=pertPhi value=[257 x 0]
+69.0845	14	0	reset	
+69.0845	14	0	start	
+70.9845	15	1	stop	
+70.9845	15	0	getData	
+72.5856	15	0	setParam	name=pertAmp value=[257 x 0]
+72.5856	15	0	setParam	name=pertPhi value=[257 x 0]
+72.5856	15	0	reset	
+72.5856	15	0	start	
+74.4856	16	1	stop	
+74.4856	16	0	getData	
+76.7353	16	0	setParam	name=pertAmp value=[257 x 0]
+76.7353	16	0	setParam	name=pertPhi value=[257 x 0]
+76.7353	16	0	reset	
+76.7353	16	0	start	
+78.6353	17	1	stop	
+78.6353	17	0	getData	
+80.5688	17	0	setParam	name=pertAmp value=[257 x 0]
+80.5688	17	0	setParam	name=pertPhi value=[257 x 0]
+80.5688	17	0	reset	
+80.5688	17	0	start	
+82.4688	18	1	stop	
+82.4688	18	0	getData	
+83.9993	18	0	setParam	name=pertAmp value=[257 x 0]
+83.9993	18	0	setParam	name=pertPhi value=[257 x 0]
+83.9993	18	0	reset	
+83.9993	18	0	start	
+85.8993	19	1	stop	
+85.8993	19	0	getData	
+87.7537	19	0	setParam	name=pertAmp value=[257 x 0]
+87.7537	19	0	setParam	name=pertPhi value=[257 x 0]
+87.7537	19	0	reset	
+87.7537	19	0	start	
+89.6537	20	1	stop	
+89.6537	20	0	getData	
+91.5260	20	0	setParam	name=pertAmp value=[257 x 0]
+91.5260	20	0	setParam	name=pertPhi value=[257 x 0]
+91.5260	20	0	reset	
+91.5260	20	0	start	
+93.4260	21	1	stop	
+93.4260	21	0	getData	
+95.1438	21	0	setParam	name=pertAmp value=[257 x 0]
+95.1438	21	0	setParam	name=pertPhi value=[257 x 0]
+95.1438	21	0	reset	
+95.1438	21	0	start	
+97.0438	22	1	stop	
+97.0438	22	0	getData	
+98.9334	22	0	setParam	name=pertAmp value=[257 x 0]
+98.9334	22	0	setParam	name=pertPhi value=[257 x 0]
+98.9334	22	0	reset	
+98.9334	22	0	start	
+100.8334	23	1	stop	
+100.8334	23	0	getData	
+102.4166	23	0	setParam	name=pertAmp value=[257 x 0]
+102.4166	23	0	setParam	name=pertPhi value=[257 x 0]
+102.4166	23	0	reset	
+102.4166	23	0	start	
+104.3166	24	1	stop	
+104.3166	24	0	getData	
+109.2290	24	0	dbstop-ignored	args=if error
+109.2290	24	0	ask:input	answer=move on prompt=Participant was successful on: 0/12 trials. Redo training? (redo/move on):  rule=\((redo|repeat)/(move on|continue)\)
+111.2320	24	0	deviceName	args=Focusrite USB
+111.2320	24	0	ost	file=
+111.2320	24	0	pcf	file=
+111.2320	24	0	getMaxPBLen	args=
+111.2320	24	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+111.2320	24	0	setParam	name=downfact value=3
+111.2320	24	0	setParam	name=srate value=16000
+111.2320	24	0	setParam	name=framelen value=32
+111.2320	24	0	setParam	name=ndelay value=5
+111.2320	24	0	setParam	name=nwin value=1
+111.2320	24	0	setParam	name=nlpc value=15
+111.2320	24	0	setParam	name=nfmts value=2
+111.2320	24	0	setParam	name=ntracks value=4
+111.2320	24	0	setParam	name=scale value=0.795271
+111.2320	24	0	setParam	name=preemp value=0.98
+111.2320	24	0	setParam	name=rmsthr value=0.011354
+111.2320	24	0	setParam	name=rmsratio value=0.7
+111.2320	24	0	setParam	name=rmsff value=0.95
+111.2320	24	0	setParam	name=dfmtsff value=0.93
+111.2320	24	0	setParam	name=bgainadapt value=0
+111.2320	24	0	setParam	name=bshift value=1
+111.2320	24	0	setParam	name=btrack value=1
+111.2320	24	0	setParam	name=bdetect value=1
+111.2320	24	0	setParam	name=avglen value=8
+111.2320	24	0	setParam	name=bweight value=1
+111.2320	24	0	setParam	name=minvowellen value=60
+111.2320	24	0	setParam	name=bratioshift value=0
+111.2320	24	0	setParam	name=bmelshift value=1
+111.2320	24	0	setParam	name=bcepslift value=0
+111.2320	24	0	setParam	name=cepswinwidth value=30
+111.2320	24	0	setParam	name=bbypassfmt value=0
+111.2320	24	0	setParam	name=f2min value=0
+111.2320	24	0	setParam	name=f2max value=5000
+111.2320	24	0	setParam	name=f1min value=0
+111.2320	24	0	setParam	name=f1max value=5000
+111.2320	24	0	setParam	name=lbk value=0
+111.2320	24	0	setParam	name=lbb value=0
+111.2320	24	0	setParam	name=pertf1 value=[257 x 0]
+111.2320	24	0	setParam	name=pertf2 value=[257 x 0]
+111.2320	24	0	setParam	name=pertamp value=[257 x 0]
+111.2320	24	0	setParam	name=pertphi value=[257 x 0]
+111.2320	24	0	setParam	name=pertamp2d value=[66049 x 0]
+111.2320	24	0	setParam	name=pertphi2d value=[66049 x 0]
+111.2320	24	0	setParam	name=fb value=3
+111.2320	24	0	setParam	name=nfb value=1
+111.2320	24	0	setParam	name=triallen value=0
+111.2320	24	0	setParam	name=ramplen value=0
+111.2320	24	0	setParam	name=afact value=1
+111.2320	24	0	setParam	name=bfact value=0.8
+111.2320	24	0	setParam	name=gfact value=1
+111.2320	24	0	setParam	name=fn1 value=675
+111.2320	24	0	setParam	name=fn2 value=1392
+111.2320	24	0	setParam	name=fb2gain value=1
+111.2320	24	0	setParam	name=fb3gain value=0.02
+111.2320	24	0	setParam	name=fb4gaindb value=10
+111.2320	24	0	setParam	name=fb5gaindb_speech value=0
+111.2320	24	0	setParam	name=fb5gain_playback value=1
+111.2320	24	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+111.2320	24	0	setParam	name=bpitchshift value=0
+111.2320	24	0	setParam	name=bshift2d value=0
+111.2320	24	0	setParam	name=pitchshiftratio value=1
+111.2320	24	0	setParam	name=pvocframelen value=256
+111.2320	24	0	setParam	name=pvochop value=64
+111.2320	24	0	setParam	name=bdownsampfilt value=1
+111.2320	24	0	setParam	name=stereomode value=1
+111.2320	24	0	setParam	name=delayFrames value=0
+111.2320	24	0	setParam	name=btimedomainshift value=0
+111.2320	24	0	setParam	name=pitchlowerboundhz value=0
+111.2320	24	0	setParam	name=pitchupperboundhz value=0
+111.2320	24	0	setParam	name=timedomainpitchshiftschedule value=1
+111.2320	24	0	setParam	name=timedomainpitchshiftalgorithm value=0
+111.2320	24	0	setParam	name=bclampformants value=0
+111.2320	24	0	setParam	name=clamposts value=[0 0]
+111.2320	24	0	setParam	name=clampf1 value=[2048 x 0]
+111.2320	24	0	setParam	name=clampf2 value=[2048 x 0]
+111.2320	24	0	keywait	fn=pause
+112.2320	24	0	key	key=space
+113.2320	24	0	setParam	name=pertAmp value=[257 x 0]
+113.2320	24	0	setParam	name=pertPhi value=[257 x 0]
+113.2320	24	0	reset	
+113.2320	24	0	start	
+115.1320	25	1	stop	
+115.1320	25	0	getData	
+116.8483	25	0	setParam	name=pertAmp value=[257 x 125]
+116.8483	25	0	setParam	name=pertPhi value=[257 x 0]
+116.8483	25	0	reset	
+116.8483	25	0	start	
+118.7483	26	1	stop	
+118.7483	26	0	getData	
+120.6433	26	0	setParam	name=pertAmp value=[257 x 0]
+120.6433	26	0	setParam	name=pertPhi value=[257 x 0]
+120.6433	26	0	reset	
+120.6433	26	0	start	
+122.5433	27	1	stop	
+122.5433	27	0	getData	
+124.2367	27	0	setParam	name=pertAmp value=[257 x -125]
+124.2367	27	0	setParam	name=pertPhi value=[257 x 0]
+124.2367	27	0	reset	
+124.2367	27	0	start	
+126.1367	28	1	stop	
+126.1367	28	0	getData	
+128.2032	28	0	setParam	name=pertAmp value=[257 x 0]
+128.2032	28	0	setParam	name=pertPhi value=[257 x 0]
+128.2032	28	0	reset	
+128.2032	28	0	start	
+130.1032	29	1	stop	
+130.1032	29	0	getData	
+131.6297	29	0	setParam	name=pertAmp value=[257 x -125]
+131.6297	29	0	setParam	name=pertPhi value=[257 x 0]
+131.6297	29	0	reset	
+131.6297	29	0	start	
+133.5297	30	1	stop	
+133.5297	30	0	getData	
+135.3168	30	0	setParam	name=pertAmp value=[257 x 0]
+135.3168	30	0	setParam	name=pertPhi value=[257 x 0]
+135.3168	30	0	reset	
+135.3168	30	0	start	
+137.2168	31	1	stop	
+137.2168	31	0	getData	
+139.1941	31	0	setParam	name=pertAmp value=[257 x 0]
+139.1941	31	0	setParam	name=pertPhi value=[257 x 0]
+139.1941	31	0	reset	
+139.1941	31	0	start	
+141.0941	32	1	stop	
+141.0941	32	0	getData	
+142.9460	32	0	setParam	name=pertAmp value=[257 x 125]
+142.9460	32	0	setParam	name=pertPhi value=[257 x 0]
+142.9460	32	0	reset	
+142.9460	32	0	start	
+144.8460	33	1	stop	
+144.8460	33	0	getData	
+146.6085	33	0	setParam	name=pertAmp value=[257 x 0]
+146.6085	33	0	setParam	name=pertPhi value=[257 x 0]
+146.6085	33	0	reset	
+146.6085	33	0	start	
+148.5085	34	1	stop	
+148.5085	34	0	getData	
+150.3143	34	0	setParam	name=pertAmp value=[257 x -125]
+150.3143	34	0	setParam	name=pertPhi value=[257 x 0]
+150.3143	34	0	reset	
+150.3143	34	0	start	
+152.2143	35	1	stop	
+152.2143	35	0	getData	
+154.2741	35	0	setParam	name=pertAmp value=[257 x 0]
+154.2741	35	0	setParam	name=pertPhi value=[257 x 0]
+154.2741	35	0	reset	
+154.2741	35	0	start	
+156.1741	36	1	stop	
+156.1741	36	0	getData	
+157.7402	36	0	setParam	name=pertAmp value=[257 x 125]
+157.7402	36	0	setParam	name=pertPhi value=[257 x 0]
+157.7402	36	0	reset	
+157.7402	36	0	start	
+159.6402	37	1	stop	
+159.6402	37	0	getData	
+161.2508	37	0	setParam	name=pertAmp value=[257 x 0]
+161.2508	37	0	setParam	name=pertPhi value=[257 x 0]
+161.2508	37	0	reset	
+161.2508	37	0	start	
+163.1508	38	1	stop	
+163.1508	38	0	getData	
+165.3276	38	0	setParam	name=pertAmp value=[257 x 0]
+165.3276	38	0	setParam	name=pertPhi value=[257 x 0]
+165.3276	38	0	reset	
+165.3276	38	0	start	
+167.2276	39	1	stop	
+167.2276	39	0	getData	

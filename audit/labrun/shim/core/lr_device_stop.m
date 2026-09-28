@@ -23,5 +23,5 @@ else
 end
 LR.trialIndex(end+1) = struct('k', k, 'mode', d.mode, 't0', d.t0, 't1', d.t1, 'word', d.ctx.word, 'cond', d.ctx.cond, 'phase', {LR.phase});
 save('-v7', fullfile(LR.outdir, 'trials', sprintf('%04d.mat', k)), 'rec');
-fprintf(LR.timeline, '%d\t%s\t%.4f\t%.4f\t%.4f\t%s\t%s\t%s\n', k, d.mode, d.t0, d.t1, rec.pumped_s, d.ctx.word, d.ctx.cond, d.inputDesc);
+if LR.timeline > 0, fprintf(LR.timeline, '%d\t%s\t%.4f\t%.4f\t%.4f\t%s\t%s\t%s\n', k, d.mode, d.t0, d.t1, rec.pumped_s, d.ctx.word, d.ctx.cond, d.inputDesc); end
 end

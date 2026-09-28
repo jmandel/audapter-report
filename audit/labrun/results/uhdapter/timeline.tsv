@@ -1,0 +1,16 @@
+k	mode	t0	t1	pumped_s	word	cond	input
+1	proc	6.0030	7.7530	1.7500	abate	noisebase	synth "abate" female f0=205 vowels=AE-AE onset=0.327 dur=0.412 level=0.050
+2	proc	9.8473	11.5973	1.7500	meta	noisebase	synth "meta" female f0=205 vowels=EH-AE onset=0.302 dur=0.405 level=0.050
+3	proc	13.7851	15.5351	1.7500	adept	baseline	synth "adept" female f0=205 vowels=AE-EH onset=0.300 dur=0.424 level=0.050
+4	proc	17.9643	19.7143	1.7500	beta	baseline	synth "beta" female f0=205 vowels=EH-AE onset=0.293 dur=0.445 level=0.050
+5	proc	21.5530	23.3030	1.7500	above	ramp	synth "above" female f0=205 vowels=AE-AA onset=0.298 dur=0.439 level=0.050
+6	proc	27.5795	29.3295	1.7500	above	ramp	synth "above" female f0=205 vowels=AE-AA onset=0.286 dur=0.387 level=0.050
+7	proc	31.7219	33.4719	1.7500	beta	ramp	synth "beta" female f0=205 vowels=EH-AE onset=0.332 dur=0.437 level=0.050
+8	proc	35.9319	37.6819	1.7500	meta	ramp	synth "meta" female f0=205 vowels=EH-AE onset=0.302 dur=0.433 level=0.050
+9	proc	40.0261	41.7761	1.7500	adept	ramp	synth "adept" female f0=205 vowels=AE-EH onset=0.271 dur=0.401 level=0.050
+10	proc	43.8883	45.6383	1.7500	abate	hold	synth "abate" female f0=205 vowels=AE-AE onset=0.315 dur=0.424 level=0.050
+11	proc	49.6264	51.3764	1.7500	meta	hold	synth "meta" female f0=205 vowels=EH-AE onset=0.288 dur=0.386 level=0.050
+12	proc	53.1594	54.9094	1.7500	above	post	synth "above" female f0=205 vowels=AE-AA onset=0.285 dur=0.392 level=0.050
+13	proc	56.9151	58.6651	1.7500	abate	post	synth "abate" female f0=205 vowels=AE-AE onset=0.336 dur=0.440 level=0.050
+14	proc	60.5932	62.3432	1.7500	beta	washout	synth "beta" female f0=205 vowels=EH-AE onset=0.301 dur=0.389 level=0.050
+15	proc	64.4603	66.2103	1.7500	adept	washout	synth "adept" female f0=205 vowels=AE-EH onset=0.264 dur=0.430 level=0.050

@@ -1,0 +1,162 @@
+vtime	trial	running	op	args
+0.0000	0	0	ask:input	answer=m prompt=Enter participant gender (m/f):  rule=gender
+2.0030	0	0	deviceName	args=Focusrite USB
+2.0030	0	0	ost	file=/w/sandbox/repos/free-speech/experiment_helpers/measureFormantsWorking.ost
+2.0030	0	0	pcf	file=/w/sandbox/repos/free-speech/experiment_helpers/measureFormantsWorking.pcf
+2.0030	0	0	getMaxPBLen	args=
+2.0030	0	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+2.0030	0	0	setParam	name=downfact value=3
+2.0030	0	0	setParam	name=srate value=16000
+2.0030	0	0	setParam	name=framelen value=32
+2.0030	0	0	setParam	name=ndelay value=5
+2.0030	0	0	setParam	name=nwin value=1
+2.0030	0	0	setParam	name=nlpc value=17
+2.0030	0	0	setParam	name=nfmts value=2
+2.0030	0	0	setParam	name=ntracks value=4
+2.0030	0	0	setParam	name=scale value=0.795271
+2.0030	0	0	setParam	name=preemp value=0.98
+2.0030	0	0	setParam	name=rmsthr value=0.011354
+2.0030	0	0	setParam	name=rmsratio value=0.7
+2.0030	0	0	setParam	name=rmsff value=0.95
+2.0030	0	0	setParam	name=dfmtsff value=0.93
+2.0030	0	0	setParam	name=bgainadapt value=0
+2.0030	0	0	setParam	name=bshift value=0
+2.0030	0	0	setParam	name=btrack value=1
+2.0030	0	0	setParam	name=bdetect value=1
+2.0030	0	0	setParam	name=avglen value=8
+2.0030	0	0	setParam	name=bweight value=1
+2.0030	0	0	setParam	name=minvowellen value=60
+2.0030	0	0	setParam	name=bratioshift value=1
+2.0030	0	0	setParam	name=bmelshift value=0
+2.0030	0	0	setParam	name=bcepslift value=0
+2.0030	0	0	setParam	name=cepswinwidth value=50
+2.0030	0	0	setParam	name=bbypassfmt value=0
+2.0030	0	0	setParam	name=f2min value=0
+2.0030	0	0	setParam	name=f2max value=5000
+2.0030	0	0	setParam	name=f1min value=0
+2.0030	0	0	setParam	name=f1max value=5000
+2.0030	0	0	setParam	name=lbk value=0
+2.0030	0	0	setParam	name=lbb value=0
+2.0030	0	0	setParam	name=pertf1 value=[257 x 0]
+2.0030	0	0	setParam	name=pertf2 value=[257 x 0]
+2.0030	0	0	setParam	name=pertamp value=[257 x 0]
+2.0030	0	0	setParam	name=pertphi value=[257 x 0]
+2.0030	0	0	setParam	name=pertamp2d value=[66049 x 0]
+2.0030	0	0	setParam	name=pertphi2d value=[66049 x 0]
+2.0030	0	0	setParam	name=fb value=3
+2.0030	0	0	setParam	name=nfb value=1
+2.0030	0	0	setParam	name=triallen value=0
+2.0030	0	0	setParam	name=ramplen value=0
+2.0030	0	0	setParam	name=afact value=1
+2.0030	0	0	setParam	name=bfact value=0.8
+2.0030	0	0	setParam	name=gfact value=1
+2.0030	0	0	setParam	name=fn1 value=591
+2.0030	0	0	setParam	name=fn2 value=1314
+2.0030	0	0	setParam	name=fb2gain value=1
+2.0030	0	0	setParam	name=fb3gain value=0.02
+2.0030	0	0	setParam	name=fb4gaindb value=10
+2.0030	0	0	setParam	name=fb5gaindb_speech value=0
+2.0030	0	0	setParam	name=fb5gain_playback value=1
+2.0030	0	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+2.0030	0	0	setParam	name=bpitchshift value=0
+2.0030	0	0	setParam	name=bshift2d value=0
+2.0030	0	0	setParam	name=pitchshiftratio value=1
+2.0030	0	0	setParam	name=pvocframelen value=256
+2.0030	0	0	setParam	name=pvochop value=64
+2.0030	0	0	setParam	name=bdownsampfilt value=1
+2.0030	0	0	setParam	name=stereomode value=1
+2.0030	0	0	setParam	name=delayFrames value=0
+2.0030	0	0	setParam	name=btimedomainshift value=0
+2.0030	0	0	setParam	name=pitchlowerboundhz value=0
+2.0030	0	0	setParam	name=pitchupperboundhz value=0
+2.0030	0	0	setParam	name=timedomainpitchshiftschedule value=1
+2.0030	0	0	setParam	name=timedomainpitchshiftalgorithm value=0
+2.0030	0	0	setParam	name=bclampformants value=0
+2.0030	0	0	setParam	name=clamposts value=[0 0]
+2.0030	0	0	setParam	name=clampf1 value=[2048 x 0]
+2.0030	0	0	setParam	name=clampf2 value=[2048 x 0]
+2.0030	0	0	keywait	fn=pause
+3.0030	0	0	key	key=space
+4.0030	0	0	reset	
+4.0030	0	0	start	
+5.5030	1	1	stop	
+5.5030	1	0	getData	
+5.5030	1	0	dbstop-ignored	args=if error
+5.5030	1	0	dbstop-ignored	args=if error
+6.3707	1	0	reset	
+6.3707	1	0	start	
+7.8707	2	1	stop	
+7.8707	2	0	getData	
+7.8707	2	0	dbstop-ignored	args=if error
+7.8707	2	0	dbstop-ignored	args=if error
+8.7617	2	0	reset	
+8.7617	2	0	start	
+10.2617	3	1	stop	
+10.2617	3	0	getData	
+10.2617	3	0	dbstop-ignored	args=if error
+10.2617	3	0	dbstop-ignored	args=if error
+11.4331	3	0	reset	
+11.4331	3	0	start	
+12.9331	4	1	stop	
+12.9331	4	0	getData	
+12.9331	4	0	dbstop-ignored	args=if error
+12.9331	4	0	dbstop-ignored	args=if error
+13.8234	4	0	reset	
+13.8234	4	0	start	
+15.3234	5	1	stop	
+15.3234	5	0	getData	
+15.3234	5	0	dbstop-ignored	args=if error
+15.3234	5	0	dbstop-ignored	args=if error
+16.2644	5	0	reset	
+16.2644	5	0	start	
+17.7644	6	1	stop	
+17.7644	6	0	getData	
+17.7644	6	0	dbstop-ignored	args=if error
+17.7644	6	0	dbstop-ignored	args=if error
+18.9248	6	0	reset	
+18.9248	6	0	start	
+20.4248	7	1	stop	
+20.4248	7	0	getData	
+20.4248	7	0	dbstop-ignored	args=if error
+20.4248	7	0	dbstop-ignored	args=if error
+21.7799	7	0	reset	
+21.7799	7	0	start	
+23.2799	8	1	stop	
+23.2799	8	0	getData	
+23.2799	8	0	dbstop-ignored	args=if error
+23.2799	8	0	dbstop-ignored	args=if error
+24.4778	8	0	reset	
+24.4778	8	0	start	
+25.9778	9	1	stop	
+25.9778	9	0	getData	
+25.9778	9	0	dbstop-ignored	args=if error
+25.9778	9	0	dbstop-ignored	args=if error
+26.7509	9	0	reset	
+26.7509	9	0	start	
+28.2509	10	1	stop	
+28.2509	10	0	getData	
+28.2509	10	0	dbstop-ignored	args=if error
+28.2509	10	0	dbstop-ignored	args=if error
+29.2365	10	0	reset	
+29.2365	10	0	start	
+30.7365	11	1	stop	
+30.7365	11	0	getData	
+30.7365	11	0	dbstop-ignored	args=if error
+30.7365	11	0	dbstop-ignored	args=if error
+33.0370	11	0	reset	
+33.0370	11	0	start	
+34.5370	12	1	stop	
+34.5370	12	0	getData	
+34.5370	12	0	dbstop-ignored	args=if error
+34.5370	12	0	dbstop-ignored	args=if error
+35.5347	12	0	reset	
+35.5347	12	0	start	
+37.0347	13	1	stop	
+37.0347	13	0	getData	
+37.0347	13	0	dbstop-ignored	args=if error
+37.0347	13	0	dbstop-ignored	args=if error
+40.8892	13	0	waitfor	
+40.8892	13	0	gui	figure=check_LPC  steps=^ok$
+40.8892	13	0	gui-click	control=OK
+40.8892	13	0	ask:questdlg	answer=Save and exit prompt=Save LPC order and exit? rule=save lpc order and exit
+40.8892	13	0	ask:input	answer=y prompt=Is the perturbation field OK? y/n:  rule=\(y/n\)|y/n|\[y/n\]|yes/no

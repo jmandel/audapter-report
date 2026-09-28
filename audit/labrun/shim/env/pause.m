@@ -10,6 +10,7 @@ if nargin == 0 || (isnumeric(varargin{1}) && isinf(varargin{1}))
   return
 end
 t = varargin{1};
+if isnumeric(t) && isscalar(t) && ~isempty(lr_player(t)), return; end   % pause(audioplayer)
 if ischar(t)
   if strcmpi(t, 'query'), varargout{1} = 'on'; end
   return

@@ -1,0 +1,3020 @@
+vtime	trial	running	op	args
+0.0000	0	0	plan:cbPermutation	dir=\\wcs-cifs.waisman.wisc.edu\wc\smng\experiments\/simonMultisyllable_v2 expt=simonMultisyllable_v2
+0.0000	0	0	rng	arg=shuffle seed=1001
+0.0000	0	0	dbstop-ignored	args=if error
+0.0000	0	0	ask:input	answer=n prompt=Does the participant appear to be above the height 5' 8"? (y/n):  rule=above the height|5' ?8
+2.0000	0	0	dbstop-ignored	args=if error
+2.0000	0	0	ask:input	answer=1 prompt=[Test mode only] Run LPC check pretest phase (1), or skip it (0)? (1/0):  rule=\((\d+)/\d+
+4.0030	0	0	dbstop-ignored	args=if error
+4.0060	0	0	deviceName	args=Focusrite USB
+4.0060	0	0	ost	file=/w/sandbox/repos/free-speech/experiment_helpers/measureFormantsWorking.ost
+4.0060	0	0	pcf	file=/w/sandbox/repos/free-speech/experiment_helpers/measureFormantsWorking.pcf
+4.0060	0	0	getMaxPBLen	args=
+4.0060	0	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+4.0060	0	0	setParam	name=downfact value=3
+4.0060	0	0	setParam	name=srate value=16000
+4.0060	0	0	setParam	name=framelen value=32
+4.0060	0	0	setParam	name=ndelay value=5
+4.0060	0	0	setParam	name=nwin value=1
+4.0060	0	0	setParam	name=nlpc value=15
+4.0060	0	0	setParam	name=nfmts value=2
+4.0060	0	0	setParam	name=ntracks value=4
+4.0060	0	0	setParam	name=scale value=0.795271
+4.0060	0	0	setParam	name=preemp value=0.98
+4.0060	0	0	setParam	name=rmsthr value=0.011354
+4.0060	0	0	setParam	name=rmsratio value=0.7
+4.0060	0	0	setParam	name=rmsff value=0.95
+4.0060	0	0	setParam	name=dfmtsff value=0.93
+4.0060	0	0	setParam	name=bgainadapt value=0
+4.0060	0	0	setParam	name=bshift value=0
+4.0060	0	0	setParam	name=btrack value=1
+4.0060	0	0	setParam	name=bdetect value=1
+4.0060	0	0	setParam	name=avglen value=8
+4.0060	0	0	setParam	name=bweight value=1
+4.0060	0	0	setParam	name=minvowellen value=60
+4.0060	0	0	setParam	name=bratioshift value=1
+4.0060	0	0	setParam	name=bmelshift value=0
+4.0060	0	0	setParam	name=bcepslift value=0
+4.0060	0	0	setParam	name=cepswinwidth value=30
+4.0060	0	0	setParam	name=bbypassfmt value=0
+4.0060	0	0	setParam	name=f2min value=0
+4.0060	0	0	setParam	name=f2max value=5000
+4.0060	0	0	setParam	name=f1min value=0
+4.0060	0	0	setParam	name=f1max value=5000
+4.0060	0	0	setParam	name=lbk value=0
+4.0060	0	0	setParam	name=lbb value=0
+4.0060	0	0	setParam	name=pertf1 value=[257 x 0]
+4.0060	0	0	setParam	name=pertf2 value=[257 x 0]
+4.0060	0	0	setParam	name=pertamp value=[257 x 0]
+4.0060	0	0	setParam	name=pertphi value=[257 x 0]
+4.0060	0	0	setParam	name=pertamp2d value=[66049 x 0]
+4.0060	0	0	setParam	name=pertphi2d value=[66049 x 0]
+4.0060	0	0	setParam	name=fb value=3
+4.0060	0	0	setParam	name=nfb value=1
+4.0060	0	0	setParam	name=triallen value=0
+4.0060	0	0	setParam	name=ramplen value=0
+4.0060	0	0	setParam	name=afact value=1
+4.0060	0	0	setParam	name=bfact value=0.8
+4.0060	0	0	setParam	name=gfact value=1
+4.0060	0	0	setParam	name=fn1 value=675
+4.0060	0	0	setParam	name=fn2 value=1392
+4.0060	0	0	setParam	name=fb2gain value=1
+4.0060	0	0	setParam	name=fb3gain value=0.02
+4.0060	0	0	setParam	name=fb4gaindb value=10
+4.0060	0	0	setParam	name=fb5gaindb_speech value=0
+4.0060	0	0	setParam	name=fb5gain_playback value=1
+4.0060	0	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+4.0060	0	0	setParam	name=bpitchshift value=0
+4.0060	0	0	setParam	name=bshift2d value=0
+4.0060	0	0	setParam	name=pitchshiftratio value=1
+4.0060	0	0	setParam	name=pvocframelen value=256
+4.0060	0	0	setParam	name=pvochop value=64
+4.0060	0	0	setParam	name=bdownsampfilt value=1
+4.0060	0	0	setParam	name=stereomode value=1
+4.0060	0	0	setParam	name=delayFrames value=0
+4.0060	0	0	setParam	name=btimedomainshift value=0
+4.0060	0	0	setParam	name=pitchlowerboundhz value=0
+4.0060	0	0	setParam	name=pitchupperboundhz value=0
+4.0060	0	0	setParam	name=timedomainpitchshiftschedule value=1
+4.0060	0	0	setParam	name=timedomainpitchshiftalgorithm value=0
+4.0060	0	0	setParam	name=bclampformants value=0
+4.0060	0	0	setParam	name=clamposts value=[0 0]
+4.0060	0	0	setParam	name=clampf1 value=[2048 x 0]
+4.0060	0	0	setParam	name=clampf2 value=[2048 x 0]
+4.0060	0	0	keywait	fn=pause
+5.0060	0	0	key	key=space
+6.0060	0	0	reset	
+6.0060	0	0	start	
+7.5060	1	1	stop	
+7.5060	1	0	getData	
+7.5060	1	0	dbstop-ignored	args=if error
+7.5060	1	0	dbstop-ignored	args=if error
+8.1780	1	0	reset	
+8.1780	1	0	start	
+9.6780	2	1	stop	
+9.6780	2	0	getData	
+9.6780	2	0	dbstop-ignored	args=if error
+9.6780	2	0	dbstop-ignored	args=if error
+10.5212	2	0	reset	
+10.5212	2	0	start	
+12.0212	3	1	stop	
+12.0212	3	0	getData	
+12.0212	3	0	dbstop-ignored	args=if error
+12.0212	3	0	dbstop-ignored	args=if error
+12.8457	3	0	reset	
+12.8457	3	0	start	
+14.3457	4	1	stop	
+14.3457	4	0	getData	
+14.3457	4	0	dbstop-ignored	args=if error
+14.3457	4	0	dbstop-ignored	args=if error
+14.9432	4	0	reset	
+14.9432	4	0	start	
+16.4432	5	1	stop	
+16.4432	5	0	getData	
+16.4432	5	0	dbstop-ignored	args=if error
+16.4432	5	0	dbstop-ignored	args=if error
+17.0003	5	0	reset	
+17.0003	5	0	start	
+18.5003	6	1	stop	
+18.5003	6	0	getData	
+18.5003	6	0	dbstop-ignored	args=if error
+18.5003	6	0	dbstop-ignored	args=if error
+22.3870	6	0	waitfor	
+22.3870	6	0	gui	figure=check_LPC  steps=^ok$
+22.3870	6	0	gui-click	control=OK
+22.3870	6	0	ask:questdlg	answer=Save and exit prompt=Save LPC order and exit? rule=save lpc order and exit
+22.3870	6	0	ask:input	answer= prompt=Press ENTER to continue to OST Check pretest phase rule=press enter|press any key|hit enter|enter to (continue|start|go)|press return
+24.3870	6	0	dbstop-ignored	args=if error
+24.3870	6	0	ask:input	answer=1 prompt=[Test mode only] Run ost pretest phase (1), or skip it (0)? (1/0):  rule=\((\d+)/\d+
+26.3930	6	0	ost	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.ost
+26.3930	6	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+26.3930	6	0	deviceName	args=Focusrite USB
+26.3930	6	0	setParam	name=sRate value=16000
+26.3930	6	0	setParam	name=downFact value=3
+26.3930	6	0	setParam	name=frameLen value=32
+26.3930	6	0	getMaxPBLen	args=
+26.3930	6	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+26.3930	6	0	setParam	name=downfact value=3
+26.3930	6	0	setParam	name=srate value=16000
+26.3930	6	0	setParam	name=framelen value=32
+26.3930	6	0	setParam	name=ndelay value=5
+26.3930	6	0	setParam	name=nwin value=1
+26.3930	6	0	setParam	name=nlpc value=15
+26.3930	6	0	setParam	name=nfmts value=2
+26.3930	6	0	setParam	name=ntracks value=4
+26.3930	6	0	setParam	name=scale value=0.795271
+26.3930	6	0	setParam	name=preemp value=0.98
+26.3930	6	0	setParam	name=rmsthr value=0.011354
+26.3930	6	0	setParam	name=rmsratio value=0.7
+26.3930	6	0	setParam	name=rmsff value=0.89
+26.3930	6	0	setParam	name=dfmtsff value=0.93
+26.3930	6	0	setParam	name=bgainadapt value=0
+26.3930	6	0	setParam	name=bshift value=1
+26.3930	6	0	setParam	name=btrack value=1
+26.3930	6	0	setParam	name=bdetect value=1
+26.3930	6	0	setParam	name=avglen value=8
+26.3930	6	0	setParam	name=bweight value=1
+26.3930	6	0	setParam	name=minvowellen value=60
+26.3930	6	0	setParam	name=bratioshift value=0
+26.3930	6	0	setParam	name=bmelshift value=1
+26.3930	6	0	setParam	name=bcepslift value=0
+26.3930	6	0	setParam	name=cepswinwidth value=30
+26.3930	6	0	setParam	name=bbypassfmt value=0
+26.3930	6	0	setParam	name=f2min value=0
+26.3930	6	0	setParam	name=f2max value=5000
+26.3930	6	0	setParam	name=f1min value=0
+26.3930	6	0	setParam	name=f1max value=5000
+26.3930	6	0	setParam	name=lbk value=0
+26.3930	6	0	setParam	name=lbb value=0
+26.3930	6	0	setParam	name=pertf1 value=[257 x 0]
+26.3930	6	0	setParam	name=pertf2 value=[257 x 0]
+26.3930	6	0	setParam	name=pertamp value=[257 x 0]
+26.3930	6	0	setParam	name=pertphi value=[257 x 0]
+26.3930	6	0	setParam	name=pertamp2d value=[66049 x 0]
+26.3930	6	0	setParam	name=pertphi2d value=[66049 x 0]
+26.3930	6	0	setParam	name=fb value=3
+26.3930	6	0	setParam	name=nfb value=1
+26.3930	6	0	setParam	name=triallen value=0
+26.3930	6	0	setParam	name=ramplen value=0
+26.3930	6	0	setParam	name=afact value=1
+26.3930	6	0	setParam	name=bfact value=0.8
+26.3930	6	0	setParam	name=gfact value=1
+26.3930	6	0	setParam	name=fn1 value=675
+26.3930	6	0	setParam	name=fn2 value=1392
+26.3930	6	0	setParam	name=fb2gain value=1
+26.3930	6	0	setParam	name=fb3gain value=0.02
+26.3930	6	0	setParam	name=fb4gaindb value=10
+26.3930	6	0	setParam	name=fb5gaindb_speech value=0
+26.3930	6	0	setParam	name=fb5gain_playback value=1
+26.3930	6	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+26.3930	6	0	setParam	name=bpitchshift value=0
+26.3930	6	0	setParam	name=bshift2d value=0
+26.3930	6	0	setParam	name=pitchshiftratio value=1
+26.3930	6	0	setParam	name=pvocframelen value=256
+26.3930	6	0	setParam	name=pvochop value=64
+26.3930	6	0	setParam	name=bdownsampfilt value=1
+26.3930	6	0	setParam	name=stereomode value=1
+26.3930	6	0	setParam	name=delayFrames value=0
+26.3930	6	0	setParam	name=btimedomainshift value=0
+26.3930	6	0	setParam	name=pitchlowerboundhz value=0
+26.3930	6	0	setParam	name=pitchupperboundhz value=0
+26.3930	6	0	setParam	name=timedomainpitchshiftschedule value=1
+26.3930	6	0	setParam	name=timedomainpitchshiftalgorithm value=0
+26.3930	6	0	setParam	name=bclampformants value=0
+26.3930	6	0	setParam	name=clamposts value=[0 0]
+26.3930	6	0	setParam	name=clampf1 value=[2048 x 0]
+26.3930	6	0	setParam	name=clampf2 value=[2048 x 0]
+26.3930	6	0	keywait	fn=pause
+27.3930	6	0	key	key=space
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	dbstop-ignored	args=if error
+28.3930	6	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+28.3930	6	0	reset	
+28.3930	6	0	start	
+29.8930	7	1	stop	
+29.8930	7	0	getData	
+29.8930	7	0	dbstop-ignored	args=if error
+29.8930	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	dbstop-ignored	args=if error
+30.7303	7	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+30.7303	7	0	reset	
+30.7303	7	0	start	
+32.2303	8	1	stop	
+32.2303	8	0	getData	
+32.2303	8	0	dbstop-ignored	args=if error
+32.2303	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	dbstop-ignored	args=if error
+33.1330	8	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+33.1330	8	0	reset	
+33.1330	8	0	start	
+34.6330	9	1	stop	
+34.6330	9	0	getData	
+34.6330	9	0	dbstop-ignored	args=if error
+34.6330	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	dbstop-ignored	args=if error
+35.2475	9	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+35.2475	9	0	reset	
+35.2475	9	0	start	
+36.7475	10	1	stop	
+36.7475	10	0	getData	
+36.7475	10	0	dbstop-ignored	args=if error
+36.7475	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	dbstop-ignored	args=if error
+37.5418	10	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+37.5418	10	0	reset	
+37.5418	10	0	start	
+39.0418	11	1	stop	
+39.0418	11	0	getData	
+39.0418	11	0	dbstop-ignored	args=if error
+39.0418	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	dbstop-ignored	args=if error
+39.8872	11	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+39.8872	11	0	reset	
+39.8872	11	0	start	
+41.3872	12	1	stop	
+41.3872	12	0	getData	
+41.3872	12	0	dbstop-ignored	args=if error
+41.3872	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+44.9144	12	0	dbstop-ignored	args=if error
+45.4144	12	0	dbstop-ignored	args=if error
+45.4144	12	0	dbstop-ignored	args=if error
+45.4144	12	0	dbstop-ignored	args=if error
+45.4144	12	0	dbstop-ignored	args=if error
+45.4144	12	0	ost	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.ost
+45.4144	12	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+45.4144	12	0	setParam	name=downfact value=3
+45.4144	12	0	setParam	name=srate value=16000
+45.4144	12	0	setParam	name=framelen value=32
+45.4144	12	0	setParam	name=ndelay value=5
+45.4144	12	0	setParam	name=nwin value=1
+45.4144	12	0	setParam	name=nlpc value=15
+45.4144	12	0	setParam	name=nfmts value=2
+45.4144	12	0	setParam	name=ntracks value=4
+45.4144	12	0	setParam	name=scale value=0.795271
+45.4144	12	0	setParam	name=preemp value=0.98
+45.4144	12	0	setParam	name=rmsthr value=0.011354
+45.4144	12	0	setParam	name=rmsratio value=0.7
+45.4144	12	0	setParam	name=rmsff value=0.89
+45.4144	12	0	setParam	name=dfmtsff value=0.93
+45.4144	12	0	setParam	name=bgainadapt value=0
+45.4144	12	0	setParam	name=bshift value=1
+45.4144	12	0	setParam	name=btrack value=1
+45.4144	12	0	setParam	name=bdetect value=1
+45.4144	12	0	setParam	name=avglen value=8
+45.4144	12	0	setParam	name=bweight value=1
+45.4144	12	0	setParam	name=minvowellen value=60
+45.4144	12	0	setParam	name=bratioshift value=0
+45.4144	12	0	setParam	name=bmelshift value=1
+45.4144	12	0	setParam	name=bcepslift value=0
+45.4144	12	0	setParam	name=cepswinwidth value=30
+45.4144	12	0	setParam	name=bbypassfmt value=0
+45.4144	12	0	setParam	name=lbk value=0
+45.4144	12	0	setParam	name=lbb value=0
+45.4144	12	0	setParam	name=pertf1 value=[257 x 0]
+45.4144	12	0	setParam	name=pertf2 value=[257 x 0]
+45.4144	12	0	setParam	name=pertamp value=[257 x 0]
+45.4144	12	0	setParam	name=pertphi value=[257 x 0]
+45.4144	12	0	setParam	name=pertamp2d value=[66049 x 0]
+45.4144	12	0	setParam	name=pertphi2d value=[66049 x 0]
+45.4144	12	0	setParam	name=fb value=3
+45.4144	12	0	setParam	name=nfb value=1
+45.4144	12	0	setParam	name=triallen value=0
+45.4144	12	0	setParam	name=ramplen value=0
+45.4144	12	0	setParam	name=afact value=1
+45.4144	12	0	setParam	name=bfact value=0.8
+45.4144	12	0	setParam	name=gfact value=1
+45.4144	12	0	setParam	name=fn1 value=675
+45.4144	12	0	setParam	name=fn2 value=1392
+45.4144	12	0	setParam	name=fb2gain value=1
+45.4144	12	0	setParam	name=fb3gain value=0.02
+45.4144	12	0	setParam	name=fb4gaindb value=10
+45.4144	12	0	setParam	name=fb5gaindb_speech value=0
+45.4144	12	0	setParam	name=fb5gain_playback value=1
+45.4144	12	0	setParam	name=rmsff_fb value=[0.85 0.85 0 0]
+45.4144	12	0	setParam	name=bpitchshift value=0
+45.4144	12	0	setParam	name=bshift2d value=0
+45.4144	12	0	setParam	name=pitchshiftratio value=1
+45.4144	12	0	setParam	name=gain value=1
+45.4144	12	0	setParam	name=mute value=0
+45.4144	12	0	setParam	name=pvocframelen value=256
+45.4144	12	0	setParam	name=pvochop value=64
+45.4144	12	0	setParam	name=bdownsampfilt value=1
+45.4144	12	0	setParam	name=stereomode value=1
+45.4144	12	0	setParam	name=tsgNTones value=0
+45.4144	12	0	setParam	name=tsgToneDur value=[]
+45.4144	12	0	setParam	name=tsgToneFreq value=[]
+45.4144	12	0	setParam	name=tsgToneAmp value=[]
+45.4144	12	0	setParam	name=tsgToneRamp value=[]
+45.4144	12	0	setParam	name=tsgInt value=[]
+45.4144	12	0	setParam	name=delayFrames value=0
+45.4144	12	0	setParam	name=wgFreq value=1000
+45.4144	12	0	setParam	name=wgAmp value=0.1
+45.4144	12	0	setParam	name=wgTime value=0
+45.4144	12	0	setParam	name=btimedomainshift value=0
+45.4144	12	0	setParam	name=pitchlowerboundhz value=0
+45.4144	12	0	setParam	name=pitchupperboundhz value=0
+45.4144	12	0	setParam	name=timedomainpitchshiftschedule value=1
+45.4144	12	0	setParam	name=timedomainpitchshiftalgorithm value=0
+45.4144	12	0	setParam	name=bclampformants value=0
+45.4144	12	0	reset	
+45.4144	12	0	getData	
+45.4144	12	0	reset	
+45.4144	12	0	getData	
+45.4144	12	0	reset	
+45.4144	12	0	getData	
+45.4144	12	0	reset	
+45.4144	12	0	getData	
+45.4144	12	0	reset	
+45.4144	12	0	getData	
+45.4144	12	0	reset	
+45.4144	12	0	getData	
+45.9144	12	0	dbstop-ignored	args=if error
+45.9144	12	0	dbstop-ignored	args=if error
+45.9144	12	0	dbstop-ignored	args=if error
+45.9144	12	0	dbstop-ignored	args=if error
+45.9144	12	0	waitfor	
+45.9144	12	0	gui	figure=audapter_viewer signal steps=^continue
+45.9144	12	0	gui-click	control=Continue/Exit
+45.9144	12	0	ask:questdlg	answer=Save and exit prompt=Save current OST parameters and exit? rule=default
+45.9144	12	0	dbstop-ignored	args=if error
+45.9144	12	0	uiwait	
+45.9144	12	0	gui	figure= Verify save location steps=^ok$
+45.9144	12	0	gui-click	control=OK
+45.9144	12	0	gui-close	figure= Verify save location
+46.4144	12	0	dbstop-ignored	args=if error
+46.4144	12	0	ask:input	answer=redo prompt=Redo OST testing phase, or move on? (redo/move on):  rule=\((redo|repeat)/(move on|continue)\)
+48.4204	12	0	ost	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.ost
+48.4204	12	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+48.4204	12	0	deviceName	args=Focusrite USB
+48.4204	12	0	setParam	name=sRate value=16000
+48.4204	12	0	setParam	name=downFact value=3
+48.4204	12	0	setParam	name=frameLen value=32
+48.4204	12	0	getMaxPBLen	args=
+48.4204	12	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+48.4204	12	0	setParam	name=downfact value=3
+48.4204	12	0	setParam	name=srate value=16000
+48.4204	12	0	setParam	name=framelen value=32
+48.4204	12	0	setParam	name=ndelay value=5
+48.4204	12	0	setParam	name=nwin value=1
+48.4204	12	0	setParam	name=nlpc value=15
+48.4204	12	0	setParam	name=nfmts value=2
+48.4204	12	0	setParam	name=ntracks value=4
+48.4204	12	0	setParam	name=scale value=0.795271
+48.4204	12	0	setParam	name=preemp value=0.98
+48.4204	12	0	setParam	name=rmsthr value=0.011354
+48.4204	12	0	setParam	name=rmsratio value=0.7
+48.4204	12	0	setParam	name=rmsff value=0.89
+48.4204	12	0	setParam	name=dfmtsff value=0.93
+48.4204	12	0	setParam	name=bgainadapt value=0
+48.4204	12	0	setParam	name=bshift value=1
+48.4204	12	0	setParam	name=btrack value=1
+48.4204	12	0	setParam	name=bdetect value=1
+48.4204	12	0	setParam	name=avglen value=8
+48.4204	12	0	setParam	name=bweight value=1
+48.4204	12	0	setParam	name=minvowellen value=60
+48.4204	12	0	setParam	name=bratioshift value=0
+48.4204	12	0	setParam	name=bmelshift value=1
+48.4204	12	0	setParam	name=bcepslift value=0
+48.4204	12	0	setParam	name=cepswinwidth value=30
+48.4204	12	0	setParam	name=bbypassfmt value=0
+48.4204	12	0	setParam	name=f2min value=0
+48.4204	12	0	setParam	name=f2max value=5000
+48.4204	12	0	setParam	name=f1min value=0
+48.4204	12	0	setParam	name=f1max value=5000
+48.4204	12	0	setParam	name=lbk value=0
+48.4204	12	0	setParam	name=lbb value=0
+48.4204	12	0	setParam	name=pertf1 value=[257 x 0]
+48.4204	12	0	setParam	name=pertf2 value=[257 x 0]
+48.4204	12	0	setParam	name=pertamp value=[257 x 0]
+48.4204	12	0	setParam	name=pertphi value=[257 x 0]
+48.4204	12	0	setParam	name=pertamp2d value=[66049 x 0]
+48.4204	12	0	setParam	name=pertphi2d value=[66049 x 0]
+48.4204	12	0	setParam	name=fb value=3
+48.4204	12	0	setParam	name=nfb value=1
+48.4204	12	0	setParam	name=triallen value=0
+48.4204	12	0	setParam	name=ramplen value=0
+48.4204	12	0	setParam	name=afact value=1
+48.4204	12	0	setParam	name=bfact value=0.8
+48.4204	12	0	setParam	name=gfact value=1
+48.4204	12	0	setParam	name=fn1 value=675
+48.4204	12	0	setParam	name=fn2 value=1392
+48.4204	12	0	setParam	name=fb2gain value=1
+48.4204	12	0	setParam	name=fb3gain value=0.02
+48.4204	12	0	setParam	name=fb4gaindb value=10
+48.4204	12	0	setParam	name=fb5gaindb_speech value=0
+48.4204	12	0	setParam	name=fb5gain_playback value=1
+48.4204	12	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+48.4204	12	0	setParam	name=bpitchshift value=0
+48.4204	12	0	setParam	name=bshift2d value=0
+48.4204	12	0	setParam	name=pitchshiftratio value=1
+48.4204	12	0	setParam	name=pvocframelen value=256
+48.4204	12	0	setParam	name=pvochop value=64
+48.4204	12	0	setParam	name=bdownsampfilt value=1
+48.4204	12	0	setParam	name=stereomode value=1
+48.4204	12	0	setParam	name=delayFrames value=0
+48.4204	12	0	setParam	name=btimedomainshift value=0
+48.4204	12	0	setParam	name=pitchlowerboundhz value=0
+48.4204	12	0	setParam	name=pitchupperboundhz value=0
+48.4204	12	0	setParam	name=timedomainpitchshiftschedule value=1
+48.4204	12	0	setParam	name=timedomainpitchshiftalgorithm value=0
+48.4204	12	0	setParam	name=bclampformants value=0
+48.4204	12	0	setParam	name=clamposts value=[0 0]
+48.4204	12	0	setParam	name=clampf1 value=[2048 x 0]
+48.4204	12	0	setParam	name=clampf2 value=[2048 x 0]
+48.4204	12	0	keywait	fn=pause
+49.4204	12	0	key	key=space
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	dbstop-ignored	args=if error
+50.4204	12	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+50.4204	12	0	reset	
+50.4204	12	0	start	
+51.9204	13	1	stop	
+51.9204	13	0	getData	
+51.9204	13	0	dbstop-ignored	args=if error
+51.9204	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	dbstop-ignored	args=if error
+52.6888	13	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+52.6888	13	0	reset	
+52.6888	13	0	start	
+54.1888	14	1	stop	
+54.1888	14	0	getData	
+54.1888	14	0	dbstop-ignored	args=if error
+54.1888	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	dbstop-ignored	args=if error
+54.9543	14	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+54.9543	14	0	reset	
+54.9543	14	0	start	
+56.4543	15	1	stop	
+56.4543	15	0	getData	
+56.4543	15	0	dbstop-ignored	args=if error
+56.4543	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	dbstop-ignored	args=if error
+57.1051	15	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+57.1051	15	0	reset	
+57.1051	15	0	start	
+58.6051	16	1	stop	
+58.6051	16	0	getData	
+58.6051	16	0	dbstop-ignored	args=if error
+58.6051	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	dbstop-ignored	args=if error
+59.3128	16	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+59.3128	16	0	reset	
+59.3128	16	0	start	
+60.8128	17	1	stop	
+60.8128	17	0	getData	
+60.8128	17	0	dbstop-ignored	args=if error
+60.8128	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	dbstop-ignored	args=if error
+61.4416	17	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+61.4416	17	0	reset	
+61.4416	17	0	start	
+62.9416	18	1	stop	
+62.9416	18	0	getData	
+62.9416	18	0	dbstop-ignored	args=if error
+62.9416	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+66.7714	18	0	dbstop-ignored	args=if error
+67.2714	18	0	dbstop-ignored	args=if error
+67.2714	18	0	dbstop-ignored	args=if error
+67.2714	18	0	dbstop-ignored	args=if error
+67.2714	18	0	dbstop-ignored	args=if error
+67.2714	18	0	ost	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.ost
+67.2714	18	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+67.2714	18	0	setParam	name=downfact value=3
+67.2714	18	0	setParam	name=srate value=16000
+67.2714	18	0	setParam	name=framelen value=32
+67.2714	18	0	setParam	name=ndelay value=5
+67.2714	18	0	setParam	name=nwin value=1
+67.2714	18	0	setParam	name=nlpc value=15
+67.2714	18	0	setParam	name=nfmts value=2
+67.2714	18	0	setParam	name=ntracks value=4
+67.2714	18	0	setParam	name=scale value=0.795271
+67.2714	18	0	setParam	name=preemp value=0.98
+67.2714	18	0	setParam	name=rmsthr value=0.011354
+67.2714	18	0	setParam	name=rmsratio value=0.7
+67.2714	18	0	setParam	name=rmsff value=0.89
+67.2714	18	0	setParam	name=dfmtsff value=0.93
+67.2714	18	0	setParam	name=bgainadapt value=0
+67.2714	18	0	setParam	name=bshift value=1
+67.2714	18	0	setParam	name=btrack value=1
+67.2714	18	0	setParam	name=bdetect value=1
+67.2714	18	0	setParam	name=avglen value=8
+67.2714	18	0	setParam	name=bweight value=1
+67.2714	18	0	setParam	name=minvowellen value=60
+67.2714	18	0	setParam	name=bratioshift value=0
+67.2714	18	0	setParam	name=bmelshift value=1
+67.2714	18	0	setParam	name=bcepslift value=0
+67.2714	18	0	setParam	name=cepswinwidth value=30
+67.2714	18	0	setParam	name=bbypassfmt value=0
+67.2714	18	0	setParam	name=lbk value=0
+67.2714	18	0	setParam	name=lbb value=0
+67.2714	18	0	setParam	name=pertf1 value=[257 x 0]
+67.2714	18	0	setParam	name=pertf2 value=[257 x 0]
+67.2714	18	0	setParam	name=pertamp value=[257 x 0]
+67.2714	18	0	setParam	name=pertphi value=[257 x 0]
+67.2714	18	0	setParam	name=pertamp2d value=[66049 x 0]
+67.2714	18	0	setParam	name=pertphi2d value=[66049 x 0]
+67.2714	18	0	setParam	name=fb value=3
+67.2714	18	0	setParam	name=nfb value=1
+67.2714	18	0	setParam	name=triallen value=0
+67.2714	18	0	setParam	name=ramplen value=0
+67.2714	18	0	setParam	name=afact value=1
+67.2714	18	0	setParam	name=bfact value=0.8
+67.2714	18	0	setParam	name=gfact value=1
+67.2714	18	0	setParam	name=fn1 value=675
+67.2714	18	0	setParam	name=fn2 value=1392
+67.2714	18	0	setParam	name=fb2gain value=1
+67.2714	18	0	setParam	name=fb3gain value=0.02
+67.2714	18	0	setParam	name=fb4gaindb value=10
+67.2714	18	0	setParam	name=fb5gaindb_speech value=0
+67.2714	18	0	setParam	name=fb5gain_playback value=1
+67.2714	18	0	setParam	name=rmsff_fb value=[0.85 0.85 0 0]
+67.2714	18	0	setParam	name=bpitchshift value=0
+67.2714	18	0	setParam	name=bshift2d value=0
+67.2714	18	0	setParam	name=pitchshiftratio value=1
+67.2714	18	0	setParam	name=gain value=1
+67.2714	18	0	setParam	name=mute value=0
+67.2714	18	0	setParam	name=pvocframelen value=256
+67.2714	18	0	setParam	name=pvochop value=64
+67.2714	18	0	setParam	name=bdownsampfilt value=1
+67.2714	18	0	setParam	name=stereomode value=1
+67.2714	18	0	setParam	name=tsgNTones value=0
+67.2714	18	0	setParam	name=tsgToneDur value=[]
+67.2714	18	0	setParam	name=tsgToneFreq value=[]
+67.2714	18	0	setParam	name=tsgToneAmp value=[]
+67.2714	18	0	setParam	name=tsgToneRamp value=[]
+67.2714	18	0	setParam	name=tsgInt value=[]
+67.2714	18	0	setParam	name=delayFrames value=0
+67.2714	18	0	setParam	name=wgFreq value=1000
+67.2714	18	0	setParam	name=wgAmp value=0.1
+67.2714	18	0	setParam	name=wgTime value=0
+67.2714	18	0	setParam	name=btimedomainshift value=0
+67.2714	18	0	setParam	name=pitchlowerboundhz value=0
+67.2714	18	0	setParam	name=pitchupperboundhz value=0
+67.2714	18	0	setParam	name=timedomainpitchshiftschedule value=1
+67.2714	18	0	setParam	name=timedomainpitchshiftalgorithm value=0
+67.2714	18	0	setParam	name=bclampformants value=0
+67.2714	18	0	reset	
+67.2714	18	0	getData	
+67.2714	18	0	reset	
+67.2714	18	0	getData	
+67.2714	18	0	reset	
+67.2714	18	0	getData	
+67.2714	18	0	reset	
+67.2714	18	0	getData	
+67.2714	18	0	reset	
+67.2714	18	0	getData	
+67.2714	18	0	reset	
+67.2714	18	0	getData	
+67.7714	18	0	dbstop-ignored	args=if error
+67.7714	18	0	dbstop-ignored	args=if error
+67.7714	18	0	dbstop-ignored	args=if error
+67.7714	18	0	dbstop-ignored	args=if error
+67.7714	18	0	waitfor	
+67.7714	18	0	gui	figure=audapter_viewer signal steps=^continue
+67.7714	18	0	gui-click	control=Continue/Exit
+67.7714	18	0	ask:questdlg	answer=Save and exit prompt=Save current OST parameters and exit? rule=default
+67.7714	18	0	dbstop-ignored	args=if error
+67.7714	18	0	uiwait	
+67.7714	18	0	gui	figure= Verify save location steps=^ok$
+67.7714	18	0	gui-click	control=OK
+67.7714	18	0	gui-close	figure= Verify save location
+68.2714	18	0	dbstop-ignored	args=if error
+68.2714	18	0	ask:input	answer=move on prompt=Redo OST testing phase, or move on? (redo/move on):  rule=\((redo|repeat)/(move on|continue)\)
+70.2714	18	0	dbstop-ignored	args=if error
+70.2714	18	0	dbstop-ignored	args=if error
+70.2714	18	0	dbstop-ignored	args=if error
+70.2714	18	0	dbstop-ignored	args=if error
+70.2714	18	0	dbstop-ignored	args=if error
+70.2714	18	0	dbstop-ignored	args=if error
+70.2714	18	0	dbstop-ignored	args=if error
+70.2714	18	0	dbstop-ignored	args=if error
+70.2714	18	0	dbstop-ignored	args=if error
+70.2714	18	0	dbstop-ignored	args=if error
+70.2714	18	0	rng	arg=shuffle seed=1002
+70.2714	18	0	rng	arg=shuffle seed=1003
+70.2774	18	0	ost	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.ost
+70.2774	18	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+70.2774	18	0	deviceName	args=Focusrite USB
+70.2774	18	0	setParam	name=sRate value=16000
+70.2774	18	0	setParam	name=downFact value=3
+70.2774	18	0	setParam	name=frameLen value=32
+70.2774	18	0	getMaxPBLen	args=
+70.2774	18	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+70.2774	18	0	setParam	name=downfact value=3
+70.2774	18	0	setParam	name=srate value=16000
+70.2774	18	0	setParam	name=framelen value=32
+70.2774	18	0	setParam	name=ndelay value=5
+70.2774	18	0	setParam	name=nwin value=1
+70.2774	18	0	setParam	name=nlpc value=15
+70.2774	18	0	setParam	name=nfmts value=2
+70.2774	18	0	setParam	name=ntracks value=4
+70.2774	18	0	setParam	name=scale value=0.795271
+70.2774	18	0	setParam	name=preemp value=0.98
+70.2774	18	0	setParam	name=rmsthr value=0.011354
+70.2774	18	0	setParam	name=rmsratio value=0.7
+70.2774	18	0	setParam	name=rmsff value=0.89
+70.2774	18	0	setParam	name=dfmtsff value=0.93
+70.2774	18	0	setParam	name=bgainadapt value=0
+70.2774	18	0	setParam	name=bshift value=1
+70.2774	18	0	setParam	name=btrack value=1
+70.2774	18	0	setParam	name=bdetect value=1
+70.2774	18	0	setParam	name=avglen value=8
+70.2774	18	0	setParam	name=bweight value=1
+70.2774	18	0	setParam	name=minvowellen value=60
+70.2774	18	0	setParam	name=bratioshift value=0
+70.2774	18	0	setParam	name=bmelshift value=1
+70.2774	18	0	setParam	name=bcepslift value=0
+70.2774	18	0	setParam	name=cepswinwidth value=30
+70.2774	18	0	setParam	name=bbypassfmt value=0
+70.2774	18	0	setParam	name=f2min value=0
+70.2774	18	0	setParam	name=f2max value=5000
+70.2774	18	0	setParam	name=f1min value=0
+70.2774	18	0	setParam	name=f1max value=5000
+70.2774	18	0	setParam	name=lbk value=0
+70.2774	18	0	setParam	name=lbb value=0
+70.2774	18	0	setParam	name=pertf1 value=[257 x 0]
+70.2774	18	0	setParam	name=pertf2 value=[257 x 0]
+70.2774	18	0	setParam	name=pertamp value=[257 x 0]
+70.2774	18	0	setParam	name=pertphi value=[257 x 0]
+70.2774	18	0	setParam	name=pertamp2d value=[66049 x 0]
+70.2774	18	0	setParam	name=pertphi2d value=[66049 x 0]
+70.2774	18	0	setParam	name=fb value=3
+70.2774	18	0	setParam	name=nfb value=1
+70.2774	18	0	setParam	name=triallen value=0
+70.2774	18	0	setParam	name=ramplen value=0
+70.2774	18	0	setParam	name=afact value=1
+70.2774	18	0	setParam	name=bfact value=0.8
+70.2774	18	0	setParam	name=gfact value=1
+70.2774	18	0	setParam	name=fn1 value=675
+70.2774	18	0	setParam	name=fn2 value=1392
+70.2774	18	0	setParam	name=fb2gain value=1
+70.2774	18	0	setParam	name=fb3gain value=0.02
+70.2774	18	0	setParam	name=fb4gaindb value=10
+70.2774	18	0	setParam	name=fb5gaindb_speech value=0
+70.2774	18	0	setParam	name=fb5gain_playback value=1
+70.2774	18	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+70.2774	18	0	setParam	name=bpitchshift value=0
+70.2774	18	0	setParam	name=bshift2d value=0
+70.2774	18	0	setParam	name=pitchshiftratio value=1
+70.2774	18	0	setParam	name=pvocframelen value=256
+70.2774	18	0	setParam	name=pvochop value=64
+70.2774	18	0	setParam	name=bdownsampfilt value=1
+70.2774	18	0	setParam	name=stereomode value=1
+70.2774	18	0	setParam	name=delayFrames value=0
+70.2774	18	0	setParam	name=btimedomainshift value=0
+70.2774	18	0	setParam	name=pitchlowerboundhz value=0
+70.2774	18	0	setParam	name=pitchupperboundhz value=0
+70.2774	18	0	setParam	name=timedomainpitchshiftschedule value=1
+70.2774	18	0	setParam	name=timedomainpitchshiftalgorithm value=0
+70.2774	18	0	setParam	name=bclampformants value=0
+70.2774	18	0	setParam	name=clamposts value=[0 0]
+70.2774	18	0	setParam	name=clampf1 value=[2048 x 0]
+70.2774	18	0	setParam	name=clampf2 value=[2048 x 0]
+70.2774	18	0	keywait	fn=pause
+71.2774	18	0	key	key=space
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	dbstop-ignored	args=if error
+72.2774	18	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+72.2774	18	0	reset	
+72.2774	18	0	start	
+74.2774	19	1	stop	
+74.2774	19	0	getData	
+74.2774	19	0	dbstop-ignored	args=if error
+74.2774	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	dbstop-ignored	args=if error
+75.7573	19	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+75.7573	19	0	reset	
+75.7573	19	0	start	
+77.7573	20	1	stop	
+77.7573	20	0	getData	
+77.7573	20	0	dbstop-ignored	args=if error
+77.7573	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	dbstop-ignored	args=if error
+79.1890	20	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+79.1890	20	0	reset	
+79.1890	20	0	start	
+81.1890	21	1	stop	
+81.1890	21	0	getData	
+81.1890	21	0	dbstop-ignored	args=if error
+81.1890	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	dbstop-ignored	args=if error
+82.5258	21	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+82.5258	21	0	reset	
+82.5258	21	0	start	
+84.5258	22	1	stop	
+84.5258	22	0	getData	
+84.5258	22	0	dbstop-ignored	args=if error
+84.5258	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	dbstop-ignored	args=if error
+85.8440	22	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+85.8440	22	0	reset	
+85.8440	22	0	start	
+87.8440	23	1	stop	
+87.8440	23	0	getData	
+87.8440	23	0	dbstop-ignored	args=if error
+87.8440	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	dbstop-ignored	args=if error
+89.2188	23	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+89.2188	23	0	reset	
+89.2188	23	0	start	
+91.2188	24	1	stop	
+91.2188	24	0	getData	
+91.2188	24	0	dbstop-ignored	args=if error
+91.2188	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	dbstop-ignored	args=if error
+92.5398	24	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+92.5398	24	0	reset	
+92.5398	24	0	start	
+94.5398	25	1	stop	
+94.5398	25	0	getData	
+94.5398	25	0	dbstop-ignored	args=if error
+94.5398	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	dbstop-ignored	args=if error
+95.9920	25	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+95.9920	25	0	reset	
+95.9920	25	0	start	
+97.9920	26	1	stop	
+97.9920	26	0	getData	
+97.9920	26	0	dbstop-ignored	args=if error
+97.9920	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	dbstop-ignored	args=if error
+99.2924	26	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+99.2924	26	0	reset	
+99.2924	26	0	start	
+101.2924	27	1	stop	
+101.2924	27	0	getData	
+101.2924	27	0	dbstop-ignored	args=if error
+101.2924	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	dbstop-ignored	args=if error
+102.7813	27	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+102.7813	27	0	reset	
+102.7813	27	0	start	
+104.7813	28	1	stop	
+104.7813	28	0	getData	
+104.7813	28	0	dbstop-ignored	args=if error
+104.7813	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	dbstop-ignored	args=if error
+106.1608	28	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+106.1608	28	0	reset	
+106.1608	28	0	start	
+108.1608	29	1	stop	
+108.1608	29	0	getData	
+108.1608	29	0	dbstop-ignored	args=if error
+108.1608	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	dbstop-ignored	args=if error
+109.6604	29	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+109.6604	29	0	reset	
+109.6604	29	0	start	
+111.6604	30	1	stop	
+111.6604	30	0	getData	
+111.6604	30	0	dbstop-ignored	args=if error
+111.6604	30	0	dbstop-ignored	args=if error
+112.9478	30	0	keywait	fn=pause
+113.9478	30	0	key	key=space
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	dbstop-ignored	args=if error
+113.9478	30	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+113.9478	30	0	reset	
+113.9478	30	0	start	
+115.9478	31	1	stop	
+115.9478	31	0	getData	
+115.9478	31	0	dbstop-ignored	args=if error
+115.9478	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	dbstop-ignored	args=if error
+117.4242	31	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+117.4242	31	0	reset	
+117.4242	31	0	start	
+119.4242	32	1	stop	
+119.4242	32	0	getData	
+119.4242	32	0	dbstop-ignored	args=if error
+119.4242	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	dbstop-ignored	args=if error
+120.8969	32	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+120.8969	32	0	reset	
+120.8969	32	0	start	
+122.8969	33	1	stop	
+122.8969	33	0	getData	
+122.8969	33	0	dbstop-ignored	args=if error
+122.8969	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	dbstop-ignored	args=if error
+124.1490	33	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+124.1490	33	0	reset	
+124.1490	33	0	start	
+126.1490	34	1	stop	
+126.1490	34	0	getData	
+126.1490	34	0	dbstop-ignored	args=if error
+126.1490	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	dbstop-ignored	args=if error
+127.4806	34	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+127.4806	34	0	reset	
+127.4806	34	0	start	
+129.4806	35	1	stop	
+129.4806	35	0	getData	
+129.4806	35	0	dbstop-ignored	args=if error
+129.4806	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	dbstop-ignored	args=if error
+130.9729	35	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+130.9729	35	0	reset	
+130.9729	35	0	start	
+132.9729	36	1	stop	
+132.9729	36	0	getData	
+132.9729	36	0	dbstop-ignored	args=if error
+132.9729	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	dbstop-ignored	args=if error
+134.4017	36	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+134.4017	36	0	reset	
+134.4017	36	0	start	
+136.4017	37	1	stop	
+136.4017	37	0	getData	
+136.4017	37	0	dbstop-ignored	args=if error
+136.4017	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	dbstop-ignored	args=if error
+137.7551	37	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+137.7551	37	0	reset	
+137.7551	37	0	start	
+139.7551	38	1	stop	
+139.7551	38	0	getData	
+139.7551	38	0	dbstop-ignored	args=if error
+139.7551	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	dbstop-ignored	args=if error
+141.0843	38	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+141.0843	38	0	reset	
+141.0843	38	0	start	
+143.0843	39	1	stop	
+143.0843	39	0	getData	
+143.0843	39	0	dbstop-ignored	args=if error
+143.0843	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	dbstop-ignored	args=if error
+144.4821	39	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+144.4821	39	0	reset	
+144.4821	39	0	start	
+146.4821	40	1	stop	
+146.4821	40	0	getData	
+146.4821	40	0	dbstop-ignored	args=if error
+146.4821	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	dbstop-ignored	args=if error
+147.7474	40	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+147.7474	40	0	reset	
+147.7474	40	0	start	
+149.7474	41	1	stop	
+149.7474	41	0	getData	
+149.7474	41	0	dbstop-ignored	args=if error
+149.7474	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	dbstop-ignored	args=if error
+151.1107	41	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+151.1107	41	0	reset	
+151.1107	41	0	start	
+153.1107	42	1	stop	
+153.1107	42	0	getData	
+153.1107	42	0	dbstop-ignored	args=if error
+153.1107	42	0	dbstop-ignored	args=if error
+154.3752	42	0	keywait	fn=pause
+155.3752	42	0	key	key=space
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	dbstop-ignored	args=if error
+155.3752	42	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+155.3752	42	0	reset	
+155.3752	42	0	start	
+157.3752	43	1	stop	
+157.3752	43	0	getData	
+157.3752	43	0	dbstop-ignored	args=if error
+157.3752	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	dbstop-ignored	args=if error
+158.7816	43	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+158.7816	43	0	reset	
+158.7816	43	0	start	
+160.7816	44	1	stop	
+160.7816	44	0	getData	
+160.7816	44	0	dbstop-ignored	args=if error
+160.7816	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	dbstop-ignored	args=if error
+162.0505	44	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+162.0505	44	0	reset	
+162.0505	44	0	start	
+164.0505	45	1	stop	
+164.0505	45	0	getData	
+164.0505	45	0	dbstop-ignored	args=if error
+164.0505	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	dbstop-ignored	args=if error
+165.3907	45	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+165.3907	45	0	reset	
+165.3907	45	0	start	
+167.3907	46	1	stop	
+167.3907	46	0	getData	
+167.3907	46	0	dbstop-ignored	args=if error
+167.3907	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	dbstop-ignored	args=if error
+168.6942	46	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+168.6942	46	0	reset	
+168.6942	46	0	start	
+170.6942	47	1	stop	
+170.6942	47	0	getData	
+170.6942	47	0	dbstop-ignored	args=if error
+170.6942	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	dbstop-ignored	args=if error
+172.0411	47	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+172.0411	47	0	reset	
+172.0411	47	0	start	
+174.0411	48	1	stop	
+174.0411	48	0	getData	
+174.0411	48	0	dbstop-ignored	args=if error
+174.0411	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	dbstop-ignored	args=if error
+175.4666	48	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+175.4666	48	0	reset	
+175.4666	48	0	start	
+177.4666	49	1	stop	
+177.4666	49	0	getData	
+177.4666	49	0	dbstop-ignored	args=if error
+177.4666	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	dbstop-ignored	args=if error
+178.8099	49	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+178.8099	49	0	reset	
+178.8099	49	0	start	
+180.8099	50	1	stop	
+180.8099	50	0	getData	
+180.8099	50	0	dbstop-ignored	args=if error
+180.8099	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	dbstop-ignored	args=if error
+182.1805	50	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+182.1805	50	0	reset	
+182.1805	50	0	start	
+184.1805	51	1	stop	
+184.1805	51	0	getData	
+184.1805	51	0	dbstop-ignored	args=if error
+184.1805	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	dbstop-ignored	args=if error
+185.4736	51	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+185.4736	51	0	reset	
+185.4736	51	0	start	
+187.4736	52	1	stop	
+187.4736	52	0	getData	
+187.4736	52	0	dbstop-ignored	args=if error
+187.4736	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	dbstop-ignored	args=if error
+188.8011	52	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+188.8011	52	0	reset	
+188.8011	52	0	start	
+190.8011	53	1	stop	
+190.8011	53	0	getData	
+190.8011	53	0	dbstop-ignored	args=if error
+190.8011	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	dbstop-ignored	args=if error
+192.2551	53	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+192.2551	53	0	reset	
+192.2551	53	0	start	
+194.2551	54	1	stop	
+194.2551	54	0	getData	
+194.2551	54	0	dbstop-ignored	args=if error
+194.2551	54	0	dbstop-ignored	args=if error
+195.5170	54	0	keywait	fn=pause
+196.5170	54	0	key	key=space
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	dbstop-ignored	args=if error
+196.5170	54	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+196.5170	54	0	reset	
+196.5170	54	0	start	
+198.5170	55	1	stop	
+198.5170	55	0	getData	
+198.5170	55	0	dbstop-ignored	args=if error
+198.5170	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	dbstop-ignored	args=if error
+199.9411	55	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+199.9411	55	0	reset	
+199.9411	55	0	start	
+201.9411	56	1	stop	
+201.9411	56	0	getData	
+201.9411	56	0	dbstop-ignored	args=if error
+201.9411	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	dbstop-ignored	args=if error
+203.2779	56	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+203.2779	56	0	reset	
+203.2779	56	0	start	
+205.2779	57	1	stop	
+205.2779	57	0	getData	
+205.2779	57	0	dbstop-ignored	args=if error
+205.2779	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	dbstop-ignored	args=if error
+206.5315	57	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+206.5315	57	0	reset	
+206.5315	57	0	start	
+208.5315	58	1	stop	
+208.5315	58	0	getData	
+208.5315	58	0	dbstop-ignored	args=if error
+208.5315	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	dbstop-ignored	args=if error
+210.0205	58	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+210.0205	58	0	reset	
+210.0205	58	0	start	
+212.0205	59	1	stop	
+212.0205	59	0	getData	
+212.0205	59	0	dbstop-ignored	args=if error
+212.0205	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	dbstop-ignored	args=if error
+213.3672	59	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+213.3672	59	0	reset	
+213.3672	59	0	start	
+215.3672	60	1	stop	
+215.3672	60	0	getData	
+215.3672	60	0	dbstop-ignored	args=if error
+215.3672	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	dbstop-ignored	args=if error
+216.7822	60	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+216.7822	60	0	reset	
+216.7822	60	0	start	
+218.7822	61	1	stop	
+218.7822	61	0	getData	
+218.7822	61	0	dbstop-ignored	args=if error
+218.7822	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	dbstop-ignored	args=if error
+220.1025	61	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+220.1025	61	0	reset	
+220.1025	61	0	start	
+222.1025	62	1	stop	
+222.1025	62	0	getData	
+222.1025	62	0	dbstop-ignored	args=if error
+222.1025	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	dbstop-ignored	args=if error
+223.5651	62	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+223.5651	62	0	reset	
+223.5651	62	0	start	
+225.5651	63	1	stop	
+225.5651	63	0	getData	
+225.5651	63	0	dbstop-ignored	args=if error
+225.5651	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	dbstop-ignored	args=if error
+226.9012	63	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+226.9012	63	0	reset	
+226.9012	63	0	start	
+228.9012	64	1	stop	
+228.9012	64	0	getData	
+228.9012	64	0	dbstop-ignored	args=if error
+228.9012	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	dbstop-ignored	args=if error
+230.1655	64	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+230.1655	64	0	reset	
+230.1655	64	0	start	
+232.1655	65	1	stop	
+232.1655	65	0	getData	
+232.1655	65	0	dbstop-ignored	args=if error
+232.1655	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	dbstop-ignored	args=if error
+233.5879	65	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+233.5879	65	0	reset	
+233.5879	65	0	start	
+235.5879	66	1	stop	
+235.5879	66	0	getData	
+235.5879	66	0	dbstop-ignored	args=if error
+235.5879	66	0	dbstop-ignored	args=if error
+236.9672	66	0	keywait	fn=pause
+237.9672	66	0	key	key=space
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	dbstop-ignored	args=if error
+237.9672	66	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+237.9672	66	0	reset	
+237.9672	66	0	start	
+239.9672	67	1	stop	
+239.9672	67	0	getData	
+239.9672	67	0	dbstop-ignored	args=if error
+239.9672	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	dbstop-ignored	args=if error
+241.4297	67	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+241.4297	67	0	reset	
+241.4297	67	0	start	
+243.4297	68	1	stop	
+243.4297	68	0	getData	
+243.4297	68	0	dbstop-ignored	args=if error
+243.4297	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	dbstop-ignored	args=if error
+244.7941	68	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+244.7941	68	0	reset	
+244.7941	68	0	start	
+246.7941	69	1	stop	
+246.7941	69	0	getData	
+246.7941	69	0	dbstop-ignored	args=if error
+246.7941	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	dbstop-ignored	args=if error
+248.1168	69	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+248.1168	69	0	reset	
+248.1168	69	0	start	
+250.1168	70	1	stop	
+250.1168	70	0	getData	
+250.1168	70	0	dbstop-ignored	args=if error
+250.1168	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	dbstop-ignored	args=if error
+251.4213	70	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+251.4213	70	0	reset	
+251.4213	70	0	start	
+253.4213	71	1	stop	
+253.4213	71	0	getData	
+253.4213	71	0	dbstop-ignored	args=if error
+253.4213	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	dbstop-ignored	args=if error
+254.6777	71	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+254.6777	71	0	reset	
+254.6777	71	0	start	
+256.6777	72	1	stop	
+256.6777	72	0	getData	
+256.6777	72	0	dbstop-ignored	args=if error
+256.6777	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	dbstop-ignored	args=if error
+257.9578	72	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+257.9578	72	0	reset	
+257.9578	72	0	start	
+259.9578	73	1	stop	
+259.9578	73	0	getData	
+259.9578	73	0	dbstop-ignored	args=if error
+259.9578	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	dbstop-ignored	args=if error
+261.3247	73	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+261.3247	73	0	reset	
+261.3247	73	0	start	
+263.3247	74	1	stop	
+263.3247	74	0	getData	
+263.3247	74	0	dbstop-ignored	args=if error
+263.3247	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	dbstop-ignored	args=if error
+264.8045	74	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+264.8045	74	0	reset	
+264.8045	74	0	start	
+266.8045	75	1	stop	
+266.8045	75	0	getData	
+266.8045	75	0	dbstop-ignored	args=if error
+266.8045	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	dbstop-ignored	args=if error
+268.1282	75	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+268.1282	75	0	reset	
+268.1282	75	0	start	
+270.1282	76	1	stop	
+270.1282	76	0	getData	
+270.1282	76	0	dbstop-ignored	args=if error
+270.1282	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	dbstop-ignored	args=if error
+271.5052	76	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+271.5052	76	0	reset	
+271.5052	76	0	start	
+273.5052	77	1	stop	
+273.5052	77	0	getData	
+273.5052	77	0	dbstop-ignored	args=if error
+273.5052	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	dbstop-ignored	args=if error
+274.7888	77	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf
+274.7888	77	0	reset	
+274.7888	77	0	start	
+276.7888	78	1	stop	
+276.7888	78	0	getData	
+276.7888	78	0	dbstop-ignored	args=if error
+276.7888	78	0	dbstop-ignored	args=if error

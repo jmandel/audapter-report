@@ -1,0 +1,22 @@
+k	mode	t0	t1	pumped_s	word	cond	input
+1	proc	8.0060	9.5060	1.5000	bat	noShift	synth "bat" female f0=205 vowels=AE onset=0.327 dur=0.268 level=0.050
+2	proc	10.3439	11.8439	1.5000	bed	noShift	synth "bed" female f0=205 vowels=EH onset=0.302 dur=0.294 level=0.050
+3	proc	12.3939	13.8939	1.5000	bid	noShift	synth "bid" female f0=205 vowels=IH onset=0.300 dur=0.290 level=0.050
+4	proc	14.6077	16.1077	1.5000	bid	noShift	synth "bid" female f0=205 vowels=IH onset=0.293 dur=0.334 level=0.050
+5	proc	16.7196	18.2196	1.5000	bed	noShift	synth "bed" female f0=205 vowels=EH onset=0.298 dur=0.329 level=0.050
+6	proc	19.1040	20.6040	1.5000	bat	noShift	synth "bat" female f0=205 vowels=AE onset=0.286 dur=0.280 level=0.050
+7	proc	30.2311	32.0311	1.8000	dead	baseline	synth "dead" female f0=205 vowels=EH onset=0.332 dur=0.322 level=0.050
+8	proc	33.4026	35.2026	1.8000	bed	baseline	synth "bed" female f0=205 vowels=EH onset=0.302 dur=0.333 level=0.050
+9	proc	36.2925	38.0925	1.8000	head	baseline	synth "head" female f0=205 vowels=EH onset=0.271 dur=0.299 level=0.050
+10	proc	43.3618	45.1618	1.8000	bed	ramp	synth "bed" female f0=205 vowels=EH onset=0.315 dur=0.326 level=0.050
+11	proc	46.3100	48.1100	1.8000	dead	ramp	synth "dead" female f0=205 vowels=EH onset=0.288 dur=0.266 level=0.050
+12	proc	49.0916	50.8916	1.8000	head	ramp	synth "head" female f0=205 vowels=EH onset=0.285 dur=0.274 level=0.050
+13	proc	54.2859	56.0859	1.8000	dead	hold	synth "dead" female f0=205 vowels=EH onset=0.336 dur=0.319 level=0.050
+14	proc	57.5584	59.3584	1.8000	head	hold	synth "head" female f0=205 vowels=EH onset=0.301 dur=0.281 level=0.050
+15	proc	60.8419	62.6419	1.8000	bed	hold	synth "bed" female f0=205 vowels=EH onset=0.264 dur=0.286 level=0.050
+16	proc	65.6719	67.4719	1.8000	dead	hold	synth "dead" female f0=205 vowels=EH onset=0.288 dur=0.292 level=0.050
+17	proc	68.7445	70.5445	1.8000	head	hold	synth "head" female f0=205 vowels=EH onset=0.298 dur=0.310 level=0.050
+18	proc	71.9180	73.7180	1.8000	bed	hold	synth "bed" female f0=205 vowels=EH onset=0.290 dur=0.320 level=0.050
+19	proc	76.6818	78.4818	1.8000	head	washout	synth "head" female f0=205 vowels=EH onset=0.258 dur=0.279 level=0.050
+20	proc	79.9185	81.7185	1.8000	dead	washout	synth "dead" female f0=205 vowels=EH onset=0.265 dur=0.297 level=0.050
+21	proc	82.6187	84.4187	1.8000	bed	washout	synth "bed" female f0=205 vowels=EH onset=0.303 dur=0.277 level=0.050

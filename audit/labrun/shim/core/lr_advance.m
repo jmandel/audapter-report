@@ -4,6 +4,9 @@ function lr_advance(dt)
 global LR
 if isempty(dt) || ~isfinite(dt) || dt <= 0, return; end
 LR.vclock = LR.vclock + dt;
+if LR.vclock - LR.lastProgress > LR.plan.maxIdleSec
+  error('labrun:idle', 'labrun: %g s of virtual time without a trial, a prompt or new text (plan.maxIdleSec): the script is waiting for something the simulation does not provide', LR.plan.maxIdleSec);
+end
 if ~lr_is_running(), return; end
 d = LR.dev;
 d.acc = d.acc + dt * d.fsDev;

@@ -1,0 +1,785 @@
+vtime	trial	running	op	args
+0.0000	0	0	ask:input	answer=f prompt=Enter participant gender (m/f):  rule=gender
+2.0040	0	0	rng	arg=shuffle seed=1001
+2.0070	0	0	dbstop-ignored	args=if error
+2.0100	0	0	deviceName	args=Focusrite USB
+2.0100	0	0	ost	file=/w/sandbox/repos/free-speech/experiment_helpers/measureFormantsWorking.ost
+2.0100	0	0	pcf	file=/w/sandbox/repos/free-speech/experiment_helpers/measureFormantsWorking.pcf
+2.0100	0	0	getMaxPBLen	args=
+2.0100	0	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+2.0100	0	0	setParam	name=downfact value=3
+2.0100	0	0	setParam	name=srate value=16000
+2.0100	0	0	setParam	name=framelen value=32
+2.0100	0	0	setParam	name=ndelay value=5
+2.0100	0	0	setParam	name=nwin value=1
+2.0100	0	0	setParam	name=nlpc value=15
+2.0100	0	0	setParam	name=nfmts value=2
+2.0100	0	0	setParam	name=ntracks value=4
+2.0100	0	0	setParam	name=scale value=0.795271
+2.0100	0	0	setParam	name=preemp value=0.98
+2.0100	0	0	setParam	name=rmsthr value=0.011354
+2.0100	0	0	setParam	name=rmsratio value=0.7
+2.0100	0	0	setParam	name=rmsff value=0.95
+2.0100	0	0	setParam	name=dfmtsff value=0.93
+2.0100	0	0	setParam	name=bgainadapt value=0
+2.0100	0	0	setParam	name=bshift value=0
+2.0100	0	0	setParam	name=btrack value=1
+2.0100	0	0	setParam	name=bdetect value=1
+2.0100	0	0	setParam	name=avglen value=8
+2.0100	0	0	setParam	name=bweight value=1
+2.0100	0	0	setParam	name=minvowellen value=60
+2.0100	0	0	setParam	name=bratioshift value=1
+2.0100	0	0	setParam	name=bmelshift value=0
+2.0100	0	0	setParam	name=bcepslift value=0
+2.0100	0	0	setParam	name=cepswinwidth value=30
+2.0100	0	0	setParam	name=bbypassfmt value=0
+2.0100	0	0	setParam	name=f2min value=0
+2.0100	0	0	setParam	name=f2max value=5000
+2.0100	0	0	setParam	name=f1min value=0
+2.0100	0	0	setParam	name=f1max value=5000
+2.0100	0	0	setParam	name=lbk value=0
+2.0100	0	0	setParam	name=lbb value=0
+2.0100	0	0	setParam	name=pertf1 value=[257 x 0]
+2.0100	0	0	setParam	name=pertf2 value=[257 x 0]
+2.0100	0	0	setParam	name=pertamp value=[257 x 0]
+2.0100	0	0	setParam	name=pertphi value=[257 x 0]
+2.0100	0	0	setParam	name=pertamp2d value=[66049 x 0]
+2.0100	0	0	setParam	name=pertphi2d value=[66049 x 0]
+2.0100	0	0	setParam	name=fb value=3
+2.0100	0	0	setParam	name=nfb value=1
+2.0100	0	0	setParam	name=triallen value=0
+2.0100	0	0	setParam	name=ramplen value=0
+2.0100	0	0	setParam	name=afact value=1
+2.0100	0	0	setParam	name=bfact value=0.8
+2.0100	0	0	setParam	name=gfact value=1
+2.0100	0	0	setParam	name=fn1 value=675
+2.0100	0	0	setParam	name=fn2 value=1392
+2.0100	0	0	setParam	name=fb2gain value=1
+2.0100	0	0	setParam	name=fb3gain value=0.02
+2.0100	0	0	setParam	name=fb4gaindb value=10
+2.0100	0	0	setParam	name=fb5gaindb_speech value=0
+2.0100	0	0	setParam	name=fb5gain_playback value=1
+2.0100	0	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+2.0100	0	0	setParam	name=bpitchshift value=0
+2.0100	0	0	setParam	name=bshift2d value=0
+2.0100	0	0	setParam	name=pitchshiftratio value=1
+2.0100	0	0	setParam	name=pvocframelen value=256
+2.0100	0	0	setParam	name=pvochop value=64
+2.0100	0	0	setParam	name=bdownsampfilt value=1
+2.0100	0	0	setParam	name=stereomode value=1
+2.0100	0	0	setParam	name=delayFrames value=0
+2.0100	0	0	setParam	name=btimedomainshift value=0
+2.0100	0	0	setParam	name=pitchlowerboundhz value=0
+2.0100	0	0	setParam	name=pitchupperboundhz value=0
+2.0100	0	0	setParam	name=timedomainpitchshiftschedule value=1
+2.0100	0	0	setParam	name=timedomainpitchshiftalgorithm value=0
+2.0100	0	0	setParam	name=bclampformants value=0
+2.0100	0	0	setParam	name=clamposts value=[0 0]
+2.0100	0	0	setParam	name=clampf1 value=[2048 x 0]
+2.0100	0	0	setParam	name=clampf2 value=[2048 x 0]
+2.0100	0	0	keywait	fn=pause
+3.0100	0	0	key	key=space
+4.0100	0	0	reset	
+4.0100	0	0	start	
+5.5100	1	1	stop	
+5.5100	1	0	getData	
+5.5100	1	0	dbstop-ignored	args=if error
+5.5100	1	0	dbstop-ignored	args=if error
+6.9795	1	0	reset	
+6.9795	1	0	start	
+8.4795	2	1	stop	
+8.4795	2	0	getData	
+8.4795	2	0	dbstop-ignored	args=if error
+8.4795	2	0	dbstop-ignored	args=if error
+9.4019	2	0	reset	
+9.4019	2	0	start	
+10.9019	3	1	stop	
+10.9019	3	0	getData	
+10.9019	3	0	dbstop-ignored	args=if error
+10.9019	3	0	dbstop-ignored	args=if error
+11.9900	3	0	reset	
+11.9900	3	0	start	
+13.4900	4	1	stop	
+13.4900	4	0	getData	
+13.4900	4	0	dbstop-ignored	args=if error
+13.4900	4	0	dbstop-ignored	args=if error
+14.5999	4	0	reset	
+14.5999	4	0	start	
+16.0999	5	1	stop	
+16.0999	5	0	getData	
+16.0999	5	0	dbstop-ignored	args=if error
+16.0999	5	0	dbstop-ignored	args=if error
+17.5256	5	0	reset	
+17.5256	5	0	start	
+19.0256	6	1	stop	
+19.0256	6	0	getData	
+19.0256	6	0	dbstop-ignored	args=if error
+19.0256	6	0	dbstop-ignored	args=if error
+20.2379	6	0	reset	
+20.2379	6	0	start	
+21.7379	7	1	stop	
+21.7379	7	0	getData	
+21.7379	7	0	dbstop-ignored	args=if error
+21.7379	7	0	dbstop-ignored	args=if error
+22.6546	7	0	reset	
+22.6546	7	0	start	
+24.1546	8	1	stop	
+24.1546	8	0	getData	
+24.1546	8	0	dbstop-ignored	args=if error
+24.1546	8	0	dbstop-ignored	args=if error
+25.0555	8	0	reset	
+25.0555	8	0	start	
+26.5555	9	1	stop	
+26.5555	9	0	getData	
+26.5555	9	0	dbstop-ignored	args=if error
+26.5555	9	0	dbstop-ignored	args=if error
+27.7386	9	0	reset	
+27.7386	9	0	start	
+29.2386	10	1	stop	
+29.2386	10	0	getData	
+29.2386	10	0	dbstop-ignored	args=if error
+29.2386	10	0	dbstop-ignored	args=if error
+30.2088	10	0	reset	
+30.2088	10	0	start	
+31.7088	11	1	stop	
+31.7088	11	0	getData	
+31.7088	11	0	dbstop-ignored	args=if error
+31.7088	11	0	dbstop-ignored	args=if error
+32.7506	11	0	reset	
+32.7506	11	0	start	
+34.2506	12	1	stop	
+34.2506	12	0	getData	
+34.2506	12	0	dbstop-ignored	args=if error
+34.2506	12	0	dbstop-ignored	args=if error
+35.0856	12	0	reset	
+35.0856	12	0	start	
+36.5856	13	1	stop	
+36.5856	13	0	getData	
+36.5856	13	0	dbstop-ignored	args=if error
+36.5856	13	0	dbstop-ignored	args=if error
+37.7215	13	0	reset	
+37.7215	13	0	start	
+39.2215	14	1	stop	
+39.2215	14	0	getData	
+39.2215	14	0	dbstop-ignored	args=if error
+39.2215	14	0	dbstop-ignored	args=if error
+40.3039	14	0	reset	
+40.3039	14	0	start	
+41.8039	15	1	stop	
+41.8039	15	0	getData	
+41.8039	15	0	dbstop-ignored	args=if error
+41.8039	15	0	dbstop-ignored	args=if error
+46.2543	15	0	waitfor	
+46.2543	15	0	gui	figure=check_LPC  steps=^ok$
+46.2543	15	0	gui-click	control=OK
+46.2543	15	0	ask:questdlg	answer=Save and exit prompt=Save LPC order and exit? rule=save lpc order and exit
+46.2543	15	0	ask:input	answer=yes prompt=Is the perturbation field OK? yes/no:  rule=\(y/n\)|y/n|\[y/n\]|yes/no
+48.2543	15	0	ask:input	answer= prompt=[Test mode only] Enter a coherence [0-1], or leave blank to run coherence testing:  rule=Enter a coherence
+50.2543	15	0	Screen:CloseAll	
+50.2543	15	0	Screen:OpenWindow	
+51.2553	15	0	key	key=space
+52.6906	15	0	key	key=LeftArrow
+56.6268	15	0	key	key=RightArrow
+60.4572	15	0	key	key=space
+60.4602	15	0	key	key=ESCAPE
+60.4632	15	0	key	key=LeftArrow
+64.0213	15	0	key	key=RightArrow
+67.2943	15	0	key	key=space
+67.2973	15	0	key	key=ESCAPE
+67.3003	15	0	key	key=LeftArrow
+70.3900	15	0	key	key=RightArrow
+73.7209	15	0	key	key=space
+73.7239	15	0	key	key=ESCAPE
+73.7269	15	0	key	key=LeftArrow
+77.6584	15	0	key	key=RightArrow
+81.5646	15	0	key	key=space
+81.5676	15	0	key	key=ESCAPE
+81.5706	15	0	key	key=LeftArrow
+84.8448	15	0	key	key=RightArrow
+88.0831	15	0	key	key=space
+88.0861	15	0	key	key=ESCAPE
+88.0891	15	0	key	key=LeftArrow
+91.5501	15	0	key	key=RightArrow
+95.4323	15	0	key	key=space
+95.4353	15	0	key	key=ESCAPE
+95.4383	15	0	key	key=LeftArrow
+99.2382	15	0	key	key=RightArrow
+102.6718	15	0	key	key=space
+102.6748	15	0	key	key=ESCAPE
+102.6778	15	0	key	key=LeftArrow
+106.4669	15	0	key	key=RightArrow
+110.3604	15	0	key	key=space
+110.3634	15	0	key	key=ESCAPE
+110.3664	15	0	key	key=LeftArrow
+113.6729	15	0	key	key=RightArrow
+117.6054	15	0	key	key=space
+117.6084	15	0	key	key=ESCAPE
+117.6114	15	0	key	key=LeftArrow
+121.1512	15	0	key	key=RightArrow
+124.4097	15	0	key	key=space
+124.4127	15	0	key	key=ESCAPE
+124.4157	15	0	key	key=LeftArrow
+128.1379	15	0	key	key=RightArrow
+131.2002	15	0	key	key=space
+131.2032	15	0	key	key=ESCAPE
+131.2062	15	0	key	key=LeftArrow
+135.0190	15	0	key	key=RightArrow
+138.4332	15	0	key	key=space
+138.4362	15	0	key	key=ESCAPE
+138.4392	15	0	key	key=LeftArrow
+141.3969	15	0	key	key=RightArrow
+144.6128	15	0	key	key=space
+144.6158	15	0	key	key=ESCAPE
+144.6188	15	0	key	key=LeftArrow
+148.0656	15	0	key	key=RightArrow
+151.3636	15	0	key	key=space
+151.3666	15	0	key	key=ESCAPE
+151.3696	15	0	key	key=LeftArrow
+154.5194	15	0	key	key=RightArrow
+157.7104	15	0	key	key=space
+157.7134	15	0	key	key=ESCAPE
+157.7164	15	0	key	key=LeftArrow
+161.1921	15	0	key	key=RightArrow
+164.6660	15	0	key	key=space
+164.6690	15	0	key	key=ESCAPE
+164.6720	15	0	key	key=LeftArrow
+168.2088	15	0	key	key=RightArrow
+172.0067	15	0	key	key=space
+172.0097	15	0	key	key=ESCAPE
+172.0127	15	0	key	key=LeftArrow
+175.2460	15	0	key	key=RightArrow
+178.8654	15	0	key	key=space
+178.8684	15	0	key	key=ESCAPE
+178.8714	15	0	key	key=LeftArrow
+182.0041	15	0	key	key=RightArrow
+185.5530	15	0	key	key=space
+185.5560	15	0	key	key=ESCAPE
+185.5590	15	0	key	key=LeftArrow
+188.8374	15	0	key	key=RightArrow
+192.1415	15	0	key	key=space
+192.1445	15	0	key	key=ESCAPE
+192.1475	15	0	key	key=LeftArrow
+195.4991	15	0	key	key=RightArrow
+199.2367	15	0	key	key=space
+199.2397	15	0	key	key=ESCAPE
+199.2427	15	0	key	key=LeftArrow
+202.8409	15	0	key	key=RightArrow
+205.8085	15	0	key	key=space
+205.8115	15	0	key	key=ESCAPE
+205.8145	15	0	key	key=LeftArrow
+209.0803	15	0	key	key=RightArrow
+212.8491	15	0	key	key=space
+212.8521	15	0	key	key=ESCAPE
+212.8551	15	0	key	key=LeftArrow
+216.7209	15	0	key	key=RightArrow
+220.1052	15	0	key	key=space
+220.1082	15	0	key	key=ESCAPE
+220.1112	15	0	key	key=LeftArrow
+223.6397	15	0	key	key=RightArrow
+227.4772	15	0	key	key=space
+227.4802	15	0	key	key=ESCAPE
+227.4832	15	0	key	key=LeftArrow
+230.8270	15	0	key	key=RightArrow
+234.5223	15	0	key	key=space
+234.5253	15	0	key	key=ESCAPE
+234.5283	15	0	key	key=LeftArrow
+238.2325	15	0	key	key=RightArrow
+241.5255	15	0	key	key=space
+241.5285	15	0	key	key=ESCAPE
+241.5315	15	0	key	key=LeftArrow
+244.5174	15	0	key	key=RightArrow
+247.6887	15	0	key	key=space
+247.6917	15	0	key	key=ESCAPE
+247.6947	15	0	key	key=LeftArrow
+251.5753	15	0	key	key=RightArrow
+255.0357	15	0	key	key=space
+255.0387	15	0	key	key=ESCAPE
+255.0417	15	0	key	key=LeftArrow
+258.4515	15	0	key	key=RightArrow
+261.9074	15	0	key	key=space
+261.9104	15	0	key	key=ESCAPE
+261.9134	15	0	key	key=LeftArrow
+265.4548	15	0	key	key=RightArrow
+268.9614	15	0	key	key=space
+268.9644	15	0	key	key=ESCAPE
+268.9674	15	0	key	key=LeftArrow
+272.7215	15	0	key	key=RightArrow
+276.6054	15	0	key	key=space
+276.6084	15	0	key	key=ESCAPE
+276.6114	15	0	key	key=LeftArrow
+280.2754	15	0	key	key=RightArrow
+284.0204	15	0	key	key=space
+284.0234	15	0	key	key=ESCAPE
+284.0264	15	0	key	key=LeftArrow
+287.1486	15	0	key	key=RightArrow
+290.7004	15	0	key	key=space
+290.7034	15	0	key	key=ESCAPE
+290.7064	15	0	key	key=LeftArrow
+293.9846	15	0	key	key=RightArrow
+296.9375	15	0	key	key=space
+296.9405	15	0	key	key=ESCAPE
+296.9435	15	0	key	key=LeftArrow
+300.7440	15	0	key	key=RightArrow
+304.5244	15	0	key	key=space
+304.5274	15	0	key	key=ESCAPE
+304.5304	15	0	key	key=LeftArrow
+307.9303	15	0	key	key=RightArrow
+311.1162	15	0	key	key=space
+311.1192	15	0	key	key=ESCAPE
+311.1222	15	0	key	key=LeftArrow
+314.2100	15	0	key	key=RightArrow
+317.4647	15	0	key	key=space
+317.4677	15	0	key	key=ESCAPE
+317.4707	15	0	key	key=LeftArrow
+320.9911	15	0	key	key=RightArrow
+324.3633	15	0	key	key=space
+324.3663	15	0	key	key=ESCAPE
+324.3693	15	0	key	key=LeftArrow
+328.1150	15	0	key	key=RightArrow
+331.4527	15	0	key	key=space
+331.4557	15	0	key	key=ESCAPE
+331.4587	15	0	key	key=LeftArrow
+335.2329	15	0	key	key=RightArrow
+338.5565	15	0	key	key=space
+338.5595	15	0	key	key=ESCAPE
+338.5625	15	0	key	key=LeftArrow
+341.6716	15	0	key	key=RightArrow
+345.3747	15	0	key	key=space
+345.3777	15	0	key	key=ESCAPE
+345.3807	15	0	key	key=LeftArrow
+348.5996	15	0	key	key=RightArrow
+351.6836	15	0	key	key=space
+351.6866	15	0	key	key=ESCAPE
+351.6896	15	0	key	key=LeftArrow
+355.5416	15	0	key	key=RightArrow
+358.8259	15	0	key	key=space
+358.8289	15	0	key	key=ESCAPE
+358.8319	15	0	key	key=LeftArrow
+361.9337	15	0	key	key=RightArrow
+365.4937	15	0	key	key=space
+365.4967	15	0	key	key=ESCAPE
+365.4997	15	0	key	key=LeftArrow
+369.3463	15	0	key	key=RightArrow
+372.9048	15	0	key	key=space
+372.9078	15	0	key	key=ESCAPE
+372.9108	15	0	key	key=LeftArrow
+376.4548	15	0	key	key=RightArrow
+379.7863	15	0	Screen:CloseAll	
+379.7863	15	0	Screen:CloseAll	
+379.7863	15	0	ask:input	answer=y prompt=Enter [y] to move on to pretest phase:  rule=enter \[([A-Za-z0-9]+)\]
+381.7893	15	0	ask:input	answer=skip prompt=Run duration practice? [skip/run]  rule=[\(\[]([A-Za-z]+)/[A-Za-z/ ]+[\)\]]
+383.7923	15	0	deviceName	args=Focusrite USB
+383.7923	15	0	ost	file=
+383.7923	15	0	pcf	file=
+383.7923	15	0	getMaxPBLen	args=
+383.7923	15	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+383.7923	15	0	setParam	name=downfact value=3
+383.7923	15	0	setParam	name=srate value=16000
+383.7923	15	0	setParam	name=framelen value=32
+383.7923	15	0	setParam	name=ndelay value=5
+383.7923	15	0	setParam	name=nwin value=1
+383.7923	15	0	setParam	name=nlpc value=15
+383.7923	15	0	setParam	name=nfmts value=2
+383.7923	15	0	setParam	name=ntracks value=4
+383.7923	15	0	setParam	name=scale value=0.795271
+383.7923	15	0	setParam	name=preemp value=0.98
+383.7923	15	0	setParam	name=rmsthr value=0.011354
+383.7923	15	0	setParam	name=rmsratio value=0.7
+383.7923	15	0	setParam	name=rmsff value=0.95
+383.7923	15	0	setParam	name=dfmtsff value=0.93
+383.7923	15	0	setParam	name=bgainadapt value=0
+383.7923	15	0	setParam	name=bshift value=1
+383.7923	15	0	setParam	name=btrack value=1
+383.7923	15	0	setParam	name=bdetect value=1
+383.7923	15	0	setParam	name=avglen value=8
+383.7923	15	0	setParam	name=bweight value=1
+383.7923	15	0	setParam	name=minvowellen value=60
+383.7923	15	0	setParam	name=bratioshift value=0
+383.7923	15	0	setParam	name=bmelshift value=1
+383.7923	15	0	setParam	name=bcepslift value=0
+383.7923	15	0	setParam	name=cepswinwidth value=30
+383.7923	15	0	setParam	name=bbypassfmt value=0
+383.7923	15	0	setParam	name=f2min value=0
+383.7923	15	0	setParam	name=f2max value=5000
+383.7923	15	0	setParam	name=f1min value=0
+383.7923	15	0	setParam	name=f1max value=5000
+383.7923	15	0	setParam	name=lbk value=0
+383.7923	15	0	setParam	name=lbb value=0
+383.7923	15	0	setParam	name=pertf1 value=[257 x 0]
+383.7923	15	0	setParam	name=pertf2 value=[257 x 0]
+383.7923	15	0	setParam	name=pertamp value=[257 x 0]
+383.7923	15	0	setParam	name=pertphi value=[257 x 0]
+383.7923	15	0	setParam	name=pertamp2d value=[66049 x 0]
+383.7923	15	0	setParam	name=pertphi2d value=[66049 x 0]
+383.7923	15	0	setParam	name=fb value=3
+383.7923	15	0	setParam	name=nfb value=1
+383.7923	15	0	setParam	name=triallen value=0
+383.7923	15	0	setParam	name=ramplen value=0
+383.7923	15	0	setParam	name=afact value=1
+383.7923	15	0	setParam	name=bfact value=0.8
+383.7923	15	0	setParam	name=gfact value=1
+383.7923	15	0	setParam	name=fn1 value=675
+383.7923	15	0	setParam	name=fn2 value=1392
+383.7923	15	0	setParam	name=fb2gain value=1
+383.7923	15	0	setParam	name=fb3gain value=0.02
+383.7923	15	0	setParam	name=fb4gaindb value=10
+383.7923	15	0	setParam	name=fb5gaindb_speech value=0
+383.7923	15	0	setParam	name=fb5gain_playback value=1
+383.7923	15	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+383.7923	15	0	setParam	name=bpitchshift value=0
+383.7923	15	0	setParam	name=bshift2d value=0
+383.7923	15	0	setParam	name=pitchshiftratio value=1
+383.7923	15	0	setParam	name=pvocframelen value=256
+383.7923	15	0	setParam	name=pvochop value=64
+383.7923	15	0	setParam	name=bdownsampfilt value=1
+383.7923	15	0	setParam	name=stereomode value=1
+383.7923	15	0	setParam	name=delayFrames value=0
+383.7923	15	0	setParam	name=btimedomainshift value=0
+383.7923	15	0	setParam	name=pitchlowerboundhz value=0
+383.7923	15	0	setParam	name=pitchupperboundhz value=0
+383.7923	15	0	setParam	name=timedomainpitchshiftschedule value=1
+383.7923	15	0	setParam	name=timedomainpitchshiftalgorithm value=0
+383.7923	15	0	setParam	name=bclampformants value=0
+383.7923	15	0	setParam	name=clamposts value=[0 0]
+383.7923	15	0	setParam	name=clampf1 value=[2048 x 0]
+383.7923	15	0	setParam	name=clampf2 value=[2048 x 0]
+383.7923	15	0	Screen:CloseAll	
+383.7923	15	0	PsychPortAudio:Open	channels=[2 2] fs=48000 handle=1 mode=2
+383.7923	15	0	Screen:OpenWindow	
+384.7923	15	0	key	key=space
+385.7943	15	0	setParam	name=pertAmp value=[257 x 0]
+385.7943	15	0	setParam	name=pertPhi value=[257 x 0]
+385.7943	15	0	reset	
+385.7943	15	0	start	
+385.8110	16	1	capture:start	handle=1 shared_with_audapter=1
+385.8130	16	1	capture:input	handle=1 input=shared with Audapter trial 16 from +0.017 s: synth "head" female f0=205 vowels=EH onset=0.288 dur=0.292 level=0.050
+387.3110	16	1	stop	
+387.3110	16	0	getData	
+388.6648	16	0	setParam	name=pertAmp value=[257 x 0]
+388.6648	16	0	setParam	name=pertPhi value=[257 x 0]
+388.6648	16	0	reset	
+388.6648	16	0	start	
+388.6815	17	1	participant	dur=1.25 follows=longer level=1
+388.6815	17	1	capture:start	handle=1 shared_with_audapter=1
+388.6835	17	1	capture:input	handle=1 input=shared with Audapter trial 17 from +0.017 s: synth "bed" female f0=205 vowels=EH onset=0.298 dur=0.387 level=0.050
+390.1815	17	1	stop	
+390.1815	17	0	getData	
+392.0454	17	0	key	key=space
+392.0454	17	0	setParam	name=pertAmp value=[257 x 0]
+392.0454	17	0	setParam	name=pertPhi value=[257 x 0]
+392.0454	17	0	reset	
+392.0454	17	0	start	
+392.0621	18	1	participant	dur=1.5625 follows=longer level=1
+392.0621	18	1	capture:start	handle=1 shared_with_audapter=1
+392.0641	18	1	capture:input	handle=1 input=shared with Audapter trial 18 from +0.017 s: synth "dead" female f0=205 vowels=EH onset=0.290 dur=0.499 level=0.050
+393.5621	18	1	stop	
+393.5621	18	0	getData	
+395.4119	18	0	setParam	name=pertAmp value=[257 x 0]
+395.4119	18	0	setParam	name=pertPhi value=[257 x 0]
+395.4119	18	0	reset	
+395.4119	18	0	start	
+395.4286	19	1	capture:start	handle=1 shared_with_audapter=1
+395.4306	19	1	capture:input	handle=1 input=shared with Audapter trial 19 from +0.017 s: synth "dead" female f0=205 vowels=EH onset=0.258 dur=0.437 level=0.050
+396.9286	19	1	stop	
+396.9286	19	0	getData	
+398.5437	19	0	setParam	name=pertAmp value=[257 x 0]
+398.5437	19	0	setParam	name=pertPhi value=[257 x 0]
+398.5437	19	0	reset	
+398.5437	19	0	start	
+398.5604	20	1	capture:start	handle=1 shared_with_audapter=1
+398.5624	20	1	capture:input	handle=1 input=shared with Audapter trial 20 from +0.017 s: synth "head" female f0=205 vowels=EH onset=0.265 dur=0.464 level=0.050
+400.0604	20	1	stop	
+400.0604	20	0	getData	
+401.4050	20	0	key	key=space
+401.4050	20	0	setParam	name=pertAmp value=[257 x 0]
+401.4050	20	0	setParam	name=pertPhi value=[257 x 0]
+401.4050	20	0	reset	
+401.4050	20	0	start	
+401.4217	21	1	capture:start	handle=1 shared_with_audapter=1
+401.4237	21	1	capture:input	handle=1 input=shared with Audapter trial 21 from +0.017 s: synth "bed" female f0=205 vowels=EH onset=0.303 dur=0.433 level=0.050
+402.9217	21	1	stop	
+402.9217	21	0	getData	
+404.8576	21	0	setParam	name=pertAmp value=[257 x 0]
+404.8576	21	0	setParam	name=pertPhi value=[257 x 0]
+404.8576	21	0	reset	
+404.8576	21	0	start	
+404.8742	22	1	capture:start	handle=1 shared_with_audapter=1
+404.8762	22	1	capture:input	handle=1 input=shared with Audapter trial 22 from +0.017 s: synth "dead" female f0=205 vowels=EH onset=0.267 dur=0.517 level=0.050
+406.3742	22	1	stop	
+406.3742	22	0	getData	
+408.1781	22	0	setParam	name=pertAmp value=[257 x 0]
+408.1781	22	0	setParam	name=pertPhi value=[257 x 0]
+408.1781	22	0	reset	
+408.1781	22	0	start	
+408.1948	23	1	capture:start	handle=1 shared_with_audapter=1
+408.1968	23	1	capture:input	handle=1 input=shared with Audapter trial 23 from +0.017 s: synth "dead" female f0=205 vowels=EH onset=0.299 dur=0.463 level=0.050
+409.6948	23	1	stop	
+409.6948	23	0	getData	
+411.4251	23	0	key	key=space
+411.4251	23	0	setParam	name=pertAmp value=[257 x 0]
+411.4251	23	0	setParam	name=pertPhi value=[257 x 0]
+411.4251	23	0	reset	
+411.4251	23	0	start	
+411.4418	24	1	capture:start	handle=1 shared_with_audapter=1
+411.4438	24	1	capture:input	handle=1 input=shared with Audapter trial 24 from +0.017 s: synth "head" female f0=205 vowels=EH onset=0.327 dur=0.467 level=0.050
+412.9418	24	1	stop	
+412.9418	24	0	getData	
+414.6773	24	0	setParam	name=pertAmp value=[257 x 0]
+414.6773	24	0	setParam	name=pertPhi value=[257 x 0]
+414.6773	24	0	reset	
+414.6773	24	0	start	
+414.6940	25	1	capture:start	handle=1 shared_with_audapter=1
+414.6960	25	1	capture:input	handle=1 input=shared with Audapter trial 25 from +0.017 s: synth "dead" female f0=205 vowels=EH onset=0.274 dur=0.417 level=0.050
+415.3886	25	1	key	key=space
+415.3946	25	1	key	key=LeftArrow
+416.1940	25	1	stop	
+416.1940	25	0	getData	
+418.1241	25	0	setParam	name=pertAmp value=[257 x 125]
+418.1241	25	0	setParam	name=pertPhi value=[257 x -3.6700184]
+418.1241	25	0	reset	
+418.1241	25	0	start	
+418.1407	26	1	capture:start	handle=1 shared_with_audapter=1
+418.1427	26	1	capture:input	handle=1 input=shared with Audapter trial 26 from +0.017 s: synth "bed" female f0=205 vowels=EH onset=0.257 dur=0.466 level=0.050
+418.8194	26	1	key	key=space
+418.8254	26	1	key	key=LeftArrow
+419.6407	26	1	stop	
+419.6407	26	0	getData	
+421.2632	26	0	setParam	name=pertAmp value=[257 x 0]
+421.2632	26	0	setParam	name=pertPhi value=[257 x 0]
+421.2632	26	0	reset	
+421.2632	26	0	start	
+421.2798	27	1	capture:start	handle=1 shared_with_audapter=1
+421.2818	27	1	capture:input	handle=1 input=shared with Audapter trial 27 from +0.017 s: synth "dead" female f0=205 vowels=EH onset=0.257 dur=0.514 level=0.050
+421.9545	27	1	key	key=space
+421.9605	27	1	key	key=LeftArrow
+422.7798	27	1	stop	
+422.7798	27	0	getData	
+424.4106	27	0	setParam	name=pertAmp value=[257 x 0]
+424.4106	27	0	setParam	name=pertPhi value=[257 x 0]
+424.4106	27	0	reset	
+424.4106	27	0	start	
+424.4273	28	1	capture:start	handle=1 shared_with_audapter=1
+424.4293	28	1	capture:input	handle=1 input=shared with Audapter trial 28 from +0.017 s: synth "bed" female f0=205 vowels=EH onset=0.297 dur=0.457 level=0.050
+425.1419	28	1	key	key=space
+425.1479	28	1	key	key=LeftArrow
+425.9273	28	1	stop	
+425.9273	28	0	getData	
+427.9302	28	0	setParam	name=pertAmp value=[257 x 0]
+427.9302	28	0	setParam	name=pertPhi value=[257 x 0]
+427.9302	28	0	reset	
+427.9302	28	0	start	
+427.9469	29	1	capture:start	handle=1 shared_with_audapter=1
+427.9489	29	1	capture:input	handle=1 input=shared with Audapter trial 29 from +0.017 s: synth "head" female f0=205 vowels=EH onset=0.309 dur=0.492 level=0.050
+428.6775	29	1	key	key=space
+428.6835	29	1	key	key=LeftArrow
+429.4469	29	1	stop	
+429.4469	29	0	getData	
+431.2370	29	0	setParam	name=pertAmp value=[257 x 125]
+431.2370	29	0	setParam	name=pertPhi value=[257 x -3.6700184]
+431.2370	29	0	reset	
+431.2370	29	0	start	
+431.2536	30	1	capture:start	handle=1 shared_with_audapter=1
+431.2556	30	1	capture:input	handle=1 input=shared with Audapter trial 30 from +0.017 s: synth "head" female f0=205 vowels=EH onset=0.341 dur=0.460 level=0.050
+432.0163	30	1	key	key=space
+432.0223	30	1	key	key=LeftArrow
+432.7536	30	1	stop	
+432.7536	30	0	getData	
+434.1081	30	0	setParam	name=pertAmp value=[257 x 0]
+434.1081	30	0	setParam	name=pertPhi value=[257 x 0]
+434.1081	30	0	reset	
+434.1081	30	0	start	
+434.1247	31	1	capture:start	handle=1 shared_with_audapter=1
+434.1267	31	1	capture:input	handle=1 input=shared with Audapter trial 31 from +0.017 s: synth "bed" female f0=205 vowels=EH onset=0.318 dur=0.474 level=0.050
+434.8634	31	1	key	key=space
+434.8694	31	1	key	key=LeftArrow
+435.6247	31	1	stop	
+435.6247	31	0	getData	
+437.2942	31	0	setParam	name=pertAmp value=[257 x 125]
+437.2942	31	0	setParam	name=pertPhi value=[257 x -4.0363082]
+437.2942	31	0	reset	
+437.2942	31	0	start	
+437.3108	32	1	capture:start	handle=1 shared_with_audapter=1
+437.3128	32	1	capture:input	handle=1 input=shared with Audapter trial 32 from +0.017 s: synth "bed" female f0=205 vowels=EH onset=0.290 dur=0.474 level=0.050
+438.0215	32	1	key	key=space
+438.0275	32	1	key	key=LeftArrow
+438.8108	32	1	stop	
+438.8108	32	0	getData	
+440.7468	32	0	setParam	name=pertAmp value=[257 x 0]
+440.7468	32	0	setParam	name=pertPhi value=[257 x 0]
+440.7468	32	0	reset	
+440.7468	32	0	start	
+440.7635	33	1	capture:start	handle=1 shared_with_audapter=1
+440.7655	33	1	capture:input	handle=1 input=shared with Audapter trial 33 from +0.017 s: synth "head" female f0=205 vowels=EH onset=0.341 dur=0.436 level=0.050
+441.5262	33	1	key	key=space
+441.5322	33	1	key	key=LeftArrow
+442.2635	33	1	stop	
+442.2635	33	0	getData	
+444.9569	33	0	key	key=RightArrow
+446.7069	33	0	key	key=space
+447.2246	33	0	setParam	name=pertAmp value=[257 x 125]
+447.2246	33	0	setParam	name=pertPhi value=[257 x -4.0363082]
+447.2246	33	0	reset	
+447.2246	33	0	start	
+447.2413	34	1	capture:start	handle=1 shared_with_audapter=1
+447.2433	34	1	capture:input	handle=1 input=shared with Audapter trial 34 from +0.017 s: synth "head" female f0=205 vowels=EH onset=0.329 dur=0.484 level=0.050
+448.7413	34	1	stop	
+448.7413	34	0	getData	
+450.5178	34	0	setParam	name=pertAmp value=[257 x 0]
+450.5178	34	0	setParam	name=pertPhi value=[257 x 0]
+450.5178	34	0	reset	
+450.5178	34	0	start	
+450.5345	35	1	capture:start	handle=1 shared_with_audapter=1
+450.5365	35	1	capture:input	handle=1 input=shared with Audapter trial 35 from +0.017 s: synth "head" female f0=205 vowels=EH onset=0.323 dur=0.513 level=0.050
+452.0345	35	1	stop	
+452.0345	35	0	getData	
+453.6343	35	0	key	key=space
+453.6343	35	0	setParam	name=pertAmp value=[257 x 125]
+453.6343	35	0	setParam	name=pertPhi value=[257 x -4.0363082]
+453.6343	35	0	reset	
+453.6343	35	0	start	
+453.6510	36	1	capture:start	handle=1 shared_with_audapter=1
+453.6530	36	1	capture:input	handle=1 input=shared with Audapter trial 36 from +0.017 s: synth "bed" female f0=205 vowels=EH onset=0.292 dur=0.495 level=0.050
+455.1510	36	1	stop	
+455.1510	36	0	getData	
+456.4688	36	0	setParam	name=pertAmp value=[257 x 0]
+456.4688	36	0	setParam	name=pertPhi value=[257 x 0]
+456.4688	36	0	reset	
+456.4688	36	0	start	
+456.4855	37	1	capture:start	handle=1 shared_with_audapter=1
+456.4875	37	1	capture:input	handle=1 input=shared with Audapter trial 37 from +0.017 s: synth "head" female f0=205 vowels=EH onset=0.263 dur=0.488 level=0.050
+457.9855	37	1	stop	
+457.9855	37	0	getData	
+459.5113	37	0	setParam	name=pertAmp value=[257 x 125]
+459.5113	37	0	setParam	name=pertPhi value=[257 x -3.6700184]
+459.5113	37	0	reset	
+459.5113	37	0	start	
+459.5279	38	1	capture:start	handle=1 shared_with_audapter=1
+459.5299	38	1	capture:input	handle=1 input=shared with Audapter trial 38 from +0.017 s: synth "bed" female f0=205 vowels=EH onset=0.265 dur=0.441 level=0.050
+461.0279	38	1	stop	
+461.0279	38	0	getData	
+462.3871	38	0	key	key=space
+462.3871	38	0	setParam	name=pertAmp value=[257 x 0]
+462.3871	38	0	setParam	name=pertPhi value=[257 x 0]
+462.3871	38	0	reset	
+462.3871	38	0	start	
+462.4038	39	1	capture:start	handle=1 shared_with_audapter=1
+462.4058	39	1	capture:input	handle=1 input=shared with Audapter trial 39 from +0.017 s: synth "dead" female f0=205 vowels=EH onset=0.316 dur=0.433 level=0.050
+463.9038	39	1	stop	
+463.9038	39	0	getData	
+465.7375	39	0	setParam	name=pertAmp value=[257 x 125]
+465.7375	39	0	setParam	name=pertPhi value=[257 x -3.6700184]
+465.7375	39	0	reset	
+465.7375	39	0	start	
+465.7542	40	1	capture:start	handle=1 shared_with_audapter=1
+465.7562	40	1	capture:input	handle=1 input=shared with Audapter trial 40 from +0.017 s: synth "dead" female f0=205 vowels=EH onset=0.282 dur=0.476 level=0.050
+467.2542	40	1	stop	
+467.2542	40	0	getData	
+469.1554	40	0	setParam	name=pertAmp value=[257 x 0]
+469.1554	40	0	setParam	name=pertPhi value=[257 x 0]
+469.1554	40	0	reset	
+469.1554	40	0	start	
+469.1720	41	1	capture:start	handle=1 shared_with_audapter=1
+469.1740	41	1	capture:input	handle=1 input=shared with Audapter trial 41 from +0.017 s: synth "dead" female f0=205 vowels=EH onset=0.295 dur=0.463 level=0.050
+470.6720	41	1	stop	
+470.6720	41	0	getData	
+471.9503	41	0	key	key=space
+471.9503	41	0	setParam	name=pertAmp value=[257 x 0]
+471.9503	41	0	setParam	name=pertPhi value=[257 x 0]
+471.9503	41	0	reset	
+471.9503	41	0	start	
+471.9669	42	1	capture:start	handle=1 shared_with_audapter=1
+471.9689	42	1	capture:input	handle=1 input=shared with Audapter trial 42 from +0.017 s: synth "head" female f0=205 vowels=EH onset=0.277 dur=0.452 level=0.050
+473.4669	42	1	stop	
+473.4669	42	0	getData	
+475.4133	42	0	setParam	name=pertAmp value=[257 x 125]
+475.4133	42	0	setParam	name=pertPhi value=[257 x -3.6700184]
+475.4133	42	0	reset	
+475.4133	42	0	start	
+475.4300	43	1	capture:start	handle=1 shared_with_audapter=1
+475.4320	43	1	capture:input	handle=1 input=shared with Audapter trial 43 from +0.017 s: synth "head" female f0=205 vowels=EH onset=0.341 dur=0.453 level=0.050
+476.1927	43	1	key	key=space
+476.1987	43	1	key	key=LeftArrow
+476.9300	43	1	stop	
+476.9300	43	0	getData	
+478.6602	43	0	setParam	name=pertAmp value=[257 x 0]
+478.6602	43	0	setParam	name=pertPhi value=[257 x 0]
+478.6602	43	0	reset	
+478.6602	43	0	start	
+478.6769	44	1	capture:start	handle=1 shared_with_audapter=1
+478.6789	44	1	capture:input	handle=1 input=shared with Audapter trial 44 from +0.017 s: synth "bed" female f0=205 vowels=EH onset=0.327 dur=0.453 level=0.050
+479.4236	44	1	key	key=space
+479.4296	44	1	key	key=LeftArrow
+480.1769	44	1	stop	
+480.1769	44	0	getData	
+482.0619	44	0	setParam	name=pertAmp value=[257 x 0]
+482.0619	44	0	setParam	name=pertPhi value=[257 x 0]
+482.0619	44	0	reset	
+482.0619	44	0	start	
+482.0786	45	1	capture:start	handle=1 shared_with_audapter=1
+482.0806	45	1	capture:input	handle=1 input=shared with Audapter trial 45 from +0.017 s: synth "head" female f0=205 vowels=EH onset=0.338 dur=0.489 level=0.050
+482.8373	45	1	key	key=space
+482.8433	45	1	key	key=LeftArrow
+483.5786	45	1	stop	
+483.5786	45	0	getData	
+485.3304	45	0	setParam	name=pertAmp value=[257 x 125]
+485.3304	45	0	setParam	name=pertPhi value=[257 x -4.0363082]
+485.3304	45	0	reset	
+485.3304	45	0	start	
+485.3471	46	1	capture:start	handle=1 shared_with_audapter=1
+485.3491	46	1	capture:input	handle=1 input=shared with Audapter trial 46 from +0.017 s: synth "dead" female f0=205 vowels=EH onset=0.297 dur=0.503 level=0.050
+486.0618	46	1	key	key=space
+486.0678	46	1	key	key=LeftArrow
+486.8471	46	1	stop	
+486.8471	46	0	getData	
+488.3080	46	0	setParam	name=pertAmp value=[257 x 0]
+488.3080	46	0	setParam	name=pertPhi value=[257 x 0]
+488.3080	46	0	reset	
+488.3080	46	0	start	
+488.3247	47	1	capture:start	handle=1 shared_with_audapter=1
+488.3267	47	1	capture:input	handle=1 input=shared with Audapter trial 47 from +0.017 s: synth "dead" female f0=205 vowels=EH onset=0.262 dur=0.455 level=0.050
+489.0073	47	1	key	key=space
+489.0133	47	1	key	key=LeftArrow
+489.8247	47	1	stop	
+489.8247	47	0	getData	
+491.6659	47	0	setParam	name=pertAmp value=[257 x 0]
+491.6659	47	0	setParam	name=pertPhi value=[257 x 0]
+491.6659	47	0	reset	
+491.6659	47	0	start	
+491.6826	48	1	capture:start	handle=1 shared_with_audapter=1
+491.6846	48	1	capture:input	handle=1 input=shared with Audapter trial 48 from +0.017 s: synth "dead" female f0=205 vowels=EH onset=0.279 dur=0.431 level=0.050
+492.3813	48	1	key	key=space
+492.3873	48	1	key	key=LeftArrow
+493.1826	48	1	stop	
+493.1826	48	0	getData	
+495.0516	48	0	setParam	name=pertAmp value=[257 x 0]
+495.0516	48	0	setParam	name=pertPhi value=[257 x 0]
+495.0516	48	0	reset	
+495.0516	48	0	start	
+495.0683	49	1	capture:start	handle=1 shared_with_audapter=1
+495.0703	49	1	capture:input	handle=1 input=shared with Audapter trial 49 from +0.017 s: synth "bed" female f0=205 vowels=EH onset=0.345 dur=0.488 level=0.050
+495.8309	49	1	key	key=space
+495.8369	49	1	key	key=LeftArrow
+496.5683	49	1	stop	
+496.5683	49	0	getData	
+498.5824	49	0	setParam	name=pertAmp value=[257 x 0]
+498.5824	49	0	setParam	name=pertPhi value=[257 x 0]
+498.5824	49	0	reset	
+498.5824	49	0	start	
+498.5991	50	1	capture:start	handle=1 shared_with_audapter=1
+498.6011	50	1	capture:input	handle=1 input=shared with Audapter trial 50 from +0.017 s: synth "bed" female f0=205 vowels=EH onset=0.284 dur=0.481 level=0.050
+499.3017	50	1	key	key=space
+499.3077	50	1	key	key=LeftArrow
+500.0991	50	1	stop	
+500.0991	50	0	getData	
+501.5939	50	0	setParam	name=pertAmp value=[257 x 0]
+501.5939	50	0	setParam	name=pertPhi value=[257 x 0]
+501.5939	50	0	reset	
+501.5939	50	0	start	
+501.6106	51	1	capture:start	handle=1 shared_with_audapter=1
+501.6126	51	1	capture:input	handle=1 input=shared with Audapter trial 51 from +0.017 s: synth "bed" female f0=205 vowels=EH onset=0.259 dur=0.426 level=0.050
+502.2892	51	1	key	key=space
+502.2952	51	1	key	key=LeftArrow
+503.1106	51	1	stop	
+503.1106	51	0	getData	
+507.3793	51	0	Screen:CloseAll	
+507.3793	51	0	Screen:CloseAll	

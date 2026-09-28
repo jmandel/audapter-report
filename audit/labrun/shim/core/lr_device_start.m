@@ -2,6 +2,7 @@ function lr_device_start(mode, ctx)
 % Open the virtual device for one "trial" (Audapter start / playWave / playTone / playToneSeq).
 global LR
 LR.ntrial = LR.ntrial + 1; k = LR.ntrial;
+LR.kbStuck = 0; LR.lastProgress = LR.vclock;
 if LR.ntrial > LR.plan.maxStarts
   error('labrun:maxStarts', 'labrun: more than %d device starts (plan.maxStarts); stopping (a retry loop that never succeeds?)', LR.plan.maxStarts);
 end
@@ -16,8 +17,7 @@ d.play = [];
 % parameters in effect at start (getParam of everything AudapterIO('init') can send) and the script's intent
 [d.params, d.intentDiff, d.intentSrc] = lr_param_check(ctx);
 if strcmp(mode, 'playWave')
-  d.datapb = double(AudapterReal('getParam', 'datapb'));
-  d.maxPB = double(AudapterReal('getMaxPBLen'));
+  d.maxPB = LR.pb.max; d.datapb = zeros(d.maxPB, 1); n = min(numel(LR.pb.data), d.maxPB); d.datapb(1:n) = LR.pb.data(1:n);
 end
 if strcmp(mode, 'playTone')
   d.wgFreq = double(AudapterReal('getParam', 'wgfreq')); d.wgAmp = double(AudapterReal('getParam', 'wgamp'));

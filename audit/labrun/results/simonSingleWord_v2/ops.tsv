@@ -1,0 +1,3688 @@
+vtime	trial	running	op	args
+0.0000	0	0	plan:cbPermutation	dir=\\wcs-cifs\wc\smng\experiments\simonSingleWord_v2\ expt=simonSingleWord_v2
+0.0000	0	0	ask:input	answer=n prompt=Does the participant appear to be above the height 5' 8"? (y/n):  rule=above the height|5' ?8
+2.0030	0	0	dbstop-ignored	args=if error
+2.0030	0	0	dbstop-ignored	args=if error
+2.0030	0	0	dbstop-ignored	args=if error
+2.0060	0	0	deviceName	args=Focusrite USB
+2.0060	0	0	ost	file=/w/sandbox/repos/free-speech/experiment_helpers/measureFormantsWorking.ost
+2.0060	0	0	pcf	file=/w/sandbox/repos/free-speech/experiment_helpers/measureFormantsWorking.pcf
+2.0060	0	0	getMaxPBLen	args=
+2.0060	0	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+2.0060	0	0	setParam	name=downfact value=3
+2.0060	0	0	setParam	name=srate value=16000
+2.0060	0	0	setParam	name=framelen value=32
+2.0060	0	0	setParam	name=ndelay value=5
+2.0060	0	0	setParam	name=nwin value=1
+2.0060	0	0	setParam	name=nlpc value=15
+2.0060	0	0	setParam	name=nfmts value=2
+2.0060	0	0	setParam	name=ntracks value=4
+2.0060	0	0	setParam	name=scale value=0.795271
+2.0060	0	0	setParam	name=preemp value=0.98
+2.0060	0	0	setParam	name=rmsthr value=0.011354
+2.0060	0	0	setParam	name=rmsratio value=0.7
+2.0060	0	0	setParam	name=rmsff value=0.95
+2.0060	0	0	setParam	name=dfmtsff value=0.93
+2.0060	0	0	setParam	name=bgainadapt value=0
+2.0060	0	0	setParam	name=bshift value=0
+2.0060	0	0	setParam	name=btrack value=1
+2.0060	0	0	setParam	name=bdetect value=1
+2.0060	0	0	setParam	name=avglen value=8
+2.0060	0	0	setParam	name=bweight value=1
+2.0060	0	0	setParam	name=minvowellen value=60
+2.0060	0	0	setParam	name=bratioshift value=1
+2.0060	0	0	setParam	name=bmelshift value=0
+2.0060	0	0	setParam	name=bcepslift value=0
+2.0060	0	0	setParam	name=cepswinwidth value=30
+2.0060	0	0	setParam	name=bbypassfmt value=0
+2.0060	0	0	setParam	name=f2min value=0
+2.0060	0	0	setParam	name=f2max value=5000
+2.0060	0	0	setParam	name=f1min value=0
+2.0060	0	0	setParam	name=f1max value=5000
+2.0060	0	0	setParam	name=lbk value=0
+2.0060	0	0	setParam	name=lbb value=0
+2.0060	0	0	setParam	name=pertf1 value=[257 x 0]
+2.0060	0	0	setParam	name=pertf2 value=[257 x 0]
+2.0060	0	0	setParam	name=pertamp value=[257 x 0]
+2.0060	0	0	setParam	name=pertphi value=[257 x 0]
+2.0060	0	0	setParam	name=pertamp2d value=[66049 x 0]
+2.0060	0	0	setParam	name=pertphi2d value=[66049 x 0]
+2.0060	0	0	setParam	name=fb value=3
+2.0060	0	0	setParam	name=nfb value=1
+2.0060	0	0	setParam	name=triallen value=0
+2.0060	0	0	setParam	name=ramplen value=0
+2.0060	0	0	setParam	name=afact value=1
+2.0060	0	0	setParam	name=bfact value=0.8
+2.0060	0	0	setParam	name=gfact value=1
+2.0060	0	0	setParam	name=fn1 value=675
+2.0060	0	0	setParam	name=fn2 value=1392
+2.0060	0	0	setParam	name=fb2gain value=1
+2.0060	0	0	setParam	name=fb3gain value=0.02
+2.0060	0	0	setParam	name=fb4gaindb value=10
+2.0060	0	0	setParam	name=fb5gaindb_speech value=0
+2.0060	0	0	setParam	name=fb5gain_playback value=1
+2.0060	0	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+2.0060	0	0	setParam	name=bpitchshift value=0
+2.0060	0	0	setParam	name=bshift2d value=0
+2.0060	0	0	setParam	name=pitchshiftratio value=1
+2.0060	0	0	setParam	name=pvocframelen value=256
+2.0060	0	0	setParam	name=pvochop value=64
+2.0060	0	0	setParam	name=bdownsampfilt value=1
+2.0060	0	0	setParam	name=stereomode value=1
+2.0060	0	0	setParam	name=delayFrames value=0
+2.0060	0	0	setParam	name=btimedomainshift value=0
+2.0060	0	0	setParam	name=pitchlowerboundhz value=0
+2.0060	0	0	setParam	name=pitchupperboundhz value=0
+2.0060	0	0	setParam	name=timedomainpitchshiftschedule value=1
+2.0060	0	0	setParam	name=timedomainpitchshiftalgorithm value=0
+2.0060	0	0	setParam	name=bclampformants value=0
+2.0060	0	0	setParam	name=clamposts value=[0 0]
+2.0060	0	0	setParam	name=clampf1 value=[2048 x 0]
+2.0060	0	0	setParam	name=clampf2 value=[2048 x 0]
+2.0060	0	0	keywait	fn=pause
+3.0060	0	0	key	key=space
+4.0060	0	0	reset	
+4.0060	0	0	start	
+5.8060	1	1	stop	
+5.8060	1	0	getData	
+5.8060	1	0	dbstop-ignored	args=if error
+5.8060	1	0	dbstop-ignored	args=if error
+7.1367	1	0	reset	
+7.1367	1	0	start	
+8.9367	2	1	stop	
+8.9367	2	0	getData	
+8.9367	2	0	dbstop-ignored	args=if error
+8.9367	2	0	dbstop-ignored	args=if error
+10.4104	2	0	reset	
+10.4104	2	0	start	
+12.2104	3	1	stop	
+12.2104	3	0	getData	
+12.2104	3	0	dbstop-ignored	args=if error
+12.2104	3	0	dbstop-ignored	args=if error
+16.5732	3	0	waitfor	
+16.5732	3	0	gui	figure=check_LPC  steps=^ok$
+16.5732	3	0	gui-click	control=OK
+16.5732	3	0	ask:questdlg	answer=Save and exit prompt=Save LPC order and exit? rule=save lpc order and exit
+16.5732	3	0	dbstop-ignored	args=if error
+16.5732	3	0	ask:input	answer=yes prompt=Is the LPC order OK? (yes/no):  rule=\(y/n\)|y/n|\[y/n\]|yes/no
+18.5732	3	0	ask:input	answer= prompt=\nRead instructions, then press ENTER to continue to "Pretest phase: OST Check" section rule=press enter|press any key|hit enter|enter to (continue|start|go)|press return
+20.5732	3	0	ask:input	answer=1 prompt=[Test mode only] Run ost pretest phase (1), or skip it (0)?  rule=default
+22.5732	3	0	dbstop-ignored	args=if error
+22.5792	3	0	ost	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.ost
+22.5792	3	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+22.5792	3	0	deviceName	args=Focusrite USB
+22.5792	3	0	setParam	name=sRate value=16000
+22.5792	3	0	setParam	name=downFact value=3
+22.5792	3	0	setParam	name=frameLen value=32
+22.5792	3	0	getMaxPBLen	args=
+22.5792	3	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+22.5792	3	0	setParam	name=downfact value=3
+22.5792	3	0	setParam	name=srate value=16000
+22.5792	3	0	setParam	name=framelen value=32
+22.5792	3	0	setParam	name=ndelay value=5
+22.5792	3	0	setParam	name=nwin value=1
+22.5792	3	0	setParam	name=nlpc value=15
+22.5792	3	0	setParam	name=nfmts value=2
+22.5792	3	0	setParam	name=ntracks value=4
+22.5792	3	0	setParam	name=scale value=0.795271
+22.5792	3	0	setParam	name=preemp value=0.98
+22.5792	3	0	setParam	name=rmsthr value=0.011354
+22.5792	3	0	setParam	name=rmsratio value=0.7
+22.5792	3	0	setParam	name=rmsff value=0.95
+22.5792	3	0	setParam	name=dfmtsff value=0.93
+22.5792	3	0	setParam	name=bgainadapt value=0
+22.5792	3	0	setParam	name=bshift value=1
+22.5792	3	0	setParam	name=btrack value=1
+22.5792	3	0	setParam	name=bdetect value=1
+22.5792	3	0	setParam	name=avglen value=8
+22.5792	3	0	setParam	name=bweight value=1
+22.5792	3	0	setParam	name=minvowellen value=60
+22.5792	3	0	setParam	name=bratioshift value=0
+22.5792	3	0	setParam	name=bmelshift value=1
+22.5792	3	0	setParam	name=bcepslift value=0
+22.5792	3	0	setParam	name=cepswinwidth value=30
+22.5792	3	0	setParam	name=bbypassfmt value=0
+22.5792	3	0	setParam	name=f2min value=0
+22.5792	3	0	setParam	name=f2max value=5000
+22.5792	3	0	setParam	name=f1min value=0
+22.5792	3	0	setParam	name=f1max value=5000
+22.5792	3	0	setParam	name=lbk value=0
+22.5792	3	0	setParam	name=lbb value=0
+22.5792	3	0	setParam	name=pertf1 value=[257 x 0]
+22.5792	3	0	setParam	name=pertf2 value=[257 x 0]
+22.5792	3	0	setParam	name=pertamp value=[257 x 0]
+22.5792	3	0	setParam	name=pertphi value=[257 x 0]
+22.5792	3	0	setParam	name=pertamp2d value=[66049 x 0]
+22.5792	3	0	setParam	name=pertphi2d value=[66049 x 0]
+22.5792	3	0	setParam	name=fb value=3
+22.5792	3	0	setParam	name=nfb value=1
+22.5792	3	0	setParam	name=triallen value=0
+22.5792	3	0	setParam	name=ramplen value=0
+22.5792	3	0	setParam	name=afact value=1
+22.5792	3	0	setParam	name=bfact value=0.8
+22.5792	3	0	setParam	name=gfact value=1
+22.5792	3	0	setParam	name=fn1 value=675
+22.5792	3	0	setParam	name=fn2 value=1392
+22.5792	3	0	setParam	name=fb2gain value=0.16
+22.5792	3	0	setParam	name=fb3gain value=0.02
+22.5792	3	0	setParam	name=fb4gaindb value=10
+22.5792	3	0	setParam	name=fb5gaindb_speech value=0
+22.5792	3	0	setParam	name=fb5gain_playback value=1
+22.5792	3	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+22.5792	3	0	setParam	name=bpitchshift value=0
+22.5792	3	0	setParam	name=bshift2d value=0
+22.5792	3	0	setParam	name=pitchshiftratio value=1
+22.5792	3	0	setParam	name=pvocframelen value=256
+22.5792	3	0	setParam	name=pvochop value=64
+22.5792	3	0	setParam	name=bdownsampfilt value=1
+22.5792	3	0	setParam	name=stereomode value=1
+22.5792	3	0	setParam	name=delayFrames value=0
+22.5792	3	0	setParam	name=btimedomainshift value=0
+22.5792	3	0	setParam	name=pitchlowerboundhz value=0
+22.5792	3	0	setParam	name=pitchupperboundhz value=0
+22.5792	3	0	setParam	name=timedomainpitchshiftschedule value=1
+22.5792	3	0	setParam	name=timedomainpitchshiftalgorithm value=0
+22.5792	3	0	setParam	name=bclampformants value=0
+22.5792	3	0	setParam	name=clamposts value=[0 0]
+22.5792	3	0	setParam	name=clampf1 value=[2048 x 0]
+22.5792	3	0	setParam	name=clampf2 value=[2048 x 0]
+22.5792	3	0	keywait	fn=pause
+23.5792	3	0	key	key=space
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	dbstop-ignored	args=if error
+24.5792	3	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+24.5792	3	0	setParam	name=fb value=3
+24.5792	3	0	setParam	name=downfact value=3
+24.5792	3	0	setParam	name=srate value=16000
+24.5792	3	0	setParam	name=framelen value=32
+24.5792	3	0	setParam	name=ndelay value=5
+24.5792	3	0	setParam	name=nwin value=1
+24.5792	3	0	setParam	name=nlpc value=15
+24.5792	3	0	setParam	name=nfmts value=2
+24.5792	3	0	setParam	name=ntracks value=4
+24.5792	3	0	setParam	name=scale value=0.795271
+24.5792	3	0	setParam	name=preemp value=0.98
+24.5792	3	0	setParam	name=rmsthr value=0.011354
+24.5792	3	0	setParam	name=rmsratio value=0.7
+24.5792	3	0	setParam	name=rmsff value=0.95
+24.5792	3	0	setParam	name=dfmtsff value=0.93
+24.5792	3	0	setParam	name=bgainadapt value=0
+24.5792	3	0	setParam	name=bshift value=1
+24.5792	3	0	setParam	name=btrack value=1
+24.5792	3	0	setParam	name=bdetect value=1
+24.5792	3	0	setParam	name=avglen value=8
+24.5792	3	0	setParam	name=bweight value=1
+24.5792	3	0	setParam	name=minvowellen value=60
+24.5792	3	0	setParam	name=bratioshift value=0
+24.5792	3	0	setParam	name=bmelshift value=1
+24.5792	3	0	setParam	name=bcepslift value=0
+24.5792	3	0	setParam	name=cepswinwidth value=30
+24.5792	3	0	setParam	name=bbypassfmt value=0
+24.5792	3	0	setParam	name=f2min value=0
+24.5792	3	0	setParam	name=f2max value=5000
+24.5792	3	0	setParam	name=f1min value=0
+24.5792	3	0	setParam	name=f1max value=5000
+24.5792	3	0	setParam	name=lbk value=0
+24.5792	3	0	setParam	name=lbb value=0
+24.5792	3	0	setParam	name=pertf1 value=[257 x 0]
+24.5792	3	0	setParam	name=pertf2 value=[257 x 0]
+24.5792	3	0	setParam	name=pertamp value=[257 x 0]
+24.5792	3	0	setParam	name=pertphi value=[257 x 0]
+24.5792	3	0	setParam	name=pertamp2d value=[66049 x 0]
+24.5792	3	0	setParam	name=pertphi2d value=[66049 x 0]
+24.5792	3	0	setParam	name=fb value=3
+24.5792	3	0	setParam	name=nfb value=1
+24.5792	3	0	setParam	name=triallen value=0
+24.5792	3	0	setParam	name=ramplen value=0
+24.5792	3	0	setParam	name=afact value=1
+24.5792	3	0	setParam	name=bfact value=0.8
+24.5792	3	0	setParam	name=gfact value=1
+24.5792	3	0	setParam	name=fn1 value=675
+24.5792	3	0	setParam	name=fn2 value=1392
+24.5792	3	0	setParam	name=fb2gain value=0.16
+24.5792	3	0	setParam	name=fb3gain value=0.02
+24.5792	3	0	setParam	name=fb4gaindb value=10
+24.5792	3	0	setParam	name=fb5gaindb_speech value=0
+24.5792	3	0	setParam	name=fb5gain_playback value=1
+24.5792	3	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+24.5792	3	0	setParam	name=bpitchshift value=0
+24.5792	3	0	setParam	name=bshift2d value=0
+24.5792	3	0	setParam	name=pitchshiftratio value=1
+24.5792	3	0	setParam	name=pvocframelen value=256
+24.5792	3	0	setParam	name=pvochop value=64
+24.5792	3	0	setParam	name=bdownsampfilt value=1
+24.5792	3	0	setParam	name=stereomode value=1
+24.5792	3	0	setParam	name=delayFrames value=0
+24.5792	3	0	setParam	name=btimedomainshift value=0
+24.5792	3	0	setParam	name=pitchlowerboundhz value=0
+24.5792	3	0	setParam	name=pitchupperboundhz value=0
+24.5792	3	0	setParam	name=timedomainpitchshiftschedule value=1
+24.5792	3	0	setParam	name=timedomainpitchshiftalgorithm value=0
+24.5792	3	0	setParam	name=bclampformants value=0
+24.5792	3	0	setParam	name=clamposts value=[0 0]
+24.5792	3	0	setParam	name=clampf1 value=[2048 x 0]
+24.5792	3	0	setParam	name=clampf2 value=[2048 x 0]
+24.5792	3	0	reset	
+24.5792	3	0	start	
+26.3792	4	1	stop	
+26.3792	4	0	getData	
+26.3792	4	0	dbstop-ignored	args=if error
+26.3792	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	dbstop-ignored	args=if error
+27.6591	4	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+27.6591	4	0	setParam	name=fb value=3
+27.6591	4	0	setParam	name=downfact value=3
+27.6591	4	0	setParam	name=srate value=16000
+27.6591	4	0	setParam	name=framelen value=32
+27.6591	4	0	setParam	name=ndelay value=5
+27.6591	4	0	setParam	name=nwin value=1
+27.6591	4	0	setParam	name=nlpc value=15
+27.6591	4	0	setParam	name=nfmts value=2
+27.6591	4	0	setParam	name=ntracks value=4
+27.6591	4	0	setParam	name=scale value=0.795271
+27.6591	4	0	setParam	name=preemp value=0.98
+27.6591	4	0	setParam	name=rmsthr value=0.011354
+27.6591	4	0	setParam	name=rmsratio value=0.7
+27.6591	4	0	setParam	name=rmsff value=0.95
+27.6591	4	0	setParam	name=dfmtsff value=0.93
+27.6591	4	0	setParam	name=bgainadapt value=0
+27.6591	4	0	setParam	name=bshift value=1
+27.6591	4	0	setParam	name=btrack value=1
+27.6591	4	0	setParam	name=bdetect value=1
+27.6591	4	0	setParam	name=avglen value=8
+27.6591	4	0	setParam	name=bweight value=1
+27.6591	4	0	setParam	name=minvowellen value=60
+27.6591	4	0	setParam	name=bratioshift value=0
+27.6591	4	0	setParam	name=bmelshift value=1
+27.6591	4	0	setParam	name=bcepslift value=0
+27.6591	4	0	setParam	name=cepswinwidth value=30
+27.6591	4	0	setParam	name=bbypassfmt value=0
+27.6591	4	0	setParam	name=f2min value=0
+27.6591	4	0	setParam	name=f2max value=5000
+27.6591	4	0	setParam	name=f1min value=0
+27.6591	4	0	setParam	name=f1max value=5000
+27.6591	4	0	setParam	name=lbk value=0
+27.6591	4	0	setParam	name=lbb value=0
+27.6591	4	0	setParam	name=pertf1 value=[257 x 0]
+27.6591	4	0	setParam	name=pertf2 value=[257 x 0]
+27.6591	4	0	setParam	name=pertamp value=[257 x 0]
+27.6591	4	0	setParam	name=pertphi value=[257 x 0]
+27.6591	4	0	setParam	name=pertamp2d value=[66049 x 0]
+27.6591	4	0	setParam	name=pertphi2d value=[66049 x 0]
+27.6591	4	0	setParam	name=fb value=3
+27.6591	4	0	setParam	name=nfb value=1
+27.6591	4	0	setParam	name=triallen value=0
+27.6591	4	0	setParam	name=ramplen value=0
+27.6591	4	0	setParam	name=afact value=1
+27.6591	4	0	setParam	name=bfact value=0.8
+27.6591	4	0	setParam	name=gfact value=1
+27.6591	4	0	setParam	name=fn1 value=675
+27.6591	4	0	setParam	name=fn2 value=1392
+27.6591	4	0	setParam	name=fb2gain value=0.16
+27.6591	4	0	setParam	name=fb3gain value=0.02
+27.6591	4	0	setParam	name=fb4gaindb value=10
+27.6591	4	0	setParam	name=fb5gaindb_speech value=0
+27.6591	4	0	setParam	name=fb5gain_playback value=1
+27.6591	4	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+27.6591	4	0	setParam	name=bpitchshift value=0
+27.6591	4	0	setParam	name=bshift2d value=0
+27.6591	4	0	setParam	name=pitchshiftratio value=1
+27.6591	4	0	setParam	name=pvocframelen value=256
+27.6591	4	0	setParam	name=pvochop value=64
+27.6591	4	0	setParam	name=bdownsampfilt value=1
+27.6591	4	0	setParam	name=stereomode value=1
+27.6591	4	0	setParam	name=delayFrames value=0
+27.6591	4	0	setParam	name=btimedomainshift value=0
+27.6591	4	0	setParam	name=pitchlowerboundhz value=0
+27.6591	4	0	setParam	name=pitchupperboundhz value=0
+27.6591	4	0	setParam	name=timedomainpitchshiftschedule value=1
+27.6591	4	0	setParam	name=timedomainpitchshiftalgorithm value=0
+27.6591	4	0	setParam	name=bclampformants value=0
+27.6591	4	0	setParam	name=clamposts value=[0 0]
+27.6591	4	0	setParam	name=clampf1 value=[2048 x 0]
+27.6591	4	0	setParam	name=clampf2 value=[2048 x 0]
+27.6591	4	0	reset	
+27.6591	4	0	start	
+29.4591	5	1	stop	
+29.4591	5	0	getData	
+29.4591	5	0	dbstop-ignored	args=if error
+29.4591	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	dbstop-ignored	args=if error
+30.7095	5	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+30.7095	5	0	setParam	name=fb value=3
+30.7095	5	0	setParam	name=downfact value=3
+30.7095	5	0	setParam	name=srate value=16000
+30.7095	5	0	setParam	name=framelen value=32
+30.7095	5	0	setParam	name=ndelay value=5
+30.7095	5	0	setParam	name=nwin value=1
+30.7095	5	0	setParam	name=nlpc value=15
+30.7095	5	0	setParam	name=nfmts value=2
+30.7095	5	0	setParam	name=ntracks value=4
+30.7095	5	0	setParam	name=scale value=0.795271
+30.7095	5	0	setParam	name=preemp value=0.98
+30.7095	5	0	setParam	name=rmsthr value=0.011354
+30.7095	5	0	setParam	name=rmsratio value=0.7
+30.7095	5	0	setParam	name=rmsff value=0.95
+30.7095	5	0	setParam	name=dfmtsff value=0.93
+30.7095	5	0	setParam	name=bgainadapt value=0
+30.7095	5	0	setParam	name=bshift value=1
+30.7095	5	0	setParam	name=btrack value=1
+30.7095	5	0	setParam	name=bdetect value=1
+30.7095	5	0	setParam	name=avglen value=8
+30.7095	5	0	setParam	name=bweight value=1
+30.7095	5	0	setParam	name=minvowellen value=60
+30.7095	5	0	setParam	name=bratioshift value=0
+30.7095	5	0	setParam	name=bmelshift value=1
+30.7095	5	0	setParam	name=bcepslift value=0
+30.7095	5	0	setParam	name=cepswinwidth value=30
+30.7095	5	0	setParam	name=bbypassfmt value=0
+30.7095	5	0	setParam	name=f2min value=0
+30.7095	5	0	setParam	name=f2max value=5000
+30.7095	5	0	setParam	name=f1min value=0
+30.7095	5	0	setParam	name=f1max value=5000
+30.7095	5	0	setParam	name=lbk value=0
+30.7095	5	0	setParam	name=lbb value=0
+30.7095	5	0	setParam	name=pertf1 value=[257 x 0]
+30.7095	5	0	setParam	name=pertf2 value=[257 x 0]
+30.7095	5	0	setParam	name=pertamp value=[257 x 0]
+30.7095	5	0	setParam	name=pertphi value=[257 x 0]
+30.7095	5	0	setParam	name=pertamp2d value=[66049 x 0]
+30.7095	5	0	setParam	name=pertphi2d value=[66049 x 0]
+30.7095	5	0	setParam	name=fb value=3
+30.7095	5	0	setParam	name=nfb value=1
+30.7095	5	0	setParam	name=triallen value=0
+30.7095	5	0	setParam	name=ramplen value=0
+30.7095	5	0	setParam	name=afact value=1
+30.7095	5	0	setParam	name=bfact value=0.8
+30.7095	5	0	setParam	name=gfact value=1
+30.7095	5	0	setParam	name=fn1 value=675
+30.7095	5	0	setParam	name=fn2 value=1392
+30.7095	5	0	setParam	name=fb2gain value=0.16
+30.7095	5	0	setParam	name=fb3gain value=0.02
+30.7095	5	0	setParam	name=fb4gaindb value=10
+30.7095	5	0	setParam	name=fb5gaindb_speech value=0
+30.7095	5	0	setParam	name=fb5gain_playback value=1
+30.7095	5	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+30.7095	5	0	setParam	name=bpitchshift value=0
+30.7095	5	0	setParam	name=bshift2d value=0
+30.7095	5	0	setParam	name=pitchshiftratio value=1
+30.7095	5	0	setParam	name=pvocframelen value=256
+30.7095	5	0	setParam	name=pvochop value=64
+30.7095	5	0	setParam	name=bdownsampfilt value=1
+30.7095	5	0	setParam	name=stereomode value=1
+30.7095	5	0	setParam	name=delayFrames value=0
+30.7095	5	0	setParam	name=btimedomainshift value=0
+30.7095	5	0	setParam	name=pitchlowerboundhz value=0
+30.7095	5	0	setParam	name=pitchupperboundhz value=0
+30.7095	5	0	setParam	name=timedomainpitchshiftschedule value=1
+30.7095	5	0	setParam	name=timedomainpitchshiftalgorithm value=0
+30.7095	5	0	setParam	name=bclampformants value=0
+30.7095	5	0	setParam	name=clamposts value=[0 0]
+30.7095	5	0	setParam	name=clampf1 value=[2048 x 0]
+30.7095	5	0	setParam	name=clampf2 value=[2048 x 0]
+30.7095	5	0	reset	
+30.7095	5	0	start	
+32.5095	6	1	stop	
+32.5095	6	0	getData	
+32.5095	6	0	dbstop-ignored	args=if error
+32.5095	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+36.9762	6	0	dbstop-ignored	args=if error
+37.4762	6	0	dbstop-ignored	args=if error
+37.4762	6	0	dbstop-ignored	args=if error
+37.4762	6	0	dbstop-ignored	args=if error
+37.4762	6	0	dbstop-ignored	args=if error
+37.4762	6	0	ost	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.ost
+37.4762	6	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+37.4762	6	0	setParam	name=downfact value=3
+37.4762	6	0	setParam	name=srate value=16000
+37.4762	6	0	setParam	name=framelen value=32
+37.4762	6	0	setParam	name=ndelay value=5
+37.4762	6	0	setParam	name=nwin value=1
+37.4762	6	0	setParam	name=nlpc value=15
+37.4762	6	0	setParam	name=nfmts value=2
+37.4762	6	0	setParam	name=ntracks value=4
+37.4762	6	0	setParam	name=scale value=0.795271
+37.4762	6	0	setParam	name=preemp value=0.98
+37.4762	6	0	setParam	name=rmsthr value=0.011354
+37.4762	6	0	setParam	name=rmsratio value=0.7
+37.4762	6	0	setParam	name=rmsff value=0.95
+37.4762	6	0	setParam	name=dfmtsff value=0.93
+37.4762	6	0	setParam	name=bgainadapt value=0
+37.4762	6	0	setParam	name=bshift value=1
+37.4762	6	0	setParam	name=btrack value=1
+37.4762	6	0	setParam	name=bdetect value=1
+37.4762	6	0	setParam	name=avglen value=8
+37.4762	6	0	setParam	name=bweight value=1
+37.4762	6	0	setParam	name=minvowellen value=60
+37.4762	6	0	setParam	name=bratioshift value=0
+37.4762	6	0	setParam	name=bmelshift value=1
+37.4762	6	0	setParam	name=bcepslift value=0
+37.4762	6	0	setParam	name=cepswinwidth value=30
+37.4762	6	0	setParam	name=bbypassfmt value=0
+37.4762	6	0	setParam	name=lbk value=0
+37.4762	6	0	setParam	name=lbb value=0
+37.4762	6	0	setParam	name=pertf1 value=[257 x 0]
+37.4762	6	0	setParam	name=pertf2 value=[257 x 0]
+37.4762	6	0	setParam	name=pertamp value=[257 x 0]
+37.4762	6	0	setParam	name=pertphi value=[257 x 0]
+37.4762	6	0	setParam	name=pertamp2d value=[66049 x 0]
+37.4762	6	0	setParam	name=pertphi2d value=[66049 x 0]
+37.4762	6	0	setParam	name=fb value=3
+37.4762	6	0	setParam	name=nfb value=1
+37.4762	6	0	setParam	name=triallen value=0
+37.4762	6	0	setParam	name=ramplen value=0
+37.4762	6	0	setParam	name=afact value=1
+37.4762	6	0	setParam	name=bfact value=0.8
+37.4762	6	0	setParam	name=gfact value=1
+37.4762	6	0	setParam	name=fn1 value=675
+37.4762	6	0	setParam	name=fn2 value=1392
+37.4762	6	0	setParam	name=fb2gain value=0.16
+37.4762	6	0	setParam	name=fb3gain value=0.02
+37.4762	6	0	setParam	name=fb4gaindb value=10
+37.4762	6	0	setParam	name=fb5gaindb_speech value=0
+37.4762	6	0	setParam	name=fb5gain_playback value=1
+37.4762	6	0	setParam	name=rmsff_fb value=[0.85 0.85 0 0]
+37.4762	6	0	setParam	name=bpitchshift value=0
+37.4762	6	0	setParam	name=bshift2d value=0
+37.4762	6	0	setParam	name=pitchshiftratio value=1
+37.4762	6	0	setParam	name=gain value=1
+37.4762	6	0	setParam	name=mute value=0
+37.4762	6	0	setParam	name=pvocframelen value=256
+37.4762	6	0	setParam	name=pvochop value=64
+37.4762	6	0	setParam	name=bdownsampfilt value=1
+37.4762	6	0	setParam	name=stereomode value=1
+37.4762	6	0	setParam	name=tsgNTones value=0
+37.4762	6	0	setParam	name=tsgToneDur value=[]
+37.4762	6	0	setParam	name=tsgToneFreq value=[]
+37.4762	6	0	setParam	name=tsgToneAmp value=[]
+37.4762	6	0	setParam	name=tsgToneRamp value=[]
+37.4762	6	0	setParam	name=tsgInt value=[]
+37.4762	6	0	setParam	name=delayFrames value=0
+37.4762	6	0	setParam	name=wgFreq value=1000
+37.4762	6	0	setParam	name=wgAmp value=0.1
+37.4762	6	0	setParam	name=wgTime value=0
+37.4762	6	0	setParam	name=btimedomainshift value=0
+37.4762	6	0	setParam	name=pitchlowerboundhz value=0
+37.4762	6	0	setParam	name=pitchupperboundhz value=0
+37.4762	6	0	setParam	name=timedomainpitchshiftschedule value=1
+37.4762	6	0	setParam	name=timedomainpitchshiftalgorithm value=0
+37.4762	6	0	setParam	name=bclampformants value=0
+37.4762	6	0	reset	
+37.4762	6	0	getData	
+37.4762	6	0	reset	
+37.4762	6	0	getData	
+37.4762	6	0	reset	
+37.4762	6	0	getData	
+37.9762	6	0	dbstop-ignored	args=if error
+37.9762	6	0	dbstop-ignored	args=if error
+37.9762	6	0	dbstop-ignored	args=if error
+37.9762	6	0	dbstop-ignored	args=if error
+37.9762	6	0	waitfor	
+37.9762	6	0	gui	figure=audapter_viewer signal steps=^continue
+37.9762	6	0	gui-click	control=Continue/Exit
+37.9762	6	0	ask:questdlg	answer=Save and exit prompt=Save current OST parameters and exit? rule=default
+37.9762	6	0	dbstop-ignored	args=if error
+37.9762	6	0	uiwait	
+37.9762	6	0	gui	figure= Verify save location steps=^ok$
+37.9762	6	0	gui-click	control=OK
+37.9762	6	0	gui-close	figure= Verify save location
+38.4762	6	0	dbstop-ignored	args=if error
+38.4762	6	0	ask:input	answer=redo prompt=Redo OST testing phase, or move on? (redo/move on):  rule=\((redo|repeat)/(move on|continue)\)
+40.4762	6	0	dbstop-ignored	args=if error
+40.4822	6	0	ost	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.ost
+40.4822	6	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+40.4822	6	0	deviceName	args=Focusrite USB
+40.4822	6	0	setParam	name=sRate value=16000
+40.4822	6	0	setParam	name=downFact value=3
+40.4822	6	0	setParam	name=frameLen value=32
+40.4822	6	0	getMaxPBLen	args=
+40.4822	6	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+40.4822	6	0	setParam	name=downfact value=3
+40.4822	6	0	setParam	name=srate value=16000
+40.4822	6	0	setParam	name=framelen value=32
+40.4822	6	0	setParam	name=ndelay value=5
+40.4822	6	0	setParam	name=nwin value=1
+40.4822	6	0	setParam	name=nlpc value=15
+40.4822	6	0	setParam	name=nfmts value=2
+40.4822	6	0	setParam	name=ntracks value=4
+40.4822	6	0	setParam	name=scale value=0.795271
+40.4822	6	0	setParam	name=preemp value=0.98
+40.4822	6	0	setParam	name=rmsthr value=0.011354
+40.4822	6	0	setParam	name=rmsratio value=0.7
+40.4822	6	0	setParam	name=rmsff value=0.95
+40.4822	6	0	setParam	name=dfmtsff value=0.93
+40.4822	6	0	setParam	name=bgainadapt value=0
+40.4822	6	0	setParam	name=bshift value=1
+40.4822	6	0	setParam	name=btrack value=1
+40.4822	6	0	setParam	name=bdetect value=1
+40.4822	6	0	setParam	name=avglen value=8
+40.4822	6	0	setParam	name=bweight value=1
+40.4822	6	0	setParam	name=minvowellen value=60
+40.4822	6	0	setParam	name=bratioshift value=0
+40.4822	6	0	setParam	name=bmelshift value=1
+40.4822	6	0	setParam	name=bcepslift value=0
+40.4822	6	0	setParam	name=cepswinwidth value=30
+40.4822	6	0	setParam	name=bbypassfmt value=0
+40.4822	6	0	setParam	name=f2min value=0
+40.4822	6	0	setParam	name=f2max value=5000
+40.4822	6	0	setParam	name=f1min value=0
+40.4822	6	0	setParam	name=f1max value=5000
+40.4822	6	0	setParam	name=lbk value=0
+40.4822	6	0	setParam	name=lbb value=0
+40.4822	6	0	setParam	name=pertf1 value=[257 x 0]
+40.4822	6	0	setParam	name=pertf2 value=[257 x 0]
+40.4822	6	0	setParam	name=pertamp value=[257 x 0]
+40.4822	6	0	setParam	name=pertphi value=[257 x 0]
+40.4822	6	0	setParam	name=pertamp2d value=[66049 x 0]
+40.4822	6	0	setParam	name=pertphi2d value=[66049 x 0]
+40.4822	6	0	setParam	name=fb value=3
+40.4822	6	0	setParam	name=nfb value=1
+40.4822	6	0	setParam	name=triallen value=0
+40.4822	6	0	setParam	name=ramplen value=0
+40.4822	6	0	setParam	name=afact value=1
+40.4822	6	0	setParam	name=bfact value=0.8
+40.4822	6	0	setParam	name=gfact value=1
+40.4822	6	0	setParam	name=fn1 value=675
+40.4822	6	0	setParam	name=fn2 value=1392
+40.4822	6	0	setParam	name=fb2gain value=0.16
+40.4822	6	0	setParam	name=fb3gain value=0.02
+40.4822	6	0	setParam	name=fb4gaindb value=10
+40.4822	6	0	setParam	name=fb5gaindb_speech value=0
+40.4822	6	0	setParam	name=fb5gain_playback value=1
+40.4822	6	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+40.4822	6	0	setParam	name=bpitchshift value=0
+40.4822	6	0	setParam	name=bshift2d value=0
+40.4822	6	0	setParam	name=pitchshiftratio value=1
+40.4822	6	0	setParam	name=pvocframelen value=256
+40.4822	6	0	setParam	name=pvochop value=64
+40.4822	6	0	setParam	name=bdownsampfilt value=1
+40.4822	6	0	setParam	name=stereomode value=1
+40.4822	6	0	setParam	name=delayFrames value=0
+40.4822	6	0	setParam	name=btimedomainshift value=0
+40.4822	6	0	setParam	name=pitchlowerboundhz value=0
+40.4822	6	0	setParam	name=pitchupperboundhz value=0
+40.4822	6	0	setParam	name=timedomainpitchshiftschedule value=1
+40.4822	6	0	setParam	name=timedomainpitchshiftalgorithm value=0
+40.4822	6	0	setParam	name=bclampformants value=0
+40.4822	6	0	setParam	name=clamposts value=[0 0]
+40.4822	6	0	setParam	name=clampf1 value=[2048 x 0]
+40.4822	6	0	setParam	name=clampf2 value=[2048 x 0]
+40.4822	6	0	keywait	fn=pause
+41.4822	6	0	key	key=space
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	dbstop-ignored	args=if error
+42.4822	6	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+42.4822	6	0	setParam	name=fb value=3
+42.4822	6	0	setParam	name=downfact value=3
+42.4822	6	0	setParam	name=srate value=16000
+42.4822	6	0	setParam	name=framelen value=32
+42.4822	6	0	setParam	name=ndelay value=5
+42.4822	6	0	setParam	name=nwin value=1
+42.4822	6	0	setParam	name=nlpc value=15
+42.4822	6	0	setParam	name=nfmts value=2
+42.4822	6	0	setParam	name=ntracks value=4
+42.4822	6	0	setParam	name=scale value=0.795271
+42.4822	6	0	setParam	name=preemp value=0.98
+42.4822	6	0	setParam	name=rmsthr value=0.011354
+42.4822	6	0	setParam	name=rmsratio value=0.7
+42.4822	6	0	setParam	name=rmsff value=0.95
+42.4822	6	0	setParam	name=dfmtsff value=0.93
+42.4822	6	0	setParam	name=bgainadapt value=0
+42.4822	6	0	setParam	name=bshift value=1
+42.4822	6	0	setParam	name=btrack value=1
+42.4822	6	0	setParam	name=bdetect value=1
+42.4822	6	0	setParam	name=avglen value=8
+42.4822	6	0	setParam	name=bweight value=1
+42.4822	6	0	setParam	name=minvowellen value=60
+42.4822	6	0	setParam	name=bratioshift value=0
+42.4822	6	0	setParam	name=bmelshift value=1
+42.4822	6	0	setParam	name=bcepslift value=0
+42.4822	6	0	setParam	name=cepswinwidth value=30
+42.4822	6	0	setParam	name=bbypassfmt value=0
+42.4822	6	0	setParam	name=f2min value=0
+42.4822	6	0	setParam	name=f2max value=5000
+42.4822	6	0	setParam	name=f1min value=0
+42.4822	6	0	setParam	name=f1max value=5000
+42.4822	6	0	setParam	name=lbk value=0
+42.4822	6	0	setParam	name=lbb value=0
+42.4822	6	0	setParam	name=pertf1 value=[257 x 0]
+42.4822	6	0	setParam	name=pertf2 value=[257 x 0]
+42.4822	6	0	setParam	name=pertamp value=[257 x 0]
+42.4822	6	0	setParam	name=pertphi value=[257 x 0]
+42.4822	6	0	setParam	name=pertamp2d value=[66049 x 0]
+42.4822	6	0	setParam	name=pertphi2d value=[66049 x 0]
+42.4822	6	0	setParam	name=fb value=3
+42.4822	6	0	setParam	name=nfb value=1
+42.4822	6	0	setParam	name=triallen value=0
+42.4822	6	0	setParam	name=ramplen value=0
+42.4822	6	0	setParam	name=afact value=1
+42.4822	6	0	setParam	name=bfact value=0.8
+42.4822	6	0	setParam	name=gfact value=1
+42.4822	6	0	setParam	name=fn1 value=675
+42.4822	6	0	setParam	name=fn2 value=1392
+42.4822	6	0	setParam	name=fb2gain value=0.16
+42.4822	6	0	setParam	name=fb3gain value=0.02
+42.4822	6	0	setParam	name=fb4gaindb value=10
+42.4822	6	0	setParam	name=fb5gaindb_speech value=0
+42.4822	6	0	setParam	name=fb5gain_playback value=1
+42.4822	6	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+42.4822	6	0	setParam	name=bpitchshift value=0
+42.4822	6	0	setParam	name=bshift2d value=0
+42.4822	6	0	setParam	name=pitchshiftratio value=1
+42.4822	6	0	setParam	name=pvocframelen value=256
+42.4822	6	0	setParam	name=pvochop value=64
+42.4822	6	0	setParam	name=bdownsampfilt value=1
+42.4822	6	0	setParam	name=stereomode value=1
+42.4822	6	0	setParam	name=delayFrames value=0
+42.4822	6	0	setParam	name=btimedomainshift value=0
+42.4822	6	0	setParam	name=pitchlowerboundhz value=0
+42.4822	6	0	setParam	name=pitchupperboundhz value=0
+42.4822	6	0	setParam	name=timedomainpitchshiftschedule value=1
+42.4822	6	0	setParam	name=timedomainpitchshiftalgorithm value=0
+42.4822	6	0	setParam	name=bclampformants value=0
+42.4822	6	0	setParam	name=clamposts value=[0 0]
+42.4822	6	0	setParam	name=clampf1 value=[2048 x 0]
+42.4822	6	0	setParam	name=clampf2 value=[2048 x 0]
+42.4822	6	0	reset	
+42.4822	6	0	start	
+44.2822	7	1	stop	
+44.2822	7	0	getData	
+44.2822	7	0	dbstop-ignored	args=if error
+44.2822	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	dbstop-ignored	args=if error
+45.5946	7	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+45.5946	7	0	setParam	name=fb value=3
+45.5946	7	0	setParam	name=downfact value=3
+45.5946	7	0	setParam	name=srate value=16000
+45.5946	7	0	setParam	name=framelen value=32
+45.5946	7	0	setParam	name=ndelay value=5
+45.5946	7	0	setParam	name=nwin value=1
+45.5946	7	0	setParam	name=nlpc value=15
+45.5946	7	0	setParam	name=nfmts value=2
+45.5946	7	0	setParam	name=ntracks value=4
+45.5946	7	0	setParam	name=scale value=0.795271
+45.5946	7	0	setParam	name=preemp value=0.98
+45.5946	7	0	setParam	name=rmsthr value=0.011354
+45.5946	7	0	setParam	name=rmsratio value=0.7
+45.5946	7	0	setParam	name=rmsff value=0.95
+45.5946	7	0	setParam	name=dfmtsff value=0.93
+45.5946	7	0	setParam	name=bgainadapt value=0
+45.5946	7	0	setParam	name=bshift value=1
+45.5946	7	0	setParam	name=btrack value=1
+45.5946	7	0	setParam	name=bdetect value=1
+45.5946	7	0	setParam	name=avglen value=8
+45.5946	7	0	setParam	name=bweight value=1
+45.5946	7	0	setParam	name=minvowellen value=60
+45.5946	7	0	setParam	name=bratioshift value=0
+45.5946	7	0	setParam	name=bmelshift value=1
+45.5946	7	0	setParam	name=bcepslift value=0
+45.5946	7	0	setParam	name=cepswinwidth value=30
+45.5946	7	0	setParam	name=bbypassfmt value=0
+45.5946	7	0	setParam	name=f2min value=0
+45.5946	7	0	setParam	name=f2max value=5000
+45.5946	7	0	setParam	name=f1min value=0
+45.5946	7	0	setParam	name=f1max value=5000
+45.5946	7	0	setParam	name=lbk value=0
+45.5946	7	0	setParam	name=lbb value=0
+45.5946	7	0	setParam	name=pertf1 value=[257 x 0]
+45.5946	7	0	setParam	name=pertf2 value=[257 x 0]
+45.5946	7	0	setParam	name=pertamp value=[257 x 0]
+45.5946	7	0	setParam	name=pertphi value=[257 x 0]
+45.5946	7	0	setParam	name=pertamp2d value=[66049 x 0]
+45.5946	7	0	setParam	name=pertphi2d value=[66049 x 0]
+45.5946	7	0	setParam	name=fb value=3
+45.5946	7	0	setParam	name=nfb value=1
+45.5946	7	0	setParam	name=triallen value=0
+45.5946	7	0	setParam	name=ramplen value=0
+45.5946	7	0	setParam	name=afact value=1
+45.5946	7	0	setParam	name=bfact value=0.8
+45.5946	7	0	setParam	name=gfact value=1
+45.5946	7	0	setParam	name=fn1 value=675
+45.5946	7	0	setParam	name=fn2 value=1392
+45.5946	7	0	setParam	name=fb2gain value=0.16
+45.5946	7	0	setParam	name=fb3gain value=0.02
+45.5946	7	0	setParam	name=fb4gaindb value=10
+45.5946	7	0	setParam	name=fb5gaindb_speech value=0
+45.5946	7	0	setParam	name=fb5gain_playback value=1
+45.5946	7	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+45.5946	7	0	setParam	name=bpitchshift value=0
+45.5946	7	0	setParam	name=bshift2d value=0
+45.5946	7	0	setParam	name=pitchshiftratio value=1
+45.5946	7	0	setParam	name=pvocframelen value=256
+45.5946	7	0	setParam	name=pvochop value=64
+45.5946	7	0	setParam	name=bdownsampfilt value=1
+45.5946	7	0	setParam	name=stereomode value=1
+45.5946	7	0	setParam	name=delayFrames value=0
+45.5946	7	0	setParam	name=btimedomainshift value=0
+45.5946	7	0	setParam	name=pitchlowerboundhz value=0
+45.5946	7	0	setParam	name=pitchupperboundhz value=0
+45.5946	7	0	setParam	name=timedomainpitchshiftschedule value=1
+45.5946	7	0	setParam	name=timedomainpitchshiftalgorithm value=0
+45.5946	7	0	setParam	name=bclampformants value=0
+45.5946	7	0	setParam	name=clamposts value=[0 0]
+45.5946	7	0	setParam	name=clampf1 value=[2048 x 0]
+45.5946	7	0	setParam	name=clampf2 value=[2048 x 0]
+45.5946	7	0	reset	
+45.5946	7	0	start	
+47.3946	8	1	stop	
+47.3946	8	0	getData	
+47.3946	8	0	dbstop-ignored	args=if error
+47.3946	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	dbstop-ignored	args=if error
+48.8721	8	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+48.8721	8	0	setParam	name=fb value=3
+48.8721	8	0	setParam	name=downfact value=3
+48.8721	8	0	setParam	name=srate value=16000
+48.8721	8	0	setParam	name=framelen value=32
+48.8721	8	0	setParam	name=ndelay value=5
+48.8721	8	0	setParam	name=nwin value=1
+48.8721	8	0	setParam	name=nlpc value=15
+48.8721	8	0	setParam	name=nfmts value=2
+48.8721	8	0	setParam	name=ntracks value=4
+48.8721	8	0	setParam	name=scale value=0.795271
+48.8721	8	0	setParam	name=preemp value=0.98
+48.8721	8	0	setParam	name=rmsthr value=0.011354
+48.8721	8	0	setParam	name=rmsratio value=0.7
+48.8721	8	0	setParam	name=rmsff value=0.95
+48.8721	8	0	setParam	name=dfmtsff value=0.93
+48.8721	8	0	setParam	name=bgainadapt value=0
+48.8721	8	0	setParam	name=bshift value=1
+48.8721	8	0	setParam	name=btrack value=1
+48.8721	8	0	setParam	name=bdetect value=1
+48.8721	8	0	setParam	name=avglen value=8
+48.8721	8	0	setParam	name=bweight value=1
+48.8721	8	0	setParam	name=minvowellen value=60
+48.8721	8	0	setParam	name=bratioshift value=0
+48.8721	8	0	setParam	name=bmelshift value=1
+48.8721	8	0	setParam	name=bcepslift value=0
+48.8721	8	0	setParam	name=cepswinwidth value=30
+48.8721	8	0	setParam	name=bbypassfmt value=0
+48.8721	8	0	setParam	name=f2min value=0
+48.8721	8	0	setParam	name=f2max value=5000
+48.8721	8	0	setParam	name=f1min value=0
+48.8721	8	0	setParam	name=f1max value=5000
+48.8721	8	0	setParam	name=lbk value=0
+48.8721	8	0	setParam	name=lbb value=0
+48.8721	8	0	setParam	name=pertf1 value=[257 x 0]
+48.8721	8	0	setParam	name=pertf2 value=[257 x 0]
+48.8721	8	0	setParam	name=pertamp value=[257 x 0]
+48.8721	8	0	setParam	name=pertphi value=[257 x 0]
+48.8721	8	0	setParam	name=pertamp2d value=[66049 x 0]
+48.8721	8	0	setParam	name=pertphi2d value=[66049 x 0]
+48.8721	8	0	setParam	name=fb value=3
+48.8721	8	0	setParam	name=nfb value=1
+48.8721	8	0	setParam	name=triallen value=0
+48.8721	8	0	setParam	name=ramplen value=0
+48.8721	8	0	setParam	name=afact value=1
+48.8721	8	0	setParam	name=bfact value=0.8
+48.8721	8	0	setParam	name=gfact value=1
+48.8721	8	0	setParam	name=fn1 value=675
+48.8721	8	0	setParam	name=fn2 value=1392
+48.8721	8	0	setParam	name=fb2gain value=0.16
+48.8721	8	0	setParam	name=fb3gain value=0.02
+48.8721	8	0	setParam	name=fb4gaindb value=10
+48.8721	8	0	setParam	name=fb5gaindb_speech value=0
+48.8721	8	0	setParam	name=fb5gain_playback value=1
+48.8721	8	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+48.8721	8	0	setParam	name=bpitchshift value=0
+48.8721	8	0	setParam	name=bshift2d value=0
+48.8721	8	0	setParam	name=pitchshiftratio value=1
+48.8721	8	0	setParam	name=pvocframelen value=256
+48.8721	8	0	setParam	name=pvochop value=64
+48.8721	8	0	setParam	name=bdownsampfilt value=1
+48.8721	8	0	setParam	name=stereomode value=1
+48.8721	8	0	setParam	name=delayFrames value=0
+48.8721	8	0	setParam	name=btimedomainshift value=0
+48.8721	8	0	setParam	name=pitchlowerboundhz value=0
+48.8721	8	0	setParam	name=pitchupperboundhz value=0
+48.8721	8	0	setParam	name=timedomainpitchshiftschedule value=1
+48.8721	8	0	setParam	name=timedomainpitchshiftalgorithm value=0
+48.8721	8	0	setParam	name=bclampformants value=0
+48.8721	8	0	setParam	name=clamposts value=[0 0]
+48.8721	8	0	setParam	name=clampf1 value=[2048 x 0]
+48.8721	8	0	setParam	name=clampf2 value=[2048 x 0]
+48.8721	8	0	reset	
+48.8721	8	0	start	
+50.6721	9	1	stop	
+50.6721	9	0	getData	
+50.6721	9	0	dbstop-ignored	args=if error
+50.6721	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+54.9805	9	0	dbstop-ignored	args=if error
+55.4805	9	0	dbstop-ignored	args=if error
+55.4805	9	0	dbstop-ignored	args=if error
+55.4805	9	0	dbstop-ignored	args=if error
+55.4805	9	0	dbstop-ignored	args=if error
+55.4805	9	0	ost	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.ost
+55.4805	9	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+55.4805	9	0	setParam	name=downfact value=3
+55.4805	9	0	setParam	name=srate value=16000
+55.4805	9	0	setParam	name=framelen value=32
+55.4805	9	0	setParam	name=ndelay value=5
+55.4805	9	0	setParam	name=nwin value=1
+55.4805	9	0	setParam	name=nlpc value=15
+55.4805	9	0	setParam	name=nfmts value=2
+55.4805	9	0	setParam	name=ntracks value=4
+55.4805	9	0	setParam	name=scale value=0.795271
+55.4805	9	0	setParam	name=preemp value=0.98
+55.4805	9	0	setParam	name=rmsthr value=0.011354
+55.4805	9	0	setParam	name=rmsratio value=0.7
+55.4805	9	0	setParam	name=rmsff value=0.95
+55.4805	9	0	setParam	name=dfmtsff value=0.93
+55.4805	9	0	setParam	name=bgainadapt value=0
+55.4805	9	0	setParam	name=bshift value=1
+55.4805	9	0	setParam	name=btrack value=1
+55.4805	9	0	setParam	name=bdetect value=1
+55.4805	9	0	setParam	name=avglen value=8
+55.4805	9	0	setParam	name=bweight value=1
+55.4805	9	0	setParam	name=minvowellen value=60
+55.4805	9	0	setParam	name=bratioshift value=0
+55.4805	9	0	setParam	name=bmelshift value=1
+55.4805	9	0	setParam	name=bcepslift value=0
+55.4805	9	0	setParam	name=cepswinwidth value=30
+55.4805	9	0	setParam	name=bbypassfmt value=0
+55.4805	9	0	setParam	name=lbk value=0
+55.4805	9	0	setParam	name=lbb value=0
+55.4805	9	0	setParam	name=pertf1 value=[257 x 0]
+55.4805	9	0	setParam	name=pertf2 value=[257 x 0]
+55.4805	9	0	setParam	name=pertamp value=[257 x 0]
+55.4805	9	0	setParam	name=pertphi value=[257 x 0]
+55.4805	9	0	setParam	name=pertamp2d value=[66049 x 0]
+55.4805	9	0	setParam	name=pertphi2d value=[66049 x 0]
+55.4805	9	0	setParam	name=fb value=3
+55.4805	9	0	setParam	name=nfb value=1
+55.4805	9	0	setParam	name=triallen value=0
+55.4805	9	0	setParam	name=ramplen value=0
+55.4805	9	0	setParam	name=afact value=1
+55.4805	9	0	setParam	name=bfact value=0.8
+55.4805	9	0	setParam	name=gfact value=1
+55.4805	9	0	setParam	name=fn1 value=675
+55.4805	9	0	setParam	name=fn2 value=1392
+55.4805	9	0	setParam	name=fb2gain value=0.16
+55.4805	9	0	setParam	name=fb3gain value=0.02
+55.4805	9	0	setParam	name=fb4gaindb value=10
+55.4805	9	0	setParam	name=fb5gaindb_speech value=0
+55.4805	9	0	setParam	name=fb5gain_playback value=1
+55.4805	9	0	setParam	name=rmsff_fb value=[0.85 0.85 0 0]
+55.4805	9	0	setParam	name=bpitchshift value=0
+55.4805	9	0	setParam	name=bshift2d value=0
+55.4805	9	0	setParam	name=pitchshiftratio value=1
+55.4805	9	0	setParam	name=gain value=1
+55.4805	9	0	setParam	name=mute value=0
+55.4805	9	0	setParam	name=pvocframelen value=256
+55.4805	9	0	setParam	name=pvochop value=64
+55.4805	9	0	setParam	name=bdownsampfilt value=1
+55.4805	9	0	setParam	name=stereomode value=1
+55.4805	9	0	setParam	name=tsgNTones value=0
+55.4805	9	0	setParam	name=tsgToneDur value=[]
+55.4805	9	0	setParam	name=tsgToneFreq value=[]
+55.4805	9	0	setParam	name=tsgToneAmp value=[]
+55.4805	9	0	setParam	name=tsgToneRamp value=[]
+55.4805	9	0	setParam	name=tsgInt value=[]
+55.4805	9	0	setParam	name=delayFrames value=0
+55.4805	9	0	setParam	name=wgFreq value=1000
+55.4805	9	0	setParam	name=wgAmp value=0.1
+55.4805	9	0	setParam	name=wgTime value=0
+55.4805	9	0	setParam	name=btimedomainshift value=0
+55.4805	9	0	setParam	name=pitchlowerboundhz value=0
+55.4805	9	0	setParam	name=pitchupperboundhz value=0
+55.4805	9	0	setParam	name=timedomainpitchshiftschedule value=1
+55.4805	9	0	setParam	name=timedomainpitchshiftalgorithm value=0
+55.4805	9	0	setParam	name=bclampformants value=0
+55.4805	9	0	reset	
+55.4805	9	0	getData	
+55.4805	9	0	reset	
+55.4805	9	0	getData	
+55.4805	9	0	reset	
+55.4805	9	0	getData	
+55.9805	9	0	dbstop-ignored	args=if error
+55.9805	9	0	dbstop-ignored	args=if error
+55.9805	9	0	dbstop-ignored	args=if error
+55.9805	9	0	dbstop-ignored	args=if error
+55.9805	9	0	waitfor	
+55.9805	9	0	gui	figure=audapter_viewer signal steps=^continue
+55.9805	9	0	gui-click	control=Continue/Exit
+55.9805	9	0	ask:questdlg	answer=Save and exit prompt=Save current OST parameters and exit? rule=default
+55.9805	9	0	dbstop-ignored	args=if error
+55.9805	9	0	uiwait	
+55.9805	9	0	gui	figure= Verify save location steps=^ok$
+55.9805	9	0	gui-click	control=OK
+55.9805	9	0	gui-close	figure= Verify save location
+56.4805	9	0	dbstop-ignored	args=if error
+56.4805	9	0	ask:input	answer=move on prompt=Redo OST testing phase, or move on? (redo/move on):  rule=\((redo|repeat)/(move on|continue)\)
+58.4805	9	0	dbstop-ignored	args=if error
+58.4805	9	0	dbstop-ignored	args=if error
+58.4805	9	0	dbstop-ignored	args=if error
+58.4805	9	0	dbstop-ignored	args=if error
+58.4805	9	0	dbstop-ignored	args=if error
+58.4805	9	0	dbstop-ignored	args=if error
+58.4805	9	0	dbstop-ignored	args=if error
+58.4805	9	0	dbstop-ignored	args=if error
+58.4805	9	0	dbstop-ignored	args=if error
+58.4805	9	0	dbstop-ignored	args=if error
+58.4805	9	0	ask:input	answer= prompt=\nRead instructions, then press ENTER to continue to "Practice with stimulus words" phase rule=press enter|press any key|hit enter|enter to (continue|start|go)|press return
+60.4805	9	0	rng	arg=shuffle seed=1001
+60.4805	9	0	rng	arg=shuffle seed=1002
+60.4805	9	0	rng	arg=shuffle seed=1003
+60.4835	9	0	ask:input	answer= prompt=\nRead instructions, then press ENTER to continue to "Main Phase" rule=press enter|press any key|hit enter|enter to (continue|start|go)|press return
+62.4865	9	0	ost	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.ost
+62.4865	9	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+62.4865	9	0	deviceName	args=Focusrite USB
+62.4865	9	0	setParam	name=sRate value=16000
+62.4865	9	0	setParam	name=downFact value=3
+62.4865	9	0	setParam	name=frameLen value=32
+62.4865	9	0	getMaxPBLen	args=
+62.4865	9	0	setParam	name=datapb value=[479230x1 min -1 max 0.946991 mean 6.3739e-06 rms 0.244684 hash 7814e4e9b5]
+62.4865	9	0	setParam	name=downfact value=3
+62.4865	9	0	setParam	name=srate value=16000
+62.4865	9	0	setParam	name=framelen value=32
+62.4865	9	0	setParam	name=ndelay value=5
+62.4865	9	0	setParam	name=nwin value=1
+62.4865	9	0	setParam	name=nlpc value=15
+62.4865	9	0	setParam	name=nfmts value=2
+62.4865	9	0	setParam	name=ntracks value=4
+62.4865	9	0	setParam	name=scale value=0.795271
+62.4865	9	0	setParam	name=preemp value=0.98
+62.4865	9	0	setParam	name=rmsthr value=0.011354
+62.4865	9	0	setParam	name=rmsratio value=0.7
+62.4865	9	0	setParam	name=rmsff value=0.95
+62.4865	9	0	setParam	name=dfmtsff value=0.93
+62.4865	9	0	setParam	name=bgainadapt value=0
+62.4865	9	0	setParam	name=bshift value=1
+62.4865	9	0	setParam	name=btrack value=1
+62.4865	9	0	setParam	name=bdetect value=1
+62.4865	9	0	setParam	name=avglen value=8
+62.4865	9	0	setParam	name=bweight value=1
+62.4865	9	0	setParam	name=minvowellen value=60
+62.4865	9	0	setParam	name=bratioshift value=0
+62.4865	9	0	setParam	name=bmelshift value=1
+62.4865	9	0	setParam	name=bcepslift value=0
+62.4865	9	0	setParam	name=cepswinwidth value=30
+62.4865	9	0	setParam	name=bbypassfmt value=0
+62.4865	9	0	setParam	name=f2min value=0
+62.4865	9	0	setParam	name=f2max value=5000
+62.4865	9	0	setParam	name=f1min value=0
+62.4865	9	0	setParam	name=f1max value=5000
+62.4865	9	0	setParam	name=lbk value=0
+62.4865	9	0	setParam	name=lbb value=0
+62.4865	9	0	setParam	name=pertf1 value=[257 x 0]
+62.4865	9	0	setParam	name=pertf2 value=[257 x 0]
+62.4865	9	0	setParam	name=pertamp value=[257 x 0]
+62.4865	9	0	setParam	name=pertphi value=[257 x 0]
+62.4865	9	0	setParam	name=pertamp2d value=[66049 x 0]
+62.4865	9	0	setParam	name=pertphi2d value=[66049 x 0]
+62.4865	9	0	setParam	name=fb value=3
+62.4865	9	0	setParam	name=nfb value=1
+62.4865	9	0	setParam	name=triallen value=0
+62.4865	9	0	setParam	name=ramplen value=0
+62.4865	9	0	setParam	name=afact value=1
+62.4865	9	0	setParam	name=bfact value=0.8
+62.4865	9	0	setParam	name=gfact value=1
+62.4865	9	0	setParam	name=fn1 value=675
+62.4865	9	0	setParam	name=fn2 value=1392
+62.4865	9	0	setParam	name=fb2gain value=0.16
+62.4865	9	0	setParam	name=fb3gain value=0.02
+62.4865	9	0	setParam	name=fb4gaindb value=10
+62.4865	9	0	setParam	name=fb5gaindb_speech value=0
+62.4865	9	0	setParam	name=fb5gain_playback value=1
+62.4865	9	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+62.4865	9	0	setParam	name=bpitchshift value=0
+62.4865	9	0	setParam	name=bshift2d value=0
+62.4865	9	0	setParam	name=pitchshiftratio value=1
+62.4865	9	0	setParam	name=pvocframelen value=256
+62.4865	9	0	setParam	name=pvochop value=64
+62.4865	9	0	setParam	name=bdownsampfilt value=1
+62.4865	9	0	setParam	name=stereomode value=1
+62.4865	9	0	setParam	name=delayFrames value=0
+62.4865	9	0	setParam	name=btimedomainshift value=0
+62.4865	9	0	setParam	name=pitchlowerboundhz value=0
+62.4865	9	0	setParam	name=pitchupperboundhz value=0
+62.4865	9	0	setParam	name=timedomainpitchshiftschedule value=1
+62.4865	9	0	setParam	name=timedomainpitchshiftalgorithm value=0
+62.4865	9	0	setParam	name=bclampformants value=0
+62.4865	9	0	setParam	name=clamposts value=[0 0]
+62.4865	9	0	setParam	name=clampf1 value=[2048 x 0]
+62.4865	9	0	setParam	name=clampf2 value=[2048 x 0]
+62.4865	9	0	keywait	fn=pause
+63.4865	9	0	key	key=space
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	dbstop-ignored	args=if error
+64.4865	9	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+64.4865	9	0	setParam	name=fb value=2
+64.4865	9	0	setParam	name=downfact value=3
+64.4865	9	0	setParam	name=srate value=16000
+64.4865	9	0	setParam	name=framelen value=32
+64.4865	9	0	setParam	name=ndelay value=5
+64.4865	9	0	setParam	name=nwin value=1
+64.4865	9	0	setParam	name=nlpc value=15
+64.4865	9	0	setParam	name=nfmts value=2
+64.4865	9	0	setParam	name=ntracks value=4
+64.4865	9	0	setParam	name=scale value=0.795271
+64.4865	9	0	setParam	name=preemp value=0.98
+64.4865	9	0	setParam	name=rmsthr value=0.011354
+64.4865	9	0	setParam	name=rmsratio value=0.7
+64.4865	9	0	setParam	name=rmsff value=0.95
+64.4865	9	0	setParam	name=dfmtsff value=0.93
+64.4865	9	0	setParam	name=bgainadapt value=0
+64.4865	9	0	setParam	name=bshift value=1
+64.4865	9	0	setParam	name=btrack value=1
+64.4865	9	0	setParam	name=bdetect value=1
+64.4865	9	0	setParam	name=avglen value=8
+64.4865	9	0	setParam	name=bweight value=1
+64.4865	9	0	setParam	name=minvowellen value=60
+64.4865	9	0	setParam	name=bratioshift value=0
+64.4865	9	0	setParam	name=bmelshift value=1
+64.4865	9	0	setParam	name=bcepslift value=0
+64.4865	9	0	setParam	name=cepswinwidth value=30
+64.4865	9	0	setParam	name=bbypassfmt value=0
+64.4865	9	0	setParam	name=f2min value=0
+64.4865	9	0	setParam	name=f2max value=5000
+64.4865	9	0	setParam	name=f1min value=0
+64.4865	9	0	setParam	name=f1max value=5000
+64.4865	9	0	setParam	name=lbk value=0
+64.4865	9	0	setParam	name=lbb value=0
+64.4865	9	0	setParam	name=pertf1 value=[257 x 0]
+64.4865	9	0	setParam	name=pertf2 value=[257 x 0]
+64.4865	9	0	setParam	name=pertamp value=[257 x 0]
+64.4865	9	0	setParam	name=pertphi value=[257 x 0]
+64.4865	9	0	setParam	name=pertamp2d value=[66049 x 0]
+64.4865	9	0	setParam	name=pertphi2d value=[66049 x 0]
+64.4865	9	0	setParam	name=fb value=2
+64.4865	9	0	setParam	name=nfb value=1
+64.4865	9	0	setParam	name=triallen value=0
+64.4865	9	0	setParam	name=ramplen value=0
+64.4865	9	0	setParam	name=afact value=1
+64.4865	9	0	setParam	name=bfact value=0.8
+64.4865	9	0	setParam	name=gfact value=1
+64.4865	9	0	setParam	name=fn1 value=675
+64.4865	9	0	setParam	name=fn2 value=1392
+64.4865	9	0	setParam	name=fb2gain value=0.16
+64.4865	9	0	setParam	name=fb3gain value=0.02
+64.4865	9	0	setParam	name=fb4gaindb value=10
+64.4865	9	0	setParam	name=fb5gaindb_speech value=0
+64.4865	9	0	setParam	name=fb5gain_playback value=1
+64.4865	9	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+64.4865	9	0	setParam	name=bpitchshift value=0
+64.4865	9	0	setParam	name=bshift2d value=0
+64.4865	9	0	setParam	name=pitchshiftratio value=1
+64.4865	9	0	setParam	name=pvocframelen value=256
+64.4865	9	0	setParam	name=pvochop value=64
+64.4865	9	0	setParam	name=bdownsampfilt value=1
+64.4865	9	0	setParam	name=stereomode value=1
+64.4865	9	0	setParam	name=delayFrames value=0
+64.4865	9	0	setParam	name=btimedomainshift value=0
+64.4865	9	0	setParam	name=pitchlowerboundhz value=0
+64.4865	9	0	setParam	name=pitchupperboundhz value=0
+64.4865	9	0	setParam	name=timedomainpitchshiftschedule value=1
+64.4865	9	0	setParam	name=timedomainpitchshiftalgorithm value=0
+64.4865	9	0	setParam	name=bclampformants value=0
+64.4865	9	0	setParam	name=clamposts value=[0 0]
+64.4865	9	0	setParam	name=clampf1 value=[2048 x 0]
+64.4865	9	0	setParam	name=clampf2 value=[2048 x 0]
+64.4865	9	0	reset	
+64.4865	9	0	start	
+66.2865	10	1	stop	
+66.2865	10	0	getData	
+66.2865	10	0	dbstop-ignored	args=if error
+66.2865	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	dbstop-ignored	args=if error
+67.6898	10	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+67.6898	10	0	setParam	name=fb value=2
+67.6898	10	0	setParam	name=downfact value=3
+67.6898	10	0	setParam	name=srate value=16000
+67.6898	10	0	setParam	name=framelen value=32
+67.6898	10	0	setParam	name=ndelay value=5
+67.6898	10	0	setParam	name=nwin value=1
+67.6898	10	0	setParam	name=nlpc value=15
+67.6898	10	0	setParam	name=nfmts value=2
+67.6898	10	0	setParam	name=ntracks value=4
+67.6898	10	0	setParam	name=scale value=0.795271
+67.6898	10	0	setParam	name=preemp value=0.98
+67.6898	10	0	setParam	name=rmsthr value=0.011354
+67.6898	10	0	setParam	name=rmsratio value=0.7
+67.6898	10	0	setParam	name=rmsff value=0.95
+67.6898	10	0	setParam	name=dfmtsff value=0.93
+67.6898	10	0	setParam	name=bgainadapt value=0
+67.6898	10	0	setParam	name=bshift value=1
+67.6898	10	0	setParam	name=btrack value=1
+67.6898	10	0	setParam	name=bdetect value=1
+67.6898	10	0	setParam	name=avglen value=8
+67.6898	10	0	setParam	name=bweight value=1
+67.6898	10	0	setParam	name=minvowellen value=60
+67.6898	10	0	setParam	name=bratioshift value=0
+67.6898	10	0	setParam	name=bmelshift value=1
+67.6898	10	0	setParam	name=bcepslift value=0
+67.6898	10	0	setParam	name=cepswinwidth value=30
+67.6898	10	0	setParam	name=bbypassfmt value=0
+67.6898	10	0	setParam	name=f2min value=0
+67.6898	10	0	setParam	name=f2max value=5000
+67.6898	10	0	setParam	name=f1min value=0
+67.6898	10	0	setParam	name=f1max value=5000
+67.6898	10	0	setParam	name=lbk value=0
+67.6898	10	0	setParam	name=lbb value=0
+67.6898	10	0	setParam	name=pertf1 value=[257 x 0]
+67.6898	10	0	setParam	name=pertf2 value=[257 x 0]
+67.6898	10	0	setParam	name=pertamp value=[257 x 0]
+67.6898	10	0	setParam	name=pertphi value=[257 x 0]
+67.6898	10	0	setParam	name=pertamp2d value=[66049 x 0]
+67.6898	10	0	setParam	name=pertphi2d value=[66049 x 0]
+67.6898	10	0	setParam	name=fb value=2
+67.6898	10	0	setParam	name=nfb value=1
+67.6898	10	0	setParam	name=triallen value=0
+67.6898	10	0	setParam	name=ramplen value=0
+67.6898	10	0	setParam	name=afact value=1
+67.6898	10	0	setParam	name=bfact value=0.8
+67.6898	10	0	setParam	name=gfact value=1
+67.6898	10	0	setParam	name=fn1 value=675
+67.6898	10	0	setParam	name=fn2 value=1392
+67.6898	10	0	setParam	name=fb2gain value=0.16
+67.6898	10	0	setParam	name=fb3gain value=0.02
+67.6898	10	0	setParam	name=fb4gaindb value=10
+67.6898	10	0	setParam	name=fb5gaindb_speech value=0
+67.6898	10	0	setParam	name=fb5gain_playback value=1
+67.6898	10	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+67.6898	10	0	setParam	name=bpitchshift value=0
+67.6898	10	0	setParam	name=bshift2d value=0
+67.6898	10	0	setParam	name=pitchshiftratio value=1
+67.6898	10	0	setParam	name=pvocframelen value=256
+67.6898	10	0	setParam	name=pvochop value=64
+67.6898	10	0	setParam	name=bdownsampfilt value=1
+67.6898	10	0	setParam	name=stereomode value=1
+67.6898	10	0	setParam	name=delayFrames value=0
+67.6898	10	0	setParam	name=btimedomainshift value=0
+67.6898	10	0	setParam	name=pitchlowerboundhz value=0
+67.6898	10	0	setParam	name=pitchupperboundhz value=0
+67.6898	10	0	setParam	name=timedomainpitchshiftschedule value=1
+67.6898	10	0	setParam	name=timedomainpitchshiftalgorithm value=0
+67.6898	10	0	setParam	name=bclampformants value=0
+67.6898	10	0	setParam	name=clamposts value=[0 0]
+67.6898	10	0	setParam	name=clampf1 value=[2048 x 0]
+67.6898	10	0	setParam	name=clampf2 value=[2048 x 0]
+67.6898	10	0	reset	
+67.6898	10	0	start	
+69.4898	11	1	stop	
+69.4898	11	0	getData	
+69.4898	11	0	dbstop-ignored	args=if error
+69.4898	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	dbstop-ignored	args=if error
+70.8547	11	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+70.8547	11	0	setParam	name=fb value=2
+70.8547	11	0	setParam	name=downfact value=3
+70.8547	11	0	setParam	name=srate value=16000
+70.8547	11	0	setParam	name=framelen value=32
+70.8547	11	0	setParam	name=ndelay value=5
+70.8547	11	0	setParam	name=nwin value=1
+70.8547	11	0	setParam	name=nlpc value=15
+70.8547	11	0	setParam	name=nfmts value=2
+70.8547	11	0	setParam	name=ntracks value=4
+70.8547	11	0	setParam	name=scale value=0.795271
+70.8547	11	0	setParam	name=preemp value=0.98
+70.8547	11	0	setParam	name=rmsthr value=0.011354
+70.8547	11	0	setParam	name=rmsratio value=0.7
+70.8547	11	0	setParam	name=rmsff value=0.95
+70.8547	11	0	setParam	name=dfmtsff value=0.93
+70.8547	11	0	setParam	name=bgainadapt value=0
+70.8547	11	0	setParam	name=bshift value=1
+70.8547	11	0	setParam	name=btrack value=1
+70.8547	11	0	setParam	name=bdetect value=1
+70.8547	11	0	setParam	name=avglen value=8
+70.8547	11	0	setParam	name=bweight value=1
+70.8547	11	0	setParam	name=minvowellen value=60
+70.8547	11	0	setParam	name=bratioshift value=0
+70.8547	11	0	setParam	name=bmelshift value=1
+70.8547	11	0	setParam	name=bcepslift value=0
+70.8547	11	0	setParam	name=cepswinwidth value=30
+70.8547	11	0	setParam	name=bbypassfmt value=0
+70.8547	11	0	setParam	name=f2min value=0
+70.8547	11	0	setParam	name=f2max value=5000
+70.8547	11	0	setParam	name=f1min value=0
+70.8547	11	0	setParam	name=f1max value=5000
+70.8547	11	0	setParam	name=lbk value=0
+70.8547	11	0	setParam	name=lbb value=0
+70.8547	11	0	setParam	name=pertf1 value=[257 x 0]
+70.8547	11	0	setParam	name=pertf2 value=[257 x 0]
+70.8547	11	0	setParam	name=pertamp value=[257 x 0]
+70.8547	11	0	setParam	name=pertphi value=[257 x 0]
+70.8547	11	0	setParam	name=pertamp2d value=[66049 x 0]
+70.8547	11	0	setParam	name=pertphi2d value=[66049 x 0]
+70.8547	11	0	setParam	name=fb value=2
+70.8547	11	0	setParam	name=nfb value=1
+70.8547	11	0	setParam	name=triallen value=0
+70.8547	11	0	setParam	name=ramplen value=0
+70.8547	11	0	setParam	name=afact value=1
+70.8547	11	0	setParam	name=bfact value=0.8
+70.8547	11	0	setParam	name=gfact value=1
+70.8547	11	0	setParam	name=fn1 value=675
+70.8547	11	0	setParam	name=fn2 value=1392
+70.8547	11	0	setParam	name=fb2gain value=0.16
+70.8547	11	0	setParam	name=fb3gain value=0.02
+70.8547	11	0	setParam	name=fb4gaindb value=10
+70.8547	11	0	setParam	name=fb5gaindb_speech value=0
+70.8547	11	0	setParam	name=fb5gain_playback value=1
+70.8547	11	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+70.8547	11	0	setParam	name=bpitchshift value=0
+70.8547	11	0	setParam	name=bshift2d value=0
+70.8547	11	0	setParam	name=pitchshiftratio value=1
+70.8547	11	0	setParam	name=pvocframelen value=256
+70.8547	11	0	setParam	name=pvochop value=64
+70.8547	11	0	setParam	name=bdownsampfilt value=1
+70.8547	11	0	setParam	name=stereomode value=1
+70.8547	11	0	setParam	name=delayFrames value=0
+70.8547	11	0	setParam	name=btimedomainshift value=0
+70.8547	11	0	setParam	name=pitchlowerboundhz value=0
+70.8547	11	0	setParam	name=pitchupperboundhz value=0
+70.8547	11	0	setParam	name=timedomainpitchshiftschedule value=1
+70.8547	11	0	setParam	name=timedomainpitchshiftalgorithm value=0
+70.8547	11	0	setParam	name=bclampformants value=0
+70.8547	11	0	setParam	name=clamposts value=[0 0]
+70.8547	11	0	setParam	name=clampf1 value=[2048 x 0]
+70.8547	11	0	setParam	name=clampf2 value=[2048 x 0]
+70.8547	11	0	reset	
+70.8547	11	0	start	
+72.6547	12	1	stop	
+72.6547	12	0	getData	
+72.6547	12	0	dbstop-ignored	args=if error
+72.6547	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	dbstop-ignored	args=if error
+73.9398	12	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+73.9398	12	0	setParam	name=fb value=2
+73.9398	12	0	setParam	name=downfact value=3
+73.9398	12	0	setParam	name=srate value=16000
+73.9398	12	0	setParam	name=framelen value=32
+73.9398	12	0	setParam	name=ndelay value=5
+73.9398	12	0	setParam	name=nwin value=1
+73.9398	12	0	setParam	name=nlpc value=15
+73.9398	12	0	setParam	name=nfmts value=2
+73.9398	12	0	setParam	name=ntracks value=4
+73.9398	12	0	setParam	name=scale value=0.795271
+73.9398	12	0	setParam	name=preemp value=0.98
+73.9398	12	0	setParam	name=rmsthr value=0.011354
+73.9398	12	0	setParam	name=rmsratio value=0.7
+73.9398	12	0	setParam	name=rmsff value=0.95
+73.9398	12	0	setParam	name=dfmtsff value=0.93
+73.9398	12	0	setParam	name=bgainadapt value=0
+73.9398	12	0	setParam	name=bshift value=1
+73.9398	12	0	setParam	name=btrack value=1
+73.9398	12	0	setParam	name=bdetect value=1
+73.9398	12	0	setParam	name=avglen value=8
+73.9398	12	0	setParam	name=bweight value=1
+73.9398	12	0	setParam	name=minvowellen value=60
+73.9398	12	0	setParam	name=bratioshift value=0
+73.9398	12	0	setParam	name=bmelshift value=1
+73.9398	12	0	setParam	name=bcepslift value=0
+73.9398	12	0	setParam	name=cepswinwidth value=30
+73.9398	12	0	setParam	name=bbypassfmt value=0
+73.9398	12	0	setParam	name=f2min value=0
+73.9398	12	0	setParam	name=f2max value=5000
+73.9398	12	0	setParam	name=f1min value=0
+73.9398	12	0	setParam	name=f1max value=5000
+73.9398	12	0	setParam	name=lbk value=0
+73.9398	12	0	setParam	name=lbb value=0
+73.9398	12	0	setParam	name=pertf1 value=[257 x 0]
+73.9398	12	0	setParam	name=pertf2 value=[257 x 0]
+73.9398	12	0	setParam	name=pertamp value=[257 x 0]
+73.9398	12	0	setParam	name=pertphi value=[257 x 0]
+73.9398	12	0	setParam	name=pertamp2d value=[66049 x 0]
+73.9398	12	0	setParam	name=pertphi2d value=[66049 x 0]
+73.9398	12	0	setParam	name=fb value=2
+73.9398	12	0	setParam	name=nfb value=1
+73.9398	12	0	setParam	name=triallen value=0
+73.9398	12	0	setParam	name=ramplen value=0
+73.9398	12	0	setParam	name=afact value=1
+73.9398	12	0	setParam	name=bfact value=0.8
+73.9398	12	0	setParam	name=gfact value=1
+73.9398	12	0	setParam	name=fn1 value=675
+73.9398	12	0	setParam	name=fn2 value=1392
+73.9398	12	0	setParam	name=fb2gain value=0.16
+73.9398	12	0	setParam	name=fb3gain value=0.02
+73.9398	12	0	setParam	name=fb4gaindb value=10
+73.9398	12	0	setParam	name=fb5gaindb_speech value=0
+73.9398	12	0	setParam	name=fb5gain_playback value=1
+73.9398	12	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+73.9398	12	0	setParam	name=bpitchshift value=0
+73.9398	12	0	setParam	name=bshift2d value=0
+73.9398	12	0	setParam	name=pitchshiftratio value=1
+73.9398	12	0	setParam	name=pvocframelen value=256
+73.9398	12	0	setParam	name=pvochop value=64
+73.9398	12	0	setParam	name=bdownsampfilt value=1
+73.9398	12	0	setParam	name=stereomode value=1
+73.9398	12	0	setParam	name=delayFrames value=0
+73.9398	12	0	setParam	name=btimedomainshift value=0
+73.9398	12	0	setParam	name=pitchlowerboundhz value=0
+73.9398	12	0	setParam	name=pitchupperboundhz value=0
+73.9398	12	0	setParam	name=timedomainpitchshiftschedule value=1
+73.9398	12	0	setParam	name=timedomainpitchshiftalgorithm value=0
+73.9398	12	0	setParam	name=bclampformants value=0
+73.9398	12	0	setParam	name=clamposts value=[0 0]
+73.9398	12	0	setParam	name=clampf1 value=[2048 x 0]
+73.9398	12	0	setParam	name=clampf2 value=[2048 x 0]
+73.9398	12	0	reset	
+73.9398	12	0	start	
+75.7398	13	1	stop	
+75.7398	13	0	getData	
+75.7398	13	0	dbstop-ignored	args=if error
+75.7398	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	dbstop-ignored	args=if error
+77.0226	13	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+77.0226	13	0	setParam	name=fb value=2
+77.0226	13	0	setParam	name=downfact value=3
+77.0226	13	0	setParam	name=srate value=16000
+77.0226	13	0	setParam	name=framelen value=32
+77.0226	13	0	setParam	name=ndelay value=5
+77.0226	13	0	setParam	name=nwin value=1
+77.0226	13	0	setParam	name=nlpc value=15
+77.0226	13	0	setParam	name=nfmts value=2
+77.0226	13	0	setParam	name=ntracks value=4
+77.0226	13	0	setParam	name=scale value=0.795271
+77.0226	13	0	setParam	name=preemp value=0.98
+77.0226	13	0	setParam	name=rmsthr value=0.011354
+77.0226	13	0	setParam	name=rmsratio value=0.7
+77.0226	13	0	setParam	name=rmsff value=0.95
+77.0226	13	0	setParam	name=dfmtsff value=0.93
+77.0226	13	0	setParam	name=bgainadapt value=0
+77.0226	13	0	setParam	name=bshift value=1
+77.0226	13	0	setParam	name=btrack value=1
+77.0226	13	0	setParam	name=bdetect value=1
+77.0226	13	0	setParam	name=avglen value=8
+77.0226	13	0	setParam	name=bweight value=1
+77.0226	13	0	setParam	name=minvowellen value=60
+77.0226	13	0	setParam	name=bratioshift value=0
+77.0226	13	0	setParam	name=bmelshift value=1
+77.0226	13	0	setParam	name=bcepslift value=0
+77.0226	13	0	setParam	name=cepswinwidth value=30
+77.0226	13	0	setParam	name=bbypassfmt value=0
+77.0226	13	0	setParam	name=f2min value=0
+77.0226	13	0	setParam	name=f2max value=5000
+77.0226	13	0	setParam	name=f1min value=0
+77.0226	13	0	setParam	name=f1max value=5000
+77.0226	13	0	setParam	name=lbk value=0
+77.0226	13	0	setParam	name=lbb value=0
+77.0226	13	0	setParam	name=pertf1 value=[257 x 0]
+77.0226	13	0	setParam	name=pertf2 value=[257 x 0]
+77.0226	13	0	setParam	name=pertamp value=[257 x 0]
+77.0226	13	0	setParam	name=pertphi value=[257 x 0]
+77.0226	13	0	setParam	name=pertamp2d value=[66049 x 0]
+77.0226	13	0	setParam	name=pertphi2d value=[66049 x 0]
+77.0226	13	0	setParam	name=fb value=2
+77.0226	13	0	setParam	name=nfb value=1
+77.0226	13	0	setParam	name=triallen value=0
+77.0226	13	0	setParam	name=ramplen value=0
+77.0226	13	0	setParam	name=afact value=1
+77.0226	13	0	setParam	name=bfact value=0.8
+77.0226	13	0	setParam	name=gfact value=1
+77.0226	13	0	setParam	name=fn1 value=675
+77.0226	13	0	setParam	name=fn2 value=1392
+77.0226	13	0	setParam	name=fb2gain value=0.16
+77.0226	13	0	setParam	name=fb3gain value=0.02
+77.0226	13	0	setParam	name=fb4gaindb value=10
+77.0226	13	0	setParam	name=fb5gaindb_speech value=0
+77.0226	13	0	setParam	name=fb5gain_playback value=1
+77.0226	13	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+77.0226	13	0	setParam	name=bpitchshift value=0
+77.0226	13	0	setParam	name=bshift2d value=0
+77.0226	13	0	setParam	name=pitchshiftratio value=1
+77.0226	13	0	setParam	name=pvocframelen value=256
+77.0226	13	0	setParam	name=pvochop value=64
+77.0226	13	0	setParam	name=bdownsampfilt value=1
+77.0226	13	0	setParam	name=stereomode value=1
+77.0226	13	0	setParam	name=delayFrames value=0
+77.0226	13	0	setParam	name=btimedomainshift value=0
+77.0226	13	0	setParam	name=pitchlowerboundhz value=0
+77.0226	13	0	setParam	name=pitchupperboundhz value=0
+77.0226	13	0	setParam	name=timedomainpitchshiftschedule value=1
+77.0226	13	0	setParam	name=timedomainpitchshiftalgorithm value=0
+77.0226	13	0	setParam	name=bclampformants value=0
+77.0226	13	0	setParam	name=clamposts value=[0 0]
+77.0226	13	0	setParam	name=clampf1 value=[2048 x 0]
+77.0226	13	0	setParam	name=clampf2 value=[2048 x 0]
+77.0226	13	0	reset	
+77.0226	13	0	start	
+78.8226	14	1	stop	
+78.8226	14	0	getData	
+78.8226	14	0	dbstop-ignored	args=if error
+78.8226	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	dbstop-ignored	args=if error
+80.1055	14	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+80.1055	14	0	setParam	name=fb value=2
+80.1055	14	0	setParam	name=downfact value=3
+80.1055	14	0	setParam	name=srate value=16000
+80.1055	14	0	setParam	name=framelen value=32
+80.1055	14	0	setParam	name=ndelay value=5
+80.1055	14	0	setParam	name=nwin value=1
+80.1055	14	0	setParam	name=nlpc value=15
+80.1055	14	0	setParam	name=nfmts value=2
+80.1055	14	0	setParam	name=ntracks value=4
+80.1055	14	0	setParam	name=scale value=0.795271
+80.1055	14	0	setParam	name=preemp value=0.98
+80.1055	14	0	setParam	name=rmsthr value=0.011354
+80.1055	14	0	setParam	name=rmsratio value=0.7
+80.1055	14	0	setParam	name=rmsff value=0.95
+80.1055	14	0	setParam	name=dfmtsff value=0.93
+80.1055	14	0	setParam	name=bgainadapt value=0
+80.1055	14	0	setParam	name=bshift value=1
+80.1055	14	0	setParam	name=btrack value=1
+80.1055	14	0	setParam	name=bdetect value=1
+80.1055	14	0	setParam	name=avglen value=8
+80.1055	14	0	setParam	name=bweight value=1
+80.1055	14	0	setParam	name=minvowellen value=60
+80.1055	14	0	setParam	name=bratioshift value=0
+80.1055	14	0	setParam	name=bmelshift value=1
+80.1055	14	0	setParam	name=bcepslift value=0
+80.1055	14	0	setParam	name=cepswinwidth value=30
+80.1055	14	0	setParam	name=bbypassfmt value=0
+80.1055	14	0	setParam	name=f2min value=0
+80.1055	14	0	setParam	name=f2max value=5000
+80.1055	14	0	setParam	name=f1min value=0
+80.1055	14	0	setParam	name=f1max value=5000
+80.1055	14	0	setParam	name=lbk value=0
+80.1055	14	0	setParam	name=lbb value=0
+80.1055	14	0	setParam	name=pertf1 value=[257 x 0]
+80.1055	14	0	setParam	name=pertf2 value=[257 x 0]
+80.1055	14	0	setParam	name=pertamp value=[257 x 0]
+80.1055	14	0	setParam	name=pertphi value=[257 x 0]
+80.1055	14	0	setParam	name=pertamp2d value=[66049 x 0]
+80.1055	14	0	setParam	name=pertphi2d value=[66049 x 0]
+80.1055	14	0	setParam	name=fb value=2
+80.1055	14	0	setParam	name=nfb value=1
+80.1055	14	0	setParam	name=triallen value=0
+80.1055	14	0	setParam	name=ramplen value=0
+80.1055	14	0	setParam	name=afact value=1
+80.1055	14	0	setParam	name=bfact value=0.8
+80.1055	14	0	setParam	name=gfact value=1
+80.1055	14	0	setParam	name=fn1 value=675
+80.1055	14	0	setParam	name=fn2 value=1392
+80.1055	14	0	setParam	name=fb2gain value=0.16
+80.1055	14	0	setParam	name=fb3gain value=0.02
+80.1055	14	0	setParam	name=fb4gaindb value=10
+80.1055	14	0	setParam	name=fb5gaindb_speech value=0
+80.1055	14	0	setParam	name=fb5gain_playback value=1
+80.1055	14	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+80.1055	14	0	setParam	name=bpitchshift value=0
+80.1055	14	0	setParam	name=bshift2d value=0
+80.1055	14	0	setParam	name=pitchshiftratio value=1
+80.1055	14	0	setParam	name=pvocframelen value=256
+80.1055	14	0	setParam	name=pvochop value=64
+80.1055	14	0	setParam	name=bdownsampfilt value=1
+80.1055	14	0	setParam	name=stereomode value=1
+80.1055	14	0	setParam	name=delayFrames value=0
+80.1055	14	0	setParam	name=btimedomainshift value=0
+80.1055	14	0	setParam	name=pitchlowerboundhz value=0
+80.1055	14	0	setParam	name=pitchupperboundhz value=0
+80.1055	14	0	setParam	name=timedomainpitchshiftschedule value=1
+80.1055	14	0	setParam	name=timedomainpitchshiftalgorithm value=0
+80.1055	14	0	setParam	name=bclampformants value=0
+80.1055	14	0	setParam	name=clamposts value=[0 0]
+80.1055	14	0	setParam	name=clampf1 value=[2048 x 0]
+80.1055	14	0	setParam	name=clampf2 value=[2048 x 0]
+80.1055	14	0	reset	
+80.1055	14	0	start	
+81.9055	15	1	stop	
+81.9055	15	0	getData	
+81.9055	15	0	dbstop-ignored	args=if error
+81.9055	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	dbstop-ignored	args=if error
+83.2013	15	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+83.2013	15	0	setParam	name=fb value=2
+83.2013	15	0	setParam	name=downfact value=3
+83.2013	15	0	setParam	name=srate value=16000
+83.2013	15	0	setParam	name=framelen value=32
+83.2013	15	0	setParam	name=ndelay value=5
+83.2013	15	0	setParam	name=nwin value=1
+83.2013	15	0	setParam	name=nlpc value=15
+83.2013	15	0	setParam	name=nfmts value=2
+83.2013	15	0	setParam	name=ntracks value=4
+83.2013	15	0	setParam	name=scale value=0.795271
+83.2013	15	0	setParam	name=preemp value=0.98
+83.2013	15	0	setParam	name=rmsthr value=0.011354
+83.2013	15	0	setParam	name=rmsratio value=0.7
+83.2013	15	0	setParam	name=rmsff value=0.95
+83.2013	15	0	setParam	name=dfmtsff value=0.93
+83.2013	15	0	setParam	name=bgainadapt value=0
+83.2013	15	0	setParam	name=bshift value=1
+83.2013	15	0	setParam	name=btrack value=1
+83.2013	15	0	setParam	name=bdetect value=1
+83.2013	15	0	setParam	name=avglen value=8
+83.2013	15	0	setParam	name=bweight value=1
+83.2013	15	0	setParam	name=minvowellen value=60
+83.2013	15	0	setParam	name=bratioshift value=0
+83.2013	15	0	setParam	name=bmelshift value=1
+83.2013	15	0	setParam	name=bcepslift value=0
+83.2013	15	0	setParam	name=cepswinwidth value=30
+83.2013	15	0	setParam	name=bbypassfmt value=0
+83.2013	15	0	setParam	name=f2min value=0
+83.2013	15	0	setParam	name=f2max value=5000
+83.2013	15	0	setParam	name=f1min value=0
+83.2013	15	0	setParam	name=f1max value=5000
+83.2013	15	0	setParam	name=lbk value=0
+83.2013	15	0	setParam	name=lbb value=0
+83.2013	15	0	setParam	name=pertf1 value=[257 x 0]
+83.2013	15	0	setParam	name=pertf2 value=[257 x 0]
+83.2013	15	0	setParam	name=pertamp value=[257 x 0]
+83.2013	15	0	setParam	name=pertphi value=[257 x 0]
+83.2013	15	0	setParam	name=pertamp2d value=[66049 x 0]
+83.2013	15	0	setParam	name=pertphi2d value=[66049 x 0]
+83.2013	15	0	setParam	name=fb value=2
+83.2013	15	0	setParam	name=nfb value=1
+83.2013	15	0	setParam	name=triallen value=0
+83.2013	15	0	setParam	name=ramplen value=0
+83.2013	15	0	setParam	name=afact value=1
+83.2013	15	0	setParam	name=bfact value=0.8
+83.2013	15	0	setParam	name=gfact value=1
+83.2013	15	0	setParam	name=fn1 value=675
+83.2013	15	0	setParam	name=fn2 value=1392
+83.2013	15	0	setParam	name=fb2gain value=0.16
+83.2013	15	0	setParam	name=fb3gain value=0.02
+83.2013	15	0	setParam	name=fb4gaindb value=10
+83.2013	15	0	setParam	name=fb5gaindb_speech value=0
+83.2013	15	0	setParam	name=fb5gain_playback value=1
+83.2013	15	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+83.2013	15	0	setParam	name=bpitchshift value=0
+83.2013	15	0	setParam	name=bshift2d value=0
+83.2013	15	0	setParam	name=pitchshiftratio value=1
+83.2013	15	0	setParam	name=pvocframelen value=256
+83.2013	15	0	setParam	name=pvochop value=64
+83.2013	15	0	setParam	name=bdownsampfilt value=1
+83.2013	15	0	setParam	name=stereomode value=1
+83.2013	15	0	setParam	name=delayFrames value=0
+83.2013	15	0	setParam	name=btimedomainshift value=0
+83.2013	15	0	setParam	name=pitchlowerboundhz value=0
+83.2013	15	0	setParam	name=pitchupperboundhz value=0
+83.2013	15	0	setParam	name=timedomainpitchshiftschedule value=1
+83.2013	15	0	setParam	name=timedomainpitchshiftalgorithm value=0
+83.2013	15	0	setParam	name=bclampformants value=0
+83.2013	15	0	setParam	name=clamposts value=[0 0]
+83.2013	15	0	setParam	name=clampf1 value=[2048 x 0]
+83.2013	15	0	setParam	name=clampf2 value=[2048 x 0]
+83.2013	15	0	reset	
+83.2013	15	0	start	
+85.0013	16	1	stop	
+85.0013	16	0	getData	
+85.0013	16	0	dbstop-ignored	args=if error
+85.0013	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	dbstop-ignored	args=if error
+86.5001	16	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+86.5001	16	0	setParam	name=fb value=2
+86.5001	16	0	setParam	name=downfact value=3
+86.5001	16	0	setParam	name=srate value=16000
+86.5001	16	0	setParam	name=framelen value=32
+86.5001	16	0	setParam	name=ndelay value=5
+86.5001	16	0	setParam	name=nwin value=1
+86.5001	16	0	setParam	name=nlpc value=15
+86.5001	16	0	setParam	name=nfmts value=2
+86.5001	16	0	setParam	name=ntracks value=4
+86.5001	16	0	setParam	name=scale value=0.795271
+86.5001	16	0	setParam	name=preemp value=0.98
+86.5001	16	0	setParam	name=rmsthr value=0.011354
+86.5001	16	0	setParam	name=rmsratio value=0.7
+86.5001	16	0	setParam	name=rmsff value=0.95
+86.5001	16	0	setParam	name=dfmtsff value=0.93
+86.5001	16	0	setParam	name=bgainadapt value=0
+86.5001	16	0	setParam	name=bshift value=1
+86.5001	16	0	setParam	name=btrack value=1
+86.5001	16	0	setParam	name=bdetect value=1
+86.5001	16	0	setParam	name=avglen value=8
+86.5001	16	0	setParam	name=bweight value=1
+86.5001	16	0	setParam	name=minvowellen value=60
+86.5001	16	0	setParam	name=bratioshift value=0
+86.5001	16	0	setParam	name=bmelshift value=1
+86.5001	16	0	setParam	name=bcepslift value=0
+86.5001	16	0	setParam	name=cepswinwidth value=30
+86.5001	16	0	setParam	name=bbypassfmt value=0
+86.5001	16	0	setParam	name=f2min value=0
+86.5001	16	0	setParam	name=f2max value=5000
+86.5001	16	0	setParam	name=f1min value=0
+86.5001	16	0	setParam	name=f1max value=5000
+86.5001	16	0	setParam	name=lbk value=0
+86.5001	16	0	setParam	name=lbb value=0
+86.5001	16	0	setParam	name=pertf1 value=[257 x 0]
+86.5001	16	0	setParam	name=pertf2 value=[257 x 0]
+86.5001	16	0	setParam	name=pertamp value=[257 x 0]
+86.5001	16	0	setParam	name=pertphi value=[257 x 0]
+86.5001	16	0	setParam	name=pertamp2d value=[66049 x 0]
+86.5001	16	0	setParam	name=pertphi2d value=[66049 x 0]
+86.5001	16	0	setParam	name=fb value=2
+86.5001	16	0	setParam	name=nfb value=1
+86.5001	16	0	setParam	name=triallen value=0
+86.5001	16	0	setParam	name=ramplen value=0
+86.5001	16	0	setParam	name=afact value=1
+86.5001	16	0	setParam	name=bfact value=0.8
+86.5001	16	0	setParam	name=gfact value=1
+86.5001	16	0	setParam	name=fn1 value=675
+86.5001	16	0	setParam	name=fn2 value=1392
+86.5001	16	0	setParam	name=fb2gain value=0.16
+86.5001	16	0	setParam	name=fb3gain value=0.02
+86.5001	16	0	setParam	name=fb4gaindb value=10
+86.5001	16	0	setParam	name=fb5gaindb_speech value=0
+86.5001	16	0	setParam	name=fb5gain_playback value=1
+86.5001	16	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+86.5001	16	0	setParam	name=bpitchshift value=0
+86.5001	16	0	setParam	name=bshift2d value=0
+86.5001	16	0	setParam	name=pitchshiftratio value=1
+86.5001	16	0	setParam	name=pvocframelen value=256
+86.5001	16	0	setParam	name=pvochop value=64
+86.5001	16	0	setParam	name=bdownsampfilt value=1
+86.5001	16	0	setParam	name=stereomode value=1
+86.5001	16	0	setParam	name=delayFrames value=0
+86.5001	16	0	setParam	name=btimedomainshift value=0
+86.5001	16	0	setParam	name=pitchlowerboundhz value=0
+86.5001	16	0	setParam	name=pitchupperboundhz value=0
+86.5001	16	0	setParam	name=timedomainpitchshiftschedule value=1
+86.5001	16	0	setParam	name=timedomainpitchshiftalgorithm value=0
+86.5001	16	0	setParam	name=bclampformants value=0
+86.5001	16	0	setParam	name=clamposts value=[0 0]
+86.5001	16	0	setParam	name=clampf1 value=[2048 x 0]
+86.5001	16	0	setParam	name=clampf2 value=[2048 x 0]
+86.5001	16	0	reset	
+86.5001	16	0	start	
+88.3001	17	1	stop	
+88.3001	17	0	getData	
+88.3001	17	0	dbstop-ignored	args=if error
+88.3001	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	dbstop-ignored	args=if error
+89.5989	17	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+89.5989	17	0	setParam	name=fb value=1
+89.5989	17	0	setParam	name=downfact value=3
+89.5989	17	0	setParam	name=srate value=16000
+89.5989	17	0	setParam	name=framelen value=32
+89.5989	17	0	setParam	name=ndelay value=5
+89.5989	17	0	setParam	name=nwin value=1
+89.5989	17	0	setParam	name=nlpc value=15
+89.5989	17	0	setParam	name=nfmts value=2
+89.5989	17	0	setParam	name=ntracks value=4
+89.5989	17	0	setParam	name=scale value=0.795271
+89.5989	17	0	setParam	name=preemp value=0.98
+89.5989	17	0	setParam	name=rmsthr value=0.011354
+89.5989	17	0	setParam	name=rmsratio value=0.7
+89.5989	17	0	setParam	name=rmsff value=0.95
+89.5989	17	0	setParam	name=dfmtsff value=0.93
+89.5989	17	0	setParam	name=bgainadapt value=0
+89.5989	17	0	setParam	name=bshift value=1
+89.5989	17	0	setParam	name=btrack value=1
+89.5989	17	0	setParam	name=bdetect value=1
+89.5989	17	0	setParam	name=avglen value=8
+89.5989	17	0	setParam	name=bweight value=1
+89.5989	17	0	setParam	name=minvowellen value=60
+89.5989	17	0	setParam	name=bratioshift value=0
+89.5989	17	0	setParam	name=bmelshift value=1
+89.5989	17	0	setParam	name=bcepslift value=0
+89.5989	17	0	setParam	name=cepswinwidth value=30
+89.5989	17	0	setParam	name=bbypassfmt value=0
+89.5989	17	0	setParam	name=f2min value=0
+89.5989	17	0	setParam	name=f2max value=5000
+89.5989	17	0	setParam	name=f1min value=0
+89.5989	17	0	setParam	name=f1max value=5000
+89.5989	17	0	setParam	name=lbk value=0
+89.5989	17	0	setParam	name=lbb value=0
+89.5989	17	0	setParam	name=pertf1 value=[257 x 0]
+89.5989	17	0	setParam	name=pertf2 value=[257 x 0]
+89.5989	17	0	setParam	name=pertamp value=[257 x 0]
+89.5989	17	0	setParam	name=pertphi value=[257 x 0]
+89.5989	17	0	setParam	name=pertamp2d value=[66049 x 0]
+89.5989	17	0	setParam	name=pertphi2d value=[66049 x 0]
+89.5989	17	0	setParam	name=fb value=1
+89.5989	17	0	setParam	name=nfb value=1
+89.5989	17	0	setParam	name=triallen value=0
+89.5989	17	0	setParam	name=ramplen value=0
+89.5989	17	0	setParam	name=afact value=1
+89.5989	17	0	setParam	name=bfact value=0.8
+89.5989	17	0	setParam	name=gfact value=1
+89.5989	17	0	setParam	name=fn1 value=675
+89.5989	17	0	setParam	name=fn2 value=1392
+89.5989	17	0	setParam	name=fb2gain value=0.16
+89.5989	17	0	setParam	name=fb3gain value=0.02
+89.5989	17	0	setParam	name=fb4gaindb value=10
+89.5989	17	0	setParam	name=fb5gaindb_speech value=0
+89.5989	17	0	setParam	name=fb5gain_playback value=1
+89.5989	17	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+89.5989	17	0	setParam	name=bpitchshift value=0
+89.5989	17	0	setParam	name=bshift2d value=0
+89.5989	17	0	setParam	name=pitchshiftratio value=1
+89.5989	17	0	setParam	name=pvocframelen value=256
+89.5989	17	0	setParam	name=pvochop value=64
+89.5989	17	0	setParam	name=bdownsampfilt value=1
+89.5989	17	0	setParam	name=stereomode value=1
+89.5989	17	0	setParam	name=delayFrames value=0
+89.5989	17	0	setParam	name=btimedomainshift value=0
+89.5989	17	0	setParam	name=pitchlowerboundhz value=0
+89.5989	17	0	setParam	name=pitchupperboundhz value=0
+89.5989	17	0	setParam	name=timedomainpitchshiftschedule value=1
+89.5989	17	0	setParam	name=timedomainpitchshiftalgorithm value=0
+89.5989	17	0	setParam	name=bclampformants value=0
+89.5989	17	0	setParam	name=clamposts value=[0 0]
+89.5989	17	0	setParam	name=clampf1 value=[2048 x 0]
+89.5989	17	0	setParam	name=clampf2 value=[2048 x 0]
+89.5989	17	0	reset	
+89.5989	17	0	start	
+91.3989	18	1	stop	
+91.3989	18	0	getData	
+91.3989	18	0	dbstop-ignored	args=if error
+91.3989	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	dbstop-ignored	args=if error
+92.8117	18	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+92.8117	18	0	setParam	name=fb value=3
+92.8117	18	0	setParam	name=downfact value=3
+92.8117	18	0	setParam	name=srate value=16000
+92.8117	18	0	setParam	name=framelen value=32
+92.8117	18	0	setParam	name=ndelay value=5
+92.8117	18	0	setParam	name=nwin value=1
+92.8117	18	0	setParam	name=nlpc value=15
+92.8117	18	0	setParam	name=nfmts value=2
+92.8117	18	0	setParam	name=ntracks value=4
+92.8117	18	0	setParam	name=scale value=0.795271
+92.8117	18	0	setParam	name=preemp value=0.98
+92.8117	18	0	setParam	name=rmsthr value=0.011354
+92.8117	18	0	setParam	name=rmsratio value=0.7
+92.8117	18	0	setParam	name=rmsff value=0.95
+92.8117	18	0	setParam	name=dfmtsff value=0.93
+92.8117	18	0	setParam	name=bgainadapt value=0
+92.8117	18	0	setParam	name=bshift value=1
+92.8117	18	0	setParam	name=btrack value=1
+92.8117	18	0	setParam	name=bdetect value=1
+92.8117	18	0	setParam	name=avglen value=8
+92.8117	18	0	setParam	name=bweight value=1
+92.8117	18	0	setParam	name=minvowellen value=60
+92.8117	18	0	setParam	name=bratioshift value=0
+92.8117	18	0	setParam	name=bmelshift value=1
+92.8117	18	0	setParam	name=bcepslift value=0
+92.8117	18	0	setParam	name=cepswinwidth value=30
+92.8117	18	0	setParam	name=bbypassfmt value=0
+92.8117	18	0	setParam	name=f2min value=0
+92.8117	18	0	setParam	name=f2max value=5000
+92.8117	18	0	setParam	name=f1min value=0
+92.8117	18	0	setParam	name=f1max value=5000
+92.8117	18	0	setParam	name=lbk value=0
+92.8117	18	0	setParam	name=lbb value=0
+92.8117	18	0	setParam	name=pertf1 value=[257 x 0]
+92.8117	18	0	setParam	name=pertf2 value=[257 x 0]
+92.8117	18	0	setParam	name=pertamp value=[257 x 0]
+92.8117	18	0	setParam	name=pertphi value=[257 x 0]
+92.8117	18	0	setParam	name=pertamp2d value=[66049 x 0]
+92.8117	18	0	setParam	name=pertphi2d value=[66049 x 0]
+92.8117	18	0	setParam	name=fb value=3
+92.8117	18	0	setParam	name=nfb value=1
+92.8117	18	0	setParam	name=triallen value=0
+92.8117	18	0	setParam	name=ramplen value=0
+92.8117	18	0	setParam	name=afact value=1
+92.8117	18	0	setParam	name=bfact value=0.8
+92.8117	18	0	setParam	name=gfact value=1
+92.8117	18	0	setParam	name=fn1 value=675
+92.8117	18	0	setParam	name=fn2 value=1392
+92.8117	18	0	setParam	name=fb2gain value=0.16
+92.8117	18	0	setParam	name=fb3gain value=0.02
+92.8117	18	0	setParam	name=fb4gaindb value=10
+92.8117	18	0	setParam	name=fb5gaindb_speech value=0
+92.8117	18	0	setParam	name=fb5gain_playback value=1
+92.8117	18	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+92.8117	18	0	setParam	name=bpitchshift value=0
+92.8117	18	0	setParam	name=bshift2d value=0
+92.8117	18	0	setParam	name=pitchshiftratio value=1
+92.8117	18	0	setParam	name=pvocframelen value=256
+92.8117	18	0	setParam	name=pvochop value=64
+92.8117	18	0	setParam	name=bdownsampfilt value=1
+92.8117	18	0	setParam	name=stereomode value=1
+92.8117	18	0	setParam	name=delayFrames value=0
+92.8117	18	0	setParam	name=btimedomainshift value=0
+92.8117	18	0	setParam	name=pitchlowerboundhz value=0
+92.8117	18	0	setParam	name=pitchupperboundhz value=0
+92.8117	18	0	setParam	name=timedomainpitchshiftschedule value=1
+92.8117	18	0	setParam	name=timedomainpitchshiftalgorithm value=0
+92.8117	18	0	setParam	name=bclampformants value=0
+92.8117	18	0	setParam	name=clamposts value=[0 0]
+92.8117	18	0	setParam	name=clampf1 value=[2048 x 0]
+92.8117	18	0	setParam	name=clampf2 value=[2048 x 0]
+92.8117	18	0	reset	
+92.8117	18	0	start	
+94.6117	19	1	stop	
+94.6117	19	0	getData	
+94.6117	19	0	dbstop-ignored	args=if error
+94.6117	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	dbstop-ignored	args=if error
+96.0361	19	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+96.0361	19	0	setParam	name=fb value=3
+96.0361	19	0	setParam	name=downfact value=3
+96.0361	19	0	setParam	name=srate value=16000
+96.0361	19	0	setParam	name=framelen value=32
+96.0361	19	0	setParam	name=ndelay value=5
+96.0361	19	0	setParam	name=nwin value=1
+96.0361	19	0	setParam	name=nlpc value=15
+96.0361	19	0	setParam	name=nfmts value=2
+96.0361	19	0	setParam	name=ntracks value=4
+96.0361	19	0	setParam	name=scale value=0.795271
+96.0361	19	0	setParam	name=preemp value=0.98
+96.0361	19	0	setParam	name=rmsthr value=0.011354
+96.0361	19	0	setParam	name=rmsratio value=0.7
+96.0361	19	0	setParam	name=rmsff value=0.95
+96.0361	19	0	setParam	name=dfmtsff value=0.93
+96.0361	19	0	setParam	name=bgainadapt value=0
+96.0361	19	0	setParam	name=bshift value=1
+96.0361	19	0	setParam	name=btrack value=1
+96.0361	19	0	setParam	name=bdetect value=1
+96.0361	19	0	setParam	name=avglen value=8
+96.0361	19	0	setParam	name=bweight value=1
+96.0361	19	0	setParam	name=minvowellen value=60
+96.0361	19	0	setParam	name=bratioshift value=0
+96.0361	19	0	setParam	name=bmelshift value=1
+96.0361	19	0	setParam	name=bcepslift value=0
+96.0361	19	0	setParam	name=cepswinwidth value=30
+96.0361	19	0	setParam	name=bbypassfmt value=0
+96.0361	19	0	setParam	name=f2min value=0
+96.0361	19	0	setParam	name=f2max value=5000
+96.0361	19	0	setParam	name=f1min value=0
+96.0361	19	0	setParam	name=f1max value=5000
+96.0361	19	0	setParam	name=lbk value=0
+96.0361	19	0	setParam	name=lbb value=0
+96.0361	19	0	setParam	name=pertf1 value=[257 x 0]
+96.0361	19	0	setParam	name=pertf2 value=[257 x 0]
+96.0361	19	0	setParam	name=pertamp value=[257 x 0]
+96.0361	19	0	setParam	name=pertphi value=[257 x 0]
+96.0361	19	0	setParam	name=pertamp2d value=[66049 x 0]
+96.0361	19	0	setParam	name=pertphi2d value=[66049 x 0]
+96.0361	19	0	setParam	name=fb value=3
+96.0361	19	0	setParam	name=nfb value=1
+96.0361	19	0	setParam	name=triallen value=0
+96.0361	19	0	setParam	name=ramplen value=0
+96.0361	19	0	setParam	name=afact value=1
+96.0361	19	0	setParam	name=bfact value=0.8
+96.0361	19	0	setParam	name=gfact value=1
+96.0361	19	0	setParam	name=fn1 value=675
+96.0361	19	0	setParam	name=fn2 value=1392
+96.0361	19	0	setParam	name=fb2gain value=0.16
+96.0361	19	0	setParam	name=fb3gain value=0.02
+96.0361	19	0	setParam	name=fb4gaindb value=10
+96.0361	19	0	setParam	name=fb5gaindb_speech value=0
+96.0361	19	0	setParam	name=fb5gain_playback value=1
+96.0361	19	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+96.0361	19	0	setParam	name=bpitchshift value=0
+96.0361	19	0	setParam	name=bshift2d value=0
+96.0361	19	0	setParam	name=pitchshiftratio value=1
+96.0361	19	0	setParam	name=pvocframelen value=256
+96.0361	19	0	setParam	name=pvochop value=64
+96.0361	19	0	setParam	name=bdownsampfilt value=1
+96.0361	19	0	setParam	name=stereomode value=1
+96.0361	19	0	setParam	name=delayFrames value=0
+96.0361	19	0	setParam	name=btimedomainshift value=0
+96.0361	19	0	setParam	name=pitchlowerboundhz value=0
+96.0361	19	0	setParam	name=pitchupperboundhz value=0
+96.0361	19	0	setParam	name=timedomainpitchshiftschedule value=1
+96.0361	19	0	setParam	name=timedomainpitchshiftalgorithm value=0
+96.0361	19	0	setParam	name=bclampformants value=0
+96.0361	19	0	setParam	name=clamposts value=[0 0]
+96.0361	19	0	setParam	name=clampf1 value=[2048 x 0]
+96.0361	19	0	setParam	name=clampf2 value=[2048 x 0]
+96.0361	19	0	reset	
+96.0361	19	0	start	
+97.8361	20	1	stop	
+97.8361	20	0	getData	
+97.8361	20	0	dbstop-ignored	args=if error
+97.8361	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	dbstop-ignored	args=if error
+99.3356	20	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+99.3356	20	0	setParam	name=fb value=3
+99.3356	20	0	setParam	name=downfact value=3
+99.3356	20	0	setParam	name=srate value=16000
+99.3356	20	0	setParam	name=framelen value=32
+99.3356	20	0	setParam	name=ndelay value=5
+99.3356	20	0	setParam	name=nwin value=1
+99.3356	20	0	setParam	name=nlpc value=15
+99.3356	20	0	setParam	name=nfmts value=2
+99.3356	20	0	setParam	name=ntracks value=4
+99.3356	20	0	setParam	name=scale value=0.795271
+99.3356	20	0	setParam	name=preemp value=0.98
+99.3356	20	0	setParam	name=rmsthr value=0.011354
+99.3356	20	0	setParam	name=rmsratio value=0.7
+99.3356	20	0	setParam	name=rmsff value=0.95
+99.3356	20	0	setParam	name=dfmtsff value=0.93
+99.3356	20	0	setParam	name=bgainadapt value=0
+99.3356	20	0	setParam	name=bshift value=1
+99.3356	20	0	setParam	name=btrack value=1
+99.3356	20	0	setParam	name=bdetect value=1
+99.3356	20	0	setParam	name=avglen value=8
+99.3356	20	0	setParam	name=bweight value=1
+99.3356	20	0	setParam	name=minvowellen value=60
+99.3356	20	0	setParam	name=bratioshift value=0
+99.3356	20	0	setParam	name=bmelshift value=1
+99.3356	20	0	setParam	name=bcepslift value=0
+99.3356	20	0	setParam	name=cepswinwidth value=30
+99.3356	20	0	setParam	name=bbypassfmt value=0
+99.3356	20	0	setParam	name=f2min value=0
+99.3356	20	0	setParam	name=f2max value=5000
+99.3356	20	0	setParam	name=f1min value=0
+99.3356	20	0	setParam	name=f1max value=5000
+99.3356	20	0	setParam	name=lbk value=0
+99.3356	20	0	setParam	name=lbb value=0
+99.3356	20	0	setParam	name=pertf1 value=[257 x 0]
+99.3356	20	0	setParam	name=pertf2 value=[257 x 0]
+99.3356	20	0	setParam	name=pertamp value=[257 x 0]
+99.3356	20	0	setParam	name=pertphi value=[257 x 0]
+99.3356	20	0	setParam	name=pertamp2d value=[66049 x 0]
+99.3356	20	0	setParam	name=pertphi2d value=[66049 x 0]
+99.3356	20	0	setParam	name=fb value=3
+99.3356	20	0	setParam	name=nfb value=1
+99.3356	20	0	setParam	name=triallen value=0
+99.3356	20	0	setParam	name=ramplen value=0
+99.3356	20	0	setParam	name=afact value=1
+99.3356	20	0	setParam	name=bfact value=0.8
+99.3356	20	0	setParam	name=gfact value=1
+99.3356	20	0	setParam	name=fn1 value=675
+99.3356	20	0	setParam	name=fn2 value=1392
+99.3356	20	0	setParam	name=fb2gain value=0.16
+99.3356	20	0	setParam	name=fb3gain value=0.02
+99.3356	20	0	setParam	name=fb4gaindb value=10
+99.3356	20	0	setParam	name=fb5gaindb_speech value=0
+99.3356	20	0	setParam	name=fb5gain_playback value=1
+99.3356	20	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+99.3356	20	0	setParam	name=bpitchshift value=0
+99.3356	20	0	setParam	name=bshift2d value=0
+99.3356	20	0	setParam	name=pitchshiftratio value=1
+99.3356	20	0	setParam	name=pvocframelen value=256
+99.3356	20	0	setParam	name=pvochop value=64
+99.3356	20	0	setParam	name=bdownsampfilt value=1
+99.3356	20	0	setParam	name=stereomode value=1
+99.3356	20	0	setParam	name=delayFrames value=0
+99.3356	20	0	setParam	name=btimedomainshift value=0
+99.3356	20	0	setParam	name=pitchlowerboundhz value=0
+99.3356	20	0	setParam	name=pitchupperboundhz value=0
+99.3356	20	0	setParam	name=timedomainpitchshiftschedule value=1
+99.3356	20	0	setParam	name=timedomainpitchshiftalgorithm value=0
+99.3356	20	0	setParam	name=bclampformants value=0
+99.3356	20	0	setParam	name=clamposts value=[0 0]
+99.3356	20	0	setParam	name=clampf1 value=[2048 x 0]
+99.3356	20	0	setParam	name=clampf2 value=[2048 x 0]
+99.3356	20	0	reset	
+99.3356	20	0	start	
+101.1356	21	1	stop	
+101.1356	21	0	getData	
+101.1356	21	0	dbstop-ignored	args=if error
+101.1356	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	dbstop-ignored	args=if error
+102.4459	21	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+102.4459	21	0	setParam	name=fb value=2
+102.4459	21	0	setParam	name=downfact value=3
+102.4459	21	0	setParam	name=srate value=16000
+102.4459	21	0	setParam	name=framelen value=32
+102.4459	21	0	setParam	name=ndelay value=5
+102.4459	21	0	setParam	name=nwin value=1
+102.4459	21	0	setParam	name=nlpc value=15
+102.4459	21	0	setParam	name=nfmts value=2
+102.4459	21	0	setParam	name=ntracks value=4
+102.4459	21	0	setParam	name=scale value=0.795271
+102.4459	21	0	setParam	name=preemp value=0.98
+102.4459	21	0	setParam	name=rmsthr value=0.011354
+102.4459	21	0	setParam	name=rmsratio value=0.7
+102.4459	21	0	setParam	name=rmsff value=0.95
+102.4459	21	0	setParam	name=dfmtsff value=0.93
+102.4459	21	0	setParam	name=bgainadapt value=0
+102.4459	21	0	setParam	name=bshift value=1
+102.4459	21	0	setParam	name=btrack value=1
+102.4459	21	0	setParam	name=bdetect value=1
+102.4459	21	0	setParam	name=avglen value=8
+102.4459	21	0	setParam	name=bweight value=1
+102.4459	21	0	setParam	name=minvowellen value=60
+102.4459	21	0	setParam	name=bratioshift value=0
+102.4459	21	0	setParam	name=bmelshift value=1
+102.4459	21	0	setParam	name=bcepslift value=0
+102.4459	21	0	setParam	name=cepswinwidth value=30
+102.4459	21	0	setParam	name=bbypassfmt value=0
+102.4459	21	0	setParam	name=f2min value=0
+102.4459	21	0	setParam	name=f2max value=5000
+102.4459	21	0	setParam	name=f1min value=0
+102.4459	21	0	setParam	name=f1max value=5000
+102.4459	21	0	setParam	name=lbk value=0
+102.4459	21	0	setParam	name=lbb value=0
+102.4459	21	0	setParam	name=pertf1 value=[257 x 0]
+102.4459	21	0	setParam	name=pertf2 value=[257 x 0]
+102.4459	21	0	setParam	name=pertamp value=[257 x 0]
+102.4459	21	0	setParam	name=pertphi value=[257 x 0]
+102.4459	21	0	setParam	name=pertamp2d value=[66049 x 0]
+102.4459	21	0	setParam	name=pertphi2d value=[66049 x 0]
+102.4459	21	0	setParam	name=fb value=2
+102.4459	21	0	setParam	name=nfb value=1
+102.4459	21	0	setParam	name=triallen value=0
+102.4459	21	0	setParam	name=ramplen value=0
+102.4459	21	0	setParam	name=afact value=1
+102.4459	21	0	setParam	name=bfact value=0.8
+102.4459	21	0	setParam	name=gfact value=1
+102.4459	21	0	setParam	name=fn1 value=675
+102.4459	21	0	setParam	name=fn2 value=1392
+102.4459	21	0	setParam	name=fb2gain value=0.16
+102.4459	21	0	setParam	name=fb3gain value=0.02
+102.4459	21	0	setParam	name=fb4gaindb value=10
+102.4459	21	0	setParam	name=fb5gaindb_speech value=0
+102.4459	21	0	setParam	name=fb5gain_playback value=1
+102.4459	21	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+102.4459	21	0	setParam	name=bpitchshift value=0
+102.4459	21	0	setParam	name=bshift2d value=0
+102.4459	21	0	setParam	name=pitchshiftratio value=1
+102.4459	21	0	setParam	name=pvocframelen value=256
+102.4459	21	0	setParam	name=pvochop value=64
+102.4459	21	0	setParam	name=bdownsampfilt value=1
+102.4459	21	0	setParam	name=stereomode value=1
+102.4459	21	0	setParam	name=delayFrames value=0
+102.4459	21	0	setParam	name=btimedomainshift value=0
+102.4459	21	0	setParam	name=pitchlowerboundhz value=0
+102.4459	21	0	setParam	name=pitchupperboundhz value=0
+102.4459	21	0	setParam	name=timedomainpitchshiftschedule value=1
+102.4459	21	0	setParam	name=timedomainpitchshiftalgorithm value=0
+102.4459	21	0	setParam	name=bclampformants value=0
+102.4459	21	0	setParam	name=clamposts value=[0 0]
+102.4459	21	0	setParam	name=clampf1 value=[2048 x 0]
+102.4459	21	0	setParam	name=clampf2 value=[2048 x 0]
+102.4459	21	0	reset	
+102.4459	21	0	start	
+104.2459	22	1	stop	
+104.2459	22	0	getData	
+104.2459	22	0	dbstop-ignored	args=if error
+104.2459	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	dbstop-ignored	args=if error
+105.5011	22	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+105.5011	22	0	setParam	name=fb value=2
+105.5011	22	0	setParam	name=downfact value=3
+105.5011	22	0	setParam	name=srate value=16000
+105.5011	22	0	setParam	name=framelen value=32
+105.5011	22	0	setParam	name=ndelay value=5
+105.5011	22	0	setParam	name=nwin value=1
+105.5011	22	0	setParam	name=nlpc value=15
+105.5011	22	0	setParam	name=nfmts value=2
+105.5011	22	0	setParam	name=ntracks value=4
+105.5011	22	0	setParam	name=scale value=0.795271
+105.5011	22	0	setParam	name=preemp value=0.98
+105.5011	22	0	setParam	name=rmsthr value=0.011354
+105.5011	22	0	setParam	name=rmsratio value=0.7
+105.5011	22	0	setParam	name=rmsff value=0.95
+105.5011	22	0	setParam	name=dfmtsff value=0.93
+105.5011	22	0	setParam	name=bgainadapt value=0
+105.5011	22	0	setParam	name=bshift value=1
+105.5011	22	0	setParam	name=btrack value=1
+105.5011	22	0	setParam	name=bdetect value=1
+105.5011	22	0	setParam	name=avglen value=8
+105.5011	22	0	setParam	name=bweight value=1
+105.5011	22	0	setParam	name=minvowellen value=60
+105.5011	22	0	setParam	name=bratioshift value=0
+105.5011	22	0	setParam	name=bmelshift value=1
+105.5011	22	0	setParam	name=bcepslift value=0
+105.5011	22	0	setParam	name=cepswinwidth value=30
+105.5011	22	0	setParam	name=bbypassfmt value=0
+105.5011	22	0	setParam	name=f2min value=0
+105.5011	22	0	setParam	name=f2max value=5000
+105.5011	22	0	setParam	name=f1min value=0
+105.5011	22	0	setParam	name=f1max value=5000
+105.5011	22	0	setParam	name=lbk value=0
+105.5011	22	0	setParam	name=lbb value=0
+105.5011	22	0	setParam	name=pertf1 value=[257 x 0]
+105.5011	22	0	setParam	name=pertf2 value=[257 x 0]
+105.5011	22	0	setParam	name=pertamp value=[257 x 0]
+105.5011	22	0	setParam	name=pertphi value=[257 x 0]
+105.5011	22	0	setParam	name=pertamp2d value=[66049 x 0]
+105.5011	22	0	setParam	name=pertphi2d value=[66049 x 0]
+105.5011	22	0	setParam	name=fb value=2
+105.5011	22	0	setParam	name=nfb value=1
+105.5011	22	0	setParam	name=triallen value=0
+105.5011	22	0	setParam	name=ramplen value=0
+105.5011	22	0	setParam	name=afact value=1
+105.5011	22	0	setParam	name=bfact value=0.8
+105.5011	22	0	setParam	name=gfact value=1
+105.5011	22	0	setParam	name=fn1 value=675
+105.5011	22	0	setParam	name=fn2 value=1392
+105.5011	22	0	setParam	name=fb2gain value=0.16
+105.5011	22	0	setParam	name=fb3gain value=0.02
+105.5011	22	0	setParam	name=fb4gaindb value=10
+105.5011	22	0	setParam	name=fb5gaindb_speech value=0
+105.5011	22	0	setParam	name=fb5gain_playback value=1
+105.5011	22	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+105.5011	22	0	setParam	name=bpitchshift value=0
+105.5011	22	0	setParam	name=bshift2d value=0
+105.5011	22	0	setParam	name=pitchshiftratio value=1
+105.5011	22	0	setParam	name=pvocframelen value=256
+105.5011	22	0	setParam	name=pvochop value=64
+105.5011	22	0	setParam	name=bdownsampfilt value=1
+105.5011	22	0	setParam	name=stereomode value=1
+105.5011	22	0	setParam	name=delayFrames value=0
+105.5011	22	0	setParam	name=btimedomainshift value=0
+105.5011	22	0	setParam	name=pitchlowerboundhz value=0
+105.5011	22	0	setParam	name=pitchupperboundhz value=0
+105.5011	22	0	setParam	name=timedomainpitchshiftschedule value=1
+105.5011	22	0	setParam	name=timedomainpitchshiftalgorithm value=0
+105.5011	22	0	setParam	name=bclampformants value=0
+105.5011	22	0	setParam	name=clamposts value=[0 0]
+105.5011	22	0	setParam	name=clampf1 value=[2048 x 0]
+105.5011	22	0	setParam	name=clampf2 value=[2048 x 0]
+105.5011	22	0	reset	
+105.5011	22	0	start	
+107.3011	23	1	stop	
+107.3011	23	0	getData	
+107.3011	23	0	dbstop-ignored	args=if error
+107.3011	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	dbstop-ignored	args=if error
+108.7016	23	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+108.7016	23	0	setParam	name=fb value=2
+108.7016	23	0	setParam	name=downfact value=3
+108.7016	23	0	setParam	name=srate value=16000
+108.7016	23	0	setParam	name=framelen value=32
+108.7016	23	0	setParam	name=ndelay value=5
+108.7016	23	0	setParam	name=nwin value=1
+108.7016	23	0	setParam	name=nlpc value=15
+108.7016	23	0	setParam	name=nfmts value=2
+108.7016	23	0	setParam	name=ntracks value=4
+108.7016	23	0	setParam	name=scale value=0.795271
+108.7016	23	0	setParam	name=preemp value=0.98
+108.7016	23	0	setParam	name=rmsthr value=0.011354
+108.7016	23	0	setParam	name=rmsratio value=0.7
+108.7016	23	0	setParam	name=rmsff value=0.95
+108.7016	23	0	setParam	name=dfmtsff value=0.93
+108.7016	23	0	setParam	name=bgainadapt value=0
+108.7016	23	0	setParam	name=bshift value=1
+108.7016	23	0	setParam	name=btrack value=1
+108.7016	23	0	setParam	name=bdetect value=1
+108.7016	23	0	setParam	name=avglen value=8
+108.7016	23	0	setParam	name=bweight value=1
+108.7016	23	0	setParam	name=minvowellen value=60
+108.7016	23	0	setParam	name=bratioshift value=0
+108.7016	23	0	setParam	name=bmelshift value=1
+108.7016	23	0	setParam	name=bcepslift value=0
+108.7016	23	0	setParam	name=cepswinwidth value=30
+108.7016	23	0	setParam	name=bbypassfmt value=0
+108.7016	23	0	setParam	name=f2min value=0
+108.7016	23	0	setParam	name=f2max value=5000
+108.7016	23	0	setParam	name=f1min value=0
+108.7016	23	0	setParam	name=f1max value=5000
+108.7016	23	0	setParam	name=lbk value=0
+108.7016	23	0	setParam	name=lbb value=0
+108.7016	23	0	setParam	name=pertf1 value=[257 x 0]
+108.7016	23	0	setParam	name=pertf2 value=[257 x 0]
+108.7016	23	0	setParam	name=pertamp value=[257 x 0]
+108.7016	23	0	setParam	name=pertphi value=[257 x 0]
+108.7016	23	0	setParam	name=pertamp2d value=[66049 x 0]
+108.7016	23	0	setParam	name=pertphi2d value=[66049 x 0]
+108.7016	23	0	setParam	name=fb value=2
+108.7016	23	0	setParam	name=nfb value=1
+108.7016	23	0	setParam	name=triallen value=0
+108.7016	23	0	setParam	name=ramplen value=0
+108.7016	23	0	setParam	name=afact value=1
+108.7016	23	0	setParam	name=bfact value=0.8
+108.7016	23	0	setParam	name=gfact value=1
+108.7016	23	0	setParam	name=fn1 value=675
+108.7016	23	0	setParam	name=fn2 value=1392
+108.7016	23	0	setParam	name=fb2gain value=0.16
+108.7016	23	0	setParam	name=fb3gain value=0.02
+108.7016	23	0	setParam	name=fb4gaindb value=10
+108.7016	23	0	setParam	name=fb5gaindb_speech value=0
+108.7016	23	0	setParam	name=fb5gain_playback value=1
+108.7016	23	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+108.7016	23	0	setParam	name=bpitchshift value=0
+108.7016	23	0	setParam	name=bshift2d value=0
+108.7016	23	0	setParam	name=pitchshiftratio value=1
+108.7016	23	0	setParam	name=pvocframelen value=256
+108.7016	23	0	setParam	name=pvochop value=64
+108.7016	23	0	setParam	name=bdownsampfilt value=1
+108.7016	23	0	setParam	name=stereomode value=1
+108.7016	23	0	setParam	name=delayFrames value=0
+108.7016	23	0	setParam	name=btimedomainshift value=0
+108.7016	23	0	setParam	name=pitchlowerboundhz value=0
+108.7016	23	0	setParam	name=pitchupperboundhz value=0
+108.7016	23	0	setParam	name=timedomainpitchshiftschedule value=1
+108.7016	23	0	setParam	name=timedomainpitchshiftalgorithm value=0
+108.7016	23	0	setParam	name=bclampformants value=0
+108.7016	23	0	setParam	name=clamposts value=[0 0]
+108.7016	23	0	setParam	name=clampf1 value=[2048 x 0]
+108.7016	23	0	setParam	name=clampf2 value=[2048 x 0]
+108.7016	23	0	reset	
+108.7016	23	0	start	
+110.5016	24	1	stop	
+110.5016	24	0	getData	
+110.5016	24	0	dbstop-ignored	args=if error
+110.5016	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	dbstop-ignored	args=if error
+111.8641	24	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+111.8641	24	0	setParam	name=fb value=2
+111.8641	24	0	setParam	name=downfact value=3
+111.8641	24	0	setParam	name=srate value=16000
+111.8641	24	0	setParam	name=framelen value=32
+111.8641	24	0	setParam	name=ndelay value=5
+111.8641	24	0	setParam	name=nwin value=1
+111.8641	24	0	setParam	name=nlpc value=15
+111.8641	24	0	setParam	name=nfmts value=2
+111.8641	24	0	setParam	name=ntracks value=4
+111.8641	24	0	setParam	name=scale value=0.795271
+111.8641	24	0	setParam	name=preemp value=0.98
+111.8641	24	0	setParam	name=rmsthr value=0.011354
+111.8641	24	0	setParam	name=rmsratio value=0.7
+111.8641	24	0	setParam	name=rmsff value=0.95
+111.8641	24	0	setParam	name=dfmtsff value=0.93
+111.8641	24	0	setParam	name=bgainadapt value=0
+111.8641	24	0	setParam	name=bshift value=1
+111.8641	24	0	setParam	name=btrack value=1
+111.8641	24	0	setParam	name=bdetect value=1
+111.8641	24	0	setParam	name=avglen value=8
+111.8641	24	0	setParam	name=bweight value=1
+111.8641	24	0	setParam	name=minvowellen value=60
+111.8641	24	0	setParam	name=bratioshift value=0
+111.8641	24	0	setParam	name=bmelshift value=1
+111.8641	24	0	setParam	name=bcepslift value=0
+111.8641	24	0	setParam	name=cepswinwidth value=30
+111.8641	24	0	setParam	name=bbypassfmt value=0
+111.8641	24	0	setParam	name=f2min value=0
+111.8641	24	0	setParam	name=f2max value=5000
+111.8641	24	0	setParam	name=f1min value=0
+111.8641	24	0	setParam	name=f1max value=5000
+111.8641	24	0	setParam	name=lbk value=0
+111.8641	24	0	setParam	name=lbb value=0
+111.8641	24	0	setParam	name=pertf1 value=[257 x 0]
+111.8641	24	0	setParam	name=pertf2 value=[257 x 0]
+111.8641	24	0	setParam	name=pertamp value=[257 x 0]
+111.8641	24	0	setParam	name=pertphi value=[257 x 0]
+111.8641	24	0	setParam	name=pertamp2d value=[66049 x 0]
+111.8641	24	0	setParam	name=pertphi2d value=[66049 x 0]
+111.8641	24	0	setParam	name=fb value=2
+111.8641	24	0	setParam	name=nfb value=1
+111.8641	24	0	setParam	name=triallen value=0
+111.8641	24	0	setParam	name=ramplen value=0
+111.8641	24	0	setParam	name=afact value=1
+111.8641	24	0	setParam	name=bfact value=0.8
+111.8641	24	0	setParam	name=gfact value=1
+111.8641	24	0	setParam	name=fn1 value=675
+111.8641	24	0	setParam	name=fn2 value=1392
+111.8641	24	0	setParam	name=fb2gain value=0.16
+111.8641	24	0	setParam	name=fb3gain value=0.02
+111.8641	24	0	setParam	name=fb4gaindb value=10
+111.8641	24	0	setParam	name=fb5gaindb_speech value=0
+111.8641	24	0	setParam	name=fb5gain_playback value=1
+111.8641	24	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+111.8641	24	0	setParam	name=bpitchshift value=0
+111.8641	24	0	setParam	name=bshift2d value=0
+111.8641	24	0	setParam	name=pitchshiftratio value=1
+111.8641	24	0	setParam	name=pvocframelen value=256
+111.8641	24	0	setParam	name=pvochop value=64
+111.8641	24	0	setParam	name=bdownsampfilt value=1
+111.8641	24	0	setParam	name=stereomode value=1
+111.8641	24	0	setParam	name=delayFrames value=0
+111.8641	24	0	setParam	name=btimedomainshift value=0
+111.8641	24	0	setParam	name=pitchlowerboundhz value=0
+111.8641	24	0	setParam	name=pitchupperboundhz value=0
+111.8641	24	0	setParam	name=timedomainpitchshiftschedule value=1
+111.8641	24	0	setParam	name=timedomainpitchshiftalgorithm value=0
+111.8641	24	0	setParam	name=bclampformants value=0
+111.8641	24	0	setParam	name=clamposts value=[0 0]
+111.8641	24	0	setParam	name=clampf1 value=[2048 x 0]
+111.8641	24	0	setParam	name=clampf2 value=[2048 x 0]
+111.8641	24	0	reset	
+111.8641	24	0	start	
+113.6641	25	1	stop	
+113.6641	25	0	getData	
+113.6641	25	0	dbstop-ignored	args=if error
+113.6641	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	dbstop-ignored	args=if error
+114.9754	25	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+114.9754	25	0	setParam	name=fb value=2
+114.9754	25	0	setParam	name=downfact value=3
+114.9754	25	0	setParam	name=srate value=16000
+114.9754	25	0	setParam	name=framelen value=32
+114.9754	25	0	setParam	name=ndelay value=5
+114.9754	25	0	setParam	name=nwin value=1
+114.9754	25	0	setParam	name=nlpc value=15
+114.9754	25	0	setParam	name=nfmts value=2
+114.9754	25	0	setParam	name=ntracks value=4
+114.9754	25	0	setParam	name=scale value=0.795271
+114.9754	25	0	setParam	name=preemp value=0.98
+114.9754	25	0	setParam	name=rmsthr value=0.011354
+114.9754	25	0	setParam	name=rmsratio value=0.7
+114.9754	25	0	setParam	name=rmsff value=0.95
+114.9754	25	0	setParam	name=dfmtsff value=0.93
+114.9754	25	0	setParam	name=bgainadapt value=0
+114.9754	25	0	setParam	name=bshift value=1
+114.9754	25	0	setParam	name=btrack value=1
+114.9754	25	0	setParam	name=bdetect value=1
+114.9754	25	0	setParam	name=avglen value=8
+114.9754	25	0	setParam	name=bweight value=1
+114.9754	25	0	setParam	name=minvowellen value=60
+114.9754	25	0	setParam	name=bratioshift value=0
+114.9754	25	0	setParam	name=bmelshift value=1
+114.9754	25	0	setParam	name=bcepslift value=0
+114.9754	25	0	setParam	name=cepswinwidth value=30
+114.9754	25	0	setParam	name=bbypassfmt value=0
+114.9754	25	0	setParam	name=f2min value=0
+114.9754	25	0	setParam	name=f2max value=5000
+114.9754	25	0	setParam	name=f1min value=0
+114.9754	25	0	setParam	name=f1max value=5000
+114.9754	25	0	setParam	name=lbk value=0
+114.9754	25	0	setParam	name=lbb value=0
+114.9754	25	0	setParam	name=pertf1 value=[257 x 0]
+114.9754	25	0	setParam	name=pertf2 value=[257 x 0]
+114.9754	25	0	setParam	name=pertamp value=[257 x 0]
+114.9754	25	0	setParam	name=pertphi value=[257 x 0]
+114.9754	25	0	setParam	name=pertamp2d value=[66049 x 0]
+114.9754	25	0	setParam	name=pertphi2d value=[66049 x 0]
+114.9754	25	0	setParam	name=fb value=2
+114.9754	25	0	setParam	name=nfb value=1
+114.9754	25	0	setParam	name=triallen value=0
+114.9754	25	0	setParam	name=ramplen value=0
+114.9754	25	0	setParam	name=afact value=1
+114.9754	25	0	setParam	name=bfact value=0.8
+114.9754	25	0	setParam	name=gfact value=1
+114.9754	25	0	setParam	name=fn1 value=675
+114.9754	25	0	setParam	name=fn2 value=1392
+114.9754	25	0	setParam	name=fb2gain value=0.16
+114.9754	25	0	setParam	name=fb3gain value=0.02
+114.9754	25	0	setParam	name=fb4gaindb value=10
+114.9754	25	0	setParam	name=fb5gaindb_speech value=0
+114.9754	25	0	setParam	name=fb5gain_playback value=1
+114.9754	25	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+114.9754	25	0	setParam	name=bpitchshift value=0
+114.9754	25	0	setParam	name=bshift2d value=0
+114.9754	25	0	setParam	name=pitchshiftratio value=1
+114.9754	25	0	setParam	name=pvocframelen value=256
+114.9754	25	0	setParam	name=pvochop value=64
+114.9754	25	0	setParam	name=bdownsampfilt value=1
+114.9754	25	0	setParam	name=stereomode value=1
+114.9754	25	0	setParam	name=delayFrames value=0
+114.9754	25	0	setParam	name=btimedomainshift value=0
+114.9754	25	0	setParam	name=pitchlowerboundhz value=0
+114.9754	25	0	setParam	name=pitchupperboundhz value=0
+114.9754	25	0	setParam	name=timedomainpitchshiftschedule value=1
+114.9754	25	0	setParam	name=timedomainpitchshiftalgorithm value=0
+114.9754	25	0	setParam	name=bclampformants value=0
+114.9754	25	0	setParam	name=clamposts value=[0 0]
+114.9754	25	0	setParam	name=clampf1 value=[2048 x 0]
+114.9754	25	0	setParam	name=clampf2 value=[2048 x 0]
+114.9754	25	0	reset	
+114.9754	25	0	start	
+116.7754	26	1	stop	
+116.7754	26	0	getData	
+116.7754	26	0	dbstop-ignored	args=if error
+116.7754	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	dbstop-ignored	args=if error
+118.2218	26	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+118.2218	26	0	setParam	name=fb value=2
+118.2218	26	0	setParam	name=downfact value=3
+118.2218	26	0	setParam	name=srate value=16000
+118.2218	26	0	setParam	name=framelen value=32
+118.2218	26	0	setParam	name=ndelay value=5
+118.2218	26	0	setParam	name=nwin value=1
+118.2218	26	0	setParam	name=nlpc value=15
+118.2218	26	0	setParam	name=nfmts value=2
+118.2218	26	0	setParam	name=ntracks value=4
+118.2218	26	0	setParam	name=scale value=0.795271
+118.2218	26	0	setParam	name=preemp value=0.98
+118.2218	26	0	setParam	name=rmsthr value=0.011354
+118.2218	26	0	setParam	name=rmsratio value=0.7
+118.2218	26	0	setParam	name=rmsff value=0.95
+118.2218	26	0	setParam	name=dfmtsff value=0.93
+118.2218	26	0	setParam	name=bgainadapt value=0
+118.2218	26	0	setParam	name=bshift value=1
+118.2218	26	0	setParam	name=btrack value=1
+118.2218	26	0	setParam	name=bdetect value=1
+118.2218	26	0	setParam	name=avglen value=8
+118.2218	26	0	setParam	name=bweight value=1
+118.2218	26	0	setParam	name=minvowellen value=60
+118.2218	26	0	setParam	name=bratioshift value=0
+118.2218	26	0	setParam	name=bmelshift value=1
+118.2218	26	0	setParam	name=bcepslift value=0
+118.2218	26	0	setParam	name=cepswinwidth value=30
+118.2218	26	0	setParam	name=bbypassfmt value=0
+118.2218	26	0	setParam	name=f2min value=0
+118.2218	26	0	setParam	name=f2max value=5000
+118.2218	26	0	setParam	name=f1min value=0
+118.2218	26	0	setParam	name=f1max value=5000
+118.2218	26	0	setParam	name=lbk value=0
+118.2218	26	0	setParam	name=lbb value=0
+118.2218	26	0	setParam	name=pertf1 value=[257 x 0]
+118.2218	26	0	setParam	name=pertf2 value=[257 x 0]
+118.2218	26	0	setParam	name=pertamp value=[257 x 0]
+118.2218	26	0	setParam	name=pertphi value=[257 x 0]
+118.2218	26	0	setParam	name=pertamp2d value=[66049 x 0]
+118.2218	26	0	setParam	name=pertphi2d value=[66049 x 0]
+118.2218	26	0	setParam	name=fb value=2
+118.2218	26	0	setParam	name=nfb value=1
+118.2218	26	0	setParam	name=triallen value=0
+118.2218	26	0	setParam	name=ramplen value=0
+118.2218	26	0	setParam	name=afact value=1
+118.2218	26	0	setParam	name=bfact value=0.8
+118.2218	26	0	setParam	name=gfact value=1
+118.2218	26	0	setParam	name=fn1 value=675
+118.2218	26	0	setParam	name=fn2 value=1392
+118.2218	26	0	setParam	name=fb2gain value=0.16
+118.2218	26	0	setParam	name=fb3gain value=0.02
+118.2218	26	0	setParam	name=fb4gaindb value=10
+118.2218	26	0	setParam	name=fb5gaindb_speech value=0
+118.2218	26	0	setParam	name=fb5gain_playback value=1
+118.2218	26	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+118.2218	26	0	setParam	name=bpitchshift value=0
+118.2218	26	0	setParam	name=bshift2d value=0
+118.2218	26	0	setParam	name=pitchshiftratio value=1
+118.2218	26	0	setParam	name=pvocframelen value=256
+118.2218	26	0	setParam	name=pvochop value=64
+118.2218	26	0	setParam	name=bdownsampfilt value=1
+118.2218	26	0	setParam	name=stereomode value=1
+118.2218	26	0	setParam	name=delayFrames value=0
+118.2218	26	0	setParam	name=btimedomainshift value=0
+118.2218	26	0	setParam	name=pitchlowerboundhz value=0
+118.2218	26	0	setParam	name=pitchupperboundhz value=0
+118.2218	26	0	setParam	name=timedomainpitchshiftschedule value=1
+118.2218	26	0	setParam	name=timedomainpitchshiftalgorithm value=0
+118.2218	26	0	setParam	name=bclampformants value=0
+118.2218	26	0	setParam	name=clamposts value=[0 0]
+118.2218	26	0	setParam	name=clampf1 value=[2048 x 0]
+118.2218	26	0	setParam	name=clampf2 value=[2048 x 0]
+118.2218	26	0	reset	
+118.2218	26	0	start	
+120.0218	27	1	stop	
+120.0218	27	0	getData	
+120.0218	27	0	dbstop-ignored	args=if error
+120.0218	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	dbstop-ignored	args=if error
+121.4325	27	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+121.4325	27	0	setParam	name=fb value=2
+121.4325	27	0	setParam	name=downfact value=3
+121.4325	27	0	setParam	name=srate value=16000
+121.4325	27	0	setParam	name=framelen value=32
+121.4325	27	0	setParam	name=ndelay value=5
+121.4325	27	0	setParam	name=nwin value=1
+121.4325	27	0	setParam	name=nlpc value=15
+121.4325	27	0	setParam	name=nfmts value=2
+121.4325	27	0	setParam	name=ntracks value=4
+121.4325	27	0	setParam	name=scale value=0.795271
+121.4325	27	0	setParam	name=preemp value=0.98
+121.4325	27	0	setParam	name=rmsthr value=0.011354
+121.4325	27	0	setParam	name=rmsratio value=0.7
+121.4325	27	0	setParam	name=rmsff value=0.95
+121.4325	27	0	setParam	name=dfmtsff value=0.93
+121.4325	27	0	setParam	name=bgainadapt value=0
+121.4325	27	0	setParam	name=bshift value=1
+121.4325	27	0	setParam	name=btrack value=1
+121.4325	27	0	setParam	name=bdetect value=1
+121.4325	27	0	setParam	name=avglen value=8
+121.4325	27	0	setParam	name=bweight value=1
+121.4325	27	0	setParam	name=minvowellen value=60
+121.4325	27	0	setParam	name=bratioshift value=0
+121.4325	27	0	setParam	name=bmelshift value=1
+121.4325	27	0	setParam	name=bcepslift value=0
+121.4325	27	0	setParam	name=cepswinwidth value=30
+121.4325	27	0	setParam	name=bbypassfmt value=0
+121.4325	27	0	setParam	name=f2min value=0
+121.4325	27	0	setParam	name=f2max value=5000
+121.4325	27	0	setParam	name=f1min value=0
+121.4325	27	0	setParam	name=f1max value=5000
+121.4325	27	0	setParam	name=lbk value=0
+121.4325	27	0	setParam	name=lbb value=0
+121.4325	27	0	setParam	name=pertf1 value=[257 x 0]
+121.4325	27	0	setParam	name=pertf2 value=[257 x 0]
+121.4325	27	0	setParam	name=pertamp value=[257 x 0]
+121.4325	27	0	setParam	name=pertphi value=[257 x 0]
+121.4325	27	0	setParam	name=pertamp2d value=[66049 x 0]
+121.4325	27	0	setParam	name=pertphi2d value=[66049 x 0]
+121.4325	27	0	setParam	name=fb value=2
+121.4325	27	0	setParam	name=nfb value=1
+121.4325	27	0	setParam	name=triallen value=0
+121.4325	27	0	setParam	name=ramplen value=0
+121.4325	27	0	setParam	name=afact value=1
+121.4325	27	0	setParam	name=bfact value=0.8
+121.4325	27	0	setParam	name=gfact value=1
+121.4325	27	0	setParam	name=fn1 value=675
+121.4325	27	0	setParam	name=fn2 value=1392
+121.4325	27	0	setParam	name=fb2gain value=0.16
+121.4325	27	0	setParam	name=fb3gain value=0.02
+121.4325	27	0	setParam	name=fb4gaindb value=10
+121.4325	27	0	setParam	name=fb5gaindb_speech value=0
+121.4325	27	0	setParam	name=fb5gain_playback value=1
+121.4325	27	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+121.4325	27	0	setParam	name=bpitchshift value=0
+121.4325	27	0	setParam	name=bshift2d value=0
+121.4325	27	0	setParam	name=pitchshiftratio value=1
+121.4325	27	0	setParam	name=pvocframelen value=256
+121.4325	27	0	setParam	name=pvochop value=64
+121.4325	27	0	setParam	name=bdownsampfilt value=1
+121.4325	27	0	setParam	name=stereomode value=1
+121.4325	27	0	setParam	name=delayFrames value=0
+121.4325	27	0	setParam	name=btimedomainshift value=0
+121.4325	27	0	setParam	name=pitchlowerboundhz value=0
+121.4325	27	0	setParam	name=pitchupperboundhz value=0
+121.4325	27	0	setParam	name=timedomainpitchshiftschedule value=1
+121.4325	27	0	setParam	name=timedomainpitchshiftalgorithm value=0
+121.4325	27	0	setParam	name=bclampformants value=0
+121.4325	27	0	setParam	name=clamposts value=[0 0]
+121.4325	27	0	setParam	name=clampf1 value=[2048 x 0]
+121.4325	27	0	setParam	name=clampf2 value=[2048 x 0]
+121.4325	27	0	reset	
+121.4325	27	0	start	
+123.2325	28	1	stop	
+123.2325	28	0	getData	
+123.2325	28	0	dbstop-ignored	args=if error
+123.2325	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	dbstop-ignored	args=if error
+124.5681	28	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+124.5681	28	0	setParam	name=fb value=2
+124.5681	28	0	setParam	name=downfact value=3
+124.5681	28	0	setParam	name=srate value=16000
+124.5681	28	0	setParam	name=framelen value=32
+124.5681	28	0	setParam	name=ndelay value=5
+124.5681	28	0	setParam	name=nwin value=1
+124.5681	28	0	setParam	name=nlpc value=15
+124.5681	28	0	setParam	name=nfmts value=2
+124.5681	28	0	setParam	name=ntracks value=4
+124.5681	28	0	setParam	name=scale value=0.795271
+124.5681	28	0	setParam	name=preemp value=0.98
+124.5681	28	0	setParam	name=rmsthr value=0.011354
+124.5681	28	0	setParam	name=rmsratio value=0.7
+124.5681	28	0	setParam	name=rmsff value=0.95
+124.5681	28	0	setParam	name=dfmtsff value=0.93
+124.5681	28	0	setParam	name=bgainadapt value=0
+124.5681	28	0	setParam	name=bshift value=1
+124.5681	28	0	setParam	name=btrack value=1
+124.5681	28	0	setParam	name=bdetect value=1
+124.5681	28	0	setParam	name=avglen value=8
+124.5681	28	0	setParam	name=bweight value=1
+124.5681	28	0	setParam	name=minvowellen value=60
+124.5681	28	0	setParam	name=bratioshift value=0
+124.5681	28	0	setParam	name=bmelshift value=1
+124.5681	28	0	setParam	name=bcepslift value=0
+124.5681	28	0	setParam	name=cepswinwidth value=30
+124.5681	28	0	setParam	name=bbypassfmt value=0
+124.5681	28	0	setParam	name=f2min value=0
+124.5681	28	0	setParam	name=f2max value=5000
+124.5681	28	0	setParam	name=f1min value=0
+124.5681	28	0	setParam	name=f1max value=5000
+124.5681	28	0	setParam	name=lbk value=0
+124.5681	28	0	setParam	name=lbb value=0
+124.5681	28	0	setParam	name=pertf1 value=[257 x 0]
+124.5681	28	0	setParam	name=pertf2 value=[257 x 0]
+124.5681	28	0	setParam	name=pertamp value=[257 x 0]
+124.5681	28	0	setParam	name=pertphi value=[257 x 0]
+124.5681	28	0	setParam	name=pertamp2d value=[66049 x 0]
+124.5681	28	0	setParam	name=pertphi2d value=[66049 x 0]
+124.5681	28	0	setParam	name=fb value=2
+124.5681	28	0	setParam	name=nfb value=1
+124.5681	28	0	setParam	name=triallen value=0
+124.5681	28	0	setParam	name=ramplen value=0
+124.5681	28	0	setParam	name=afact value=1
+124.5681	28	0	setParam	name=bfact value=0.8
+124.5681	28	0	setParam	name=gfact value=1
+124.5681	28	0	setParam	name=fn1 value=675
+124.5681	28	0	setParam	name=fn2 value=1392
+124.5681	28	0	setParam	name=fb2gain value=0.16
+124.5681	28	0	setParam	name=fb3gain value=0.02
+124.5681	28	0	setParam	name=fb4gaindb value=10
+124.5681	28	0	setParam	name=fb5gaindb_speech value=0
+124.5681	28	0	setParam	name=fb5gain_playback value=1
+124.5681	28	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+124.5681	28	0	setParam	name=bpitchshift value=0
+124.5681	28	0	setParam	name=bshift2d value=0
+124.5681	28	0	setParam	name=pitchshiftratio value=1
+124.5681	28	0	setParam	name=pvocframelen value=256
+124.5681	28	0	setParam	name=pvochop value=64
+124.5681	28	0	setParam	name=bdownsampfilt value=1
+124.5681	28	0	setParam	name=stereomode value=1
+124.5681	28	0	setParam	name=delayFrames value=0
+124.5681	28	0	setParam	name=btimedomainshift value=0
+124.5681	28	0	setParam	name=pitchlowerboundhz value=0
+124.5681	28	0	setParam	name=pitchupperboundhz value=0
+124.5681	28	0	setParam	name=timedomainpitchshiftschedule value=1
+124.5681	28	0	setParam	name=timedomainpitchshiftalgorithm value=0
+124.5681	28	0	setParam	name=bclampformants value=0
+124.5681	28	0	setParam	name=clamposts value=[0 0]
+124.5681	28	0	setParam	name=clampf1 value=[2048 x 0]
+124.5681	28	0	setParam	name=clampf2 value=[2048 x 0]
+124.5681	28	0	reset	
+124.5681	28	0	start	
+126.3681	29	1	stop	
+126.3681	29	0	getData	
+126.3681	29	0	dbstop-ignored	args=if error
+126.3681	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	dbstop-ignored	args=if error
+127.8530	29	0	pcf	file=/w/sandbox/repos/<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf
+127.8530	29	0	setParam	name=fb value=1
+127.8530	29	0	setParam	name=downfact value=3
+127.8530	29	0	setParam	name=srate value=16000
+127.8530	29	0	setParam	name=framelen value=32
+127.8530	29	0	setParam	name=ndelay value=5
+127.8530	29	0	setParam	name=nwin value=1
+127.8530	29	0	setParam	name=nlpc value=15
+127.8530	29	0	setParam	name=nfmts value=2
+127.8530	29	0	setParam	name=ntracks value=4
+127.8530	29	0	setParam	name=scale value=0.795271
+127.8530	29	0	setParam	name=preemp value=0.98
+127.8530	29	0	setParam	name=rmsthr value=0.011354
+127.8530	29	0	setParam	name=rmsratio value=0.7
+127.8530	29	0	setParam	name=rmsff value=0.95
+127.8530	29	0	setParam	name=dfmtsff value=0.93
+127.8530	29	0	setParam	name=bgainadapt value=0
+127.8530	29	0	setParam	name=bshift value=1
+127.8530	29	0	setParam	name=btrack value=1
+127.8530	29	0	setParam	name=bdetect value=1
+127.8530	29	0	setParam	name=avglen value=8
+127.8530	29	0	setParam	name=bweight value=1
+127.8530	29	0	setParam	name=minvowellen value=60
+127.8530	29	0	setParam	name=bratioshift value=0
+127.8530	29	0	setParam	name=bmelshift value=1
+127.8530	29	0	setParam	name=bcepslift value=0
+127.8530	29	0	setParam	name=cepswinwidth value=30
+127.8530	29	0	setParam	name=bbypassfmt value=0
+127.8530	29	0	setParam	name=f2min value=0
+127.8530	29	0	setParam	name=f2max value=5000
+127.8530	29	0	setParam	name=f1min value=0
+127.8530	29	0	setParam	name=f1max value=5000
+127.8530	29	0	setParam	name=lbk value=0
+127.8530	29	0	setParam	name=lbb value=0
+127.8530	29	0	setParam	name=pertf1 value=[257 x 0]
+127.8530	29	0	setParam	name=pertf2 value=[257 x 0]
+127.8530	29	0	setParam	name=pertamp value=[257 x 0]
+127.8530	29	0	setParam	name=pertphi value=[257 x 0]
+127.8530	29	0	setParam	name=pertamp2d value=[66049 x 0]
+127.8530	29	0	setParam	name=pertphi2d value=[66049 x 0]
+127.8530	29	0	setParam	name=fb value=1
+127.8530	29	0	setParam	name=nfb value=1
+127.8530	29	0	setParam	name=triallen value=0
+127.8530	29	0	setParam	name=ramplen value=0
+127.8530	29	0	setParam	name=afact value=1
+127.8530	29	0	setParam	name=bfact value=0.8
+127.8530	29	0	setParam	name=gfact value=1
+127.8530	29	0	setParam	name=fn1 value=675
+127.8530	29	0	setParam	name=fn2 value=1392
+127.8530	29	0	setParam	name=fb2gain value=0.16
+127.8530	29	0	setParam	name=fb3gain value=0.02
+127.8530	29	0	setParam	name=fb4gaindb value=10
+127.8530	29	0	setParam	name=fb5gaindb_speech value=0
+127.8530	29	0	setParam	name=fb5gain_playback value=1
+127.8530	29	0	setParam	name=rmsff_fb value=[0.8 0.99 0.1 0.1]
+127.8530	29	0	setParam	name=bpitchshift value=0
+127.8530	29	0	setParam	name=bshift2d value=0
+127.8530	29	0	setParam	name=pitchshiftratio value=1
+127.8530	29	0	setParam	name=pvocframelen value=256
+127.8530	29	0	setParam	name=pvochop value=64
+127.8530	29	0	setParam	name=bdownsampfilt value=1
+127.8530	29	0	setParam	name=stereomode value=1
+127.8530	29	0	setParam	name=delayFrames value=0
+127.8530	29	0	setParam	name=btimedomainshift value=0
+127.8530	29	0	setParam	name=pitchlowerboundhz value=0
+127.8530	29	0	setParam	name=pitchupperboundhz value=0
+127.8530	29	0	setParam	name=timedomainpitchshiftschedule value=1
+127.8530	29	0	setParam	name=timedomainpitchshiftalgorithm value=0
+127.8530	29	0	setParam	name=bclampformants value=0
+127.8530	29	0	setParam	name=clamposts value=[0 0]
+127.8530	29	0	setParam	name=clampf1 value=[2048 x 0]
+127.8530	29	0	setParam	name=clampf2 value=[2048 x 0]
+127.8530	29	0	reset	
+127.8530	29	0	start	
+129.6530	30	1	stop	
+129.6530	30	0	getData	
+129.6530	30	0	dbstop-ignored	args=if error
+129.6530	30	0	dbstop-ignored	args=if error

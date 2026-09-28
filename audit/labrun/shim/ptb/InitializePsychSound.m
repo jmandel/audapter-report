@@ -1,0 +1,2 @@
+function InitializePsychSound(varargin)
+end

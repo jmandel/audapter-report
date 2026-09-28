@@ -1,0 +1,38 @@
+#!/bin/bash
+# labrun: run a blab experiment's real MATLAB code (entry script, runner, shared helpers; unmodified) under Octave
+# with the real Audapter MEX behind a virtual audio device. See README.md.
+#   labrun PLAN.m [OUTDIR]      run the experiment described by a plan file
+#   labrun --summary OUTDIR     recompute summary.tsv/summary.md of a finished run
+#   labrun --analyze SCRIPT.m DIR...   run an Octave analysis script; it reads the dirs from getenv('LR_DIRS') (':'-separated)
+# OUTDIR defaults to results/<plan name> next to the plan's directory (plans/ -> results/).
+# Env: LR_IMAGE (docker image, default audapter-labrun), LR_MEX (MEX build dir relative to audit/harness, default build-oct).
+set -euo pipefail
+L=$(cd "$(dirname "$0")" && pwd); ROOT=$(cd "$L/../.." && pwd)
+if [[ "${1:-}" == "--analyze" ]]; then   # run an analysis script (Octave) over existing result dirs: labrun --analyze SCRIPT.m DIR...
+  S=$(realpath "$2"); shift 2; A=(); for d in "$@"; do A+=("$(realpath "$d")"); done
+  exec docker run --rm -u $(id -u):$(id -g) -v "$ROOT":/a -e LR_DIRS="$(printf '%s:' "${A[@]}" | sed "s#$ROOT#/a#g")" ${LR_IMAGE:-audapter-labrun} octave --no-gui --norc -q --eval \
+    "pkg load signal; warning('off','all'); addpath('/a/audit/labrun/oct'); addpath('/a/audit/harness/oct','-end'); run('${S/$ROOT//a}')"
+fi
+if [[ "${1:-}" == "--summary" ]]; then   # re-run only the summary of an existing output dir
+  OUT=$(realpath "$2")
+  exec docker run --rm -u $(id -u):$(id -g) -v "$ROOT":/a:ro -v "$OUT":/o ${LR_IMAGE:-audapter-labrun} octave --no-gui --norc -q --eval \
+    "pkg load signal; warning('off','all'); addpath('/a/audit/labrun/oct'); addpath('/a/audit/harness/oct','-end'); labrun_summary('/o')"
+fi
+PLAN=$(realpath "$1"); NAME=$(basename "$PLAN" .m)
+OUT=${2:-$(dirname "$(dirname "$PLAN")")/results/$NAME}
+mkdir -p "$OUT"; OUT=$(realpath "$OUT"); rm -f "$OUT/transforms.list"
+MEXB=${LR_MEX:-build-oct}
+case "$PLAN" in "$ROOT"/*) ;; *) echo "plan must be inside $ROOT" >&2; exit 2;; esac
+RELPLAN=${PLAN#$ROOT/}
+for attempt in $(seq 1 30); do
+  rm -rf "$OUT"/{trials,plays,ost,labdata} "$OUT/run.json"
+  docker run --rm -u $(id -u):$(id -g) --tmpfs /w:rw,size=3g,exec -v "$ROOT":/a:ro -v "$OUT":/o \
+  -e LR_PLAN="/a/$RELPLAN" -e LR_OUT=/o -e LR_LIB=/a/audit/labrun -e LR_SRC=/a -e LR_WORK=/w/sandbox \
+  -e LR_MEX="/a/audit/harness/$MEXB/Audapter.mex" -e LR_HARNESS=/a/audit/harness/oct -e HOME=/w -e LR_PROFILE -e LR_FULL \
+  ${LR_IMAGE:-audapter-labrun} bash -c '(Xvfb :99 -screen 0 1920x1080x24 >/dev/null 2>&1 &) ; sleep 0.5; export DISPLAY=:99 LANG=C.UTF-8 LR_WINROOT=/w/win; mkdir -p /w/sandbox /w/win && cd /w && LD_PRELOAD=/usr/local/lib/labrun-winpath.so octave --no-gui --norc -q --eval "run(\"/a/audit/labrun/oct/labrun_main.m\")"' \
+  2>&1 | tee "$OUT/run.log" | grep -v -E '^(Action (Start|End)|[0-9.]+\s+[0-9]+\s+[01]\s)' || true
+  grep -q '"status":"retry"' "$OUT/run.json" 2>/dev/null || break
+  echo "labrun: retry $attempt after load-time transformation"
+done
+# public runs (plans under audit/labrun): keep unpublished repo names out of the text outputs
+case "$PLAN" in "$L"/*) "$L/tools/sanitize.sh" "$OUT";; esac

@@ -8,8 +8,9 @@ function varargout = Audapter(varargin)
 %                     in frames of frameLen*downFact (a fresh copy per call; finding H3).
 %     'stop'       -> the trial is closed (a partially filled frame is dropped, as a device stop would).
 %     'playWave'   -> reset + a virtual WAV_PLAYBACK device: the played samples are data_pb read by the same rule
-%                     as Audapter.cpp handleBufferWavePB (from pbCounter, wrap at maxPBSize, no gain). pbCounter is
-%                     mirrored here (0 on setParam datapb, +frameLen*downFact per processed frame in fb 2..5).
+%                     as Audapter.cpp handleBufferWavePB (from pbCounter, wrap at maxPBSize, no gain). data_pb and
+%                     pbCounter are mirrored here (getParam cannot read them): data_pb = the last setParam datapb
+%                     vector, zero after it; pbCounter 0 on setParam datapb, +frameLen*downFact per frame in fb 2..5.
 %     'playTone'   -> reset + a virtual sine generator (wgAmp*sin(2*pi*wgFreq*t), handleBufferSineGen).
 %     'playToneSeq'-> reset + recorded as an event only (tone-sequence generator not simulated).
 %     'deviceName' -> forwarded (it only stores the name); 'info' -> forwarded plus a note.
@@ -44,7 +45,7 @@ switch a
     lr_log_op(struct('op', 'setParam', 'name', nm, 'value', lr_summ(v)));
     if lr_is_running(), lr_note(sprintf('setParam %s while audio running (LIVE-2/3 territory)', nm)); end
     [varargout{1:nargout}] = AudapterReal(varargin{:});
-    if strcmpi(nm, 'datapb'), LR.pb.counter = 0; LR.pb.len = numel(v); end
+    if strcmpi(nm, 'datapb'), LR.pb.counter = 0; LR.pb.len = numel(v); LR.pb.data = double(v(:)); end   % mirror: data_pb = v, zeros after (Audapter.cpp setParam)
     if ~any(strcmp(LR.setNames, lower(nm))), LR.setNames{end+1} = lower(nm); end
   case {'ost', 'pcf'}
     fn = ''; if numel(varargin) >= 2, fn = varargin{2}; end
@@ -73,21 +74,5 @@ switch a
     args = cellfun(@lr_summ, varargin(2:end), 'UniformOutput', false);
     lr_log_op(struct('op', a, 'args', {args}));
     [varargout{1:nargout}] = AudapterReal(varargin{:});
-end
-end
-
-function c = lr_caller_ctx()
-% What the lab script had in scope when it started the trial (read-only): its parameter struct (p / params),
-% expt, and the trial-index variable. Used for the intended-vs-actual parameter diff and to pick the input.
-% (Nested evalin: this subfunction's caller is Audapter.m; the lab script is one level further up.)
-c = struct();
-names = {'p', 'params', 'expt', 'itrial', 'trial_index', 'iTrial', 'trialInd', 'trialNum', 'thisTrial', 'trial', 'i', 'ii', 'k', 'n'};
-for j = 1:numel(names)
-  try
-    if evalin('caller', sprintf('evalin(''caller'', ''exist(%s, var) == 1'')', names{j}))
-      c.(names{j}) = evalin('caller', sprintf('evalin(''caller'', ''%s'')', names{j}));
-    end
-  catch
-  end
 end
 end

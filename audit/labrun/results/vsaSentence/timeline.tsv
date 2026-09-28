@@ -1,0 +1,50 @@
+k	mode	t0	t1	pumped_s	word	cond	input
+1	proc	4.0030	5.5030	1.5000	bod	test	synth "bod" male f0=118 vowels=AA onset=0.327 dur=0.268 level=0.050
+2	proc	6.9929	8.4929	1.5000	bid	test	synth "bid" male f0=118 vowels=IH onset=0.302 dur=0.294 level=0.050
+3	proc	9.7843	11.2843	1.5000	booed	test	synth "booed" male f0=118 vowels=UW onset=0.300 dur=0.290 level=0.050
+4	proc	12.0408	13.5408	1.5000	bed	test	synth "bed" male f0=118 vowels=EH onset=0.293 dur=0.334 level=0.050
+5	proc	14.4851	15.9851	1.5000	bode	test	synth "bode" male f0=118 vowels=OW onset=0.298 dur=0.329 level=0.050
+6	proc	19.4034	20.9034	1.5000	hood	test	synth "hood" male f0=118 vowels=UH onset=0.286 dur=0.280 level=0.050
+7	proc	21.8177	23.3177	1.5000	bead	test	synth "bead" male f0=118 vowels=IY onset=0.332 dur=0.322 level=0.050
+8	proc	24.3864	25.8864	1.5000	bayed	test	synth "bayed" male f0=118 vowels=EY onset=0.302 dur=0.333 level=0.050
+9	proc	26.7373	28.2373	1.5000	bud	test	synth "bud" male f0=118 vowels=AH onset=0.271 dur=0.299 level=0.050
+10	proc	29.3655	30.8655	1.5000	bad	test	synth "bad" male f0=118 vowels=AE onset=0.315 dur=0.326 level=0.050
+11	proc	38.7717	43.2717	4.5000	It is easy to tell the depth of a well.	baseline1	synth "It is easy to tell the depth of a well." male f0=118 vowels=IH-IH-IY-IH-AA-EH-EH-EH-AA-AE-EH onset=0.288 dur=2.537 level=0.050
+12	proc	44.3045	48.8045	4.5000	The boy was there when the sun rose.	baseline1	synth "The boy was there when the sun rose." male f0=118 vowels=EH-AA-AE-EH-EH-EH-AH-AA onset=0.285 dur=1.790 level=0.050
+13	proc	49.9388	54.4388	4.5000	Help the woman get back to her feet.	baseline1	synth "Help the woman get back to her feet." male f0=118 vowels=EH-EH-AA-AE-EH-AE-AA-EH-IY onset=0.336 dur=2.131 level=0.050
+14	proc	55.7229	60.2229	4.5000	The box was thrown beside the parked truck.	baseline1	synth "The box was thrown beside the parked truck." male f0=118 vowels=EH-AA-AE-AA-EH-IH-EH-AE-EH-AH onset=0.301 dur=2.332 level=0.050
+15	proc	66.5047	68.0047	1.5000	Smoky fires lack flame and heat.	transfer1	synth "Smoky fires lack flame and heat." male f0=118 vowels=AA-IH-IH-EH-AE-AE-AE-IY onset=0.264 dur=1.890 level=0.050
+16	proc	69.1454	70.6454	1.5000	The source of the huge river is the clear spring.	transfer1	synth "The source of the huge river is the clear spring." male f0=118 vowels=EH-UW-AA-EH-AH-IH-EH-IH-EH-IY-IH onset=0.288 dur=2.593 level=0.050
+17	proc	71.8049	73.3049	1.5000	The girl at the booth sold fifty bonds.	transfer1	synth "The girl at the booth sold fifty bonds." male f0=118 vowels=EH-IH-AE-EH-UW-AA-IH-IH-AA onset=0.298 dur=2.059 level=0.050
+18	proc	74.3898	75.8898	1.5000	These days a chicken leg is a rare dish.	transfer1	synth "These days a chicken leg is a rare dish." male f0=118 vowels=EH-EY-AE-IH-EH-EH-IH-AE-AE-IH onset=0.290 dur=2.369 level=0.050
+19	proc	76.6845	78.1845	1.5000	Four hours of steady work faced us.	transfer1	synth "Four hours of steady work faced us." male f0=118 vowels=UW-UW-AA-IY-IH-AA-AE-EH-AH onset=0.258 dur=2.126 level=0.050
+20	proc	83.9556	88.4556	4.5000	Glue the sheet to the dark blue background.	baseline2	synth "Glue the sheet to the dark blue background." male f0=118 vowels=UW-EH-IY-AA-EH-AE-UW-AE-UW onset=0.265 dur=2.074 level=0.050
+21	proc	89.3353	93.8353	4.5000	The hogs were fed chopped corn and garbage.	baseline2	synth "The hogs were fed chopped corn and garbage." male f0=118 vowels=EH-AA-EH-EH-AA-EH-AA-AE-AE-AE onset=0.303 dur=2.276 level=0.050
+22	proc	94.9805	99.4805	4.5000	Four hours of steady work faced us.	baseline2	synth "Four hours of steady work faced us." male f0=118 vowels=UW-UW-AA-IY-IH-AA-AE-EH-AH onset=0.267 dur=2.129 level=0.050
+23	proc	100.3149	104.8149	4.5000	Kick the ball straight and follow through.	baseline2	synth "Kick the ball straight and follow through." male f0=118 vowels=IH-EH-AE-EY-AE-AA-AA-UW onset=0.299 dur=1.877 level=0.050
+24	proc	110.8300	112.3300	1.5000	The juice of lemons makes fine punch.	transfer2	synth "The juice of lemons makes fine punch." male f0=118 vowels=EH-AH-AA-EH-AA-AE-EH-IH-AH onset=0.327 dur=2.147 level=0.050
+25	proc	113.2573	114.7573	1.5000	The source of the huge river is the clear spring.	transfer2	synth "The source of the huge river is the clear spring." male f0=118 vowels=EH-UW-AA-EH-AH-IH-EH-IH-EH-IY-IH onset=0.274 dur=2.493 level=0.050
+26	proc	115.6678	117.1678	1.5000	The salt breeze came across from the sea.	transfer2	synth "The salt breeze came across from the sea." male f0=118 vowels=EH-AE-IY-AE-AE-AA-AA-EH-IY onset=0.257 dur=2.088 level=0.050
+27	proc	118.3510	119.8510	1.5000	Kick the ball straight and follow through.	transfer2	synth "Kick the ball straight and follow through." male f0=118 vowels=IH-EH-AE-EY-AE-AA-AA-UW onset=0.257 dur=1.902 level=0.050
+28	proc	120.7292	122.2292	1.5000	Help the woman get back to her feet.	transfer2	synth "Help the woman get back to her feet." male f0=118 vowels=EH-EH-AA-AE-EH-AE-AA-EH-IY onset=0.297 dur=2.086 level=0.050
+29	proc	128.1111	132.6111	4.5000	The birch canoe slid on the smooth planks.	ramp	synth "The birch canoe slid on the smooth planks." male f0=118 vowels=EH-IH-AE-OW-IH-AA-EH-UW-AE onset=0.309 dur=2.152 level=0.050
+30	proc	133.3879	137.8879	4.5000	It is easy to tell the depth of a well.	ramp	synth "It is easy to tell the depth of a well." male f0=118 vowels=IH-IH-IY-IH-AA-EH-EH-EH-AA-AE-EH onset=0.341 dur=2.622 level=0.050
+31	proc	139.3653	143.8653	4.5000	Glue the sheet to the dark blue background.	ramp	synth "Glue the sheet to the dark blue background." male f0=118 vowels=UW-EH-IY-AA-EH-AE-UW-AE-UW onset=0.318 dur=2.122 level=0.050
+32	proc	145.0354	149.5354	4.5000	A pot of tea helps to pass the evening.	ramp	synth "A pot of tea helps to pass the evening." male f0=118 vowels=AE-AA-AA-IY-EH-AA-AE-EH-EH-EH-IH onset=0.290 dur=2.529 level=0.050
+33	proc	155.3803	159.8803	4.5000	A large size in stockings is hard to sell.	hold	synth "A large size in stockings is hard to sell." male f0=118 vowels=AE-AE-IH-IH-AA-IH-IH-AE-AA-EH onset=0.341 dur=2.297 level=0.050
+34	proc	160.6839	165.1839	4.5000	These days a chicken leg is a rare dish.	hold	synth "These days a chicken leg is a rare dish." male f0=118 vowels=EH-EY-AE-IH-EH-EH-IH-AE-AE-IH onset=0.329 dur=2.282 level=0.050
+35	proc	166.0245	170.5245	4.5000	The hogs were fed chopped corn and garbage.	hold	synth "The hogs were fed chopped corn and garbage." male f0=118 vowels=EH-AA-EH-EH-AA-EH-AA-AE-AE-AE onset=0.323 dur=2.283 level=0.050
+36	proc	172.0049	176.5049	4.5000	The salt breeze came across from the sea.	hold	synth "The salt breeze came across from the sea." male f0=118 vowels=EH-AE-IY-AE-AE-AA-AA-EH-IY onset=0.292 dur=2.076 level=0.050
+37	proc	182.3744	183.8744	1.5000	A rod is used to catch pink salmon.	transfer3	synth "A rod is used to catch pink salmon." male f0=118 vowels=AE-AA-IH-AH-EH-AA-AE-IH-AE-AA onset=0.263 dur=2.260 level=0.050
+38	proc	185.3267	186.8267	1.5000	A rod is used to catch pink salmon.	transfer3	synth "A rod is used to catch pink salmon." male f0=118 vowels=AE-AA-IH-AH-EH-AA-AE-IH-AE-AA onset=0.265 dur=2.265 level=0.050
+39	proc	188.2262	189.7262	1.5000	Rice is often served in round bowls.	transfer3	synth "Rice is often served in round bowls." male f0=118 vowels=IH-IH-AA-EH-EH-EH-IH-UW-AA onset=0.316 dur=2.079 level=0.050
+40	proc	191.1584	192.6584	1.5000	The box was thrown beside the parked truck.	transfer3	synth "The box was thrown beside the parked truck." male f0=118 vowels=EH-AA-AE-AA-EH-IH-EH-AE-EH-AH onset=0.282 dur=2.370 level=0.050
+41	proc	194.1300	195.6300	1.5000	A pot of tea helps to pass the evening.	transfer3	synth "A pot of tea helps to pass the evening." male f0=118 vowels=AE-AA-AA-IY-EH-AA-AE-EH-EH-EH-IH onset=0.295 dur=2.598 level=0.050
+42	proc	201.5946	206.0946	4.5000	A large size in stockings is hard to sell.	washout	synth "A large size in stockings is hard to sell." male f0=118 vowels=AE-AE-IH-IH-AA-IH-IH-AE-AA-EH onset=0.277 dur=2.402 level=0.050
+43	proc	207.0077	211.5077	4.5000	Rice is often served in round bowls.	washout	synth "Rice is often served in round bowls." male f0=118 vowels=IH-IH-AA-EH-EH-EH-IH-UW-AA onset=0.341 dur=2.139 level=0.050
+44	proc	212.4472	216.9472	4.5000	The birch canoe slid on the smooth planks.	washout	synth "The birch canoe slid on the smooth planks." male f0=118 vowels=EH-IH-AE-OW-IH-AA-EH-UW-AE onset=0.327 dur=2.174 level=0.050
+45	proc	217.7474	222.2474	4.5000	Smoky fires lack flame and heat.	washout	synth "Smoky fires lack flame and heat." male f0=118 vowels=AA-IH-IH-EH-AE-AE-AE-IY onset=0.338 dur=1.931 level=0.050
+46	proc	229.0738	233.5738	4.5000	The juice of lemons makes fine punch.	retention	synth "The juice of lemons makes fine punch." male f0=118 vowels=EH-AH-AA-EH-AA-AE-EH-IH-AH onset=0.297 dur=2.115 level=0.050
+47	proc	234.3422	238.8422	4.5000	The soft cushion broke the fall.	retention	synth "The soft cushion broke the fall." male f0=118 vowels=EH-AA-AH-IH-AA-EH-AE onset=0.262 dur=1.591 level=0.050
+48	proc	239.9890	244.4890	4.5000	The girl at the booth sold fifty bonds.	retention	synth "The girl at the booth sold fifty bonds." male f0=118 vowels=EH-IH-AE-EH-UW-AA-IH-IH-AA onset=0.279 dur=2.038 level=0.050
+49	proc	245.9180	250.4180	4.5000	The soft cushion broke the fall.	retention	synth "The soft cushion broke the fall." male f0=118 vowels=EH-AA-AH-IH-AA-EH-AE onset=0.345 dur=1.645 level=0.050

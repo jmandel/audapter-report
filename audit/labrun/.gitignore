@@ -1,0 +1,7 @@
+# bulky or derived run outputs (regenerate with ./labrun); the text summaries stay tracked
+results/*/trials/
+results/*/labdata/
+results/*/audio/
+results/*/plays/
+results/*/run.log
+tools/__pycache__/

@@ -6,6 +6,7 @@ global LR
 if iscell(prompt), prompt = strjoin(prompt, ' | '); end
 prompt = char(prompt); key = regexprep(prompt, '\s+', ' ');
 LR.asked.n = LR.asked.n + 1;
+LR.kbStuck = 0; LR.lastProgress = LR.vclock;
 m = find(strcmp(LR.asked.keys, key), 1);
 if isempty(m), LR.asked.keys{end+1} = key; LR.asked.count(end+1) = 0; m = numel(LR.asked.keys); end
 LR.asked.count(m) = LR.asked.count(m) + 1; n = LR.asked.count(m);

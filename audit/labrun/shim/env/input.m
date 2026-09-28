@@ -4,7 +4,11 @@ global LR
 if isempty(LR) || ~isstruct(LR), r = builtin('input', prompt, varargin{:}); return; end
 if nargin < 1, prompt = ''; end
 isStr = numel(varargin) >= 1 && ischar(varargin{1}) && strcmpi(varargin{1}, 's');
-a = lr_ask('input', prompt, {}, '');
+d = '';
+if ~isStr   % a number is expected: with no rule, the first number the prompt offers
+  t = regexp(prompt, '\d+', 'match', 'once'); if ~isempty(t), d = t; end
+end
+a = lr_ask('input', prompt, {}, d);
 lr_advance(LR.plan.answerWait);
 if isStr, r = a; return; end
 if isempty(a), r = []; return; end

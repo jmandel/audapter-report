@@ -5,7 +5,7 @@ global LR
 op.t = LR.vclock; op.trial = LR.ntrial; op.running = lr_is_running();
 if ~isfield(op, 'op'), op.op = '?'; end
 LR.ops{end+1} = op;
-if LR.echo_ops && ~any(strcmp(op.op, {'getParam'}))
+if LR.echo_ops && LR.oplog > 0 && ~any(strcmp(op.op, {'getParam'}))
   f = setdiff(fieldnames(op), {'t', 'trial', 'running', 'op', 'text'});
   parts = {};
   for j = 1:numel(f)

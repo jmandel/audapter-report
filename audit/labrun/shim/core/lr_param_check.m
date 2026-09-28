@@ -27,6 +27,7 @@ for j = 1:numel(f)
     a = LR.pmap{m, 2};
     if any(strcmp(a, {'datapb', 'timedomainpitchshiftschedule'})), continue; end
     try, act = double(AudapterReal('getParam', a)); catch, continue; end
+    if isempty(act), continue; end                   % not readable through getParam
     if ~lr_same(double(v), act)
       diffs{end+1} = struct('kind', 'mismatch', 'field', f{j}, 'param', a, 'intended', lr_summ(double(v)), 'actual', lr_summ(act));
     end
@@ -42,7 +43,9 @@ for j = 1:numel(f)
         diffs{end+1} = struct('kind', 'not-forwarded', 'field', f{j}, 'param', a, 'intended', lr_summ(double(v)), 'actual', lr_summ(act));
       end
     else
-      diffs{end+1} = struct('kind', 'unknown', 'field', f{j}, 'param', '', 'intended', lr_summ(double(v)), 'actual', '');
+      if any(strcmp(f{j}, {'timeDomainPitchShiftSchedule', 'timeDomainPitchShiftAlgorithm'})), continue; end   % sent in a reshaped form
+      kind = 'unknown'; if any(strcmp(LR.defaultFields, f{j})), kind = 'unknown-default'; end
+      diffs{end+1} = struct('kind', kind, 'field', f{j}, 'param', '', 'intended', lr_summ(double(v)), 'actual', '');
     end
   end
 end

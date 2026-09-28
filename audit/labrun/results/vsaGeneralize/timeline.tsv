@@ -1,0 +1,23 @@
+k	mode	t0	t1	pumped_s	word	cond	input
+1	proc	6.0030	7.5030	1.5000	bod	baselineTrain	synth "bod" male f0=118 vowels=AA onset=0.327 dur=0.268 level=0.050
+2	proc	8.5607	10.0607	1.5000	booed	baselineTrain	synth "booed" male f0=118 vowels=UW onset=0.302 dur=0.294 level=0.050
+3	proc	10.8164	12.3164	1.5000	bad	baselineTrain	synth "bad" male f0=118 vowels=AE onset=0.300 dur=0.290 level=0.050
+4	proc	13.1111	14.6111	1.5000	bead	baselineTrain	synth "bead" male f0=118 vowels=IY onset=0.293 dur=0.334 level=0.050
+5	proc	22.8309	24.3309	1.5000	bid	baselineGeneralize	synth "bid" male f0=118 vowels=IH onset=0.298 dur=0.329 level=0.050
+6	proc	25.2479	26.7479	1.5000	bud	baselineGeneralize	synth "bud" male f0=118 vowels=AH onset=0.286 dur=0.280 level=0.050
+7	proc	27.7830	29.2830	1.5000	bayed	baselineGeneralize	synth "bayed" male f0=118 vowels=EY onset=0.332 dur=0.322 level=0.050
+8	proc	30.5466	32.0466	1.5000	bode	baselineGeneralize	synth "bode" male f0=118 vowels=OW onset=0.302 dur=0.333 level=0.050
+9	proc	32.9399	34.4399	1.5000	bed	baselineGeneralize	synth "bed" male f0=118 vowels=EH onset=0.271 dur=0.299 level=0.050
+10	proc	40.8608	42.3608	1.5000	bad	baselineTrain	synth "bad" male f0=118 vowels=AE onset=0.315 dur=0.326 level=0.050
+11	proc	43.6408	45.1408	1.5000	booed	baselineTrain	synth "booed" male f0=118 vowels=UW onset=0.288 dur=0.266 level=0.050
+12	proc	46.0190	47.5190	1.5000	bod	baselineTrain	synth "bod" male f0=118 vowels=AA onset=0.285 dur=0.274 level=0.050
+13	proc	48.3788	49.8788	1.5000	bead	baselineTrain	synth "bead" male f0=118 vowels=IY onset=0.336 dur=0.319 level=0.050
+14	proc	52.1167	53.6167	1.5000	bead	train	synth "bead" male f0=118 vowels=IY onset=0.301 dur=0.281 level=0.050
+15	proc	55.0715	56.5715	1.5000	bod	train	synth "bod" male f0=118 vowels=AA onset=0.264 dur=0.286 level=0.050
+16	proc	57.3960	58.8960	1.5000	booed	train	synth "booed" male f0=118 vowels=UW onset=0.288 dur=0.292 level=0.050
+17	proc	60.0352	61.5352	1.5000	bad	train	synth "bad" male f0=118 vowels=AE onset=0.298 dur=0.310 level=0.050
+18	proc	67.9205	69.4205	1.5000	bid	generalization	synth "bid" male f0=118 vowels=IH onset=0.290 dur=0.320 level=0.050
+19	proc	70.4423	71.9423	1.5000	bed	generalization	synth "bed" male f0=118 vowels=EH onset=0.258 dur=0.279 level=0.050
+20	proc	72.9246	74.4246	1.5000	bud	generalization	synth "bud" male f0=118 vowels=AH onset=0.265 dur=0.297 level=0.050
+21	proc	75.2182	76.7182	1.5000	bode	generalization	synth "bode" male f0=118 vowels=OW onset=0.303 dur=0.277 level=0.050
+22	proc	77.8759	79.3759	1.5000	bayed	generalization	synth "bayed" male f0=118 vowels=EY onset=0.267 dur=0.331 level=0.050

@@ -1,0 +1,14 @@
+k	mode	t0	t1	pumped_s	word	cond	input
+1	proc	4.0030	5.5030	1.5000	bod	baseline	synth "bod" male f0=118 vowels=AA onset=0.327 dur=0.268 level=0.050
+2	proc	6.3707	7.8707	1.5000	bad	baseline	synth "bad" male f0=118 vowels=AE onset=0.302 dur=0.294 level=0.050
+3	proc	8.7617	10.2617	1.5000	booed	baseline	synth "booed" male f0=118 vowels=UW onset=0.300 dur=0.290 level=0.050
+4	proc	11.4331	12.9331	1.5000	bead	baseline	synth "bead" male f0=118 vowels=IY onset=0.293 dur=0.334 level=0.050
+5	proc	13.8234	15.3234	1.5000	bead	baseline	synth "bead" male f0=118 vowels=IY onset=0.298 dur=0.329 level=0.050
+6	proc	16.2644	17.7644	1.5000	bod	baseline	synth "bod" male f0=118 vowels=AA onset=0.286 dur=0.280 level=0.050
+7	proc	18.9248	20.4248	1.5000	bad	baseline	synth "bad" male f0=118 vowels=AE onset=0.332 dur=0.322 level=0.050
+8	proc	21.7799	23.2799	1.5000	booed	baseline	synth "booed" male f0=118 vowels=UW onset=0.302 dur=0.333 level=0.050
+9	proc	24.4778	25.9778	1.5000	bead	baseline	synth "bead" male f0=118 vowels=IY onset=0.271 dur=0.299 level=0.050
+10	proc	26.7509	28.2509	1.5000	booed	baseline	synth "booed" male f0=118 vowels=UW onset=0.315 dur=0.326 level=0.050
+11	proc	29.2365	30.7365	1.5000	bod	baseline	synth "bod" male f0=118 vowels=AA onset=0.288 dur=0.266 level=0.050
+12	proc	33.0370	34.5370	1.5000	bod	baseline	synth "bod" male f0=118 vowels=AA onset=0.285 dur=0.274 level=0.050
+13	proc	35.5347	37.0347	1.5000	bad	baseline	synth "bad" male f0=118 vowels=AE onset=0.336 dur=0.319 level=0.050
