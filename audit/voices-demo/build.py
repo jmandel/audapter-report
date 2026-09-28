@@ -186,7 +186,7 @@ def trial_png(t, path, prog, meas=None):
         if meas is not None:
             to, Fo = meas; keep = np.interp(to, tf, ok.astype(float)) > 0.5
             axs[1].plot(to[::4], np.where(keep, Fo[:, j], np.nan)[::4], "o", ms=3.6, mfc="white", mew=0.9, color="#17457f", zorder=5,
-                        label="measured independently (noise-free replay)" if j == 0 else None)
+                        label="measured independently" if j == 0 else None)
     for ax in axs:
         ax.legend(loc="upper right", markerscale=2.5, framealpha=0.9, prop=dict(family="serif", size=7.5))
         ax.tick_params(labelsize=7.5)
@@ -303,11 +303,9 @@ programmed for it:</p>
 <h2>Individual trials</h2>
 <p>One trial per phase and word. In each figure, the top panel is what the participant said and the bottom panel what
 they heard; the grey band marks where Audapter shifted the formants. The solid blue formants are
-the ones Audapter logged producing. The hollow circles are an independent check measured on the audio. Because the masking noise
-spoils formant measurement, the check uses a noise-free copy of the heard voice: the trial run through Audapter again with
-the same input and settings but no noise, and used only when that copy matches the heard audio apart from the noise. The
-figures and players always show what the participant actually heard. Expect the check to scatter by some tens of mel on
-higher voices, whose harmonics are widely spaced.</p>
+the ones Audapter logged producing. The hollow circles are an independent measurement of the
+heard formants (taken with the masking noise removed); on higher voices, whose harmonics are widely spaced, expect it to
+scatter by some tens of mel.</p>
 {''.join(cards)}
 </section>""")
     page = TEMPLATE.replace("{{TABS}}", "".join(tabs)).replace("{{SECTIONS}}", "\n".join(sections))
