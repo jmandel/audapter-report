@@ -45,3 +45,4 @@ audit/publish/private-patterns.local
 audit/private/
 other/blab-private/
 audit/publish/private-allowed.local
+audit/voices-demo/dist/

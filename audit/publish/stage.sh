@@ -8,6 +8,8 @@ cp -r "$A/report/prototype/." "$S/"
 touch "$S/.nojekyll"
 # Playground (audit/playground, built by its build.sh into dist/): published at docs/playground/ when present.
 if [[ -d "$A/playground/dist" ]]; then mkdir -p "$S/playground"; cp -r "$A/playground/dist/." "$S/playground/"; else echo "note: audit/playground/dist not built; playground not staged"; fi
+# coAdapt run with realistic voices (audit/voices-demo/build.py writes dist/): published at docs/voices-demo/ when present.
+if [[ -d "$A/voices-demo/dist" ]]; then mkdir -p "$S/voices-demo"; cp -r "$A/voices-demo/dist/." "$S/voices-demo/"; else echo "note: audit/voices-demo/dist not built; voices demo not staged"; fi
 cp "$A/../blab/audapter_mex/LICENSE" "$S/LICENSE-audapter-apache-2.0.txt"
 cp "$A/../LICENSE" "$S/LICENSE-apache-2.0.txt"; cp "$A/../LICENSE-CC-BY-4.0.txt" "$S/"; cp "$A/../NOTICE" "$S/NOTICE.txt"
 cat > "$S/LICENSE.md" <<'MD'
