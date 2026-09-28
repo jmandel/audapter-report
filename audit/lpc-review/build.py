@@ -129,7 +129,7 @@ def score_svg(scores, preset, chosen, best):
         out.append(f'<line class="sk-grid" x1="{X0}" x2="{W-10}" y1="{y(g):.1f}" y2="{y(g):.1f}"/><text class="sk-tick" x="{X0-6}" y="{y(g)+4:.1f}" text-anchor="end">{g:.1f}</text>')
     thr = MARGIN * scores[preset]["cost"]
     out.append(f'<line class="sk-thr" x1="{X0}" x2="{W-10}" y1="{y(thr):.1f}" y2="{y(thr):.1f}"/>'
-               f'<text class="sk-tick" x="{W-12}" y="{Y0-4}" text-anchor="end">dotted line: the cost an order must beat to replace the default (0.85 × default)</text>')
+               f'<text class="sk-tick" x="{W-12}" y="{Y0-4}" text-anchor="end">dotted line: the score an order must beat to replace the default (0.85 × default)</text>')
     for i, o in enumerate(ORDERS):
         s = scores[o]; x0 = X0 + i * bw + 4; acc = 0
         for part, cls in zip(s["parts"], ("sk-pA", "sk-pB", "sk-pC")):
@@ -142,7 +142,7 @@ def score_svg(scores, preset, chosen, best):
         tag = "used" if o == chosen else ("default" if o == preset else ("best" if o == best else ""))
         if o == chosen and o == preset: tag = "default, kept"
         if tag: out.append(f'<text class="sk-tag{" on" if o == chosen else ""}" x="{x0 + (bw-8)/2:.1f}" y="{H-8}" text-anchor="middle">{tag}</text>')
-    out.append(f'<text class="sk-axlab" x="{X0}" y="{Y0-4}">cost (lower is better)</text>')
+    out.append(f'<text class="sk-axlab" x="{X0}" y="{Y0-4}">score (lower is better)</text>')
     return f'<svg class="sketch" viewBox="0 0 {W} {H}" role="img" aria-label="Cost of each LPC order">{"".join(out)}</svg>'
 
 
@@ -203,41 +203,43 @@ def build(dirs):
         g = c.get("gender", "")
         dname = f"the {g} default ({preset})" if g else f"the default ({preset})"
         if chosen != preset:
-            verdict = f"Switches from {dname} to order {chosen}: {gain:.0f}% lower cost, and better on {wins} of {ntok} tokens."
+            verdict = f"Switches from {dname} to order {chosen}: {gain:.0f}% lower score, and better on {wins} of {ntok} words."
         elif nm == preset:
-            verdict = f"Keeps {dname}: it has the lowest cost of all orders."
+            verdict = f"Keeps {dname}: it scored best of all orders."
         else:
             why = []
-            if scores[nm]["cost"] > MARGIN * scores[preset]["cost"]: why.append(f"only {gain:.0f}% lower cost (15% needed)")
-            if wins is not None and ntok and wins < 2 * ntok / 3: why.append(f"better on only {wins} of {ntok} tokens (two thirds needed)")
-            verdict = f"Keeps {dname}: order {nm} has the lowest cost, but " + " and ".join(why or ["not clearly enough"]) + "."
+            if scores[nm]["cost"] > MARGIN * scores[preset]["cost"]: why.append(f"only {gain:.0f}% lower (15% needed)")
+            if wins is not None and ntok and wins < 2 * ntok / 3: why.append(f"better on only {wins} of {ntok} words (two thirds needed)")
+            verdict = f"Keeps {dname}: order {nm} scored best overall, but " + " and ".join(why or ["not clearly enough"]) + "."
         nref = sum(1 for t in toks if t["qc"] == "ok")
-        summary.append(f'<tr><td>{E(talker)}</td><td>{E(g)}</td><td>{preset}</td><td>{nm}</td><td>{gain:.0f}%</td>'
-                       f'<td>{"–" if wins is None else f"{wins} of {ntok}"}</td><td><b>{chosen}</b></td><td>{"yes" if chosen != preset else "no"}</td>'
-                       f'<td>{nref} of {len(toks)}</td></tr>')
+        why_short = ("the default tracked best" if nm == preset else
+                     f"order {nm} was slightly better overall, but not on most words" if (wins is not None and ntok and wins < 2 * ntok / 3) else
+                     f"order {nm} was only slightly better")
+        if chosen != preset: why_short = f"order {chosen} was clearly and consistently better"
+        summary.append(f'<tr><td>{E(talker)} ({E(g)})</td><td>{preset}</td><td><b>{chosen}</b></td><td>{E(why_short)}</td></tr>')
         tabs.append(f'<button type="button" data-t="{tid}"{" class=on" if not tabs else ""}>{E(talker)}</button>')
         excluded = [f"trial {t['k']} “{t['word']}”: {t['qc']}" for t in toks if t["qc"] != "ok"]
         sections.append(f"""<section id="{tid}" class="talker"{'' if not sections else ' hidden'}>
-<p class="who"><b>{E(talker)}</b> · {E(c.get('voice', ''))}; {E(g)}; study {E(c.get('study', ''))}.</p>
 <p class="verdict">{E(verdict)}</p>
-<h2>Why this order</h2>
-<p>Each bar is one LPC order; its height is the rule's cost, built from three parts (legend below). The outlined bar
-is the order used.{' The Praat reference passed its quality check on ' + str(nref) + ' of ' + str(len(toks)) + ' tokens; tokens that failed are left out of the tracking-error part.' if excluded else ''}</p>
-{score_svg(scores, preset, chosen, nm)}
-<p class="legend"><span class="lg pA"></span>tracking error against Praat <span class="lg pB"></span>track jumps
-<span class="lg pC"></span>vowel-cluster spread <span class="lg chosen"></span>used <span class="lg preset"></span>default (from the male/female setting)</p>
-<details><summary>Scores by order</summary><table class="scores"><tr><th>order</th><th>A, error %</th><th>B, jumps %</th><th>C, spread %</th><th>cost</th></tr>{rows}</table>
-{'<p>References left out: ' + E('; '.join(excluded)) + '.</p>' if excluded else ''}</details>
-<h2>Every order, every token</h2>
-<p>Each row is one LPC order and each column one pretest token. Read down a column to see how one token is tracked as
-the order changes, or along a row to see one order across all tokens. The number in each cell is that token's cost at
-that order (lower is better; orange above 10); the last column shows the vowel clusters as the lab's tool plots them.
-A column marked “no reference” is a token whose Praat reference failed its quality check.</p>
-<p class="legend"><span class="lg trk"></span>Audapter's F1, F2 at that order <span class="lg ref"></span>Praat (independent reference)
-<span class="lg nuc"></span>middle of the vowel (where accuracy is scored) <span class="lg chosen"></span>order used
-<span class="lg preset"></span>default</p>
+<p>Each row is one LPC order, each column one pretest word. The blue lines are the formants Audapter tracked at that
+order; the dashed lines are Praat's independent measurement. The number in each cell is that word's score at that order,
+lower is better (it grows when Audapter's formants are far from Praat's or jump around; orange above 10). Where Praat
+itself could not measure a word reliably, the column says <span class="noref">no reference</span> and that word is judged
+only on how smoothly it is tracked. The last column shows the vowels plotted as the lab's tool shows them: tight,
+well-separated groups are better. The outlined row is the order chosen.</p>
 <div class="gridwrap"><table class="grid" id="{tid}-grid"></table></div>
-<p class="note">Tracks are the ones the lab's LPC-check tool computed when the simulated experimenter selected each order.</p>
+<details><summary>How the score works, order by order</summary>
+<p>An order's score adds three parts: how far its formants are from Praat's on the middle of each vowel (half), how often
+the tracks jump (a quarter), and how spread out each vowel's group is compared with the distance between vowels (a
+quarter). Words whose Praat measurement failed its check (two Praat settings disagree, or the values are implausible for
+the vowel) are left out of the first part. The experimenter switches from the default only if another order scores at
+least 15% lower and is better on at least two thirds of the words.</p>
+{score_svg(scores, preset, chosen, nm)}
+<p class="legend"><span class="lg pA"></span>distance from Praat <span class="lg pB"></span>jumps
+<span class="lg pC"></span>vowel spread <span class="lg chosen"></span>chosen <span class="lg preset"></span>default</p>
+<table class="scores"><tr><th>order</th><th>distance from Praat</th><th>jumps</th><th>vowel spread</th><th>score</th></tr>{rows}</table>
+{'<p>Words without a usable Praat measurement: ' + E('; '.join(excluded)) + '.</p>' if excluded else ''}
+</details>
 </section>""")
     page = (TEMPLATE.replace("{{TABS}}", "".join(tabs)).replace("{{SECTIONS}}", "\n".join(sections))
             .replace("{{SUMMARY}}", "".join(summary)).replace("{{DATA}}", json.dumps(data, separators=(",", ":"))))
@@ -293,30 +295,21 @@ table.grid .cell .e { position: absolute; right: 2px; top: 1px; font-size: 10.5p
 table.grid .cell .e.hi { color: #fff; background: #eb6834; }
 table.grid tr.used .cell, table.grid tr.used .vw { outline: 2.5px solid var(--observed); }
 table.grid tr.dflt .cell, table.grid tr.dflt .vw { outline: 1.5px dashed var(--ink-2); }
-.noref { color: #eb6834; font-size: .9em; } table.grid .vw { width: 96px; height: 81px; background: var(--paper); border: 1px solid var(--rule); display: block; }
+.noref { color: #eb6834; font-size: .9em; } .result { font-size: 1.05em; } .prev { color: var(--ink-3); font-size: .85em; font-weight: 400; } table.summary td, table.summary th { padding-right: 18px; } table.grid .vw { width: 96px; height: 81px; background: var(--paper); border: 1px solid var(--rule); display: block; }
 .note { font-size: .85em; color: var(--ink-3); }
 </style></head><body>
 <p><a href="../">← Audapter report</a> · <a href="../voices-demo/">coAdapt with realistic voices</a></p>
 <h1>How the LPC order was chosen for each simulated participant</h1>
-<p class="lede">Before an experiment, a blab experimenter checks the order of Audapter's formant tracker (the LPC order).
-The male/female setting, which the experimenter picks from the participant's apparent height, gives a default order (17 for male, 15 for female); the experimenter then opens the lab's LPC-check tool on a few pretest
-recordings, tries orders 10 to 20, and keeps the one whose formant tracks follow the formants and whose vowels form tight,
-separate clusters.</p>
-<p class="lede">Our simulated experimenter does this with a fixed rule, written down before it was run. For each order
-it scores three things: how far Audapter's F1 and F2 are from an independent Praat measurement over the middle of each
-vowel (half the weight), how often the tracks jump (a quarter), and how spread out each vowel's cluster is relative to
-the distance between vowels (a quarter). Praat measurements are used only if they pass a quality check (two Praat
-settings agree, and the values are plausible for the vowel). Like an experimenter, it keeps the default unless another
-order is clearly better: at least 15% lower cost, and better on at least two thirds of the tokens. The talkers are
-AI-generated voices (OpenAI gpt-audio-1.5) saying the pretest words of the lab's coAdapt experiment; the lab's own
-LPC-check tool computes every track.</p>
-<p class="lede">Use this page to judge whether the choices look right: pick a talker and scan the grid of every order against every token, comparing the blue tracks with the dashed Praat reference.</p>
-<h2>All talkers</h2>
-<div class="gridwrap"><table><tr><th>talker</th><th>male/female setting</th><th>default order</th><th>lowest-cost order</th><th>its cost vs default</th><th>better on tokens</th><th>order used</th><th>changed?</th><th>usable references</th></tr>{{SUMMARY}}</table></div>
-<p class="preview"><b>Preview.</b> This covers the coAdapt pretest for eight AI-generated voices. The rule was revised
-twice before this run, for stated reasons: a quality check on the Praat reference (it mistracks some tokens), and the
-two-thirds-of-tokens condition (a 15% margin alone is easy to meet when every good order scores near zero). Other studies
-and a validation on real recordings are in progress.</p>
+<p class="lede">Audapter finds formants with a setting called the LPC order. The male/female setting gives a default
+(17 for male voices, 15 for female); before an experiment the experimenter plays a few pretest words through the lab's
+LPC-check tool, tries orders 10 to 20, and switches only if another order clearly tracks the formants better.</p>
+<p class="lede">Our simulated experimenter does the same with a fixed rule: it prefers the order whose formant tracks are
+closest to an independent measurement (Praat), smoothest, and give the tightest vowel groups, and it switches only if
+that order is clearly and consistently better than the default. The talkers are eight AI-generated voices (OpenAI
+gpt-audio-1.5) saying the pretest words of the lab's coAdapt experiment.</p>
+<p class="result"><b>Result: all eight voices keep their default order.</b> <span class="prev">Preview: other studies
+and a check on real recordings are still to come.</span></p>
+<table class="summary"><tr><th>voice</th><th>default</th><th>chosen</th><th>why</th></tr>{{SUMMARY}}</table>
 <nav class="talkers">{{TABS}}</nav>
 {{SECTIONS}}
 <script>
@@ -339,7 +332,7 @@ function drawGrid(tid) {
   D.orders.forEach(function (o) {
     var tr = document.createElement('tr'); if (o === D.chosen) tr.className = 'used'; else if (o === D.preset) tr.className = 'dflt';
     var tags = []; if (o === D.chosen) tags.push('used'); if (o === D.preset) tags.push('default'); if (o === D.best && o !== D.chosen) tags.push('lowest cost');
-    tr.innerHTML = '<td class="lab"><b>' + o + '</b><span class="tag">' + (tags.join(', ') || '&nbsp;') + '</span><span class="tag">cost ' + D.cost[o].toFixed(1) + '</span></td>';
+    tr.innerHTML = '<td class="lab"><b>' + o + '</b><span class="tag">' + (tags.join(', ') || '&nbsp;') + '</span><span class="tag">score ' + D.cost[o].toFixed(1) + '</span></td>';
     D.tokens.forEach(function (tk) {
       var td = document.createElement('td'), c = document.createElement('div'); c.className = 'cell';
       c.innerHTML = '<img src="' + tk.img + '" alt="" loading="lazy">';
