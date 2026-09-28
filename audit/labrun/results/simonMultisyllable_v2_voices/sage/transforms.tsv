@@ -1,0 +1,114 @@
+file	line	before	after
+free-speech/experiment_helpers/check_audapterLPC.m	213	f.Visible = 'On';	f = lr_dotset(f, 'Visible', 'On');
+free-speech/experiment_helpers/check_audapterLPC.m	243	UserData.nLPC = str2double(cell2mat(UserData.LPCdrop.String(UserData.LPCdrop.Value)));	UserData.nLPC = str2double(cell2mat(lr_dotget(UserData.LPCdrop, 'String')(lr_dotget(UserData.LPCdrop, 'Value'))));
+free-speech/experiment_helpers/check_audapterLPC.m	285	UserData.refPointCalcMethod = cell2mat(UserData.refPointCalcCtr.String(UserData.refPointCalcCtr.Value));	UserData.refPointCalcMethod = cell2mat(lr_dotget(UserData.refPointCalcCtr, 'String')(lr_dotget(UserData.refPointCalcCtr, 'Value')));
+free-speech/experiment_helpers/check_audapterLPC.m	495	updatePlots(src.Parent.Parent)	updatePlots(lr_dotget(lr_dotget(src, 'Parent'), 'Parent'))
+free-speech/experiment_helpers/check_audapterLPC.m	546	updatePlots(src.Parent.Parent)	updatePlots(lr_dotget(lr_dotget(src, 'Parent'), 'Parent'))
+free-speech/experiment_helpers/check_audapterLPC.m	571	updatePlots(src.Parent)	updatePlots(lr_dotget(src, 'Parent'))
+free-speech/audapter_viewer/audapter_viewer.m	506	set_ost(trackingFileDir,trackingFileName,ostStatus,hdropdown.heuristicChoice.String{hdropdown.heuristicChoice.Value},...	set_ost(trackingFileDir,trackingFileName,ostStatus,lr_dotget(hdropdown.heuristicChoice, 'String'){lr_dotget(hdropdown.heuristicChoice, 'Value')},...
+free-speech/audapter_viewer/audapter_viewer.m	507	str2double(hedit.statusParam1.String),str2double(hedit.statusParam2.String),str2double(hedit.statusParam3.String));	str2double(lr_dotget(hedit.statusParam1, 'String')),str2double(lr_dotget(hedit.statusParam2, 'String')),str2double(lr_dotget(hedit.statusParam3, 'String')));
+free-speech/audapter_viewer/audapter_viewer.m	750	newThresh = str2double(hedit.statusParam1.String);	newThresh = str2double(lr_dotget(hedit.statusParam1, 'String'));
+free-speech/audapter_viewer/audapter_viewer.m	751	newDur = str2double(hedit.statusParam2.String);	newDur = str2double(lr_dotget(hedit.statusParam2, 'String'));
+free-speech/audapter_viewer/audapter_viewer.m	752	newThird = str2double(hedit.statusParam3.String);	newThird = str2double(lr_dotget(hedit.statusParam3, 'String'));
+free-speech/audapter_viewer/audapter_viewer.m	833	newThresh = str2double(hedit.statusParam1.String);	newThresh = str2double(lr_dotget(hedit.statusParam1, 'String'));
+free-speech/audapter_viewer/audapter_viewer.m	834	newDur = str2double(hedit.statusParam2.String);	newDur = str2double(lr_dotget(hedit.statusParam2, 'String'));
+free-speech/audapter_viewer/audapter_viewer.m	835	newThird = str2double(hedit.statusParam3.String);	newThird = str2double(lr_dotget(hedit.statusParam3, 'String'));
+free-speech/audapter_viewer/audapter_viewer.m	945	'BackgroundColor', p.guidata.buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	953	'BackgroundColor', p.guidata.buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	961	'BackgroundColor', p.guidata.buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	968	htext.statusParam1Unit.String = heurUnits{1};	htext.statusParam1Unit = lr_dotset(htext.statusParam1Unit, 'String', heurUnits{1});
+free-speech/audapter_viewer/audapter_viewer.m	969	htext.statusParam2Unit.String = heurUnits{2};	htext.statusParam2Unit = lr_dotset(htext.statusParam2Unit, 'String', heurUnits{2});
+free-speech/audapter_viewer/audapter_viewer.m	970	htext.statusParam3Unit.String = heurUnits{3};	htext.statusParam3Unit = lr_dotset(htext.statusParam3Unit, 'String', heurUnits{3});
+free-speech/audapter_viewer/audapter_viewer.m	988	hslider.statusParam1.Value = heurMin(1) + heurStep(1,1);	hslider.statusParam1 = lr_dotset(hslider.statusParam1, 'Value', heurMin(1) + heurStep(1,1));
+free-speech/audapter_viewer/audapter_viewer.m	989	hslider.statusParam2.Value = heurMin(2) + heurStep(1,1);	hslider.statusParam2 = lr_dotset(hslider.statusParam2, 'Value', heurMin(2) + heurStep(1,1));
+free-speech/audapter_viewer/audapter_viewer.m	990	hslider.statusParam3.Value = heurMin(3) + heurStep(1,1);	hslider.statusParam3 = lr_dotset(hslider.statusParam3, 'Value', heurMin(3) + heurStep(1,1));
+free-speech/audapter_viewer/audapter_viewer.m	992	hedit.statusParam1.String = num2str(heurMin(1) + heurStep(1,1));	hedit.statusParam1 = lr_dotset(hedit.statusParam1, 'String', num2str(heurMin(1) + heurStep(1,1)));
+free-speech/audapter_viewer/audapter_viewer.m	993	hedit.statusParam2.String = num2str(heurMin(2) + heurStep(1,1));	hedit.statusParam2 = lr_dotset(hedit.statusParam2, 'String', num2str(heurMin(2) + heurStep(1,1)));
+free-speech/audapter_viewer/audapter_viewer.m	994	hedit.statusParam3.String = num2str(heurMin(3) + heurStep(1,1));	hedit.statusParam3 = lr_dotset(hedit.statusParam3, 'String', num2str(heurMin(3) + heurStep(1,1)));
+free-speech/audapter_viewer/audapter_viewer.m	1077	newParam1 = hObject.String;	newParam1 = lr_dotget(hObject, 'String');
+free-speech/audapter_viewer/audapter_viewer.m	1079	hslider.statusParam1.Value = str2double(newParam1);	hslider.statusParam1 = lr_dotset(hslider.statusParam1, 'Value', str2double(newParam1));
+free-speech/audapter_viewer/audapter_viewer.m	1084	newParam2 = hObject.String;	newParam2 = lr_dotget(hObject, 'String');
+free-speech/audapter_viewer/audapter_viewer.m	1086	hslider.statusParam2.Value = str2double(newParam2);	hslider.statusParam2 = lr_dotset(hslider.statusParam2, 'Value', str2double(newParam2));
+free-speech/audapter_viewer/audapter_viewer.m	1091	newParam3 = hObject.String;	newParam3 = lr_dotget(hObject, 'String');
+free-speech/audapter_viewer/audapter_viewer.m	1093	hslider.statusParam3.Value = str2double(newParam3);	hslider.statusParam3 = lr_dotset(hslider.statusParam3, 'Value', str2double(newParam3));
+free-speech/audapter_viewer/audapter_viewer.m	1108	ostStatus = str2double(hObject.String{hObject.Value});	ostStatus = str2double(lr_dotget(hObject, 'String'){lr_dotget(hObject, 'Value')});
+free-speech/audapter_viewer/audapter_viewer.m	1110	hdropdown.heuristicChoice.Value = find(strcmp(allHeuristics,heuristic));	hdropdown.heuristicChoice = lr_dotset(hdropdown.heuristicChoice, 'Value', find(strcmp(allHeuristics,heuristic)));
+free-speech/audapter_viewer/audapter_viewer.m	1129	htoggle.editOstRef.Value = 1;	htoggle.editOstRef = lr_dotset(htoggle.editOstRef, 'Value', 1);
+free-speech/audapter_viewer/audapter_viewer.m	1144	heuristic = hObject.String{hObject.Value};	heuristic = lr_dotget(hObject, 'String'){lr_dotget(hObject, 'Value')};
+free-speech/audapter_viewer/audapter_viewer.m	1239	htoggle.rms.Value = strcmp(lineVisibility.rms,'on');	htoggle.rms = lr_dotset(htoggle.rms, 'Value', strcmp(lineVisibility.rms,'on'));
+free-speech/audapter_viewer/audapter_viewer.m	1240	htoggle.rmsRatio.Value = strcmp(lineVisibility.rms_rat,'on');	htoggle.rmsRatio = lr_dotset(htoggle.rmsRatio, 'Value', strcmp(lineVisibility.rms_rat,'on'));
+free-speech/audapter_viewer/audapter_viewer.m	1241	htoggle.dRms.Value = strcmp(lineVisibility.dRms,'on');	htoggle.dRms = lr_dotset(htoggle.dRms, 'Value', strcmp(lineVisibility.dRms,'on'));
+free-speech/audapter_viewer/audapter_viewer.m	1242	htoggle.dRms_rat.Value = strcmp(lineVisibility.dRms_rat,'on');	htoggle.dRms_rat = lr_dotset(htoggle.dRms_rat, 'Value', strcmp(lineVisibility.dRms_rat,'on'));
+free-speech/audapter_viewer/audapter_viewer.m	1256	newTrial = hObject.Value;	newTrial = lr_dotget(hObject, 'Value');
+free-speech/audapter_viewer/audapter_viewer.m	1286	set(htoggle.formantsOut, 'Value', sum(strcmp({h_formantsOut_1(1:end).Visible},'on')) > 0);	set(htoggle.formantsOut, 'Value', sum(strcmp({lr_dotget(h_formantsOut_1(1:end), 'Visible')},'on')) > 0);
+free-speech/audapter_viewer/audapter_viewer.m	1302	'BackgroundColor', p.guidata.buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	1316	newTrial = hObject.String;	newTrial = lr_dotget(hObject, 'String');
+free-speech/audapter_viewer/audapter_viewer.m	1345	'BackgroundColor', p.guidata.buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	1367	if hObject.Value	if lr_dotget(hObject, 'Value')
+free-speech/audapter_viewer/audapter_viewer.m	1392	if hObject.Value	if lr_dotget(hObject, 'Value')
+free-speech/audapter_viewer/audapter_viewer.m	1419	if hObject.Value	if lr_dotget(hObject, 'Value')
+free-speech/audapter_viewer/audapter_viewer.m	1438	'Value',strcmp(h_dRms(1).Visible,'on'),...	'Value',strcmp(lr_dotget(h_dRms(1), 'Visible'),'on'),...
+free-speech/audapter_viewer/audapter_viewer.m	1446	if hObject.Value	if lr_dotget(hObject, 'Value')
+free-speech/audapter_viewer/audapter_viewer.m	1464	'Value',strcmp(h_dRms_rat(1).Visible,'on'),...	'Value',strcmp(lr_dotget(h_dRms_rat(1), 'Visible'),'on'),...
+free-speech/audapter_viewer/audapter_viewer.m	1473	if hObject.Value	if lr_dotget(hObject, 'Value')
+free-speech/audapter_viewer/audapter_viewer.m	1496	'Value',strcmp(h_rms(1).Visible,'on'),...	'Value',strcmp(lr_dotget(h_rms(1), 'Visible'),'on'),...
+free-speech/audapter_viewer/audapter_viewer.m	1504	if hObject.Value	if lr_dotget(hObject, 'Value')
+free-speech/audapter_viewer/audapter_viewer.m	1522	'Value',strcmp(h_rms_rat(1).Visible,'on'),...	'Value',strcmp(lr_dotget(h_rms_rat(1), 'Visible'),'on'),...
+free-speech/audapter_viewer/audapter_viewer.m	1530	if hObject.Value	if lr_dotget(hObject, 'Value')
+free-speech/audapter_viewer/audapter_viewer.m	1550	'BackgroundColor', p.guidata.buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	1573	wp.dur = hslider.statusParam2.Value;	wp.dur = lr_dotget(hslider.statusParam2, 'Value');
+free-speech/audapter_viewer/audapter_viewer.m	1574	wp.thresh = hslider.statusParam1.Value;	wp.thresh = lr_dotget(hslider.statusParam1, 'Value');
+free-speech/audapter_viewer/audapter_viewer.m	1592	newMinTrial = hObject.Value;	newMinTrial = lr_dotget(hObject, 'Value');
+free-speech/audapter_viewer/audapter_viewer.m	1622	'BackgroundColor', p.guidata.trialPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.trialPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	1638	newMinTrial = hObject.String;	newMinTrial = lr_dotget(hObject, 'String');
+free-speech/audapter_viewer/audapter_viewer.m	1677	'BackgroundColor', p.guidata.trialPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.trialPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	1691	newMaxTrial = hObject.String;	newMaxTrial = lr_dotget(hObject, 'String');
+free-speech/audapter_viewer/audapter_viewer.m	1708	num_currentMinTrial = str2double(hedit.firstTrial.String);	num_currentMinTrial = str2double(lr_dotget(hedit.firstTrial, 'String'));
+free-speech/audapter_viewer/audapter_viewer.m	1925	traxesPosition = oax.Position;	traxesPosition = lr_dotget(oax, 'Position');
+free-speech/audapter_viewer/audapter_viewer.m	1943	ax.YDir = 'normal';	ax = lr_dotset(ax, 'YDir', 'normal');
+free-speech/audapter_viewer/audapter_viewer.m	1945	ax.YLim = [0 6000];	ax = lr_dotset(ax, 'YLim', [0 6000]);
+free-speech/audapter_viewer/audapter_viewer.m	1946	ax.XLim = [t(1) t(end)];	ax = lr_dotset(ax, 'XLim', [t(1) t(end)]);
+free-speech/audapter_viewer/audapter_viewer.m	2038	'BackgroundColor', p.guidata.pcf_buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.pcf_buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	2046	'BackgroundColor', p.guidata.pcf_buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.pcf_buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	2063	durHold = hslider.durHold.Value;	durHold = lr_dotget(hslider.durHold, 'Value');
+free-speech/audapter_viewer/audapter_viewer.m	2079	rate2 = hslider.rate2.Value;	rate2 = lr_dotget(hslider.rate2, 'Value');
+free-speech/audapter_viewer/audapter_viewer.m	2096	durHold = str2double(hObject.String);	durHold = str2double(lr_dotget(hObject, 'String'));
+free-speech/audapter_viewer/audapter_viewer.m	2111	rate2 = str2double(hObject.String);	rate2 = str2double(lr_dotget(hObject, 'String'));
+free-speech/audapter_viewer/audapter_viewer.m	2124	'BackgroundColor', p.guidata.pcf_buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.pcf_buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	2132	'BackgroundColor', p.guidata.pcf_buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.pcf_buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	2149	rate1 = hslider.rate1.Value;	rate1 = lr_dotget(hslider.rate1, 'Value');
+free-speech/audapter_viewer/audapter_viewer.m	2165	dur1 = hslider.dur1.Value;	dur1 = lr_dotget(hslider.dur1, 'Value');
+free-speech/audapter_viewer/audapter_viewer.m	2182	rate1 = str2double(hObject.String);	rate1 = str2double(lr_dotget(hObject, 'String'));
+free-speech/audapter_viewer/audapter_viewer.m	2197	dur1 = str2double(hObject.String);	dur1 = str2double(lr_dotget(hObject, 'String'));
+free-speech/audapter_viewer/audapter_viewer.m	2209	'BackgroundColor', p.guidata.pcf_buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.pcf_buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	2217	'BackgroundColor', p.guidata.pcf_buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.pcf_buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	2234	if hObject.Value ~= floor(hObject.Value)	if lr_dotget(hObject, 'Value') ~= floor(lr_dotget(hObject, 'Value'))
+free-speech/audapter_viewer/audapter_viewer.m	2235	ostStat_initial = floor(hObject.Value);	ostStat_initial = floor(lr_dotget(hObject, 'Value'));
+free-speech/audapter_viewer/audapter_viewer.m	2237	ostStat_initial = hObject.Value;	ostStat_initial = lr_dotget(hObject, 'Value');
+free-speech/audapter_viewer/audapter_viewer.m	2255	tBegin = hslider.tBegin.Value;	tBegin = lr_dotget(hslider.tBegin, 'Value');
+free-speech/audapter_viewer/audapter_viewer.m	2272	newOstStat_initial = str2double(hObject.String);	newOstStat_initial = str2double(lr_dotget(hObject, 'String'));
+free-speech/audapter_viewer/audapter_viewer.m	2298	tBegin = str2double(hObject.String);	tBegin = str2double(lr_dotget(hObject, 'String'));
+free-speech/audapter_viewer/audapter_viewer.m	2314	newTrial = hObject.Value;	newTrial = lr_dotget(hObject, 'Value');
+free-speech/audapter_viewer/audapter_viewer.m	2344	set(htoggle.formantsOut, 'Value', sum(strcmp({h_formantsOut_1(1:end).Visible},'on')) > 0);	set(htoggle.formantsOut, 'Value', sum(strcmp({lr_dotget(h_formantsOut_1(1:end), 'Visible')},'on')) > 0);
+free-speech/audapter_viewer/audapter_viewer.m	2395	'BackgroundColor', p.guidata.pcf_buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.pcf_buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	2409	newTrial = hObject.String;	newTrial = lr_dotget(hObject, 'String');
+free-speech/audapter_viewer/audapter_viewer.m	2438	'Value',sum(strcmp({h_formantsIn_1(1:end).Visible},'on')) > 0,...	'Value',sum(strcmp({lr_dotget(h_formantsIn_1(1:end), 'Visible')},'on')) > 0,...
+free-speech/audapter_viewer/audapter_viewer.m	2446	if hObject.Value	if lr_dotget(hObject, 'Value')
+free-speech/audapter_viewer/audapter_viewer.m	2465	'Value',sum(strcmp({h_formantsOut_1(1:end).Visible},'on')) > 0,...	'Value',sum(strcmp({lr_dotget(h_formantsOut_1(1:end), 'Visible')},'on')) > 0,...
+free-speech/audapter_viewer/audapter_viewer.m	2473	if hObject.Value	if lr_dotget(hObject, 'Value')
+free-speech/audapter_viewer/audapter_viewer.m	2549	'BackgroundColor', p.guidata.pcf_buttonPanel.BackgroundColor, ...	'BackgroundColor', lr_dotget(p.guidata.pcf_buttonPanel, 'BackgroundColor'), ...
+free-speech/audapter_viewer/audapter_viewer.m	3485	ax.YDir = 'normal';	ax = lr_dotset(ax, 'YDir', 'normal');
+free-speech/audapter_viewer/audapter_viewer.m	3486	ax.YLim = [0 6000];	ax = lr_dotset(ax, 'YLim', [0 6000]);
+free-speech/audapter_viewer/audapter_viewer.m	3487	ax.XLim = [t(1) t(end)];	ax = lr_dotset(ax, 'XLim', [t(1) t(end)]);
+free-speech/audapter_viewer/audapter_viewer.m	3572	if ~isempty(ax.Title.String)	if ~isempty(lr_dotget(lr_dotget(ax, 'Title'), 'String'))
+free-speech/audapter_viewer/audapter_viewer.m	3573	ax.Title.String = '';	lr_dotset(lr_dotget(ax, 'Title'), 'String', '');
+free-speech/audapter_viewer/audapter_viewer.m	3689	ax.YDir = 'normal';	ax = lr_dotset(ax, 'YDir', 'normal');
+free-speech/audapter_viewer/audapter_viewer.m	3691	ax.YLim = [0 6000];	ax = lr_dotset(ax, 'YLim', [0 6000]);
+free-speech/audapter_viewer/audapter_viewer.m	3692	ax.XLim = [t(1) t(end)];	ax = lr_dotset(ax, 'XLim', [t(1) t(end)]);
+free-speech/audapter_viewer/audapter_viewer.m	3760	if ~isempty(ax.Title.String)	if ~isempty(lr_dotget(lr_dotget(ax, 'Title'), 'String'))
+free-speech/audapter_viewer/audapter_viewer.m	3761	ax.Title.String = '';	lr_dotset(lr_dotget(ax, 'Title'), 'String', '');
+free-speech/audapter_viewer/audapter_viewer.m	3925	if h.Value	if lr_dotget(h, 'Value')
+free-speech/audapter_viewer/choosePathDialog.m	100	idx = popup.Value;	idx = lr_dotget(popup, 'Value');
+free-speech/audapter_viewer/choosePathDialog.m	101	popup_items = popup.String;	popup_items = lr_dotget(popup, 'String');
+free-speech/audapter_viewer/choosePathDialog.m	106	idx = popup.Value;	idx = lr_dotget(popup, 'Value');
+free-speech/audapter_viewer/choosePathDialog.m	107	popup_items = popup.String;	popup_items = lr_dotget(popup, 'String');

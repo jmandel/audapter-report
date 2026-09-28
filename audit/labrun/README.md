@@ -26,6 +26,9 @@ Audapter and by explicit waits, as fast as the CPU allows (see [Speed](#speed)).
 | `tools/transform.py` | the one load-time source transformation (graphics dot notation), applied only to files that fail with it |
 | `tools/runall.sh` | run several plans in parallel |
 | `tools/sanitize.sh` | keeps names of unpublished lab repositories out of public results |
+| `tools/runvoices.sh`, `tools/compare_voices.py` | voice-bank runs (plans x talkers) and synthetic-vs-voice tables |
+| `voices/` | the voice bank: generator, manifest, validation, index (`voices/README.md`) |
+| `oct/lr_replay.m` | voice-only replay of fb 2..5 trials in the summary stage (checked; measurement aid) |
 | `plans/` | one plan per public experiment |
 | `results/<plan>/` | outputs (the text summaries are tracked; trial data, lab data and audio are not) |
 
@@ -70,6 +73,15 @@ onset, 0.30 s vowels (0.18 s per syllable in longer words), vowel RMS 0.05, smal
 The participant follows the lab's on-screen feedback ("speak more slowly", "louder", ...): vowels get 25 % longer or
 20 % shorter, the level ±3 dB.
 
+**Voice-bank participants** (`LR_VOICE=<talker>`; `voices/README.md`). The participant is one talker from the voice bank
+for the whole session, saying the text each trial asks for: AI-generated (OpenAI `gpt-audio-1.5`) takes of every
+stimulus word and sentence by ten voices (five perceived female, five male), validated (transcript, word boundaries,
+clipping, F0 and vowel formants against reference means) and level-normalised like the synthetic vowels. Repetitions of
+a word cycle through the talker's takes; "slower"/"faster" feedback picks a longer or shorter take (no time-stretch);
+rest trials are silent. The talker's gender replaces the plan's. `tools/runvoices.sh` runs plans x talkers into
+`results/<plan>_voices/<talker>/` (with `talker.json`); `tools/compare_voices.py` tabulates synthetic vs voice results
+per condition and word.
+
 ### The virtual experimenter
 - Console prompts (`input`) and dialogs (`questdlg`, `inputdlg`, `listdlg`, `uigetfile`, ...) are answered by
   the plan's rules (`plan.answers = {regexp, answer}`), then by generic rules: participant ID `lr001`, height by
@@ -87,8 +99,50 @@ The participant follows the lab's on-screen feedback ("speak more slowly", "loud
   keys last), which ends "press left or right" loops.
 - Randomness: `rng('shuffle')` becomes a seed derived from `plan.seed`; runs are reproducible.
 
+### Participant setup: the LPC check
+At setup a blab experimenter picks the male or female preset from a visual height estimate (labrun answers from the
+talker's gender), then opens free-speech `check_audapterLPC` on the pretest recordings: a dropdown of LPC orders 10-20
+(changing it re-runs Audapter offline on the pretest trials through the tool's own `changeLPC` callback), formant tracks
+drawn over a spectrogram of one token per vowel, and an F1-F2 scatter of every pretest trial. The experimenter keeps the
+order whose tracks look right and whose vowel clusters are tight, and saves it (`nlpc.mat`); the main phase loads it.
+With `LR_LPCCHECK=rule` (voice-bank participants) the virtual experimenter does the same through the tool
+(`shim/core/lr_lpc_experimenter.m`); otherwise it saves the preset.
+
+For every order 10-20 it selects the order in the dropdown and invokes `changeLPC`, reads the tracks the tool computed,
+and scores them; then it selects the chosen order, invokes `changeLPC` again and saves through the tool's OK button and
+its "Save and exit" dialog. The rule, fixed before it was run on any talker:
+- **A, accuracy (%)**: per pretest trial, Audapter's median F1 and F2 over the middle half of the vowel nucleus against
+  an independent reference for the same token and span (the Praat tracks of the voice-bank token, `voices/audio/tracks`),
+  mean of |ln(Audapter/reference)| over F1 and F2; A = 100 x the median over trials. **Reference quality control** (added
+  before any scaled run, because Praat mistracked F1 on some tokens, e.g. an /ae/ at 212 Hz): a token's reference is used
+  only if Praat at two formant ceilings (5500 and 6000 Hz for female voices, 5000 and 5500 Hz for male) agrees within
+  10 % on the nucleus medians of F1 and F2, and the medians lie within +-35 % (F1) and +-25 % (F2) of the Hillenbrand et
+  al. (1995) or Peterson & Barney (1952) mean for that vowel and gender (one-vowel words only). Tokens failing QC are left
+  out of A and logged. If fewer than 3 trials or fewer than 2 vowels have a usable reference, A is dropped and the cost is
+  0.5 B + 0.5 C (or B alone if C is unavailable too).
+- **B, continuity (%)**: over each trial's vowel nucleus, the share of frame-to-frame steps with |dF1| > 100 Hz or
+  |dF2| > 200 Hz (pooled over trials).
+- **C, clustering (%)**: from the tool's own per-trial F1/F2 (the points of its scatter), in mel: the RMS distance of the
+  points to their vowel's centroid divided by the mean distance between vowel centroids, x 100 (vowels with at least
+  two trials; not used if fewer than two vowels, and the weights of A and B are then rescaled to sum to 1).
+- **Cost** = 0.5 A + 0.25 B + 0.25 C (rescaled as stated when A or C is unavailable). The best order is the one with the lowest cost (ties: the one closer to the
+  preset). **Experimenters keep the default unless another order is clearly better**: the chosen order is the best order
+  only if (a) its cost is at most 0.85 x the preset's cost (15 % lower) **and** (b) the improvement is consistent across
+  tokens: on the per-token cost (2/3 a + 1/3 b for a token with a usable reference, b alone otherwise, where a and b are
+  that token's A and B) the best order is strictly lower than the preset on at least 2/3 of the pretest tokens (ties count
+  against). Otherwise the preset is kept. (b) was added before any scaled run: when several orders are good their costs
+  are small and nearly equal, and (a) alone switches on differences within token-to-token noise. Logged for every session:
+  the choice without any margin (lowest cost), with (a) only, and with (a) and (b) (the rule).
+- Logged per session (`lpccheck/check.json` in the result dir, and an `lpc-check` line in ops.tsv): the preset, the score
+  of every order, the best order, the chosen order, and whether it differs from the preset; `lpccheck/index.json` lists
+  the figures without scores, `lpccheck/audio/` holds the pretest audio as it went into the check. The tool's two panels are exported for every order
+  (`lpccheck/order<NN>_tracks.png`, `order<NN>_vowels.png`) with the same axis limits across orders.
+- Studies whose scripts offer the check run it; studies without it keep what their script does (the preset, or the order
+  saved by an earlier checked session). The rule was validated on real recordings with known formants (see
+  audit/FINDINGS-LOG.md, LPC-RULE entries).
+
 ### The simulated machine
-- Figures, axes, text and uicontrols are real Octave graphics objects (gnuplot toolkit, never rendered; Xvfb gives
+- Figures, axes, text and uicontrols are real Octave graphics objects (gnuplot toolkit, never rendered except the LPC-check panels; Xvfb gives
   Octave a 1920×1080 screen so normalized units and font sizes work). MATLAB-only figure properties are added at
   creation. `CloneFig`/`varycolor` have display-only stand-ins.
 - The platform is Windows (`ispc` true for lab code; Octave's own code gets the truth).
@@ -142,6 +196,16 @@ while Audapter runs is noted; it is not mixed into the microphone (no script so 
   signal at the device rate, `signalIn`/`signalOut` and Audapter's data matrix. `audio/` (untracked): stereo WAVs
   (left = mic, right = heard) for two trials per condition. `labdata/` (untracked): every file the lab code saved
   (`expt.mat`, `data.mat`, trial files, Working OST/PCF).
+
+**Voice-only replay (measurement aid).** In fb 2..5 `signalOut` mixes the voice with the masking noise. In the summary
+stage, after the session, each such trial is replayed from its own record in a freshly loaded MEX: the exact pumped input
+(`rec.input`), the full getParam snapshot at start (`rec.paramsFull`), the OST/PCF texts in effect (`rec.ostText`,
+`rec.pcfText`), with fb = 1 and nothing else changed. The replay is kept as `rec.signalOutVoice` only if it passes every
+check (`rec.replayCheck`): replayed `signalIn` identical to the recorded one, `fmts` and `sfmts` identical (< 0.01 Hz), and
+the recorded output minus the replay, over the voiced part, is noise only (voice leakage <residual, replay>/<replay,
+replay> within +-0.03, i.e. about +-0.25 dB, and level no more than 2 dB above the recorded output before voice onset). summary.tsv gets `replay_ok`, `replay_match` (max |sfmts
+difference|, Hz) and `gain_voice_dB` (the replay re input); summary.md counts the replays that failed. Heard levels,
+WAVs and every reported number use the recorded `signalOut`; the replay is only an independent view of the voice.
 
 **Intended vs actual.** At every `start` the runner's parameter struct (`p`, `params` or `expt.audapterParams`,
 read from its workspace) is compared with what Audapter reports through `getParam`, using the field→parameter map
@@ -201,10 +265,12 @@ lab's own code (figures, per-trial saves and plots, GUIs) and the shims. Experim
   handles to nested functions do not share their parent's workspace, so a GUI that returns its result through
   nested-function state (wave_viewer's end state, used by free-speech audioGUI) needs a stub.
   Each MATLAB-only function added in `shim/compat` is a small reimplementation; the ones that affect numbers the lab
-  uses are `isoutlier` (median / Grubbs), `pitch`, `detectSpeech`, `spectrogram`, `tinv`, `randsample`, `round(x, n)`,
+  uses are `isoutlier` (median / Grubbs), `fillmissing`, `pitch`, `detectSpeech`, `spectrogram`, `tinv`, `randsample`, `round(x, n)`,
   `readtable` (a struct of columns, not a table).
-- The participant is synthetic (or a corpus clip): clean vowels without consonant bursts, a fixed F0 contour and
-  level unless a plan varies them. Formant and pitch tracking behave as on clean speech.
+- The default participant is synthetic (or a corpus clip): clean vowels without consonant bursts, a fixed F0 contour and
+  level unless a plan varies them. Formant and pitch tracking behave as on clean speech. The voice-bank participants are
+  AI-generated voices: real words with consonants, natural F0 and formant movement and take-to-take variation, but
+  studio-clean, with loud sibilants and abrupt onsets of sustained vowels (voices/README.md, Limits).
 - The experimenter is generic: default answers take the first or "continue" option. Answers that choose a group,
   a session or a phase are listed in `summary.md`; plans override them.
 - Files that live on the lab server or only on rigs (counterbalancing tables, sentence lists, images) are absent
@@ -234,4 +300,75 @@ the graphics dot-notation rewrites (`transforms.tsv`).
 | free-speech run_measureFormants_audapter, run_checkLPC, check_audapterLPC, audapter_viewer, get_noiseSource, calc_vowelMeans, calc_pertField | run inside the experiments above | | |
 
 Per-run speed and stand-in counts are in the [Speed](#speed) table; per-trial results are in `results/<run>/`.
+
+
+## Voice-bank reruns (public experiments)
+Every public run above was repeated with each of eight AI-generated voices (marin, coral, sage, nova, cedar, verse,
+echo, ash; `voices/README.md`): `results/<plan>[_full]_voices/<talker>/` with the gender preset, and, for the
+experiments whose scripts run the LPC check, `results/<plan>[_full]_voices_lpccheck/<talker>/` with the virtual
+experimenter's check (see "Participant setup: the LPC check"). All runs completed as their synthetic counterparts did
+(vsaCentralize stops at the same missing runner). `results/<plan>_voices/compare.md` tabulates synthetic vs voice
+results per condition and word (`tools/compare_voices.py`); the headline numbers are in audit/FINDINGS-LOG.md
+(VOICES-2, VOICES-3). The LPC-check choices per session are below (`tools/lpc_summary.py`); the coAdapt sessions'
+panels, audio and scores are collected in `results/lpccheck/<talker>/` (`tools/lpc_export.py`).
+
+**LPC check, per study** (public; changed = the rule's choice differs from the preset). Where the check kept the preset,
+the checked run is the preset run (same order, same trials), so only sessions whose order changed need a comparison; none of
+the public numbers quoted in the report comes from such a session.
+
+| study | sessions | chosen order differs from the preset | lowest-cost order differs |
+|---|---|---|---|
+| attentionAdapt | 8 | none | 2 |
+| attentionComp | 8 | none | 4 |
+| coAdapt | 8 | none | 1 |
+| modelExpt_full | 8 | none | 2 |
+| modelExpt | 8 | none | 1 |
+| simonMultisyllable_exp3 | 8 | none | 1 |
+| simonMultisyllable_v2 | 8 | none | 1 |
+| simonSingleWord_v1 | 8 | none | 2 |
+| simonSingleWord_v2 | 8 | ash 17->19, coral 15->14 | 6 |
+| vsaAdapt2 | 8 | none | 7 |
+| vsaGeneralize_full | 8 | none | 6 |
+| vsaGeneralize | 8 | cedar 17->16, echo 17->16 | 6 |
+| vsaSentence | 8 | none | 6 |
+
+Sessions: 104. Chosen order differs from the preset in 4 (4 %); lowest-cost order differs in 45; margin-only choice differs in 25. Talkers with at least one session off the preset: 4 of 8 (ash, cedar, coral, echo).
+
+**coAdapt sessions** (the panels in `results/lpccheck/`):
+
+| talker | preset | chosen | lowest cost | best cost / preset cost | best wins tokens | tokens with reference |
+|---|---|---|---|---|---|---|
+| ash | 17 | 17 | 17 | 1.00 | 0/6 | 5 |
+| cedar | 17 | 17 | 16 | 0.94 | 2/6 | 3 |
+| coral | 15 | 15 | 15 | 1.00 | 0/6 | 6 |
+| echo | 17 | 17 | 17 | 1.00 | 0/6 | 3 |
+| marin | 15 | 15 | 15 | 1.00 | 0/6 | 4 |
+| nova | 15 | 15 | 15 | 1.00 | 0/6 | 5 |
+| sage | 15 | 15 | 15 | 1.00 | 0/6 | 5 |
+| verse | 17 | 17 | 17 | 1.00 | 0/6 | 4 |
+
+**Validation on recordings** (`tools/lpc_validate.py public`: CMU ARCTIC monophthongs from the phone labels and PVQD
+sustained /a/ /i/, Audapter at the gender preset, reference = Praat at two ceilings with the same QC): the rule keeps the
+preset for all 17 talkers; the lowest-cost order differs from the preset for 7 (by 1-3 orders); for the four talkers with
+at least four tokens the two halves of their tokens give the same choice as the whole except one (17 vs 16).
+
+| talker | tokens (with reference) | preset | lowest cost | chosen | best wins tokens | split halves |
+|---|---|---|---|---|---|---|
+| arctic_awb | 2 (2) | 17 | 18 | 17 | 1/2 | n/a |
+| arctic_bdl | 9 (8) | 17 | 17 | 17 | 0/9 | 17 / 17 |
+| arctic_clb | 10 (7) | 15 | 15 | 15 | 0/10 | 15 / 15 |
+| arctic_jmk | 2 (2) | 17 | 17 | 17 | 0/2 | n/a |
+| arctic_ksp | 2 (2) | 17 | 17 | 17 | 0/2 | n/a |
+| arctic_rms | 11 (10) | 17 | 16 | 17 | 7/11 | 17 / 16 |
+| arctic_slt | 9 (8) | 15 | 17 | 15 | 5/9 | 15 / 15 |
+| pvqd_LA9003 | 2 (2) | 15 | 15 | 15 | 0/2 | n/a |
+| pvqd_LA9015 | 2 (2) | 17 | 17 | 17 | 0/2 | n/a |
+| pvqd_LA9022 | 2 (0) | 17 | 17 | 17 | 0/2 | n/a |
+| pvqd_NYU1015 | 2 (0) | 15 | 18 | 15 | 1/2 | n/a |
+| pvqd_NYU1017 | 2 (2) | 17 | 18 | 17 | 1/2 | n/a |
+| pvqd_PT101 | 2 (0) | 15 | 16 | 15 | 1/2 | n/a |
+| pvqd_PT128 | 1 (1) | 17 | 17 | 17 | 0/1 | n/a |
+| pvqd_SJ2001 | 2 (1) | 15 | 15 | 15 | 0/2 | n/a |
+| pvqd_SJ2009 | 2 (1) | 17 | 16 | 17 | 1/2 | n/a |
+| pvqd_SJ7001 | 2 (1) | 15 | 15 | 15 | 0/2 | n/a |
 

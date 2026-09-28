@@ -43,7 +43,7 @@ figure_caption: >-
 table:
 - [simonSingleWord v2, 'Silent gaps in 24 masking trials (current build)', '{n_gaps}, each {gap_ms_min:.0f} ms, in trials {gap_trials}']
 - [simonSingleWord v2, 'Same session, pre-b2.4 buffer', '{up_gaps} gaps']
-- [real sessions (labrun), 'modelExpt and vsaGeneralize full sessions run with their own scripts', '15.4 ms holes every 10.0 s of noise running time (12 and 34 holes)']
+- [real sessions (labrun), 'modelExpt and vsaGeneralize full sessions run with their own scripts', '15.4 ms holes every 10.0 s of noise running time (9–12 and 22–34 holes per session with eight AI-generated voices)']
 - [simonSingleWord v2, 'How often', 'every {every_s:.1f} s of running time: about 1 in {one_in:.1f} trials of 1.8 s']
 - [general case, 'A 5 s noise file in a 12 s trial', 'no noise {gaps_text}']
 sketch: i01
@@ -146,7 +146,7 @@ verify:
 - kind: H
   what: public experiments run with their own scripts (labrun)
   name: labrun/README.md
-  detail: 'LABRUN-3: 15.4 ms holes every 10.0 s of noise running time in the modelExpt (12) and vsaGeneralize (34) full sessions'
+  detail: 'LABRUN-3, VOICES-2: 15.4 ms holes every 10.0 s of noise running time in the modelExpt (9–12) and vsaGeneralize (22–34) full sessions with eight AI-generated voices (holes under the voice are not counted)'
 - kind: H
   what: real session structure
   name: exp_noise_session.m

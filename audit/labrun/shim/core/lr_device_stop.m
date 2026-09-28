@@ -7,7 +7,7 @@ k = d.k;
 rec = struct('k', k, 'mode', d.mode, 't0', d.t0, 't1', d.t1, 'pumped_s', d.nframes * d.frame / d.fsDev, ...
   'nframes', d.nframes, 'sr', d.sr, 'downFact', d.downFact, 'frameLen', d.frameLen, 'fb', d.fb, ...
   'inputDesc', d.inputDesc, 'input_s', numel(d.input) / d.fsDev, 'ctx', d.ctx, 'params', d.params, ...
-  'intentDiff', {d.intentDiff}, 'intentSrc', d.intentSrc);
+  'intentDiff', {d.intentDiff}, 'intentSrc', d.intentSrc, 'paramsFull', d.paramsFull, 'ostText', d.ostText, 'pcfText', d.pcfText);
 rec.ops = LR.ops; LR.ops = {};
 rec.nTracks = double(AudapterReal('getParam', 'ntracks')); rec.nLPC = double(AudapterReal('getParam', 'nlpc'));
 rec.maxRecSize = 480000;
@@ -15,8 +15,10 @@ if strcmp(d.mode, 'proc')
   [sig, dat] = AudapterReal(4);
   rec.signalIn = single(sig(:, 1)); rec.signalOut = single(sig(:, min(2, end)));
   rec.dataMat = single(dat);
-  rec.input = single(d.input(1:min(end, d.nframes * d.frame)));
+  rec.input = double(d.input(1:min(end, d.nframes * d.frame)));   % exactly what was pumped (incl. the floor after the input)
   rec.fsDev = d.fsDev;
+  si = double(rec.signalIn);   % fingerprint, so a lab data struct's signalIn can be traced back to this trial's input
+  LR.sigLog(end+1) = struct('k', k, 'fp', [numel(si), sum(abs(si)), sum(si.^2)], 'desc', d.inputDesc);
 else
   rec.play = single(d.play); rec.fsDev = d.fsDev;
   rec.playPeak = max([0; abs(d.play(:))]);

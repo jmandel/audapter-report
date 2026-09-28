@@ -12,6 +12,17 @@ addpath(fullfile(getenv('LR_LIB'), 'shim', 'core'));
 src = getenv('LR_SRC'); work = getenv('LR_WORK'); out = getenv('LR_OUT'); lib = getenv('LR_LIB');
 plan = struct(); run(getenv('LR_PLAN'));
 if ~isfield(plan, 'repos'), plan.repos = {}; end
+% Voice-bank participant (LR_VOICE = talker id in voices/bank.tsv): the talker's gender replaces plan.gender.
+if ~isempty(getenv('LR_VOICE'))
+  global LR; LR = struct(); VB = lr_voice_bank(); jv = find(strcmp(VB.talker, getenv('LR_VOICE')), 1);
+  if isempty(jv), error('labrun: talker %s not in the voice bank', getenv('LR_VOICE')); end
+  plan.voice = getenv('LR_VOICE'); plan.gender = 'female'; if strcmp(VB.gender{jv}, 'M'), plan.gender = 'male'; end; clear VB jv
+  % LR_LPCCHECK=rule: the virtual experimenter runs free-speech check_audapterLPC by the scripted rule (README, "Participant setup")
+  if strcmp(getenv('LR_LPCCHECK'), 'rule')
+    if ~isfield(plan, 'gui'), plan.gui = cell(0, 2); end
+    plan.gui = [{'check_LPC', {@lr_lpc_experimenter}}; plan.gui]; plan.lpcCheck = 'rule';
+  end
+end
 if ~isfield(plan, 'paths'), plan.paths = {}; end
 repos = unique([plan.repos, {'free-speech', 'commonmcode', 'wave_viewer'}], 'stable');
 % --- sandbox: writable copies of the lab repos (the lab code writes working OST/PCF copies into its repos) ---

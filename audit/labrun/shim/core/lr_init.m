@@ -6,7 +6,7 @@ d = struct('name', 'run', 'seed', 1, 'gender', '', 'answers', {cell(0, 2)}, 'gui
   'guiDefaultButton', {{'^continue', '^save', '^ok$', '^done', '^next', '^accept', '^confirm', '^finish', '^yes$', '^close'}}, ...
   'keys', {{}}, 'defaultKey', 'space', 'kbEvery', 3, 'keyWait', 1.0, 'answerWait', 2.0, 'idleQuantum', 0.001, ...
   'maxStarts', 3000, 'maxIdleSec', 1800, 'maxTrialSec', 120, 'maxSamePrompt', 25, 'floorNoise', 1e-4, 'maxPlayWavs', 200, ...
-  'input', [], 'echo_ops', true);
+  'input', [], 'voice', '', 'voiceStyle', '', 'echo_ops', true);
 f = fieldnames(d);
 for j = 1:numel(f), if ~isfield(plan, f{j}), plan.(f{j}) = d.(f{j}); end, end
 LR.plan = plan; LR.outdir = outdir;
@@ -15,7 +15,7 @@ LR.ptb0 = 1000; LR.ticT = 0; LR.ntrial = 0; LR.ops = {}; LR.notes = {}; LR.echo_
 LR.dev = []; LR.phase = ''; LR.nplay = 0; LR.kbPolls = 0; LR.keyQueue = plan.keys; LR.lastKey = '';
 LR.ptbWin = 0; LR.ptbTex = 0; LR.ptbDraw = {}; LR.ptbShown = {}; LR.ptbTextSize = 24;
 LR.kbKnown = {}; LR.kbStuck = 0; LR.lastProgress = 0; LR.players = {}; LR.recorders = {}; LR.texts = cell(0, 2); LR.speaker = struct('dur', 1, 'level', 1, 'lastPick', -1, 'log', {{}});
-LR.ppa = struct('n', 0, 'h', {{}}, 'bufs', {{}});
+LR.ppa = struct('n', 0, 'h', {{}}, 'bufs', {{}}); LR.curOst = ''; LR.curPcf = ''; LR.sigLog = struct('k', {}, 'fp', {}, 'desc', {});
 LR.asked = struct('n', 0, 'keys', {{}}, 'count', []);
 LR.counts = struct('userRunFrame', 0, 'getData', 0);
 LR.setNames = {}; LR.rngSeed = plan.seed; LR.rngShuffles = 0;

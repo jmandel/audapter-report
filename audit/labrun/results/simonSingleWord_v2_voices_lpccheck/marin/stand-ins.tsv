@@ -1,0 +1,12 @@
+kind	path	source
+experiment-folder	<unpublished-repo>/simonSingleWord	simonSingleWord/experiment scripts
+experiment-folder	<unpublished-repo>/simonSingleWord_v2	simonSingleWord/experiment scripts
+repo-marker	<unpublished-repo>/dummy_current-studies_file.m	
+working-copy	<unpublished-repo>/simonSingleWord_v2/bedheadWorking.pcf	<unpublished-repo>/simonSingleWord_v2/bedheadMaster.pcf
+working-copy	<unpublished-repo>/simonSingleWord_v2/bedheadWorking.ost	<unpublished-repo>/simonSingleWord_v2/bedheadMaster.ost
+working-copy	<unpublished-repo>/simonSingleWord/bedheadWorking.pcf	<unpublished-repo>/simonSingleWord/bedheadMaster.pcf
+working-copy	<unpublished-repo>/simonSingleWord/bedheadWorking.ost	<unpublished-repo>/simonSingleWord/bedheadMaster.ost
+working-copy	free-speech/experiment_helpers/measureFormantsWorking.pcf	free-speech/experiment_helpers/measureFormantsMaster.pcf
+working-copy	free-speech/experiment_helpers/measureFormantsWorking.ost	free-speech/experiment_helpers/measureFormantsMaster.ost
+working-copy	simonSingleWord/experiment scripts/bedheadWorking.pcf	simonSingleWord/experiment scripts/bedheadMaster.pcf
+working-copy	simonSingleWord/experiment scripts/bedheadWorking.ost	simonSingleWord/experiment scripts/bedheadMaster.ost

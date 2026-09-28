@@ -42,7 +42,9 @@ switch a
     if lr_is_running(), lr_device_stop(); else, lr_note('Audapter stop while not started'); end
   case 'setParam'
     nm = varargin{2}; v = varargin{3};
-    lr_log_op(struct('op', 'setParam', 'name', nm, 'value', lr_summ(v)));
+    o = struct('op', 'setParam', 'name', nm, 'value', lr_summ(v));
+    if (isnumeric(v) || islogical(v)) && numel(v) <= 70000 && ~strcmpi(nm, 'datapb'), o.full = double(v); end
+    lr_log_op(o);
     if lr_is_running(), lr_note(sprintf('setParam %s while audio running (LIVE-2/3 territory)', nm)); end
     [varargout{1:nargout}] = AudapterReal(varargin{:});
     if strcmpi(nm, 'datapb'), LR.pb.counter = 0; LR.pb.len = numel(v); LR.pb.data = double(v(:)); end   % mirror: data_pb = v, zeros after (Audapter.cpp setParam)
@@ -51,6 +53,7 @@ switch a
     fn = ''; if numel(varargin) >= 2, fn = varargin{2}; end
     txt = ''; if ischar(fn) && ~isempty(fn) && exist(fn, 'file'), txt = fileread(fn); end
     lr_log_op(struct('op', a, 'file', fn, 'text', txt));
+    if strcmp(a, 'ost'), LR.curOst = txt; else, LR.curPcf = txt; end
     if lr_is_running(), lr_note(sprintf('%s load while audio running (LIVE-1)', a)); end
     [varargout{1:nargout}] = AudapterReal(varargin{:});
   case 'reset'

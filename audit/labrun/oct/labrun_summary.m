@@ -19,6 +19,8 @@ function labrun_summary(outdir, opts)
 if nargin < 2, opts = struct(); end
 if ~isfield(opts, 'wavs'), opts.wavs = 'sample'; end
 if ~isfield(opts, 'wavPerCond'), opts.wavPerCond = 2; end
+if ~isfield(opts, 'replay'), opts.replay = 'noise-modes'; end
+nRep = 0; nRepOk = 0; repFail = {};
 if ~exist(fullfile(outdir, 'trials'), 'dir'), return; end
 F = dir(fullfile(outdir, 'trials', '*.mat')); F = F(cellfun(@isempty, regexp({F.name}, '_ptbCapture', 'once')));
 if isempty(F), printf('labrun_summary: no trials\n'); end
@@ -58,6 +60,14 @@ for i = 1:numel(F)
     't0', r.t0, 'dur', r.t1 - r.t0, 'pumped_s', r.pumped_s, 'sr', r.sr, 'fb', fbv, 'input', r.inputDesc);
   if strcmp(r.mode, 'proc') && isfield(r, 'dataMat') && numel(r.dataMat) > 1
     row = lr_trial_measures(r, row, hz2mel);
+    if isfield(r, 'fb') && r.fb >= 2 && r.fb <= 5 && ~strcmp(opts.replay, 'none')   % voice-only replay (measurement aid only)
+      try, [yv, chk] = lr_replay(r); catch e, yv = []; chk = struct('pass', false, 'reason', ['replay error: ' e.message]); end
+      rec = S.rec; rec.replayCheck = chk; if chk.pass, rec.signalOutVoice = yv; elseif isfield(rec, 'signalOutVoice'), rec = rmfield(rec, 'signalOutVoice'); end
+      save('-v7', fullfile(outdir, 'trials', F(i).name), 'rec');
+      row.replay_ok = double(chk.pass); if isfield(chk, 'sfmts_maxdiff'), row.replay_match = chk.sfmts_maxdiff; end
+      nRep = nRep + 1; if chk.pass, nRepOk = nRepOk + 1; else, repFail{end+1} = sprintf('trial %d: %s', r.k, chk.reason); end
+      if chk.pass, row.gain_voice_dB = lr_voice_gain(r, double(yv)); end
+    end
     % sample WAVs
     key = regexprep([r.ctx.cond '_' r.mode], '\W', '_'); if ~isfield(wavCount, key), wavCount.(key) = 0; end
     if strcmp(opts.wavs, 'all') || (strcmp(opts.wavs, 'sample') && wavCount.(key) < opts.wavPerCond)
@@ -85,7 +95,7 @@ cols = {'k', 'mode', 'itrial', 'word', 'cond', 'shiftInfo', 't0', 'dur', 'pumped
   'ost', 'shift_s', 'shift_span', 'shift_F1_Hz', 'shift_F2_Hz', 'shift_F1_mel', 'shift_F2_mel', ...
   'in_F1', 'in_F2', 'out_F1', 'out_F2', 'span_in_F1', 'span_in_F2', 'span_out_F1', 'span_out_F2', ...
   'in_f0', 'out_f0', 'pitch_cents', 'gain_dB', 'heard_peak', 'lag_ms', 'in_rms_dB', 'noise_zero_runs', 'noise_zero_at', ...
-  'play_s', 'play_rms_dB', 'play_peak', 'read_s', 'lost_s', 'input'};
+  'play_s', 'play_rms_dB', 'play_peak', 'read_s', 'lost_s', 'replay_ok', 'replay_match', 'gain_voice_dB', 'input'};
 fid = fopen(fullfile(outdir, 'summary.tsv'), 'w'); fprintf(fid, '%s\n', strjoin(cols, "\t"));
 for i = 1:numel(rows)
   c = cell(1, numel(cols));
@@ -114,6 +124,10 @@ N = {}; if isfield(R, 'notes'), N = R.notes; if ischar(N), N = {N}; end, end
 if ~isempty(N)
   [u, ~, ix] = unique(regexprep(N, '^\[t=[0-9.]+ trial \d+\] ', ''));
   fprintf(fid, '- notes:\n'); for j = 1:numel(u), fprintf(fid, '  - %s (x%d)\n', u{j}, sum(ix == j)); end
+end
+if nRep > 0
+  fprintf(fid, '- voice-only replays (fb 2..5 trials, measurement aid; heard numbers use signalOut): %d of %d passed the checks\n', nRepOk, nRep);
+  for j = 1:min(numel(repFail), 20), fprintf(fid, '  - failed %s\n', repFail{j}); end
 end
 fprintf(fid, '\n## OST/PCF files loaded\n\n| file | kind | hash | first trial | loads |\n|---|---|---|---|---|\n');
 for j = 1:numel(ostSeen), fprintf(fid, '| %s | %s | %s | %d | %d |\n', ostSeen(j).file, ostSeen(j).kind, ostSeen(j).hash, ostSeen(j).first, ostSeen(j).n); end
@@ -241,4 +255,13 @@ t = unique(t); if numel(t) <= 6, s = strjoin(arrayfun(@num2str, t, 'UniformOutpu
 end
 function s = lr_nsum(v)
 s = sum(v(isfinite(v)));
+end
+
+function g = lr_voice_gain(r, yv)
+% Voice-only replay re input over the input's voiced samples (dB), aligned like gain_dB. Informational only.
+x = double(r.signalIn); sc = lr_num(r.params, 'scale', 1); y = yv * sc; sr = r.sr;
+L = round(0.06 * sr); [c, lg] = xcorr(y, x, L); [~, m] = max(abs(c)); lag = lg(m);
+if lag > 0, y = [y(lag+1:end); zeros(lag, 1)]; elseif lag < 0, y = [zeros(-lag, 1); y(1:end+lag)]; end
+W = round(0.02 * sr); env = sqrt(filter(ones(W, 1) / W, 1, x.^2)); act = env > max(env) * 0.1;
+g = 20 * log10(sqrt(mean(y(act).^2)) / max(sqrt(mean(x(act).^2)), 1e-12));
 end

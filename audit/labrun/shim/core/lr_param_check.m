@@ -1,16 +1,16 @@
-function [actual, diffs, src] = lr_param_check(ctx)
-% actual: getParam of every parameter AudapterIO('init') can send (long arrays summarised).
+function [actual, diffs, src, full] = lr_param_check(ctx)
+% actual: getParam of every parameter AudapterIO('init') can send (long arrays summarised); full: the same, numeric.
 % diffs:  the lab script's intended parameter struct (p, params or expt.audapterParams, from its workspace) vs
 %         what Audapter reports. Kinds: 'mismatch' (sent value differs from the struct's now), 'not-forwarded'
 %         (Audapter has a parameter of that name but AudapterIO('init') never sends the field and the script
 %         never set it directly), 'unknown' (no Audapter parameter of that name; informational).
 global LR
-actual = struct(); diffs = {}; src = '';
+actual = struct(); full = struct(); diffs = {}; src = '';
 for j = 1:size(LR.pmap, 1)
   a = LR.pmap{j, 2};
   if isfield(actual, a) || any(strcmp(a, {'datapb'})), continue; end
   try, v = double(AudapterReal('getParam', a)); catch, continue; end
-  actual.(a) = lr_summ(v);
+  actual.(a) = lr_summ(v); full.(a) = v;
 end
 p = [];
 if isfield(ctx, 'p') && isstruct(ctx.p) && isfield(ctx.p, 'frameLen'), p = ctx.p; src = 'p';

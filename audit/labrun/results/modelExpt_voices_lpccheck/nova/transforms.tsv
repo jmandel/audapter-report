@@ -1,0 +1,7 @@
+file	line	before	after
+free-speech/experiment_helpers/check_audapterLPC.m	213	f.Visible = 'On';	f = lr_dotset(f, 'Visible', 'On');
+free-speech/experiment_helpers/check_audapterLPC.m	243	UserData.nLPC = str2double(cell2mat(UserData.LPCdrop.String(UserData.LPCdrop.Value)));	UserData.nLPC = str2double(cell2mat(lr_dotget(UserData.LPCdrop, 'String')(lr_dotget(UserData.LPCdrop, 'Value'))));
+free-speech/experiment_helpers/check_audapterLPC.m	285	UserData.refPointCalcMethod = cell2mat(UserData.refPointCalcCtr.String(UserData.refPointCalcCtr.Value));	UserData.refPointCalcMethod = cell2mat(lr_dotget(UserData.refPointCalcCtr, 'String')(lr_dotget(UserData.refPointCalcCtr, 'Value')));
+free-speech/experiment_helpers/check_audapterLPC.m	495	updatePlots(src.Parent.Parent)	updatePlots(lr_dotget(lr_dotget(src, 'Parent'), 'Parent'))
+free-speech/experiment_helpers/check_audapterLPC.m	546	updatePlots(src.Parent.Parent)	updatePlots(lr_dotget(lr_dotget(src, 'Parent'), 'Parent'))
+free-speech/experiment_helpers/check_audapterLPC.m	571	updatePlots(src.Parent)	updatePlots(lr_dotget(src, 'Parent'))

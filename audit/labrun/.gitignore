@@ -5,3 +5,28 @@ results/*/audio/
 results/*/plays/
 results/*/run.log
 tools/__pycache__/
+results/*_voices/*/trials/
+results/*_voices/*/labdata/
+results/*_voices/*/audio/
+results/*_voices/*/plays/
+results/*_voices/*/run.log
+# voice-bank runs: only the summaries, run.json and talker.json are tracked (the op logs repeat per talker; regenerate with tools/runvoices.sh)
+results/*_voices/*/ops.tsv
+results/*_voices/*/timeline.tsv
+results/*_voices/*/plays.tsv
+results/*_voices/*/ost/
+results/*_voices_lpccheck/*/trials/
+results/*_voices_lpccheck/*/labdata/
+results/*_voices_lpccheck/*/audio/
+results/*_voices_lpccheck/*/plays/
+results/*_voices_lpccheck/*/run.log
+results/*_voices_lpccheck/*/ops.tsv
+results/*_voices_lpccheck/*/timeline.tsv
+results/*_voices_lpccheck/*/plays.tsv
+results/*_voices_lpccheck/*/ost/
+results/*_voices_lpccheck/*/lpccheck/
+# LPC-check export: the figures and audio are regenerated locally (tools/lpc_export.py); check.json/index.json are tracked
+results/lpccheck/*/audio/
+results/lpccheck/*/*.png
+results/lpccheck/_validation_public/tracks*/
+results/lpccheck/_validation_public/list.tsv

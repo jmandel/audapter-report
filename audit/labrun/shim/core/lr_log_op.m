@@ -6,7 +6,7 @@ op.t = LR.vclock; op.trial = LR.ntrial; op.running = lr_is_running();
 if ~isfield(op, 'op'), op.op = '?'; end
 LR.ops{end+1} = op;
 if LR.echo_ops && LR.oplog > 0 && ~any(strcmp(op.op, {'getParam'}))
-  f = setdiff(fieldnames(op), {'t', 'trial', 'running', 'op', 'text'});
+  f = setdiff(fieldnames(op), {'t', 'trial', 'running', 'op', 'text', 'full'});   % full arrays stay in the trial record only
   parts = {};
   for j = 1:numel(f)
     v = op.(f{j}); if isnumeric(v), v = mat2str(v, 6); elseif iscell(v), v = strjoin(cellfun(@(x) lr_str(x), v, 'UniformOutput', false), ', '); end

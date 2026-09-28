@@ -108,10 +108,17 @@
     <h3>Running the lab's own code</h3>
     <p>To check findings against the experiments as the lab runs them, we ran each public blab experiment's own entry script, runner and shared
       helpers, unmodified, under Octave with the real Audapter build behind a virtual sound card on a virtual clock (<code>pause</code> and
-      timers advance the recording instead of waiting), with a synthetic participant and a rule-driven experimenter answering prompts and dialogs
+      timers advance the recording instead of waiting), with a participant who says each trial's word or sentence and a rule-driven experimenter answering prompts and dialogs
       through their real callbacks. Per trial it records every Audapter call, the parameters in effect against the script's own, the OST timeline,
       the logged shift and the heard formants, pitch, level and lag. 12 of the 13 public entry points run end to end (vsaCentralize's stops because
-      the runner it calls is not in its repository); vsaGeneralize and the modelExpt template ran full sessions. Limits: synthetic voices, no
+      the runner it calls is not in its repository); vsaGeneralize and the modelExpt template ran full sessions. The participant is one of eight
+      AI-generated voices (OpenAI text to speech, four perceived female and four male; every take checked for what was said, clipping, F0 and
+      vowel formants, and checked against real recordings of "head"), each running every experiment; the numbers quoted from these runs are
+      their range across the eight voices. Participant setup is simulated too: the experimenter answers the height question from the
+      voice's gender (the male or female preset) and, where the script opens the lab's LPC check, tries every order the tool offers
+      through the tool itself and keeps the preset unless another order is clearly and consistently better on formant accuracy
+      against an independent reference, track continuity and vowel clustering (the rule was fixed before it was run; it kept the
+      preset in almost every session). Limits: AI-generated voices are studio-clean renditions, not people; no
       real-time scheduling or sound-card timing, simplified Psychtoolbox, and one recorded load-time change (graphics dot notation) in files that
       fail without it. Details: <a href="https://github.com/jmandel/audapter-report/blob/main/audit/labrun/README.md">audit/labrun/README.md</a>.</p>
   </section>

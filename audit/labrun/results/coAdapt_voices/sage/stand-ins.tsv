@@ -1,0 +1,7 @@
+kind	path	source
+working-copy	free-speech/experiment_helpers/measureFormantsWorking.pcf	free-speech/experiment_helpers/measureFormantsMaster.pcf
+working-copy	free-speech/experiment_helpers/measureFormantsWorking.ost	free-speech/experiment_helpers/measureFormantsMaster.ost
+working-copy	simonMulti/experiment scripts/Exp3/pedXXXWorking.pcf	simonMulti/experiment scripts/Exp3/pedXXXMaster.pcf
+working-copy	simonMulti/experiment scripts/Exp3/pedXXXWorking.ost	simonMulti/experiment scripts/Exp3/pedXXXMaster.ost
+working-copy	simonMulti/experiment scripts/Exp2/sevXXXWorking.pcf	simonMulti/experiment scripts/Exp2/sevXXXMaster.pcf
+working-copy	simonMulti/experiment scripts/Exp2/sevXXXWorking.ost	simonMulti/experiment scripts/Exp2/sevXXXMaster.ost

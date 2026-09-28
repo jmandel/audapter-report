@@ -1,0 +1,11 @@
+kind	path	source
+experiment-folder	<unpublished-repo>/simonMultisyllable_v2	simonMulti/experiment scripts/Exp2
+repo-marker	<unpublished-repo>/dummy_current-studies_file.m	
+working-copy	<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.pcf	<unpublished-repo>/simonMultisyllable_v2/sevXXXMaster.pcf
+working-copy	<unpublished-repo>/simonMultisyllable_v2/sevXXXWorking.ost	<unpublished-repo>/simonMultisyllable_v2/sevXXXMaster.ost
+working-copy	free-speech/experiment_helpers/measureFormantsWorking.pcf	free-speech/experiment_helpers/measureFormantsMaster.pcf
+working-copy	free-speech/experiment_helpers/measureFormantsWorking.ost	free-speech/experiment_helpers/measureFormantsMaster.ost
+working-copy	simonMulti/experiment scripts/Exp3/pedXXXWorking.pcf	simonMulti/experiment scripts/Exp3/pedXXXMaster.pcf
+working-copy	simonMulti/experiment scripts/Exp3/pedXXXWorking.ost	simonMulti/experiment scripts/Exp3/pedXXXMaster.ost
+working-copy	simonMulti/experiment scripts/Exp2/sevXXXWorking.pcf	simonMulti/experiment scripts/Exp2/sevXXXMaster.pcf
+working-copy	simonMulti/experiment scripts/Exp2/sevXXXWorking.ost	simonMulti/experiment scripts/Exp2/sevXXXMaster.ost

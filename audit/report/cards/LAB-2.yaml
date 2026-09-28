@@ -36,7 +36,8 @@ example: >-
   On six synthetic vowels every one is shifted, by {s0_min:.0f}–{s0_max:.0f} mel, and the training-phase shifts are identical to
   the baseline ones. Confirmed by running the committed vsaGeneralize experiment script and runner end to end for a full session
   (466 trials, unmodified code; see "Running the lab's own code"): baseline-training trials at strength 0 are shifted like training
-  trials, 0.32 s per trial, median 116 mel in F1 and 314 mel in F2, heard F2 ×1.33. The lab's logs can settle whether this runner
+  trials in every one of eight AI-generated voices: 0.29–0.37 s per trial, median 177–236 mel in F1 and 334–424 mel in F2, heard F2
+  ×1.51–1.70. The lab's logs can settle whether this runner
   collected the data.
 settings:
   source_html: "blab's <a href=\"https://github.com/blab-lab/vsaGeneralize/blob/0ec575ae1cde8402628b6cb5cd756467a95dd11d/run_vsaGeneralize_audapter.m\">vsaGeneralize run_vsaGeneralize_audapter.m @0ec575a</a> with run_vsaGeneralize_expt.m and free-speech calc_pertField('in', means, 1), parameter sequence reproduced exactly. Expected = the design: no shift at strength 0, the field scaled by 0.5 on training trials."
@@ -87,5 +88,5 @@ cause:
 verify:
 - {kind: H, what: report export (public runner's exact parameter sequence, real and synthetic vowels), name: report_vsa.m}
 - {kind: H, what: field wiring check, name: exp_vsa_field.m, detail: 'EXP-4: re-run for this report'}
-- {kind: H, what: the committed runner run end to end, full session (labrun), name: labrun/README.md, detail: 'LABRUN-2: baseline-training trials (strength 0) shifted like training trials, 40/40 trials, 0.32 s per trial, median |dF1| 116 mel and |dF2| 314 mel, heard F2 ×1.33'}
+- {kind: H, what: the committed runner run end to end, full session (labrun), name: labrun/README.md, detail: 'LABRUN-2, VOICES-2: with eight AI-generated voices, baseline-training trials (strength 0) shifted like training trials, 40/40 trials in every voice, 0.29–0.37 s per trial, median |dF1| 177–236 mel and |dF2| 334–424 mel, heard F2 ×1.51–1.70'}
 reproduce: cd audit/harness && ./run-oct.sh report_vsa.m

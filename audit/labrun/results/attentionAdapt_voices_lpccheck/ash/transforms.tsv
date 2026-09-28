@@ -1,0 +1,17 @@
+file	line	before	after
+free-speech/experiment_helpers/check_audapterLPC.m	213	f.Visible = 'On';	f = lr_dotset(f, 'Visible', 'On');
+free-speech/experiment_helpers/check_audapterLPC.m	243	UserData.nLPC = str2double(cell2mat(UserData.LPCdrop.String(UserData.LPCdrop.Value)));	UserData.nLPC = str2double(cell2mat(lr_dotget(UserData.LPCdrop, 'String')(lr_dotget(UserData.LPCdrop, 'Value'))));
+free-speech/experiment_helpers/check_audapterLPC.m	285	UserData.refPointCalcMethod = cell2mat(UserData.refPointCalcCtr.String(UserData.refPointCalcCtr.Value));	UserData.refPointCalcMethod = cell2mat(lr_dotget(UserData.refPointCalcCtr, 'String')(lr_dotget(UserData.refPointCalcCtr, 'Value')));
+free-speech/experiment_helpers/check_audapterLPC.m	495	updatePlots(src.Parent.Parent)	updatePlots(lr_dotget(lr_dotget(src, 'Parent'), 'Parent'))
+free-speech/experiment_helpers/check_audapterLPC.m	546	updatePlots(src.Parent.Parent)	updatePlots(lr_dotget(lr_dotget(src, 'Parent'), 'Parent'))
+free-speech/experiment_helpers/check_audapterLPC.m	571	updatePlots(src.Parent)	updatePlots(lr_dotget(src, 'Parent'))
+free-speech/plotting/makeFig4Screen.m	19	hax.LineWidth = 1;	hax = lr_dotset(hax, 'LineWidth', 1);
+free-speech/plotting/makeFig4Screen.m	20	if isequal(hax.XColor,[.15 .15 .15]) % default	if isequal(lr_dotget(hax, 'XColor'),[.15 .15 .15]) % default
+free-speech/plotting/makeFig4Screen.m	21	hax.XColor = [0 0 0];	hax = lr_dotset(hax, 'XColor', [0 0 0]);
+free-speech/plotting/makeFig4Screen.m	23	if isequal(hax.YColor,[.15 .15 .15])	if isequal(lr_dotget(hax, 'YColor'),[.15 .15 .15])
+free-speech/plotting/makeFig4Screen.m	24	hax.YColor = [0 0 0];	hax = lr_dotset(hax, 'YColor', [0 0 0]);
+free-speech/plotting/makeFig4Screen.m	26	hax.FontName = 'Helvetica';	hax = lr_dotset(hax, 'FontName', 'Helvetica');
+free-speech/plotting/makeFig4Screen.m	27	hax.FontSize = 14;	hax = lr_dotset(hax, 'FontSize', 14);
+free-speech/plotting/makeFig4Screen.m	39	for c = 1:length(hax.Children)	for c = 1:length(lr_dotget(hax, 'Children'))
+free-speech/plotting/makeFig4Screen.m	40	if isprop(hax.Children(c),'LineWidth') && hax.Children(c).LineWidth < minLineWidth	if isprop(lr_dotget(hax, 'Children')(c),'LineWidth') && lr_dotget(lr_dotget(hax, 'Children')(c), 'LineWidth') < minLineWidth
+free-speech/plotting/makeFig4Screen.m	41	hax.Children(c).LineWidth = minLineWidth;	lr_dotset(lr_dotget(hax, 'Children')(c), 'LineWidth', minLineWidth);

@@ -29,6 +29,7 @@ for j = 1:n
         fr = zeros(d.frame, 1); m = max(0, numel(d.input) - d.pos);
         if m > 0, fr(1:m) = d.input(i0:end); end
         fr = fr + LR.plan.floorNoise * randn(d.frame, 1);
+        d.input(i0:i1) = fr;                        % keep what was pumped (the record replays exactly)
       end
       fr = double(fr(:)) + 0;                       % a fresh buffer for every call (H3)
       AudapterReal('runFrame', fr);

@@ -1,0 +1,1 @@
+Session stopped after the pretest LPC check (disk full). The check kept the preset (see lpccheck/check.json), so this session equals ../../vsaGeneralize_full_voices/marin.
