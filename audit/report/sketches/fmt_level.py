@@ -104,4 +104,4 @@ def derive(d, up):
     g1r = [abs(r["level_db"]) for r in R if r["gainadapt"] == 1 and r["pert"] in ("F1 +125 mel", "F1 -125 mel")]
     v["g1_rms_n2"] = sum(1 for x in g1r if x <= 2.5); v["g1_rms_n"] = len(g1r)
     v.update(_labrun(d)); v.update(_loud(d))
-    return v
+    return {k: (0.0 if isinstance(x, float) and -0.05 < x < 0 else x) for k, x in v.items()}   # no "-0.0" in the prose
