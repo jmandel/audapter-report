@@ -13,6 +13,7 @@ import csv, glob, html, json, os, re, sys
 import numpy as np
 import scipy.io as sio
 import scipy.io.wavfile as wavfile
+import scipy.signal as sg
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -51,7 +52,9 @@ def load_trial(run, k):
     D = np.asarray(r.dataMat, float); nT = int(r.nTracks); o = 4
     fm = D[:, o:o + nT]; o2 = o + 2 * nT + 2; sf = D[:, o2:o2 + 2]
     sc = float(getattr(r.params, "scale", 1.0)) if hasattr(r.params, "scale") else 1.0
-    return dict(sr=int(r.sr), fl=int(r.frameLen), x=np.asarray(r.signalIn, float), y=np.asarray(r.signalOut, float) * sc,
+    v = getattr(r, "signalOutVoice", None)
+    v = None if v is None or np.size(v) < 2 else np.asarray(v, float) * sc
+    return dict(sr=int(r.sr), fl=int(r.frameLen), x=np.asarray(r.signalIn, float), y=np.asarray(r.signalOut, float) * sc, v=v,
                 fm=fm, sf=sf, word=str(r.ctx.word), cond=str(r.ctx.cond), inputDesc=str(r.inputDesc), params=r.params)
 
 
@@ -63,6 +66,35 @@ def summary_rows(run):
 def applied_shift_mel(row):
     """F1 shift Audapter applied (its own log: target minus tracked F1, median over the shifted frames); 0 if none."""
     return num(row, "shift_F1_mel") or 0.0
+
+
+def lpc_formants(x, sr, hop, order=12):
+    """Autocorrelation-LPC track of F1, F2 (one per hop). Used only on the clean heard voice (no masking noise)."""
+    fs = 10000; y = sg.resample_poly(x, fs, sr); y = np.append(y[0], y[1:] - 0.97 * y[:-1])
+    w = int(0.025 * fs); h = max(1, int(round(hop * fs))); win = np.hamming(w)
+    n = max(0, (len(y) - w) // h + 1); F = np.full((n, 2), np.nan); t = (np.arange(n) * h + w / 2) / fs
+    for i in range(n):
+        s = y[i*h:i*h+w] * win; r = np.correlate(s, s, "full")[w-1:w+order+1]
+        if r[0] < 1e-8: continue
+        try: a = np.linalg.solve(np.array([[r[abs(p-q)] for q in range(order)] for p in range(order)]), -r[1:order+1])
+        except np.linalg.LinAlgError: continue
+        ro = np.roots(np.r_[1, a]); ro = ro[np.imag(ro) > 0]
+        f = np.angle(ro) * fs / (2 * np.pi); bw = -np.log(np.abs(ro)) * fs / np.pi
+        f = np.sort(f[(f > 200) & (f < 4000) & (bw < 400)])
+        if len(f) >= 2: F[i] = f[:2]
+    return t, F
+
+
+def measured_shift(t):
+    """F1 shift measured independently: LPC on the clean heard voice minus LPC on the spoken signal, over the frames
+    Audapter shifted (or all tracked frames). None without a clean heard voice."""
+    if t["v"] is None: return None, None
+    sr, fl = t["sr"], t["fl"]; tf = (np.arange(len(t["fm"])) + 0.5) * fl / sr; ok = t["fm"][:, 0] > 0
+    sh = ok & (t["sf"][:, 0] > 0) & (np.abs(t["sf"][:, 0] - t["fm"][:, 0]) > 0.5); sel = sh if sh.any() else ok
+    ti, Fi = lpc_formants(t["x"], sr, fl / sr); to, Fo = lpc_formants(t["v"], sr, fl / sr); n = min(len(Fi), len(Fo))
+    m = np.interp(ti[:n], tf, sel.astype(float)) > 0.5
+    d = mel(Fo[:n][m, 0]) - mel(Fi[:n][m, 0])
+    return (float(np.nanmedian(d)) if np.isfinite(d).any() else None), (to, Fo)
 
 
 # ---------------------------------------------------------------------------------------------------- SVG charts
@@ -114,14 +146,15 @@ def dots_panel(rows, words, value, expected, lo, hi, grid, gridlab, sub, tol, ti
 
 
 # ---------------------------------------------------------------------------------------------------- trial figure
-def trial_png(t, path, prog):
+def trial_png(t, path, prog, meas=None):
     sr, fl = t["sr"], t["fl"]; x, y = t["x"], t["y"]; T = len(x) / sr
     tf = (np.arange(len(t["fm"])) + 0.5) * fl / sr
     fig, axs = plt.subplots(2, 1, figsize=(7.4, 3.9), sharex=True, gridspec_kw=dict(hspace=0.08))
     vmax = 20 * np.log10(max(np.abs(x).max(), np.abs(y).max(), 1e-6))
     ok = t["fm"][:, 0] > 0
     sh = (t["sf"][:, 0] > 0) & ok & ((np.abs(t["sf"][:, 0] - t["fm"][:, 0]) > 0.5) | (np.abs(t["sf"][:, 1] - t["fm"][:, 1]) > 0.5))
-    for ax, sig, lab in ((axs[0], x, "spoken (into Audapter)"), (axs[1], y, "heard")):
+    hv = t["v"] if t["v"] is not None else y
+    for ax, sig, lab in ((axs[0], x, "spoken (into Audapter)"), (axs[1], hv, "heard voice (masking noise left out)" if t["v"] is not None else "heard")):
         ax.specgram(sig + 1e-7, NFFT=int(0.032 * sr), Fs=sr, noverlap=int(0.028 * sr), cmap="Greys", vmin=vmax - 100, vmax=vmax - 25)
         ax.set_ylim(0, 3500); ax.set_ylabel("Hz", fontsize=8)
         ax.text(0.01, 0.93, lab, transform=ax.transAxes, fontsize=8.5, va="top", family="serif",
@@ -134,8 +167,12 @@ def trial_png(t, path, prog):
     exp_ = fmn.copy(); exp_[:, 0] = m2h(mel(fmn[:, 0]) + prog)                  # expected: spoken F1 moved by the programmed shift
     obs = np.where(sh[:, None], t["sf"], t["fm"][:, :2]); obs[~ok] = np.nan    # observed: the formants Audapter produced (its log)
     for j in (0, 1):
-        axs[1].plot(tf, obs[:, j], "-", lw=2.2, color=C["observed"], zorder=3, label="observed (Audapter's output formants)" if j == 0 else None)
+        axs[1].plot(tf, obs[:, j], "-", lw=1.6, color=C["observed"], alpha=0.75, zorder=3, label="observed (Audapter's output formants)" if j == 0 else None)
         axs[1].plot(tf, exp_[:, j], "--", lw=1.4, color=C["ink"], zorder=4, label="expected (spoken + programmed shift)" if j == 0 else None)
+        if meas is not None:
+            to, Fo = meas; keep = np.interp(to, tf, ok.astype(float)) > 0.5
+            axs[1].plot(to[::4], np.where(keep, Fo[:, j], np.nan)[::4], "o", ms=3.6, mfc="white", mew=0.9, color="#17457f", zorder=5,
+                        label="measured on the heard voice" if j == 0 else None)
     for ax in axs:
         ax.legend(loc="upper right", markerscale=2.5, framealpha=0.9, prop=dict(family="serif", size=7.5))
         ax.tick_params(labelsize=7.5)
@@ -167,12 +204,15 @@ def talker_label(run, first_desc):
 
 
 def settings_html(p):
-    g = lambda k, d="–": getattr(p, k, d)
+    def g(k, d="–"):
+        v = getattr(p, k, d)
+        try: v = float(v); return f"{v:g}" if abs(v) < 1 else f"{v:.0f}" if v == int(v) else f"{v:.3g}"
+        except (TypeError, ValueError): return v
     fb = g("fb"); items = [
         ("Sampling rate", f'{g("srate")} Hz'), ("Frame length", f'{g("framelen")} samples'), ("LPC order", g("nlpc")),
-        ("Formant shift", "on, in mel, by region of the F1–F2 plane" if int(g("bshift", 0)) and int(g("bmelshift", 0)) else g("bshift")),
-        ("Gain adaptation (bGainAdapt)", g("bgainadapt")), ("Feedback mode", f"{fb} (voice plus masking noise)" if int(fb) == 3 else fb),
-        ("Output scale (dScale)", g("scale"))]
+        ("Formant shift", "on, in mel, by region of the F1–F2 plane" if g("bshift", 0) == "1" and g("bmelshift", 0) == "1" else g("bshift")),
+        ("Gain adaptation (bGainAdapt)", g("bgainadapt")), ("Feedback mode", f"{fb} (voice plus masking noise)" if fb == "3" else fb),
+        ("Output scale (dScale)", f'{float(g("scale")):.4f}')]
     return "<dl class=settings>" + "".join(f"<dt>{E(str(a))}</dt><dd>{E(str(b))}</dd>" for a, b in items) + "</dl>"
 
 
@@ -199,21 +239,26 @@ def build(runs):
             lv = [num(r, "gain_dB") - ref for r in hw if num(r, "gain_dB") is not None]
             if not hw or not hs or not lv: continue
             pr = float(np.median([programmed(r) for r in hw]))
+            mm = [m for m in (measured_shift(load_trial(run, int(r["k"])))[0] for r in hw) if m is not None]
+            mcol = f"<td>{np.median(mm):+.0f} mel</td>" if mm else "<td>–</td>" 
             summ.append(f'<tr><td>“{E(w)}”</td><td>{"none" if pr == 0 else f"F1 {pr:+.0f} mel"}</td><td>{np.median(hs):+.0f} mel</td>'
-                        f'<td>{np.median(lv):+.1f} dB</td><td>{len(hw)}</td></tr>')
+                        f'{mcol}<td>{np.median(lv):+.1f} dB</td><td>{len(hw)}</td></tr>')
         cards, first = [], None
         for r in pick_trials(main):
             k = int(r["k"]); t = load_trial(run, k); first = first or t["inputDesc"]; base = f"{tid}_{k:04d}"
             write_wav(os.path.join(OUT, "assets", base + "_in.wav"), t["x"], t["sr"])
             write_wav(os.path.join(OUT, "assets", base + "_out.wav"), t["y"], t["sr"])
-            trial_png(t, os.path.join(OUT, "assets", base + ".png"), programmed(r))
+            ms, mtrack = measured_shift(t)
+            trial_png(t, os.path.join(OUT, "assets", base + ".png"), programmed(r), mtrack)
+            if t["v"] is not None: write_wav(os.path.join(OUT, "assets", base + "_voice.wav"), t["v"], t["sr"])
             pr = programmed(r); hs = applied_shift_mel(r); lv = num(r, "gain_dB")
             ok = t["fm"][:, 0] > 0; sh = ok & (t["sf"][:, 0] > 0) & (np.abs(t["sf"][:, 0] - t["fm"][:, 0]) > 0.5)
             fi = float(np.median(t["fm"][sh if sh.any() else ok, 0])) if ok.any() else None
             fo = float(np.median(t["sf"][sh, 0])) if sh.any() else fi
             stat = (f"F1 {fi:.0f} Hz spoken, {fo:.0f} Hz heard: Audapter shifted it {hs:+.0f} mel" if sh.any() else
                     (f"F1 {fi:.0f} Hz, not shifted" if fi else "No voice tracked"))
-            stat += f' (programmed: {"no shift" if pr == 0 else f"{pr:+.0f} mel"}).'
+            stat += f' (programmed: {"no shift" if pr == 0 else f"{pr:+.0f} mel"})'
+            stat += f"; measured on the heard voice {ms:+.0f} mel." if ms is not None else "." 
             if lv is not None: stat += f" Heard level {lv - ref:+.1f} dB relative to unshifted trials."
             flag = (hs is not None and abs(hs - pr) > SHIFT_TOL_MEL) or (lv is not None and abs(lv - ref) > LEVEL_TOL_DB)
             cards.append(f"""
@@ -223,6 +268,7 @@ def build(runs):
   <div class="audio">
     <label><span class="role input">spoken</span><audio controls preload="none" src="assets/{base}_in.wav"></audio></label>
     <label><span class="role observed">heard</span><audio controls preload="none" src="assets/{base}_out.wav"></audio></label>
+    {f'<label><span class="role observed">heard voice only</span><audio controls preload="none" src="assets/{base}_voice.wav"></audio></label>' if t["v"] is not None else ''}
   </div>
   <p class="meas{' flag' if flag else ''}">{E(stat)}</p>
 </figure>""")
@@ -239,14 +285,15 @@ programmed for it:</p>
 <p class="legend"><span class="lg exp"></span>expected <span class="lg obs"></span>observed
 <span class="lg disc"></span>differs from expected by more than {SHIFT_TOL_MEL:.0f} mel or {LEVEL_TOL_DB:.0f} dB</p>
 <table class="hold"><caption>Hold phase (full-strength shift), medians</caption>
-<tr><th>word</th><th>programmed</th><th>F1 shift applied</th><th>heard level vs unshifted</th><th>trials</th></tr>
+<tr><th>word</th><th>programmed</th><th>F1 shift applied</th><th>measured on the heard voice</th><th>heard level vs unshifted</th><th>trials</th></tr>
 {''.join(summ)}</table>
 <details><summary>Audapter settings used</summary>{settings_html(load_trial(run, int(main[0]['k']))['params'])}</details>
 <h2>Individual trials</h2>
 <p>One trial per phase and word. In each figure, the top panel is what the participant said and the bottom panel what
-they heard; the grey band marks where Audapter shifted the formants. Formant values come from Audapter's own log:
-measuring them independently on the heard audio is unreliable here, because the masking noise and the widely spaced
-harmonics of a higher voice pull the estimates around. The spectrograms and the audio let you check by eye and ear.</p>
+they heard; the grey band marks where Audapter shifted the formants. The solid blue formants are
+the ones Audapter logged producing. The hollow circles are an independent measurement on the heard voice with the masking
+noise left out (the trial replayed through Audapter with identical input and settings, voice only); expect it to scatter by
+some tens of mel on higher voices, whose harmonics are widely spaced.</p>
 {''.join(cards)}
 </section>""")
     page = TEMPLATE.replace("{{TABS}}", "".join(tabs)).replace("{{SECTIONS}}", "\n".join(sections))
