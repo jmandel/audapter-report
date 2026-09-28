@@ -42,14 +42,16 @@ PG.TrialsUI = (() => {
 
   function renderList() {
     PG.clear(listEl);
-    let T = [...PG.state.trials];
+    PG.Cases.renderGroups(listEl, render);   // a loaded test case: one row per trial under a case header
+    let T = PG.state.trials.filter(t => !t.caseRef);
     const q = filter.trim().toLowerCase();
     if (q) T = T.filter(t => [t.name, t.summary, (t.tags || []).join(' '), t.notes, (PG.state.inputs.get(t.inputId) || {}).label].join(' ').toLowerCase().includes(q));
     const sk = sortKey.startsWith('p:') ? sortKey.slice(2) : null;
     if (sortKey === 'new') T.reverse();
     else if (sortKey === 'name') T.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
     else if (sk) T.sort((a, b) => { const va = valueOf(a, sk), vb = valueOf(b, sk); return (typeof va === 'number' && typeof vb === 'number') ? va - vb : String(va).localeCompare(String(vb)); });
-    if (!T.length) { listEl.append(h('li.empty', { text: PG.state.trials.length ? 'No trial matches the filter.' : 'No trials yet. Choose an input: the current settings run automatically.' })); return; }
+    if (!T.length) { if (!listEl.children.length) listEl.append(h('li.empty', { text: PG.state.trials.length ? 'No trial matches the filter.' : 'No trials yet. Choose an input: the current settings run automatically.' })); return; }
+    if (listEl.children.length) listEl.append(h('li.case-head', {}, h('b', { text: 'Other trials' })));
     for (const t of T) {
       const cur = t.id === PG.state.currentId;
       const cb = h('input', { type: 'checkbox', checked: PG.state.selected.has(t.id), 'aria-label': `Tick ${t.name}`,

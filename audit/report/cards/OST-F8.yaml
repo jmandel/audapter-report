@@ -4,6 +4,10 @@ log: OST-F8
 notes: notes/ost-pcf.md#f8
 headline: Written the way the manual describes, the INTENSITY_AND_RATIO OST rules have no hold time
 severity: low
+studies:
+  status: na
+  text: >-
+    Not applicable: no blab OST we inspected uses the AND_RATIO rules.
 reach_kind: pitfall
 reach: >-
   Not triggered: no blab OST we inspected uses the AND_RATIO rules. Affects OSTs written with the manual's {{}} placeholder in field 5.

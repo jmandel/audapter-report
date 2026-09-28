@@ -5,6 +5,10 @@ notes: notes/formant.md#f1
 headline: >-
   A clamp trajectory shorter than 2048 values is read as 2048: after it ends, the formant clamp follows whatever lies next in memory
 severity: med
+studies:
+  status: safe
+  text: >-
+    Safe as run: taimComp pads its clamp trajectories to 2048 values.
 reach_kind: robust
 reach: >-
   Not triggered by blab's public code, which does no formant clamping; the settings of blab's clamping experiment were not available to us. Affects clamp trajectories shorter than 2048 values.

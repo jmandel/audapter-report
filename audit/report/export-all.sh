@@ -23,6 +23,7 @@ echo "export: exp_vsa_field.m, exp_mixed.m S1 S2"; ./run-oct.sh exp_vsa_field.m 
 (SCEN=S1 ./run-oct.sh exp_mixed.m; SCEN=S2 ./run-oct.sh exp_mixed.m) 2>&1 | grep -v "Set param" > oct/out/report/carryover/exp_mixed.log || true
 run report_ost_f2.m;  runu report_ost_f2.m
 run report_i01.m;     runu report_i01.m
+SCEN=cereb ./run-oct.sh report_pt5.m > /dev/null     # cerebTypicalProduction settings, fresh process
 run report_pt5.m
 mkdir -p oct/out/report/ost-f4
 ./run-oct.sh report_ost_f4.m build-asan > oct/out/report/ost-f4/asan.log 2>&1 || true   # ASan aborts at the first bad read

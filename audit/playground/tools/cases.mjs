@@ -1,7 +1,7 @@
 // Package the captured report test cases (capture/out/<ID>/) into dist/cases/: one classic script per case
 // (cases/<ID>.js -> PG.caseLoaded(case)) and content-addressed resources shared between cases (cases/res/<sha>.js ->
 // PG.caseRes(sha, res)): trial inputs and long audio-like arrays (datapb) as 24-bit FLAC, other long arrays as float32.
-// Case format (version 1): {format, version, id, title, summary, key, card, build, metric, ostStates, switching,
+// Case format (version 1): {format, version, id, title, summary, key, card, build, metric, ostStates, switching, focus, spot, diff, expWord,
 //   inputs: [{res, label, n}], variants: [{name, label, mode, build, stateOffset, setup: [op], trials: [{label, input, ops: [op]}]}],
 //   checks: [{label, variant, trial, metric, want, tol}], extra}
 // op: {op: 'setParam', name, value | res} | {op: 'ost'|'pcf', text} | {op: 'reset'}; each trial then processes its input.
@@ -12,6 +12,14 @@ import os from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { CASES, NOT_REPLAYABLE } from './cases.spec.mjs';
 
+// RMS of a 16-bit PCM WAV (the report's exported clips), for card numbers that exist only as audio
+function wavRms(f) {
+  const b = fs.readFileSync(f); let o = 12, e = 0, n = 0;
+  while (o < b.length - 8) { const id = b.toString('ascii', o, o + 4), sz = b.readUInt32LE(o + 4);
+    if (id === 'data') { for (let i = o + 8; i + 1 < o + 8 + sz; i += 2) { const v = b.readInt16LE(i) / 32768; e += v * v; n++; } break; }
+    o += 8 + sz + (sz & 1); }
+  return Math.sqrt(e / n);
+}
 export function buildCases({ P, A, DIST, hasFlac }) {
   const out = path.join(DIST, 'cases'), resDir = path.join(out, 'res');
   fs.mkdirSync(resDir, { recursive: true });
@@ -41,11 +49,17 @@ export function buildCases({ P, A, DIST, hasFlac }) {
     const cd = path.join(P, 'capture', 'out', spec.capture || id);
     if (!fs.existsSync(path.join(cd, 'log.json'))) { console.warn(`WARN: case ${id} not captured (run tools/capture-cases.sh ${id})`); index.push({ id, title: spec.title, summary: spec.summary, available: false, why: 'not captured in this build' }); continue; }
     // the card's numbers: the export's data.json (harness output), or the report's merged copy if that is where they are
+    // Sets: the real-voice example (the card's primary one, where the export has it) first, then the synthetic one.
+    const SETS = spec.real ? [{ ...spec, ...spec.real, id: 'real', setLabel: 'Real voice' }, { ...spec, id: 'synthetic', setLabel: 'Synthetic' }] : [{ ...spec, id: spec.setId || 'synthetic', setLabel: spec.setLabel || 'Synthetic' }];
     let data = null;
     for (const f of [path.join(A, 'harness/oct/out/report', spec.dir, 'blab', 'data.json'), path.join(A, 'report/prototype/assets', spec.dir, 'data.json')]) {
       if (!fs.existsSync(f)) continue;
       const d = JSON.parse(fs.readFileSync(f, 'utf8'));
-      try { spec.checks(d); data = d; break; } catch { /* numbers not in this copy */ }
+      // real-voice numbers some exports keep beside data.json (OST-F1: meas/real.json)
+      const rj = path.join(A, 'harness/oct/out/report', spec.dir, 'meas', 'real.json');
+      if (d.real === undefined && fs.existsSync(rj)) d.real = JSON.parse(fs.readFileSync(rj, 'utf8'));
+      d._wavRms = rel => wavRms(path.join(A, 'harness/oct/out/report', rel));
+      try { SETS.forEach(st => st.checks(d)); data = d; break; } catch { /* numbers not in this copy */ }
     }
     if (!data) throw new Error(`${id}: no data.json with the card's numbers`);
     const arrays = {}, inputs = {};
@@ -59,6 +73,7 @@ export function buildCases({ P, A, DIST, hasFlac }) {
     const inputList = [];
     const inputIdx = k => { const r = inRes(k); let i = inputList.findIndex(q => q.res === r); if (i < 0) { i = inputList.length; inputList.push({ res: r, n: fs.statSync(path.join(capDir, 'inputs', `${k}.f64`)).size / 8, label: '' }); } return i; };
     const seqLabels = (data.settings && [].concat(data.settings.sequence || []).flat()) || [];
+    const buildSet = spec => {
     const tl = spec.trialLabels ? spec.trialLabels(data) : null;
     const variants = spec.variants.map(v => {
       const cap = v.capture || spec.capture || id; capDir = path.join(P, 'capture', 'out', cap);
@@ -73,19 +88,27 @@ export function buildCases({ P, A, DIST, hasFlac }) {
         const cut = JSON.stringify(tail) === JSON.stringify(pat) ? first.length - pat.length : (first.length && first[first.length - 1].op === 'reset' ? first.length - 1 : first.length);
         setup = first.slice(0, cut); trials[0].ops = first.slice(cut);
       }
-      trials.forEach((t, k) => { t.label = (spec.vowels ? `strength ${k < 6 ? 0 : 0.5}, /${spec.vowels[k % 6]}/` : tl ? tl[k] : seqLabels[k]) || `trial ${k + 1}`; });
+      const T = v.pick ? v.pick.map(i => trials[i]) : trials.slice();
+      const W = v.ownWarmup ? 1 : 0, vl = v.labels ? v.labels(data) : null;
+      T.forEach((t, k0) => { const k = k0 - W; t.label = (k < 0 ? 'warm-up (not compared; EXP-10)' : spec.vowels ? `strength ${k < 6 ? 0 : 0.5}, /${spec.vowels[k % 6]}/` : vl ? vl[k] : tl ? tl[k] : seqLabels[k]) || `trial ${k + 1}`; if (k < 0) t.warmup = true; });
+      trials.length = 0; trials.push(...T);
       // The export ran this section after others in the same process; the first trial of a fresh instance tracks onsets
       // differently (EXP-10), so the replay starts with one uncounted warm-up trial (a copy of the first).
-      if (v.warmup && trials.length) trials.unshift({ ...JSON.parse(JSON.stringify(trials[0])), label: 'warm-up (not compared: the first trial of a fresh Audapter tracks onsets differently, EXP-10)', warmup: true });
+      if (v.warmup && trials.length) trials.unshift({ ...JSON.parse(JSON.stringify(trials[0])), label: 'warm-up (not compared; EXP-10)', warmup: true });
       return { name: v.name, label: v.label, mode: v.mode, build: v.build || spec.build, stateOffset: v.stateOffset || 0, setup, trials };
     });
+    return { id: spec.id, label: spec.setLabel, variants, checks: spec.checks(data), focus: spec.focus || {}, key: spec.key, diff: spec.diff || 'formant-on', expWord: spec.expWord || 'should be',
+      metric: spec.metric, ostStates: spec.ostStates, inputDesc: spec.inputDesc || (data.settings && data.settings.input) || '', summary: spec.summary };
+    };
+    const sets = SETS.map(buildSet), S0 = sets[0], variants = S0.variants;
     inputList.forEach((q, i) => { q.label = `input ${i + 1} (${(q.n / 48000).toFixed(2)} s)`; });
     const c = { format: 'audapter-playground-case', version: 1, id, title: spec.title, summary: spec.summary, key: spec.key, card: id,
       build: spec.build, metric: spec.metric, ostStates: spec.ostStates, switching: data.settings && data.settings.switching || '',
-      inputDesc: data.settings && data.settings.input || '', note: spec.note || '', inputs: inputList, variants, checks: spec.checks(data), extra: spec.intended ? { intended: spec.intended(data) } : {},
+      inputDesc: data.settings && data.settings.input || '', note: spec.note || '', inputs: inputList, ...S0, id, sets, spot: spec.spot || [], extra: spec.intended ? { intended: spec.intended(data) } : {},
       source: `captured from audit/harness/oct/${logOf(spec.capture || id).script} by audit/playground/tools/capture-cases.sh` };
+    c.variants = undefined; c.checks = undefined;   // they live in sets (the page merges the chosen set)
     fs.writeFileSync(path.join(out, `${id}.js`), `/* Audapter Playground test case ${id} (${c.source}). */\nPG.caseLoaded(${JSON.stringify(c)});\n`);
-    index.push({ id, title: spec.title, summary: spec.summary, key: spec.key, available: true, trials: variants.map(v => v.trials.length) });
+    index.push({ id, title: spec.title, summary: spec.summary, key: S0.key, available: true, sets: sets.map(st => st.id), trials: variants.map(v => v.trials.length) });
   }
   for (const [id, why] of Object.entries(NOT_REPLAYABLE)) index.push({ id, title: '', summary: '', available: false, why });
   fs.rmSync(tmp, { recursive: true, force: true });

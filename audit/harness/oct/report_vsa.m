@@ -82,6 +82,7 @@ for k = 1:3
   ap = A.(names{k});
   p = getAudapterDefaultParams('male'); p = add2struct(p, ap); p.bShift = 1; p.bRatioShift = 0; p.bMelShift = 1; p.fb = 1;
   if k == 1, p.bShift2D = 1; end
+  case_mark(['real_' names{k}]);   % Playground test case capture; no-op otherwise
   Audapter('ost', '', 0); Audapter('pcf', '', 0); AudapterIO('init', p);
   switch names{k}
     case 'sent', Audapter(3, 'pertf1', p.pertF1); Audapter(3, 'pertf2', p.pertF2); Audapter(3, 'pertAmp2D', p.pertAmp2D); Audapter(3, 'pertPhi2D', p.pertPhi2D);
@@ -106,6 +107,7 @@ for k = 1:3
       printf('real %s %s %s: produced %4.0f/%4.0f heard %4.0f/%4.0f intended %4.0f/%4.0f Hz\n', names{k}, tag, nm, mel2hz(P), mel2hz(H), mel2hz(P + s * (cen - P)));
     end
   end
+  case_mark('');
 end
 R.real = RV; R.real_ids = rid;
 % fb 4 with a real sentence (speech-modulated noise follows the voice)
@@ -123,8 +125,11 @@ case_mark('');
 audiowrite(fullfile(md, 'fb4_committed.wav'), d1.signalOut, p.sr, 'BitsPerSample', 16);
 audiowrite(fullfile(md, 'fb4_intended.wav'), d2.signalOut, p.sr, 'BitsPerSample', 16);
 audiowrite(fullfile(md, 'fb4_in.wav'), d1.signalIn, p.sr, 'BitsPerSample', 16);
+case_mark('fb4_real_committed');   % Playground test case capture; no-op otherwise
 AudapterIO('init', p); Audapter('setParam', 'datapb', w, 1); e1 = run_trial(p, xr, 'init', false);
+case_mark('fb4_real_intended');
 AudapterIO('init', q); Audapter('setParam', 'datapb', w, 1); e2 = run_trial(q, xr, 'init', false);
+case_mark('');
 audiowrite(fullfile(md, 'fb4_real_committed.wav'), e1.signalOut, p.sr, 'BitsPerSample', 16);
 audiowrite(fullfile(md, 'fb4_real_intended.wav'), e2.signalOut, p.sr, 'BitsPerSample', 16);
 audiowrite(fullfile(md, 'fb4_real_in.wav'), e1.signalIn, p.sr, 'BitsPerSample', 16);

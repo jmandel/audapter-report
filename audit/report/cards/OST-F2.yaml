@@ -5,6 +5,10 @@ notes: notes/ost-pcf.md#f2
 headline: >-
   After an OST maxIOI timeout, the next ELAPSED_TIME lasts one frame, and without reloading the OST the timeout fires 0.2 s later in every trial
 severity: med
+studies:
+  status: na
+  text: >-
+    Not applicable: no blab OST we inspected has a maxIOI section.
 reach_kind: pitfall
 reach: >-
   Not triggered: no blab OST we inspected has a maxIOI (timeout) section. Affects OSTs with a timeout that are loaded once for many trials.

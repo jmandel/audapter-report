@@ -214,22 +214,86 @@ await (await page.$('#v-vowel')).screenshot({ path: path.join(SHOTS, 'variabilit
 await page.setViewportSize({ width: 1440, height: 1000 }); await page.emulateMedia({ colorScheme: 'light' }); await page.evaluate(() => PG.bus.emit('theme'));
 await page.evaluate(() => { PG.Vowel.setMode('trial'); PG.setSettings(PG.S.defaultSettings(), 'noauto'); PG.state.selected.clear(); PG.bus.emit('trials'); PG.bus.emit('view', 'spectro'); });
 
-// ---------------- 2d. report test cases: every case replays the card's numbers
-const caseIds = await page.evaluate(() => PG.CASES.filter(c => c.available).map(c => c.id));
+// ---------------- 2d. report test cases, opened in the main workspace. Per case: the card's numbers reproduce; the first
+// view is the key trial side by side (expected above observed, one axis, formant tracks, orange difference, a callout,
+// play buttons); the trial list has one row per trial with an Expected/Observed toggle; the settings panel reflects the
+// case (3 parameters); "expected" is the card's fix build where one exists, otherwise labelled for what it is.
+const FIXB = { 'OST-F1': 'fix-ost-f1', 'OST-F2': 'fix-ost-f2', 'I-01': 'fix-i-01', 'I-02': 'fix-i-02', 'PT-5': 'fix-pt-5', 'F6': 'alt-f6' };
+// Cases with a real-voice example (the card's primary one) open with it; the synthetic one is checked the same way.
+const caseSets = await page.evaluate(() => PG.CASES.filter(c => c.available).flatMap(c => c.sets.map((s, i) => [c.id, s, i === 0])));
 const caseRows = [];
-for (const cid of caseIds) {
-  await page.evaluate(id => { location.hash = 'case=' + id; }, cid);
-  await page.waitForFunction(id => PG.Cases.current() && PG.Cases.current().id === id && !PG.Cases.running() && Object.keys(PG.Cases.results()).length, cid, { timeout: 180000 });
+const openCase = async (pg, cid, set, dflt) => {
+  if (cid === 'OST-F1' && !dflt) await pg.click(`#case-set button[data-set="${set}"]`);   // the banner's switch
+  else await pg.evaluate(([id, s, d]) => { location.hash = 'case=' + id + (d ? '' : '&voice=' + s); }, [cid, set, dflt]);
+  await pg.waitForFunction(([id, s]) => PG.Cases.current() && PG.Cases.current().id === id && PG.Cases.current().set === s && !PG.Cases.running() && Object.keys(PG.Cases.results()).length && PG_TEST.idle(), [cid, set], { timeout: 180000 });
+  await pg.waitForTimeout(400);
+};
+for (const [cid, set, dflt] of caseSets) {
+  await openCase(page, cid, set, dflt);
+  const CID = cid; { const cid = `${CID} (${set === 'real' ? 'real voice' : set}${dflt ? ', default' : ''})`;
   const C = await page.evaluate(() => PG.Cases.comparisons().map(x => ({ l: x.label, v: x.variant, want: x.want, got: x.got, ok: x.ok })));
+  const st = await page.evaluate(() => PG_TEST.caseState()), info = await page.evaluate(() => { const c = PG.Cases.current(); return { focus: c.focus, n: Math.max(...c.variants.filter(v => /^(expected|observed)$/.test(v.name)).map(v => v.trials.length)), expBuild: (c.variants.find(v => v.name === 'expected') || {}).build }; });
   const bad = C.filter(x => !x.ok);
   caseRows.push([cid, C.length - bad.length, C.length]);
+  if (dflt) { const sets = await page.evaluate(() => PG.Cases.current().sets.map(x => x.id)); T(`test case ${cid}: opens with the real voice where the card has one`, sets.includes('real') ? set === 'real' : true, sets.join(', ')); }
   T(`test case ${cid}: the replay reproduces the card`, !bad.length, `${C.length - bad.length} of ${C.length} numbers` + (bad.length ? '; ' + bad.slice(0, 3).map(x => `${x.v} ${x.l}: card ${x.want} replay ${x.got}`).join('; ') : ''));
-  if (cid === 'OST-F1') { await page.waitForTimeout(300); await page.screenshot({ path: path.join(SHOTS, 'case-ost-f1-1440-light.png') }); await (await page.$('#case-results')).screenshot({ path: path.join(SHOTS, 'case-ost-f1-timeline-1440-light.png') }); }
+  const keyOk = st && st.caseRef && st.caseRef.variant === 'observed' && st.caseRef.trial === (info.focus.observed ?? 0) && st.banner && st.selected.some(n => n.includes('· expected ·'));
+  T(`test case ${cid}: opens with the key trial selected (observed current, expected ticked)`, !!keyOk, st ? `current "${st.current}", ticked ${st.selected.length}` : 'no state');
+  const pairOk = st && st.view === 'pair' && st.stacks === 1 && st.tierLabels.includes('Expected · heard') && st.tierLabels.includes('Observed · heard') && st.tierLabels.indexOf('Expected · heard') < st.tierLabels.indexOf('Observed · heard')
+    && st.bluePixelsExpected > 100 && st.bluePixelsObserved > 100 && st.playButtons === 3;
+  T(`test case ${cid}: first view is the key trial side by side (expected above observed, one time axis, formant tracks, play buttons)`, !!pairOk,
+    st ? `view ${st.view}, ${st.stacks} stack; tiers ${st.tierLabels.join(' / ')}; heard-formant pixels ${st.bluePixelsExpected} / ${st.bluePixelsObserved}` : '');
+  const diffOk = st && st.diffBands > 0 && st.orangePixelsObserved > 50 && st.callout.length > 10 && !/^No difference/.test(st.callout);
+  T(`test case ${cid}: the difference is marked in orange with a one-line callout`, !!diffOk, st ? `"${st.callout}"; ${st.diffBands} band(s), ${st.orangePixelsObserved} orange pixels` : '');
+  const rowsOk = st && st.rows === info.n && st.toggles === info.n && st.caseTrials >= 2 * info.n;
+  T(`test case ${cid}: the trial list has one row per trial with an Expected/Observed toggle`, !!rowsOk, st ? `${st.rows} rows (${info.n} trials), ${st.toggles} toggles, ${st.caseTrials} trial results` : '');
+  const expOk = FIXB[CID] ? info.expBuild === FIXB[CID] && st.pair && st.pair.eBuild === FIXB[CID] && st.pair.oBuild !== FIXB[CID]
+    : info.expBuild === 'lite' && /no code fix applies|no fixed build exists/.test(st.expectedMeans);
+  T(`test case ${cid}: expected is ${FIXB[CID] ? `the same sequence on the ${FIXB[CID]} build` : 'labelled as what the card uses (no fix build)'}`, !!expOk, st ? st.expectedMeans.slice(0, 160) : '');
+  const spotOk = st && st.spot.length === 3 && st.spot.every(x => x.case !== undefined && Math.abs(x.settings - x.case) <= 1e-9 * Math.max(1, Math.abs(x.case)));
+  T(`test case ${cid}: the settings panel reflects the case`, !!spotOk, st ? st.spot.map(x => `${x.name} ${x.settings} (case ${x.case})`).join(', ') + `; When: ${st.whenMode}` : '');
+  if (['OST-F1', 'LAB-1', 'PT-5'].includes(CID) && dflt) { await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(150); await page.screenshot({ path: path.join(SHOTS, `case-${CID.toLowerCase()}-workspace-1440-light.png`) }); }
+  if (CID === 'OST-F1' && set === 'synthetic') {   // the banner's example switch
+    const sw = await page.evaluate(() => ({ b: [...document.querySelectorAll('#case-set button')].map(b => b.textContent + (b.getAttribute('aria-checked') === 'true' ? '*' : '')).join(' / '), key: PG.Cases.current().key }));
+    T('the banner switches between the real voice and synthetic examples', sw.b === 'Real voice / Synthetic*' && /^Trial 4/.test(sw.key), sw.b + '; ' + sw.key.slice(0, 60));
+  }
+  if (CID === 'OST-F1' && dflt) {
+    await (await page.$('#v-tiers')).screenshot({ path: path.join(SHOTS, 'case-ost-f1-pair-1440-light.png') });
+    // the toggle: show the expected run of the key row; ticking a row ticks both variants (both show in Compare)
+    await page.click('#trials li.case-row[data-group="case"][data-trial="3"] .case-tog button[data-variant="expected"]'); await page.waitForTimeout(300);
+    const tg = await page.evaluate(() => PG_TEST.caseState());
+    T('test case toggle: Expected shows the expected run of the same trial', tg.caseRef.variant === 'expected' && tg.caseRef.trial === 3 && tg.view === 'pair', tg.current);
+    await page.click('#trials li.case-row[data-group="case"][data-trial="1"] input[type=checkbox]'); await page.waitForTimeout(200);
+    const tick = await page.evaluate(() => PG.state.trials.filter(t => PG.state.selected.has(t.id) && t.caseRef && t.caseRef.trial === 1).map(t => t.caseRef.variant).sort().join(','));
+    T('ticking a case row ticks both variants', tick === 'expected,observed', tick);
+    await page.click('#case-timeline-btn'); await page.waitForTimeout(600);
+    await (await page.$('#case-summary')).screenshot({ path: path.join(SHOTS, 'case-ost-f1-timeline-1440-light.png') });
+    const cmp = await page.evaluate(() => ({ view: PG.state.view, figs: document.querySelectorAll('#v-compare figure.sm').length, sel: PG.state.selected.size }));
+    T('Compare shows the session timeline, the card numbers and every case trial', cmp.view === 'compare' && cmp.figs === cmp.sel && cmp.sel === 16 && await page.$('#case-numbers') !== null, JSON.stringify(cmp));
+    // editing: fork, then re-run the whole sequence as one session
+    await page.evaluate(() => PG.Cases.focus()); await page.waitForTimeout(300);
+    await page.evaluate(() => PG.editSettings(s => { s.raw.fb3gain = 0.05; }));
+    await page.waitForFunction(() => PG.Cases.forks().length && PG.Cases.forks()[0].ran && !PG.Cases.running() && PG_TEST.idle(), null, { timeout: 120000 });
+    await page.waitForTimeout(400);
+    const fk = await page.evaluate(() => { const s = PG_TEST.caseState(), f = PG.Cases.forks()[0], R = PG.Cases.results();
+      const sh = t => +PG.Cases.metric('shift_s', t.result).toFixed(3);
+      return { s, rows: document.querySelectorAll(`#trials li.case-row[data-group="${f.key}"]`).length, orig: document.querySelectorAll('#trials li.case-row[data-group="case"]').length,
+        head: document.querySelector(`#trials li.case-head[data-group="${f.key}"]`).textContent, t4: sh(f.results[3]), obs4: sh(R.observed[3]), exp4: sh(R.expected[3]) }; });
+    T('an edit while a case is loaded makes "OST-F1 · my edit" with a settings diff; the original stays', fk.s.forks.length === 1 && fk.s.forks[0].name === 'OST-F1 · my edit' && /fb3gain 0\.02 → 0\.05/.test(fk.head) && fk.orig === 8 && fk.rows === 8, fk.head.slice(0, 140));
+    T('the copy re-runs the whole sequence as one session (the cross-trial leak is kept)', fk.s.forks[0].n === 8 && fk.s.forks[0].seqIds === 1 && Math.abs(fk.t4 - fk.obs4) < 0.011,
+      `${fk.s.forks[0].n} trials in ${fk.s.forks[0].seqIds} session; trial 4 shift ${fk.t4} s (original observed ${fk.obs4} s, expected ${fk.exp4} s)`);
+    await page.evaluate(() => PG.editSettings(s => { s.build = 'fix-ost-f1'; }));
+    await page.waitForTimeout(900);
+    await page.waitForFunction(() => !PG.Cases.running() && PG_TEST.idle() && PG.Cases.forks()[0].results[3] && PG.Cases.forks()[0].results[3].variant === 'fix-ost-f1', null, { timeout: 120000 });
+    const fk2 = await page.evaluate(() => { const f = PG.Cases.forks()[0]; return { n: PG.Cases.forks().length, t4: +PG.Cases.metric('shift_s', f.results[3].result).toFixed(3), exp4: +PG.Cases.metric('shift_s', PG.Cases.results().expected[3].result).toFixed(3), head: document.querySelector(`#trials li.case-head[data-group="${f.key}"]`).textContent }; });
+    T('a second edit updates the same copy (build switched to the fix: trial 4 as expected)', fk2.n === 1 && Math.abs(fk2.t4 - fk2.exp4) < 0.011 && /build lite → fix-ost-f1/.test(fk2.head), `trial 4 shift ${fk2.t4} s (expected ${fk2.exp4} s); ${fk2.head.slice(0, 120)}`);
+    await page.evaluate(() => { window.scrollTo(0, 0); const f = PG.Cases.forks()[0]; const el = document.querySelector(`#trials li.case-head[data-group="${f.key}"]`); el.closest('.trials-col').scrollTop = el.offsetTop - 40; });
+    await page.screenshot({ path: path.join(SHOTS, 'case-ost-f1-fork-1440-light.png') });
+  }
+  }
 }
 console.log('test cases: ' + caseRows.map(([i, a, b]) => `${i} ${a}/${b}`).join(', '));
-await page.evaluate(() => { location.hash = ''; window.scrollTo(0, 0); PG.bus.emit('tab', 'cases'); });
-await page.waitForTimeout(300);
-await page.screenshot({ path: path.join(SHOTS, 'case-picker-1440-light.png') });
+await page.evaluate(() => { history.replaceState(null, '', location.pathname); window.scrollTo(0, 0); });
 // part A: a report settings link with a custom OST/PCF shows the per-state values on the cards, not "F1 0 mel"
 const link = JSON.parse(fs.readFileSync(path.join(A, 'report', 'prototype', 'assets', 'ost-f1', 'settings.json'), 'utf8')).playground;
 const summ = await page.evaluate(sv => { PG.setSettings(sv, 'noauto'); PG.bus.emit('tab', 'explore'); return document.querySelector('[data-card="formant"] .card-sum').textContent; }, link);
@@ -281,15 +345,19 @@ async function shots(width, scheme) {
     else await p.screenshot({ path: path.join(SHOTS, `${v}-${tag}.png`) });
   }
   if (width < 600) { await p.click('#vt-spectro'); await p.screenshot({ path: path.join(SHOTS, `top-${tag}.png`) }); }
-  if (width < 600 || scheme === 'dark') {
-    await p.evaluate(() => { location.hash = 'case=OST-F1'; });
-    await p.waitForFunction(() => PG.Cases.current() && !PG.Cases.running() && Object.keys(PG.Cases.results()).length, null, { timeout: 180000 });
-    await p.waitForTimeout(300);
-    await p.screenshot({ path: path.join(SHOTS, `case-ost-f1-${tag}.png`) });
-    await (await p.$('#case-results')).screenshot({ path: path.join(SHOTS, `case-ost-f1-timeline-${tag}.png`) });
-    await p.evaluate(() => { location.hash = ''; window.scrollTo(0, 0); PG.bus.emit('tab', 'cases'); });
-    await p.waitForTimeout(300);
-    await p.screenshot({ path: path.join(SHOTS, `case-picker-${tag}.png`) });
+  if (scheme === 'dark') {
+    for (const cid of ['OST-F1', 'LAB-1', 'PT-5']) {
+      await p.evaluate(id => { location.hash = 'case=' + id; }, cid);
+      await p.waitForFunction(id => PG.Cases.current() && PG.Cases.current().id === id && !PG.Cases.running() && Object.keys(PG.Cases.results()).length && PG_TEST.idle(), cid, { timeout: 180000 });
+      await p.waitForTimeout(500); await p.evaluate(() => window.scrollTo(0, 0));
+      await p.screenshot({ path: path.join(SHOTS, `case-${cid.toLowerCase()}-workspace-${tag}.png`) });
+      await p.evaluate(() => document.querySelector('#v-tiers').scrollIntoView()); await p.waitForTimeout(200);
+      await p.screenshot({ path: path.join(SHOTS, `case-${cid.toLowerCase()}-pair-${tag}.png`) });
+      if (width < 600) { await p.evaluate(() => document.querySelector('#trials').scrollIntoView()); await p.waitForTimeout(200); await p.screenshot({ path: path.join(SHOTS, `case-${cid.toLowerCase()}-list-${tag}.png`) }); }
+    }
+    await p.click('#case-timeline-btn'); await p.waitForTimeout(600);
+    await (await p.$('#case-summary')).screenshot({ path: path.join(SHOTS, `case-pt-5-timeline-${tag}.png`) });
+    await p.evaluate(() => { history.replaceState(null, '', location.pathname); window.scrollTo(0, 0); PG.bus.emit('view', 'spectro'); });
   }
   await p.click('#tab-design');
   await p.waitForFunction(() => PG.DesignUI.state().dry && PG_TEST.idle() && document.querySelector('.dz-timeline .tiers'), null, { timeout: 60000 });

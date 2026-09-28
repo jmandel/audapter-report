@@ -71,11 +71,13 @@ if ~UP
     r.real.exp_on(k) = shon(q); wr(sprintf('real_exp_t%d.wav', k), q.signalOut);
   end
   wr('real_in.wav', q.signalIn);
+  case_mark('real_observed');   % Playground test case capture; no-op otherwise
   q = run_trial(p, xr, 'ost', 'cfg/report_ioi.ost', 'pcf', 'cfg/report_ioi.pcf'); r.real.max_rms = max(q.rms(:,1));
   for k = 1:3
     if k > 1, q = run_trial(p, xr, 'init', false); end
     r.real.obs_on(k) = shon(q); r.real.obs_s2(k) = first(q, 2); r.real.obs_s3(k) = first(q, 3); wr(sprintf('real_obs_t%d.wav', k), q.signalOut);
   end
+  case_mark('');
   Audapter('ost', '', 0); Audapter('pcf', '', 0);
   r.real.trial_s = T1; r.real.v_on = 0.05; r.real.v_off = 0.05 + numel(xr0) / fs; r.real.clip = 'pvqd_SJ7001_a';
   printf('real: max rms %.4f; expected shift on %s; observed shift on %s s\n', r.real.max_rms, mat2str(r.real.exp_on, 3), mat2str(r.real.obs_on, 3));

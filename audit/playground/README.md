@@ -40,19 +40,43 @@ output, 1 SD dispersion ellipses, and the heard/spoken dispersion ratio. "Vowel 
 makes N tokens with random F1/F2 around a vowel, optionally runs them unshifted first to set the centre, then runs them
 with the current settings and shows them as tokens.
 
-**Test cases tab.** Every report card that can be replayed is a test case (14 of 22 cards; the other 8 say why:
-live audio path, a hang, heap-garbage reads, array reuse, a 35 s trial). A case is the exact command stream the card's
-export script sent to Audapter: `audit/playground/tools/capture-cases.sh` runs the export (`audit/harness/oct/report_*.m`,
-with `case_mark` section marks) against the real Octave MEX through a recording shim (`capture/Audapter.m`) that logs
-every setParam (including the ones `AudapterIO('init')` sends), OST/PCF text, reset and trial input. The build packs
-each case (`tools/cases.spec.mjs`: which sections are "expected" and "observed", session or fresh per trial, the build,
-and the card's key numbers read from the same export's `data.json`) into `dist/cases/<ID>.js`, with inputs and long
-arrays as shared 24-bit FLAC or float32 resources. Open a case from the picker or with `#case=<ID>` (each report card
-links it): it replays every variant (for example expected = fresh per trial or patched build or the runner with its
-clear lines, observed = one session as run), adds the trials to the trial list, draws a session timeline with expected
-(hollow) and observed (blue) rows and orange where they differ, and lists card vs replay for each key number. Edit the
-trial order, the input of each trial (case inputs or bundled clips), the build and session mode of each variant, or the
-switching between trials (as captured, clear OST/PCF, re-send the init parameters, reset only), and run again.
+**Test cases from the report.** Every report card that can be replayed is a test case (14 of 22 cards; the other 8 say
+why in the header picker: live audio path, a hang, heap-garbage reads, array reuse, a 35 s trial). A case is the exact
+command stream the card's export script sent to Audapter: `audit/playground/tools/capture-cases.sh` runs the export
+(`audit/harness/oct/report_*.m`, with `case_mark` section marks) against the real Octave MEX through a recording shim
+(`capture/Audapter.m`) that logs every setParam (including the ones `AudapterIO('init')` sends), OST/PCF text, reset and
+trial input. The build packs each case (`tools/cases.spec.mjs`: the captured sections, session or fresh per trial, the
+build, and the card's key numbers read from the same export's `data.json`) into `dist/cases/<ID>.js`, with inputs and
+long arrays as shared 24-bit FLAC or float32 resources.
+
+Open a case from the "Test cases from the report…" menu in the header, with `#case=<ID>`, or from a report card's link.
+It opens in the Explore workspace:
+- **Real voice first.** Where the card's primary example is real speech (OST-F1, OST-F2, COORD-1, OST-F5, LAB-1/2/3,
+  PT-5), the case opens with it (captured from the export's real-voice sections); "Real voice / Synthetic" in the
+  banner switches to the synthetic example (`#case=<ID>&voice=synthetic`). The key trial, callout, trial list and
+  numbers vs card follow the chosen example.
+- Every case has an **expected** and an **observed** variant with the same trials. Expected is, where one exists, the
+  same inputs and sequence on the build with that card's fix alone (the report's one-fix builds from
+  `audit/report/wasm/variants.yaml`: OST-F1, OST-F2, I-01, I-02, PT-5 gain-normalised; F6's one-shot rule, labelled an
+  alternative, not a fix). Where no code fix applies, expected is what the card uses, and the banner says so: COORD-1 the
+  runner's two clear lines, the LAB cards the correctly wired settings, OST-F5 the all-zero catch PCF, OST-F8 the hold in
+  field 5, CORPUS-11 the mel units, CORPUS-8 the longer window. PT-5 is the card's plausible design (the settings of an unused
+  Audapter runner in blab's cerebTypicalProduction folder: baseline bPitchShift 0, later phases bPitchShift 1 at 0 st) on
+  a real sentence; its synthetic step trials are an extra group.
+- **First view: the key trial side by side** ("Expected vs observed"): expected above observed, one time axis and one
+  playhead; output spectrograms with the spoken (tracked), target and heard (LPC) formants; pitch or level strips where
+  the case is about pitch or level; OST state and shift-on rows; the difference marked in orange with a one-line callout
+  ("0.72–1.30 s: F1 shifted +27 % (should be unchanged)"); Play expected / Play observed / A/B (switch with X).
+- **Trial list:** one row per trial under a case header, with an Expected/Observed toggle; ticking a row ticks both, so
+  both show in Compare. The settings panel shows the selected trial's settings (per-trial settings are flagged in the
+  banner), and the input panel gives way to the case's own input.
+- **Compare** (or "Show session timeline" / "Numbers vs card" in the banner) shows the session timeline with expected
+  (hollow) and observed (blue) rows and orange where they differ, and the card-vs-replay table.
+- **Editing forks the case.** Any change while a case is loaded (a setting, the build, or the trial table: order,
+  inputs, switching between trials, session mode) makes an editable copy, "OST-F1 · my edit", listed with its settings
+  diff against the original, and re-runs the whole trial sequence as one session with the case's switching, so effects
+  between trials are kept. Further edits update the same copy; the original stays in the list for comparison, and the
+  side-by-side view shows the copy against the original expected run.
 
 When a custom OST/PCF or a timeline design sets the shift, the Explore cards show what it sets per state
 ("set by the OST/PCF: F1 +125 mel in state 2") with their switches locked, instead of their own unused values.
@@ -102,7 +126,8 @@ a session exports to and imports from a zip (`session.json` plus 32-bit float WA
 terminated afterwards), so trials are independent and reproducible. "Run ticked as one session" runs selected trials
 in order in *one* instance, as a MATLAB session would; a trial without an OST/PCF then keeps the previous one, exactly
 like `AudapterIO('init')` (COORD-1). A small "Audapter build" option switches between the shipped build, the patched
-build (fixes for OST-F1, OST-F2, I-01) and the full-size shipped build (30 s recorders).
+build (fixes for OST-F1, OST-F2, I-01), the full-size shipped build (30 s recorders), and the report's one-fix builds
+(each card's fix alone, `audit/report/prototype/wasm/audapter-<fix>.js`; the test cases use them as "expected").
 
 **Playback.** Original, processed, or both in sync with a gapless A/B switch (X), loop over the visible time window,
 start at the clicked time, and an optional level match (labelled with the gain applied). Playback is capped at
@@ -123,15 +148,17 @@ light and dark, with a one-column phone layout:
 ## Build
 
 Test cases: `audit/playground/tools/capture-cases.sh` (docker, the harness image and `audit/harness/build-oct`) writes
-`audit/playground/capture/out/<ID>/`; the build then packs them and writes `audit/playground/cases.json`, which the
+`audit/playground/capture/out/<ID>/` (PT-5's two-phase design is the capture `PT-5-CEREB`, run with
+`SCEN=cereb`; OST-F1's real-voice session is `OST-F1-REAL`, run with `SCEN=real`); the build then packs them and writes `audit/playground/cases.json`, which the
 report build reads to link each card. Without captures the build skips the cases with a warning.
 
 
 ```sh
-audit/playground/build.sh        # -> audit/playground/dist/ (about 4.2 MB); copy it to docs/playground/
+audit/playground/build.sh        # -> audit/playground/dist/ (about 15 MB with the test cases); copy it to docs/playground/
 ```
 
-Needs node ≥ 20 and the WASM bundles in `audit/wasm/lib/` (`audit/wasm/build.sh full lite patched`). If the `flac`
+Needs node ≥ 20 and the WASM bundles in `audit/wasm/lib/` (`audit/wasm/build.sh full lite patched`) and, for the
+test cases' expected runs, the report's one-fix builds in `audit/report/prototype/wasm/` (`audit/report/wasm/build-variants.sh`). If the `flac`
 encoder is installed, the clips are stored losslessly as FLAC, otherwise as WAV. The build also parses the parameter
 table from `blab/audapter_mex/TransShiftMex/Audapter.cpp` and copies the report's Charis SIL fonts. Everything is a
 classic script, so `dist/index.html` also works from `file://` (engines load as Blob workers from function source text);
@@ -162,15 +189,24 @@ fed from `audit/corpus/audio/pvqd_LA9003_a.wav`. Results on 2026-09-27, Chromium
   heard point is within 1.8 Hz of the intended point on the line to the centre (grid step 7.9 Hz diagonal). In node the
   JavaScript port of Audapter's 2-D lookup reproduced sfmts on all 6042 shifted frames of each direction
   (`audit/scratch/playground/probe10.mjs`).
-- Test cases: every one of the 14 replays the card's key numbers (OST-F1 32/32, OST-F2 11/11, COORD-1 10/10, OST-F5 16/16,
-  I-01 4/4, LAB-1 24/24, LAB-2 24/24, LAB-3 2/2, F6 7/7, OST-F8 4/4, CORPUS-11 4/4, CORPUS-8 28/28, I-02 3/3, PT-5 4/4).
-  Tolerances are one frame (2 ms) for times, 1 frame count, 3 Hz for heard formants, 12 cents, 0.1 dB, and one lag step
-  for CORPUS-8's logged pitchHz (16000 / integer lag; a single frame decided differently moves the median by that much).
+- Test cases: every example of the 14 cases replays the card's key numbers, for both variants. Real voice (the default where
+  it exists): OST-F1 32/32, OST-F2 12/12, COORD-1 10/10, OST-F5 16/16, LAB-1 16/16, LAB-2 16/16, LAB-3 2/2 (RMS of the
+  card's real clips), PT-5 3/3. Synthetic: OST-F1 32/32, OST-F2 18/18, COORD-1 10/10, OST-F5 16/16, I-01 4/4, LAB-1 48/48,
+  LAB-2 48/48, LAB-3 2/2, F6 11/11, OST-F8 4/4, CORPUS-11 4/4, CORPUS-8 28/28, I-02 5/5, PT-5 4/4 (341 numbers in all).
+  Tolerances are one frame (2 ms) for times, 1 frame count, 3 Hz for heard formants, 12 cents, 0.1 dB
+  (0.2 dB for "PT-5 fix: later phase at the baseline level"), and one lag step for CORPUS-8's logged pitchHz.
+  For every example: the key trial opens side by side (one stack, expected above observed, heard-formant dots drawn in both),
+  the difference is marked in orange with a callout, the list has one row and one Expected/Observed toggle per trial,
+  expected runs on the card's fix build where one exists (otherwise the banner says what it is), and three parameters of
+  the settings panel equal the case's. On OST-F1: the toggle, ticking a row ticks both variants, Compare shows all 16
+  trials with the timeline and numbers; an edit (fb3gain 0.05) makes "OST-F1 · my edit" (8 trials, one session, trial 4
+  still leaks 0.92 s like the original), and a second edit (build → fix-ost-f1) updates the same copy (trial 4: 0.348 s,
+  as expected).
 - 14 settings variants run (pvoc, time-domain after 0.5 s, loudness window, time warp during the vowel, 150 ms delay,
   speech + 3 s noise, Hz region, F2-dependent field, painted 2-D field, mel units, custom OST/PCF, child preset, low-voice
   preset on the patched build, full-size build).
 - A 5-value F1 sweep logs ratios 1.0/1.1/1.2/1.3/1.4; three trials run as one session; the page also runs from `file://`; no page errors.
-- 32 screenshots at 1440 px and 390 px, light and dark (Explore views, Timing & design, schedule, expert drawer, vowel variability tokens), in `test/shots/` (git-ignored).
+- 55 screenshots at 1440 px and 390 px, light and dark (Explore views, Timing & design, schedule, expert drawer, vowel variability tokens; OST-F1, LAB-1 and PT-5 opened in the workspace at 1440 px light and dark and 390 px dark, the side-by-side view, the list, the timeline, the fork), in `test/shots/` (git-ignored).
 
 ## Memory and latency
 

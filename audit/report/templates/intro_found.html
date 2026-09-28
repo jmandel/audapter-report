@@ -6,24 +6,21 @@ sessions with the lab's settings, catch trials received no perturbation whatever
 (<a href="#carryover">details</a>).</p>
 <p><strong>What does touch current experiments:</strong></p>
 <ul>
-<li><strong>Masking noise drops out.</strong> Since b2.4 (April 2026) the bundled babble goes silent for
+<li><strong>Masking noise drops out.</strong> In the many blab runners that load the noise once per session, since b2.4 (April 2026) the bundled babble goes silent for
 [[I01_gap_ms_min:.0f]] ms about every 10 s of running time: in about 1 in [[I01_one_in:.1f]] trials of a masking phase. Data
 collected before April 2026 are not affected (<a href="#I-01">I-01</a>).</li>
-<li><strong>The phase vocoder changes loudness.</strong> With pitch shifting switched on, the voice is played louder, by up to
-[[PT5_cue_db:.0f]] dB, unless a time-warp section is loaded. blab's timeWrap design avoids this by keeping a zero-length warp row on
-its control trials (<a href="#PT-5">PT-5</a>).</li>
 <li><strong>vsaSentence depends on an undocumented blab change.</strong> The field perturbation switches on again at every vowel;
 on the original Audapter 2.1.5 or another fork, only the first vowel of each sentence would be perturbed (<a href="#F6">F6</a>).</li>
-<li><strong>Three questions about the public experiment scripts.</strong> As committed, vsaCentralize's runner looks up the
-lab's field on the wrong grid, so most vowels are pushed away from the vowel-space centre instead of toward it
-(<a href="#LAB-1">LAB-1</a>); vsaGeneralize's runner perturbs its baseline trials and never scales the field
-(<a href="#LAB-2">LAB-2</a>) and plays its fb 4 masking noise [[LAB3_lv_diff:.0f]] dB louder than set (<a href="#LAB-3">LAB-3</a>).
-The runners that collected the data may differ; each card says how to check the lab's own data.</li>
+<li><strong>One open question about the public vsaGeneralize runner.</strong> As committed, it perturbs the baseline trials and
+never scales the field (<a href="#LAB-2">LAB-2</a>); its experiment script calls it, and the lab's logs can settle it. The later
+vsaGeneralize2 study is wired correctly. Two smaller notes: vsaCentralize's repository ships an unused, mis-wired runner
+(<a href="#LAB-1">LAB-1</a>), and vsaGeneralize's <code>p.fb4Gain</code> line has no effect, as the lab's code already notes
+(<a href="#LAB-3">LAB-3</a>).</li>
 </ul>
 <p><strong>Pitfalls for future designs.</strong> Carry-over is real with other settings: an offset rule placed after a timer or
 after the RMS-floor rule fires later on every trial (<a href="#OST-F1">OST-F1</a>); a PCF left loaded overrides a later field
 experiment (<a href="#COORD-1">COORD-1</a>); pitch catch trials made by clearing the PCF can be shifted (<a href="#OST-F5">OST-F5</a>).
 Each card gives the safe pattern. Other pitfalls include wrongly logged pitch for low voices with time-domain shifting, crashes
-or hangs when settings change mid-session, and clicks when resetting during speech (<a href="#pitfalls">all</a>).</p>
+or hangs when settings change mid-session, a loudness step when the phase vocoder is switched on (<a href="#PT-5">PT-5</a>), and clicks when resetting during speech (<a href="#pitfalls">all</a>).</p>
 <p><strong>Robustness.</strong> A few memory errors need a malformed file or array to show up (<a href="#robust">all</a>).</p>
 <p>None of these produce a warning. Most cards include a fix you can try on this page.</p>

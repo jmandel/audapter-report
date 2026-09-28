@@ -389,3 +389,10 @@ body { overflow-wrap: break-word; }
 .sk-cen { stroke: var(--ink); stroke-width: 2; fill: none; }
 .sk-miss { stroke: var(--disc); stroke-width: 1.5; stroke-dasharray: 3 3; }
 .nph { font-size: 0.8rem; color: var(--ink-3); margin: 2px 0 0; }
+.ev-sub { font-weight: 700; margin: 14px 0 4px; font-size: 0.95rem; } .ev-sub:first-child { margin-top: 0; }
+.bs { font-size: 0.78rem; white-space: nowrap; padding: 0 5px; border-radius: 3px; border: 1px solid var(--rule-2); }
+.bs-affected { border-color: var(--sev-high); color: var(--ink); font-weight: 700; }
+.bs-safe { border-color: var(--pass); }
+.bs-na { color: var(--ink-3); }
+td.t-bs, th.t-bs { width: 7.5em; }
+.bs-safe_unused { border-color: var(--pass); white-space: normal; }

@@ -1,10 +1,12 @@
-<p>We read the lab's public experiment scripts and found three places where, as committed, the code appears to do something
-different from what the design describes. For each we show what the design intends, what the committed code does, and how to
-check the lab's own data. These are questions, not Audapter defects: the runner that collected the data may differ from the
-committed one (vsaCentralize's experiment script calls a runner that is not in its repository), and this is a reading of public
-code, not a claim about published results. Every parameter sequence below was reproduced exactly, with the lab's own
-<code>calc_pertField</code>, through Audapter.</p>
+<p>We read the lab's public experiment scripts and found three things, of different weight. One is a real open question:
+as committed, the public vsaGeneralize runner, which its public experiment script calls, perturbs the baseline trials and never
+scales the field (<a href="#LAB-2">LAB-2</a>); the lab's logs can settle it, and the later vsaGeneralize2 study is wired correctly.
+One is repository hygiene: vsaCentralize's repository ships an unused runner with wrong field wiring, while the runner its
+experiment calls is correct (<a href="#LAB-1">LAB-1</a>). One is a known, harmless dead setting: <code>p.fb4Gain</code> never reaches
+Audapter, as the lab's own code already notes, so every fb 4 study used the same default level (<a href="#LAB-3">LAB-3</a>). Every
+parameter sequence was reproduced exactly, with the lab's own <code>calc_pertField</code>, through Audapter. This is a reading of
+public code, not a claim about published results.</p>
 <p><strong>For reference, vsaSentence is wired as designed:</strong> it sends the mel grids after init
 (<a class="permalink" href="https://github.com/blab-lab/vsaSentence/blob/c01942f1381237fd8c205e06e7c1472d72e4e685/run_vsaSentence_audapter.m#L67-L71">run_vsaSentence_audapter.m lines 67–71 @c01942f</a>),
 and at strength 0.5 every vowel is heard [[vsaSentence_tc_min:.2f]]–[[vsaSentence_tc_max:.2f]] of the way to the centre
-(intended 0.50). That wiring is the "Expected" in the first two cards.</p>
+(intended 0.50). That wiring, also used by the runner vsaCentralize's experiment calls, is the "Expected" in LAB-1 and LAB-2.</p>

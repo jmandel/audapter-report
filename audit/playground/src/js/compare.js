@@ -27,9 +27,14 @@ PG.Compare = (() => {
     const seg = (opts, cur, set, lab) => h('div.seg', { role: 'radiogroup', 'aria-label': lab }, opts.map(([v, t]) => h('button', { type: 'button', role: 'radio', 'aria-checked': String(v === cur), text: t, on: { click: () => { set(v); render(); } } })));
     root.append(h('div.cmp-head', {},
       h('p.muted', { text: `Comparing ${selNote}.` }),
-      seg([['grid', 'Side by side'], ['timeline', 'Session timeline']], layout, v => { layout = v; }, 'Layout'),
+      seg([...(PG.Cases.current() ? [['case', `Test case ${PG.Cases.current().id}`]] : []), ['grid', 'Side by side'], ['timeline', 'Session timeline']], layout, v => { layout = v; }, 'Layout'),
       layout === 'grid' ? seg([['formants', 'Formants'], ['pitch', 'Pitch'], ['level', 'Level'], ['ost', 'OST state']], metric, v => { metric = v; }, 'Show') : null));
     if (T.length < 2) { root.append(h('p.empty', { text: 'Run at least two trials to compare them. Try "Sweep" next to any setting: it runs several values at once.' })); return; }
+    if (layout === 'case' && PG.Cases.current()) {   // the case's session timeline and card-vs-replay numbers, then the ticked trials side by side
+      stacks.push(...PG.Cases.renderSummary(root));
+      root.append(abPanel(T), diffTable(T)); grid(T); return;
+    }
+    if (layout === 'case') layout = 'grid';
     root.append(abPanel(T), diffTable(T));
     if (layout === 'timeline') timeline(T); else grid(T);
   }

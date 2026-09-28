@@ -5,6 +5,10 @@ notes: notes/corpus.md#corpus-11
 headline: >-
   Shifted formant targets have no upper bound, so a unit mix-up produces targets far above Nyquist and loud, clipped output
 severity: med
+studies:
+  status: na
+  text: >-
+    Not applicable: current blab designs set bRatioShift 0 and bMelShift 1 explicitly.
 reach_kind: pitfall
 reach: >-
   Not triggered by current blab designs, which set bRatioShift 0 and bMelShift 1 explicitly for 125 mel shifts. Affects replays of old parameter files under today's defaults, where bRatioShift is 1.

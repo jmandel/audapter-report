@@ -5,6 +5,10 @@ notes: notes/interface.md#i-02
 headline: >-
   In feedback mode 5, the speech-modulated noise is scaled by dScale twice, so the noise mix changes with the rig's calibration
 severity: low
+studies:
+  status: affected
+  text: >-
+    Affected: sponAdapt3 uses fb 5 (the only blab study that does, apart from a demo); its speech-to-noise balance depends on dScale.
 reach_kind: pitfall
 reach: >-
   Not triggered: no blab experiment we inspected uses fb 5, which was added to blab in August 2026. Affects any fb 5 design with dScale other than 1.

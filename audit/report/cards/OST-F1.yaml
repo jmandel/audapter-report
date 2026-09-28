@@ -8,6 +8,10 @@ headline: >-
 severity: high
 origin: upstream
 status: [H, D, F]
+studies:
+  status: safe
+  text: >-
+    Safe as run: no blab OST, public or unpublished, has an INTENSITY_FALL preceded only by ELAPSED_TIME, the RMS-floor rule or a ratio rule (timeWrap uses the RMS-floor rule for onset, followed by a rise-and-hold rule).
 reach_kind: pitfall
 reach: >-
   Not triggered by any blab design we inspected: in all 69 blab OST files, public and unpublished, every INTENSITY_FALL has a

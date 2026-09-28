@@ -8,6 +8,10 @@ headline: >-
 severity: med
 origin: upstream
 status: [H]
+studies:
+  status: safe
+  text: >-
+    Safe as run: every blab field-mode runner clears the OST and PCF before AudapterIO('init').
 reach_kind: safe
 reach: >-
   blab's runners are protected: every blab field-mode runner we inspected clears the OST and PCF before

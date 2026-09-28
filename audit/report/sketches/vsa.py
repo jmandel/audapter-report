@@ -68,7 +68,7 @@ def _panel(x0, y0, w, h, rows, cen_hz, kind, title, note=None, mid=""):
     return "".join(out)
 
 
-def figure(sid, blocks, cen_hz, desc, callout):
+def figure(sid, blocks, cen_hz, desc, callout, obs_title="the committed wiring"):
     """blocks: [(heading, rows, exp_note)] ; each block = Expected and Observed panels (side by side wide, stacked narrow)."""
     narrow = SL.NARROW
     W = 480 if narrow else 960; pw, ph = (W, 330) if narrow else (470, 330)
@@ -84,10 +84,10 @@ def figure(sid, blocks, cen_hz, desc, callout):
             y += 8
         if narrow:
             parts.append(_panel(0, y, pw, ph, rows, cen_hz, "expected", "Expected: what the design intends", note, mid=mid)); y += ph + 8
-            parts.append(_panel(0, y, pw, ph, rows, cen_hz, "observed", "Observed: the committed wiring", mid=mid)); y += ph + 8
+            parts.append(_panel(0, y, pw, ph, rows, cen_hz, "observed", f"Observed: {obs_title}", mid=mid)); y += ph + 8
         else:
             parts.append(_panel(0, y, pw, ph, rows, cen_hz, "expected", "Expected: what the design intends", note, mid=mid))
-            parts.append(_panel(pw + 20, y, pw, ph, rows, cen_hz, "observed", "Observed: the committed wiring", mid=mid)); y += ph + 10
+            parts.append(_panel(pw + 20, y, pw, ph, rows, cen_hz, "observed", f"Observed: {obs_title}", mid=mid)); y += ph + 10
     lines = SL.wrap(callout, W * (0.95 if narrow else 0.9))
     for i, l in enumerate(lines):
         parts.append(f'<text class="sk-note" x="0" y="{y + 16 + i * 18}">{E(l)}</text>')

@@ -3,16 +3,21 @@ id: PT-5
 log: PT-5
 notes: notes/pitch-time.md#pt-5
 headline: >-
-  With the phase vocoder on, the voice is played up to 6 dB louder, depending on whether a time-warp section is loaded, so mixing
-  warp and no-warp trials gives a loudness cue
+  With the phase vocoder on, the voice is played 3.5 dB louder than with it off (6 dB at blab's time-warp settings unless a warp
+  section is loaded), so a design that switches the vocoder on after a baseline phase changes loudness at the phase boundary
 severity: high
 origin: upstream
 status: [H, D, F]
-reach_kind: current
+studies:
+  status: safe
+  text: >-
+    None affected as wired. The time-warp studies (the timeAdapt family, timeWrap, cerebTimeAdapt) keep a warp row on every trial,
+    which plays at about 0 dB. The settings in part A come from an Audapter runner in blab's cerebTypicalProduction folder that the
+    experiment does not call: as wired, that experiment records through Psychtoolbox and plays no Audapter feedback.
+reach_kind: pitfall
 reach: >-
-  Touches blab's time-warp experiments, whose settings turn the vocoder on (timeAdapt, timeWrap). blab's timeWrap keeps a
-  zero-length warp row on its control trials, so its trials all play at the same, correct level. Any design that drops the warp
-  section on some trials, or runs the vocoder without a warp section, is affected.
+  Affects any design that switches the phase vocoder on or off between phases (for example a baseline with <code>bPitchShift 0</code>
+  and later phases with <code>bPitchShift 1</code>), or that drops the warp section on some trials of a time-warp design.
 what: >-
   With <code>bPitchShift = 1</code> the phase vocoder processes the voice even at 0 semitones. Without a time-warp section in the
   PCF, it plays the voice louder than it came in: +3.5 dB at the default 16 kHz / frameLen 32, and +6.0 dB at the 24 kHz / frameLen 48
@@ -25,17 +30,27 @@ scope: >-
   and for pitch-shift onsets. <strong>Safe if</strong> every trial carries a warp section (a zero-length row on control trials), as in
   blab's timeWrap experiment.
 example: >-
-  A time-warp experiment with blab's timeAdapt settings (24 kHz, frameLen 48, vocoder on): perturbed trials slow the speech down
-  and catch up, control trials do not. If control trials keep a zero-length warp row, both kinds play at the spoken level
-  (control {exp_t1_txt}, warp {exp_t2_txt}). If control trials drop the warp section, they play at {obs_t1_txt}: {cue_db:.1f} dB
-  louder than the warp trials around them.
+  <strong>A. A plausible design:</strong> a baseline phase with the vocoder off, later phases with <code>bPitchShift 1</code> and no PCF
+  (24 kHz, frameLen 32, nDelay 3), on a real sentence. In the baseline the voice is played at {cereb_b0}; in the later phases at
+  {cereb_b1}, so from the first vocoder phase on the participant hears their own voice about 3.5 dB louder, a change they may notice
+  and that coincides with the start of the experimental phases. <strong>B. Time-warp designs</strong> with blab's timeAdapt
+  settings (24 kHz, frameLen 48): if control trials keep a zero-length warp row, both kinds play at the spoken level (control
+  {exp_t1_txt}, warp {exp_t2_txt}); if control trials drop the warp section, they play at {obs_t1_txt}, {cue_db:.1f} dB louder than the
+  warp trials around them. Note that clearing a warp PCF with <code>Audapter('pcf', '', 0)</code> leaves the vocoder in its warp
+  mode for the rest of the MATLAB session: at the part-A settings a no-PCF trial run after warp trials plays at −2.6 dB instead of
+  +3.5 dB. The level of a later no-PCF phase therefore depends on what ran earlier in the session.
 settings:
-  source: "blab's timeAdapt settings (free-speech run_measureDuration_audapter.m: 24 kHz, downFact 2, frameLen 48, bPitchShift 1 \"needed if time warping is used\"); the warp timing here is illustrative. blab's timeWrap experiment keeps a zero-length warp row on control trials (the expected panel). fb 1 so the speech level can be measured without the babble."
-  key_params: [sr, downFact, frameLen, bPitchShift, fb]
+  from: cereb.settings
+  override:
+    sequence: ['baseline: bPitchShift 0', 'later phases: bPitchShift 1']
+    switching: 'phase change: bPitchShift 0 in the baseline, 1 afterwards; no OST or PCF'
+  source: "Hypothetical design (the settings of an unused Audapter runner in blab's cerebTypicalProduction folder; the experiment as wired records through Psychtoolbox and plays no Audapter feedback): 24 kHz, downFact 2, frameLen 32 (the default), nDelay 3, no OST or PCF; bPitchShift 0 in the baseline phase, 1 in later phases. fb 1 so the speech level can be measured without the babble. Part B of the figure uses blab's timeAdapt settings (24 kHz, frameLen 48); its settings are in the export's data.json (warp)."
+  key_params: [sr, downFact, nDelay, bPitchShift, fb]
 figure_caption: >-
-  One session of four trials. Expected: control trials keep a zero-length warp row. Observed: control trials drop the warp
-  section. Values are the output level measured on the audio, relative to the spoken input.
+  A: one session in two phases of a plausible design (baseline with the vocoder off, then on). B: four trials of a time-warp design. Expected: the level the
+  participant should hear; Observed: what Audapter plays. Values are the output level measured on the audio, relative to the input.
 table:
+- [plausible design A, 'Level re input: baseline (bPitchShift 0) / later phases (bPitchShift 1)', '{cereb_b0} / {cereb_b1}']
 - [timeAdapt settings, 'Level, control trial without a warp section', '{obs_t1_txt}']
 - [timeAdapt settings, 'Level, control trial with a zero-length warp row / warp trial', '{exp_t1_txt} / {exp_t2_txt}']
 - [timeAdapt settings, 'Loudness cue, no-warp control vs warp trial', '{cue_db:.1f} dB']
@@ -46,13 +61,17 @@ table:
 sketch: pt5
 asset_dir: pt-5
 audio:
-- {file: warp_input.wav, src: meas/warp_in.wav, role: input, title: 'Input', label: 'the same sentence on every trial', panel: exp, trial: 1}
-- {file: t1_expected.wav, src: meas/warp_exp_t1_out.wav, role: expected, title: 'Expected, trial 1', label: 'control, zero-length warp row ({exp_t1_txt})', panel: exp, trial: 1}
-- {file: t1_observed.wav, src: meas/warp_obs_t1_out.wav, role: observed, title: 'Observed, trial 1', label: 'control, no warp section ({obs_t1_txt})', panel: obs, trial: 1}
-- {file: t2_warp.wav, src: meas/warp_obs_t2_out.wav, role: observed, title: 'Observed, trial 2', label: 'warp trial ({obs_t2_txt})', panel: obs, trial: 2}
-- {file: t12_ab.wav, src: [meas/warp_obs_t1_out.wav, meas/warp_obs_t2_out.wav], gap_s: 0.4, role: ab, title: 'A/B, trials 1 and 2 as observed', label: 'control, then warp trial: the loudness cue', no_playhead: true}
+- {file: cereb_input.wav, src: meas/cereb_in.wav, role: input, title: 'Input, baseline', label: 'a real sentence', sketch: sk-pt-5c, panel: exp, trial: 1}
+- {file: cereb_pre.wav, src: meas/cereb_b0_out.wav, role: expected, title: 'Expected, baseline', label: 'bPitchShift 0: {cereb_b0}', sketch: sk-pt-5c, panel: exp, trial: 1}
+- {file: cereb_later.wav, src: meas/cereb_b1_out.wav, role: observed, title: 'Observed, later phases', label: 'bPitchShift 1, 0 st: {cereb_b1}', sketch: sk-pt-5c, panel: obs, trial: 2}
+- {file: cereb_ab.wav, src: [meas/cereb_b0_out.wav, meas/cereb_b1_out.wav], gap_s: 0.4, role: ab, title: 'A/B', label: 'baseline, then a later phase: the 3.5 dB step'}
+- {file: warp_input.wav, src: meas/warp_in.wav, role: input, title: 'Input, trial 1', label: 'B: the same sentence on every trial', panel: exp, trial: 1}
+- {file: t1_expected.wav, src: meas/warp_exp_t1_out.wav, role: expected, title: 'Expected, trial 1', label: 'B: control, zero-length warp row ({exp_t1_txt})', panel: exp, trial: 1}
+- {file: t1_observed.wav, src: meas/warp_obs_t1_out.wav, role: observed, title: 'Observed, trial 1', label: 'B: control, no warp section ({obs_t1_txt})', panel: obs, trial: 1}
+- {file: t2_warp.wav, src: meas/warp_obs_t2_out.wav, role: observed, title: 'Observed, trial 2', label: 'B: warp trial ({obs_t2_txt})', panel: obs, trial: 2}
+- {file: t12_ab.wav, src: [meas/warp_obs_t1_out.wav, meas/warp_obs_t2_out.wav], gap_s: 0.4, role: ab, title: 'A/B, trials 1 and 2 as observed', label: 'B: control, then warp trial'}
 audio_note: >-
-  These clips share one playback gain, so the level differences you hear are real. 24 kHz, 16-bit, as recorded by Audapter.
+  These clips share one playback gain, so the level differences you hear are real. 24 kHz, 16-bit, as recorded by Audapter. Real voice: CMU ARCTIC clb a0018, © 2003 Carnegie Mellon University (<a href="assets/licenses/CMU_ARCTIC_COPYING.txt">licence notice</a>), processed by Audapter.
 real:
   dir: pt-5
   clips:

@@ -46,6 +46,7 @@ end
 % "I had faith in them.", female)
 Mc = corpus_index(); xs = corpus_wav(Mc(strcmp({Mc.id}, 'arctic_clb_a0030'))); xs = [xs; 1e-4*randn(round(0.3*fs),1)];
 for arm = {'exp', 'obs'}
+  case_mark(['real_' arm{1}]);   % Playground test case capture; no-op otherwise
   Audapter('setParam', 'datapb', w, 1);
   Audapter('ost', MF_OST, 0); Audapter('pcf', MF_PCF, 0); AudapterIO('init', pc);
   for k = 1:numel(seq)
@@ -61,6 +62,7 @@ for arm = {'exp', 'obs'}
     wr(sprintf('real_%s_t%d_out.wav', arm{1}, k), q.d.signalOut); if k == 1, wr('real_in.wav', q.d.signalIn); end
     printf('real %s trial %d (%s): shifted %.3f s, output/input F1 %.3f\n', arm{1}, k, seq{k}, q.shift_s, q.outF1);
   end
+  case_mark('');
 end
 Audapter('ost', '', 0); Audapter('pcf', '', 0);
 r.real.trial_s = numel(xs) / fs; r.real.clip = 'arctic_clb_a0030';

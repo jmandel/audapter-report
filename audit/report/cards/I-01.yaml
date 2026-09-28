@@ -10,10 +10,13 @@ since: >-
   Only since blab b2.4 (commit 3c90a3a, 6 April 2026), which enlarged the playback buffer from 230,400 to 480,000 samples. Data
   collected with earlier versions are not affected: the bundled babble was truncated to the old buffer and looped seamlessly.
 status: [H]
+studies:
+  status: affected
+  text: >-
+    Affected, on data collected with b2.4 or later (since April 2026) only: runners that load the noise once per session, so its position runs on across trials. Public: <a class="permalink" href="https://github.com/blab-lab/simonSingleWord/blob/df6712020e59dae86e303d5cea599c2412aaa206/experiment%20scripts/run_simonSingleWord_v2_audapter.m#L80">simonSingleWord v2</a>, <a class="permalink" href="https://github.com/blab-lab/simonSingleWord/blob/df6712020e59dae86e303d5cea599c2412aaa206/experiment%20scripts/run_simonSingleWord_audapter.m#L65">v1</a>, <a class="permalink" href="https://github.com/blab-lab/simonMulti/blob/e05f155dfba07110026688d8f000068cee1c9249/experiment%20scripts/Exp1/run_coAdapt_audapter.m#L67">coAdapt</a>, <a class="permalink" href="https://github.com/blab-lab/simonMulti/blob/e05f155dfba07110026688d8f000068cee1c9249/experiment%20scripts/Exp2/run_simonMultisyllable_v2_audapter.m#L59">simonMultisyllable v2</a>, <a class="permalink" href="https://github.com/blab-lab/attentionAAF/blob/0f4ef4301ef10144fcbc2a75b990207a9e9441fd/run_attentionComp_audapter.m#L50">attentionComp</a>, <a class="permalink" href="https://github.com/blab-lab/attentionAAF/blob/0f4ef4301ef10144fcbc2a75b990207a9e9441fd/run_attentionAdapt_audapter.m#L68">attentionAdapt</a>, <a class="permalink" href="https://github.com/blab-lab/uhdapter/blob/92aa1c0a45756267d73414d291a0c38fb02d68bc/run_uhdapter_audapter.m#L175">uhdapter</a>, <a class="permalink" href="https://github.com/blab-lab/vsaCentralize/blob/9beb9a7767418cae5d681b35fb1e0cc010331d02/run_vsaAdapt2_audapter.m#L56">vsaCentralize</a> (its committed experiment script calls a runner that is not in the repository), <a class="permalink" href="https://github.com/blab-lab/vsaGeneralize/blob/0ec575ae1cde8402628b6cb5cd756467a95dd11d/run_vsaGeneralize_audapter.m#L63">vsaGeneralize</a>, <a class="permalink" href="https://github.com/blab-lab/vsaSentence/blob/c01942f1381237fd8c205e06e7c1472d72e4e685/run_vsaSentence_audapter.m#L61">vsaSentence</a>, <a class="permalink" href="https://github.com/carrien/free-speech/blob/ec961b7a04a79199217f4973effda9157afcdf9d/templates/modelExpt/run_modelExpt_audapter.m#L79">the free-speech template</a> (each link is the line that loads the noise once). Unpublished: timeAdapt, timeWrap, varMod, sponAdapt, vsaRetention, diphthongAdapt, brut, vin, and the simon and cerebellar studies. Safe as run: runners that reload the noise before every trial, which rewinds it (the MRI and iEEG interleaved runners, noGoAdapt, varModAdapt, compRetest). How audible: in fb 3 (most runners; babble at gain 0.02 under the participant's own voice) a 16 ms dropout is subtle; fb 2 studies (brut, vin, and the masking phases of simonSingleWord v2, uhdapter and vsaSentence) and fb 4 studies (vsaGeneralize, biteblockAdapt, diphthongAdapt, sponAdapt, sponAdapt2, vsaRetention) are more exposed, because the noise is all or most of what is heard.
 reach_kind: current
 reach: >-
-  Affects blab's current experiments: every runner that plays the bundled babble through free-speech's get_noiseSource in fb 2 or 3,
-  on b2.4 and later (since April 2026). Data collected before April 2026 are unaffected.
+  Affects blab's current experiments on b2.4 and later.
 what: >-
   In feedback modes 2–5 Audapter plays the loaded noise (<code>datapb</code>) in a loop. It loops at the end of its 480,000-sample
   (10 s) buffer, not at the end of the noise that was loaded, and the unused end of the buffer is silence. The bundled babble is
@@ -124,9 +127,10 @@ cause:
     note: Callers truncate to the maximum but never pass the actual length to the playback loop.
   fix_label: Workaround and fix
   fix: >-
-    <strong>Workaround for current sessions:</strong> make the noise exactly 480,000 samples long before loading it, for example by
-    padding the bundled babble with its own first 770 samples, or truncate it to a length that ends at a quiet point and tile it to
-    480,000 samples. <strong>Fix:</strong> store the loaded length when <code>datapb</code> is set and wrap there
+    <strong>Workarounds for current sessions</strong> (any one): (1) reload the noise with <code>Audapter('setParam', 'datapb', w, 1)</code>
+    before each trial, which rewinds it, as blab's per-trial runners do (a trial then never reaches the 10 s loop point); (2) pad or
+    trim the noise to exactly 480,000 samples before loading it, for example by appending the bundled babble's own first 770 samples;
+    (3) apply the loop-at-length patch below. This applies only to data collected with b2.4 or later (since April 2026). <strong>Fix:</strong> store the loaded length when <code>datapb</code> is set and wrap there
     (<code>report/patches/i-01-datapb-loop-length.patch</code>), and rewind <code>pbCounter</code> in <code>reset()</code>.
     <strong>Check past data:</strong> if <code>signalOut</code> was saved for fb 2–5 trials, look for runs of exact zeros; otherwise
     the gap's position can be reconstructed from the trial durations, since the noise position runs on across trials.

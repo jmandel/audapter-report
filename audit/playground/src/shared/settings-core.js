@@ -533,7 +533,7 @@
     const fb = g('fb');
     if (fb >= 2 && fb <= 5) {
       const pb = (m.get('datapb') || []).length, sec = pb / 48000;
-      if (pb && pb < 480000) W('hear', 'I-01', s.build === 'patched' ? 'info' : 'warn', s.build === 'patched'
+      if (pb && pb < 480000) W('hear', 'I-01', /^(patched|fix-i-01)$/.test(s.build) ? 'info' : 'warn', /^(patched|fix-i-01)$/.test(s.build)
         ? `Noise is ${sec.toFixed(1)} s long. The patched build loops it at its own length.`
         : `Noise shorter than 10 s (${sec.toFixed(1)} s) is followed by silence until 10 s: the shipped build loops playback at 480 000 samples, not at the noise length. The gap position also carries over between trials. Use 10 s of noise, or the patched build.`);
       if (fb === 3 && (s.hear.noise.gain ?? 1) === 0) W('hear', null, 'info', 'fb3Gain is 0 (Audapter\'s default), so the noise is silent in mode 3.');

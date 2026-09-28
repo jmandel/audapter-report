@@ -17,6 +17,7 @@
   </div>
   <nav id="tabs" class="tabs" role="tablist" aria-label="Sections"></nav>
   <div class="top-tools">
+    <span id="case-pick"></span>
     <span id="mem" class="muted"></span>
     <button id="theme-btn" class="linkish" type="button">Light / dark</button>
   </div>
@@ -26,6 +27,7 @@
   <div id="panel-explore" class="explore" role="tabpanel" aria-labelledby="tab-explore">
     <aside id="settings" class="settings-col" aria-label="Settings"></aside>
     <section id="results" class="results-col" aria-label="Input and results">
+      <div id="case-banner" class="case-banner" aria-label="Test case" hidden></div>
       <div id="input-panel" class="input-panel"></div>
       <div id="runbar" class="runbar"></div>
       <div id="run-warns" class="warns"></div>
@@ -42,7 +44,6 @@
   </div>
 
   <div id="panel-design" class="design-panel" role="tabpanel" aria-labelledby="tab-design" hidden></div>
-  <div id="panel-cases" class="design-panel" role="tabpanel" aria-labelledby="tab-cases" hidden></div>
   <dialog id="expert" class="expert" aria-labelledby="pt-title"></dialog>
 
   <div id="panel-about" class="about" role="tabpanel" aria-labelledby="tab-about" hidden>

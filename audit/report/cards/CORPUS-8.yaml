@@ -4,6 +4,10 @@ log: CORPUS-8
 notes: notes/corpus.md#corpus-8
 headline: With the default frame settings, the logged pitch is wrong for voices below about 140 Hz
 severity: med
+studies:
+  status: safe
+  text: >-
+    Safe as run: the time-domain pitch studies (pitchAdapt, pitchComp, pitchAdaptPD) use frameLen 64 / nDelay 7 with pitch bounds set around each participant's calibrated F0.
 reach_kind: pitfall
 reach: >-
   Not triggered by any blab design we inspected: none uses time-domain pitch shifting, the only mode that logs pitch. Affects time-domain pitch experiments with low voices at the default frame settings.

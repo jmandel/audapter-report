@@ -54,13 +54,17 @@ const workerCode = sharedData + shared + '\n;\n' + rd(path.join(SRC, 'worker', '
 
 // ---------- 4. WASM engines: one lazily loaded classic script per build, holding the bundle as a string
 const VARIANTS = { lite: 'shipped', patched: 'patched', full: 'shipped (full size)' };
+// the report's one-fix builds (audit/report/wasm/build-variants.sh): each card's fix alone, used as the test cases' "expected"
+const FIXES = { 'fix-ost-f1': 'One fix: OST-F1 (OST state reset per trial)', 'fix-ost-f2': 'One fix: OST-F2 (maxIOI onset index)', 'fix-i-01': 'One fix: I-01 (noise loops at its length)',
+  'fix-i-02': 'One fix: I-02 (dScale applied once)', 'fix-pt-5': 'One fix: PT-5 (gain-normalised vocoder)', 'alt-f6': 'F6 alternative: one-shot field rule (not a fix)' };
+Object.assign(VARIANTS, FIXES);
 const engineInfo = {};
 for (const v of Object.keys(VARIANTS)) {
-  const f = path.join(A, 'wasm/lib', `audapter-${v}.js`);
+  const f = FIXES[v] ? path.join(A, 'report/prototype/wasm', `audapter-${v}.js`) : path.join(A, 'wasm/lib', `audapter-${v}.js`);
   if (!fs.existsSync(f)) { console.warn(`WARN: ${f} missing; build ${v} will be unavailable (run audit/wasm/build.sh ${v})`); continue; }
   const txt = rd(f);
   fs.writeFileSync(path.join(DIST, 'engine', `engine-${v}.js`),
-    `/* Audapter WASM bundle "${v}" (audit/wasm/lib/audapter-${v}.js, Apache-2.0), wrapped in a function whose source text\n` +
+    `/* Audapter WASM bundle "${v}" (${path.relative(path.join(A, '..'), f)}, Apache-2.0), wrapped in a function whose source text\n` +
     `   (Function.prototype.toString) becomes a Worker blob, so the engine also loads from file://. */\n` +
     `(self.PG_ENGINE_FN = self.PG_ENGINE_FN || {})[${JSON.stringify(v)}] = function () {\n${txt}\n};\n`);
   engineInfo[v] = { label: VARIANTS[v], bytes: txt.length };

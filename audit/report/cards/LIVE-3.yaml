@@ -4,6 +4,10 @@ log: LIVE-3
 notes: live/README.md#live-3
 headline: reset() while the participant is speaking can send a loud, clipped click to the headphones
 severity: med
+studies:
+  status: safe
+  text: >-
+    Safe as run: no blab runner keeps audio running across trials, so reset() is never called during speech.
 reach_kind: pitfall
 reach: >-
   Not triggered by blab's per-trial flow, which calls reset() while audio is stopped. Affects designs that call reset() with audio running while the participant may be speaking.

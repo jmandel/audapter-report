@@ -1,6 +1,6 @@
 {
  "card": "LAB-1",
- "source": "blab's vsaCentralize (public runner), parameter sequence reproduced exactly",
+ "source": "blab's vsaCentralize public repository: the unused runner run_vsaAdapt2_audapter.m, parameter sequence reproduced exactly",
  "preset": "male",
  "build": "shipped",
  "params": {

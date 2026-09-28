@@ -5,6 +5,10 @@ notes: notes/interface.md#i-03
 headline: >-
   A trial longer than 30 s loses its beginning, and the OST, trialLen mute and onset ramp restart at 30 s
 severity: low
+studies:
+  status: na
+  text: >-
+    Not applicable: blab's longest recorded trials are 4.5 s (vsaSentence).
 reach_kind: pitfall
 reach: >-
   Not triggered: blab's longest recorded trials are 4.5 s (vsaSentence). Affects trials longer than 30 s, for example sustained phonation or passage reading with an OST.

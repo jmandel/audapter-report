@@ -5,6 +5,7 @@
 PG.Tiers = (() => {
   const { h } = PG;
   const zoom = { t0: 0, t1: 1, dur: 1 };
+  let drawZ = null;   // the zoom of the stack being drawn (stacks with their own axis)
   let cursor = null;   // time the user clicked (playback starts there)
   const stacks = new Set();
 
@@ -22,7 +23,11 @@ PG.Tiers = (() => {
   function redrawAll() { for (const s of stacks) s.draw(); }
 
   // A stack of tiers sharing the zoom, hover crosshair, cursor and playhead.
-  function Stack(container, { tiers, compact = false, axis = true, t0Offset = 0 } = {}) {
+  function Stack(container, { tiers, compact = false, axis = true, t0Offset = 0, ownDuration = 0 } = {}) {
+    // ownDuration: this stack keeps its own time axis (e.g. a session timeline next to per-trial panels)
+    const Z = ownDuration ? { t0: 0, t1: ownDuration, dur: ownDuration } : zoom;
+    const setZ = ownDuration ? (a, b) => { const span = Math.max(0.02, Math.min(Z.dur, b - a)); a = Math.max(0, Math.min(Z.dur - span, a)); Z.t0 = a; Z.t1 = a + span; api.draw(); } : setZoom;
+    const zoomByZ = (f, at) => { const c = at ?? (Z.t0 + Z.t1) / 2, sp = (Z.t1 - Z.t0) * f; setZ(c - (c - Z.t0) * f, c - (c - Z.t0) * f + sp); };
     const narrow = !compact && container.clientWidth > 0 && container.clientWidth < 560, LW = compact || narrow ? 0 : 150;
     const rowsEl = h('div.tiers-rows');
     const hair = h('div.hair', { 'aria-hidden': 'true' }), play = h('div.playhead', { 'aria-hidden': 'true' }), cur = h('div.cursor', { 'aria-hidden': 'true' });
@@ -37,37 +42,38 @@ PG.Tiers = (() => {
       const lab = compact ? null : h('div.tier-lab', {}, h('div.tl-name', { text: t.label }), t.sub ? h('div.tl-sub', { text: t.sub }) : null, t.key ? t.key() : null);
       const row = h('div.tier', { style: { height: t.height + 'px', minHeight: compact ? '' : '40px' } }, lab, cv);
       rowsEl.append(row);
-      if (t.attach) setTimeout(() => t.attach(cv, { tOf: px => zoom.t0 + px / Math.max(1, cv.clientWidth) * (zoom.t1 - zoom.t0), xOf: tt => (tt - zoom.t0) / (zoom.t1 - zoom.t0) * cv.clientWidth, redraw: () => api.draw() }), 0);
+      if (t.attach) setTimeout(() => t.attach(cv, { tOf: px => Z.t0 + px / Math.max(1, cv.clientWidth) * (Z.t1 - Z.t0), xOf: tt => (tt - Z.t0) / (Z.t1 - Z.t0) * cv.clientWidth, redraw: () => api.draw() }), 0);
       return { ...t, cv, row };
     });
     const W = () => Math.max(50, rowsEl.clientWidth - LW);
-    const xOf = (t, w) => (t - zoom.t0) / (zoom.t1 - zoom.t0) * w;
-    const tOf = px => zoom.t0 + px / W() * (zoom.t1 - zoom.t0);
+    const xOf = (t, w) => (t - Z.t0) / (Z.t1 - Z.t0) * w;
+    const tOf = px => Z.t0 + px / W() * (Z.t1 - Z.t0);
     const api = {
       el,
       draw() {
-        const w = W(), dpr = Math.min(2, self.devicePixelRatio || 1), C = col();
+        const w = W(), dpr = Math.min(2, self.devicePixelRatio || 1), C = col(); drawZ = Z;
         for (const t of T) {
           const hgt = t.height;
           t.cv.width = Math.round(w * dpr); t.cv.height = Math.round(hgt * dpr); t.cv.style.width = w + 'px'; t.cv.style.height = hgt + 'px';
           const g = t.cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, hgt);
-          try { t.draw(g, w, hgt, tt => xOf(tt, w), C, zoom); } catch (e) { console.error('tier', t.label, e); }
+          try { t.draw(g, w, hgt, tt => xOf(tt, w), C, Z); } catch (e) { console.error('tier', t.label, e); }
           g.strokeStyle = C.rule; g.lineWidth = 1; g.beginPath(); g.moveTo(0, hgt - 0.5); g.lineTo(w, hgt - 0.5); g.stroke();
         }
+        drawZ = null;
         if (axisC) drawAxis(axisC, w, C);
         api.placeCursor();
       },
       placeCursor() { if (cursor === null) { cur.hidden = true; return; } const x = xOf(cursor, W()); cur.hidden = x < 0 || x > W(); cur.style.left = (LW + x) + 'px'; },
-      playhead(t) { if (t === null) { play.hidden = true; return; } const x = xOf(t, W()); play.hidden = x < 0 || x > W(); play.style.left = (LW + x) + 'px'; },
+      playhead(t) { if (t === null || ownDuration) { play.hidden = true; return; } const x = xOf(t, W()); play.hidden = x < 0 || x > W(); play.style.left = (LW + x) + 'px'; },
       destroy() { stacks.delete(api); ro.disconnect(); el.remove(); },
     };
     function drawAxis(c, w, C) {
       const dpr = Math.min(2, self.devicePixelRatio || 1); c.width = w * dpr; c.height = 22 * dpr; c.style.width = w + 'px'; c.style.height = '22px';
       const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const span = zoom.t1 - zoom.t0, steps = [0.01, 0.02, 0.05, 0.1, 0.2, 0.25, 0.5, 1, 2, 5, 10];
+      const span = Z.t1 - Z.t0, steps = [0.01, 0.02, 0.05, 0.1, 0.2, 0.25, 0.5, 1, 2, 5, 10];
       const st = steps.find(s => w / (span / s) >= 60) || 10;
       g.fillStyle = C.ink3; g.strokeStyle = C.rule; g.font = '12px ' + PG.css('--serif'); g.textBaseline = 'top';
-      for (let t = Math.ceil(zoom.t0 / st) * st; t <= zoom.t1 + 1e-9; t += st) {
+      for (let t = Math.ceil(Z.t0 / st) * st; t <= Z.t1 + 1e-9; t += st) {
         const x = xOf(t, w); g.beginPath(); g.moveTo(x + 0.5, 0); g.lineTo(x + 0.5, 4); g.stroke();
         const s = (t + t0Offset).toFixed(st < 0.1 ? 2 : st < 1 ? 1 : 0);
         g.fillText(s, Math.min(w - g.measureText(s).width, Math.max(0, x - g.measureText(s).width / 2)), 6);
@@ -77,13 +83,13 @@ PG.Tiers = (() => {
     let drag = null;
     plot.addEventListener('pointermove', e => {
       const r = rowsEl.getBoundingClientRect(), px = e.clientX - r.left - LW;
-      if (drag) { const dt = (drag.x - e.clientX) / W() * (drag.t1 - drag.t0); if (Math.abs(drag.x - e.clientX) > 3) drag.moved = true; setZoom(drag.t0 + dt, drag.t1 + dt); return; }
+      if (drag) { const dt = (drag.x - e.clientX) / W() * (drag.t1 - drag.t0); if (Math.abs(drag.x - e.clientX) > 3) drag.moved = true; setZ(drag.t0 + dt, drag.t1 + dt); return; }
       if (px < 0 || px > W()) { hair.hidden = true; tip.hidden = true; return; }
       const t = tOf(px); hair.hidden = false; hair.style.left = (LW + px) + 'px';
       showTip(t, e.clientX - el.getBoundingClientRect().left, e.clientY - el.getBoundingClientRect().top);
     });
     plot.addEventListener('pointerleave', () => { hair.hidden = true; tip.hidden = true; });
-    plot.addEventListener('pointerdown', e => { if (e.button !== 0) return; drag = { x: e.clientX, t0: zoom.t0, t1: zoom.t1, moved: false }; plot.setPointerCapture(e.pointerId); });
+    plot.addEventListener('pointerdown', e => { if (e.button !== 0) return; drag = { x: e.clientX, t0: Z.t0, t1: Z.t1, moved: false }; plot.setPointerCapture(e.pointerId); });
     plot.addEventListener('pointerup', e => {
       const d = drag; drag = null; if (!d || d.moved) return;
       const r = rowsEl.getBoundingClientRect(), px = e.clientX - r.left - LW; if (px < 0) return;
@@ -93,10 +99,10 @@ PG.Tiers = (() => {
       if (!(e.ctrlKey || e.metaKey || Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey)) return;
       e.preventDefault();
       const r = rowsEl.getBoundingClientRect(), t = tOf(e.clientX - r.left - LW);
-      if (e.ctrlKey || e.metaKey) zoomBy(Math.exp(e.deltaY * 0.01), t);
-      else { const dt = (e.deltaX || e.deltaY) / W() * (zoom.t1 - zoom.t0); setZoom(zoom.t0 + dt, zoom.t1 + dt); }
+      if (e.ctrlKey || e.metaKey) zoomByZ(Math.exp(e.deltaY * 0.01), t);
+      else { const dt = (e.deltaX || e.deltaY) / W() * (Z.t1 - Z.t0); setZ(Z.t0 + dt, Z.t1 + dt); }
     }, { passive: false });
-    plot.addEventListener('dblclick', () => fit());
+    plot.addEventListener('dblclick', () => setZ(0, Z.dur));
     function showTip(t, x, y) {
       const lines = [];
       for (const tr of T) if (tr.readout) for (const r of tr.readout(t) || []) lines.push(r);
@@ -130,7 +136,7 @@ PG.Tiers = (() => {
   // series: {t(i) or dt, y: array, style: 'observed'|'target'|'input'|'obsDots'|'inDots'|'refLine', yOf}
   function drawSeries(g, s, xOf, yOf, C, w) {
     const n = s.y.length, tAt = s.t || (i => i * s.dt + (s.tOff || 0));
-    const i0 = Math.max(0, Math.floor((zoom.t0 - (s.tOff || 0)) / (s.dt || 1e9)) - 2), i1 = s.dt ? Math.min(n, Math.ceil((zoom.t1 - (s.tOff || 0)) / s.dt) + 2) : n;
+    const z = drawZ || zoom, i0 = Math.max(0, Math.floor((z.t0 - (s.tOff || 0)) / (s.dt || 1e9)) - 2), i1 = s.dt ? Math.min(n, Math.ceil((z.t1 - (s.tOff || 0)) / s.dt) + 2) : n;
     const ok = s.ok || isNum;
     if (/Dots$/.test(s.style)) {
       g.fillStyle = s.style === 'obsDots' ? C.obs : C.input;

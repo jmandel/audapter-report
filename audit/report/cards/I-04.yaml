@@ -5,6 +5,10 @@ notes: notes/interface.md#i-04
 headline: >-
   Reprocessing one recording under two conditions applies the second condition to the first condition's output
 severity: low
+studies:
+  status: safe
+  text: >-
+    Safe as run: blab's offline helpers (audapter_viewer, check_audapterLPC) build fresh frames for every run.
 reach_kind: pitfall
 reach: >-
   Not triggered by blab's offline helpers (audapter_viewer, check_audapterLPC), which build fresh frames for every run. Affects offline reprocessing that reuses one frame array for several conditions.

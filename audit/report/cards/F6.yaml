@@ -6,6 +6,10 @@ headline: >-
   An undocumented blab change that vsaSentence depends on: a field perturbation switches on again every time the formants re-enter
   the field (and minVowelLen has no effect)
 severity: med
+studies:
+  status: affected
+  text: >-
+    Affected by design: vsaSentence depends on the re-arming, and vsaCentralize and vsaGeneralize use the same restricted field. The uniform whole-plane fields (attentionComp, coAdapt, uhdapter) are unaffected.
 reach_kind: current
 reach: >-
   Touches blab's current experiments: vsaSentence depends on this behaviour, and the other VSA experiments use the same restricted field. It is an undocumented behaviour change, not a defect for blab; it matters for anyone running these designs on Audapter 2.1.5 or another fork.

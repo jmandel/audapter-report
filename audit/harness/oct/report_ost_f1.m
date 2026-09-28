@@ -72,7 +72,7 @@ end
 for di = [2 1]   % leak design first, so its session starts on a freshly loaded MEX
   nm = OSTS{di,1}; ost = sprintf('cfg/report_ostf1_%s.ost', nm);
   % OBSERVED: one session, OST loaded once, PCF reloaded per trial, reset() per trial
-  if di == 2 && ~REAL, case_mark('observed'); end   % Playground test case (audit/playground/capture); no-op otherwise
+  if di == 2, case_mark(ifelse_str(REAL, 'real', 'observed')); end   % Playground test case (audit/playground/capture); no-op otherwise
   Audapter('ost', '', 0); Audapter('pcf', '', 0);
   Audapter('setParam', 'datapb', w, 1); AudapterIO('init', p); Audapter('ost', ost, 0);
   obs = cell(1, T);

@@ -88,6 +88,7 @@ SINCE_LINE = {"upstream": "Present since at least Audapter 2.1.5.", "both": "Pre
               "blab-amplified": "Present since at least Audapter 2.1.5; made more likely in the blab-lab fork.",
               "blab": "Introduced in the blab-lab fork.", "blab-intended": "Introduced in the blab-lab fork."}
 SEV_ORDER = {"high": 0, "med": 1, "low": 2}
+BS = {"affected": "affected", "safe": "safe as run", "na": "n.a.", "safe_unused": "safe as run; unused public copy mis-wired"}
 KIND = {"H": "Harness", "D": "Driver", "R": "Reading", "F": "Formal"}
 ROLE = {"input": "Input", "expected": "Expected", "observed": "Observed", "ab": "A/B"}
 
@@ -126,7 +127,7 @@ def clip_li(card, a, m, src_rel, sketch_id=None, credit=None, fmt=None):
     ds = ""
     if sketch_id and a.get("panel") and not a.get("no_playhead"):
         # mapping: figure panel, trial box, and the time within that trial where the clip starts (excerpts)
-        ds = (f' data-sketch="{sketch_id}-{a["panel"]}" data-trial="{a["trial"]}" data-offset="{a.get("offset", a.get("a", 0))}"'
+        ds = (f' data-sketch="{a.get("sketch", sketch_id)}-{a["panel"]}" data-trial="{a["trial"]}" data-offset="{a.get("offset", a.get("a", 0))}"'
               f' data-dur="{m.get("dur_s", 0):.4f}"')
     np_note = ""
     if a.get("no_playhead") or not a.get("panel"):
@@ -235,7 +236,7 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
     wide = mod.sketch(data, up)
     for a in card.get("audio", []):
         if a.get("panel") and not a.get("no_playhead"):
-            m_ = re.search(r'<svg[^>]*id="' + re.escape(f'{sid}-{a["panel"]}') + r'".*?</svg>', wide, re.S)
+            m_ = re.search(r'<svg[^>]*id="' + re.escape(f'{a.get("sketch", sid)}-{a["panel"]}') + r'".*?</svg>', wide, re.S)
             if not m_ or f'data-trial="{a["trial"]}"' not in m_.group(0):
                 fail(f'card {card["id"]}: clip {a["file"]} maps to {sid}-{a["panel"]} trial {a.get("trial")}, which the figure does not draw')
         elif re.search(r"\btrial \d", a.get("title", "")) and not a.get("no_playhead") and a["role"] != "ab":
@@ -244,10 +245,16 @@ def card_html(repos, card, tests, data, up, asset_rel, variants):
     cap = f'<p class="figcap">{fmt(card["figure_caption"])}</p>' if card.get("figure_caption") else ""
     setp = ""
     if data.get("settings") or card.get("settings"):
-        S = dict(data.get("settings") or {}); S.update(card.get("settings", {}).get("override", {}))
+        S = dict(data.get("settings") or {})
+        if card.get("settings", {}).get("from"):          # e.g. "cereb.settings": a named variant of the export is the card's example
+            S = dict(data); [S := S[k] for k in card["settings"]["from"].split(".")]; S = dict(S)
+        S.update(card.get("settings", {}).get("override", {}))
         setp = settings_panel.panel_html(card, S, asset_rel)
         json.dump(settings_panel.settings_json(card, S), open(os.path.join(OUT, asset_rel, "settings.json"), "w"), indent=1)
-    reach = f'<p class="reach reach-{card.get("reach_kind", "none")}">{fmt(card["reach"])}</p>' if card.get("reach") else ""
+    st = card.get("studies") or {}
+    stl = f' <span class="bs bs-{st.get("status")}">{BS[st["status"]]}</span>' if st.get("status") else ""
+    stx = f'<br><strong>Relevant blab studies</strong>{stl}. {fmt(st["text"])}' if st.get("text") else ""
+    reach = f'<p class="reach reach-{card.get("reach_kind", "none")}">{fmt(card["reach"])}{stx}</p>' if card.get("reach") else ""
     return f'''
 <article class="card" id="{anchor(card["id"])}" aria-labelledby="{anchor(card["id"])}-h">
   <aside class="rail">
@@ -440,15 +447,16 @@ def table_html(rows, short=(), sections=()):
     byid = {r["id"]: r for r in rows}; sh = {r["id"]: r for r in short}
     def row(r, href, text):
         sev, sevc = SEV[r["sev"]]
+        bs = r.get("bs") or STUDIES.get(r["id"], "na")
         return (f'<tr><td class="t-id"><a href="#{href}">{E(r["id"])}</a></td><td><span class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev}</span></td>'
-                f'<td>{E(text)}</td><td><span class="vk-l">{r["status"]}</span></td><td class="t-since">{SINCE[r["origin"]]}</td></tr>')
+                f'<td>{E(text)}</td><td class="t-bs"><span class="bs bs-{bs}">{BS[bs]}</span></td><td><span class="vk-l">{r["status"]}</span></td><td class="t-since">{SINCE[r["origin"]]}</td></tr>')
     out = []
     for sec in sections:
         items = [byid[i] for i in sec.get("cards", []) if i in byid]
         shs = [sh[i] for i in sec.get("short", []) if i in sh]
         if not items and not shs and not sec.get("table_rows"):
             continue
-        out.append(f'<tr class="group"><td colspan="5"><a href="#{sec["id"]}">{E(sec["title"])}</a></td></tr>')
+        out.append(f'<tr class="group"><td colspan="6"><a href="#{sec["id"]}">{E(sec["title"])}</a></td></tr>')
         for r in sorted(items, key=lambda r: SEV_ORDER[r["sev"]]):
             out.append(row(r, anchor(r["id"]), r["text"]))
         for r in sec.get("table_rows", []):
@@ -458,6 +466,7 @@ def table_html(rows, short=(), sections=()):
     return "".join(out)
 
 SECVALS = {}
+STUDIES = {}   # card id -> affected | safe | na, from cards/<ID>.yaml studies.status
 def section_text(t):
     """Section prose with [[name]] or [[name:fmt]] values filled from harness logs (parse_section_values).
     'file:<name>' reads templates/<name>."""
@@ -629,6 +638,7 @@ def main():
     if extra:
         print("note: cards not in findings.yaml order, appended:", ", ".join(extra))
     y["cards"] = [allc[cid] for cid in y["cards"] + extra if cid in allc]
+    STUDIES.update({c["id"]: c.get("studies", {}).get("status", "na") for c in y["cards"]})
     for extra_short in ("short-live.yaml",):
         p = os.path.join(HERE, extra_short)
         if os.path.exists(p):

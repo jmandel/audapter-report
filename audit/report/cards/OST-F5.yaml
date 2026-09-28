@@ -7,6 +7,10 @@ headline: >-
 severity: med
 origin: upstream
 status: [H, R]
+studies:
+  status: safe
+  text: >-
+    Safe as run: blab's pitch experiments (pitchAdaptPD, pitchComp) re-run AudapterIO('init', p) before every trial.
 reach_kind: pitfall
 reach: >-
   Not triggered by any blab design we inspected: blab's pitch experiments (pitchAdaptPD, pitchComp) re-run

@@ -13,7 +13,7 @@
   // ---------------- layout
   function layout() {
     const app = $('#app');
-    const tabs = [['explore', 'Explore'], ['design', 'Timing & design'], ['cases', 'Test cases'], ['about', 'About']];
+    const tabs = [['explore', 'Explore'], ['design', 'Timing & design'], ['about', 'About']];
     const nav = $('#tabs');
     for (const [k, t] of tabs) nav.append(h('button', { type: 'button', role: 'tab', id: 'tab-' + k, 'aria-controls': 'panel-' + k, 'aria-selected': String(k === 'explore'), text: t, on: { click: () => PG.bus.emit('tab', k) } }));
     $('#theme-btn').addEventListener('click', () => PG.theme.toggle());
@@ -25,7 +25,7 @@
     PG.InputUI.mount($('#input-panel'));
     PG.TrialsUI.mount($('#trials'));
     PG.DesignUI.mount($('#panel-design'));
-    PG.Cases.mount($('#panel-cases'));
+    PG.Cases.mount($('#case-banner'), $('#case-pick'));
     PG.Compare.mount($('#v-compare'));
     PG.Vowel.mount($('#v-vowel'));
     runBar(); PG.Transport.mount($('#transport')); viewTabs();
@@ -51,7 +51,7 @@
 
   // ---------------- running
   const schedule = PG.debounce(() => { if (st.autoRun && st.input) runCurrent(false); }, 450);
-  PG.bus.on('settings', why => { PG.Store.saveSettings(st.settings); updateWarnings(); if (why !== 'noauto') schedule(); });
+  PG.bus.on('settings', why => { PG.Store.saveSettings(st.settings); updateWarnings(); if (why !== 'noauto' && why !== 'case' && !PG.Cases.owns()) schedule(); });
   PG.bus.on('input', inp => { updateWarnings(); analyseInput(inp); schedule(); });
 
   function nextName(extra) { counter++; return `T${counter}${extra ? ' ' + extra : ''}`; }
@@ -213,7 +213,7 @@
 
   // ---------------- views
   function viewTabs() {
-    const tabs = [['spectro', 'Spectrograms'], ['pitch', 'Pitch and level'], ['vowel', 'Vowel space'], ['compare', 'Compare']];
+    const tabs = [['pair', 'Expected vs observed'], ['spectro', 'Spectrograms'], ['pitch', 'Pitch and level'], ['vowel', 'Vowel space'], ['compare', 'Compare']];
     const bar = $('#viewtabs');
     for (const [k, t] of tabs) bar.append(h('button', { type: 'button', role: 'tab', id: 'vt-' + k, 'aria-selected': String(k === st.view), text: t, on: { click: () => PG.bus.emit('view', k) } }));
     const zoom = h('div.zoom', { role: 'group', 'aria-label': 'Time zoom' },
@@ -222,13 +222,15 @@
       h('button.icon.wide', { type: 'button', text: 'Fit', on: { click: () => PG.Tiers.fit() } }));
     bar.append(zoom);
     PG.bus.on('view', k => { st.view = k; for (const [x] of tabs) $('#vt-' + x).setAttribute('aria-selected', String(x === k)); showView(); });
-    PG.bus.on('current', () => showView());
+    PG.bus.on('current', () => { $('#vt-pair').hidden = !PG.Cases.pairFor(PG.current()); showView(); });
+    $('#vt-pair').hidden = true;
     PG.bus.on('show-trial', id => { st.currentId = id; PG.bus.emit('current'); if (st.view === 'compare') PG.bus.emit('view', 'spectro'); });
     PG.bus.on('selection', () => { if (st.view === 'compare') showView(); });
   }
   function showView() {
+    if (st.view === 'pair' && !PG.Cases.pairFor(PG.current())) { st.view = 'spectro'; $('#vt-pair').setAttribute('aria-selected', 'false'); $('#vt-spectro').setAttribute('aria-selected', 'true'); }
     const k = st.view, t = PG.current();
-    for (const v of ['tiers', 'vowel', 'compare']) $('#v-' + v).hidden = !((v === 'tiers' && (k === 'spectro' || k === 'pitch')) || v === k);
+    for (const v of ['tiers', 'vowel', 'compare']) $('#v-' + v).hidden = !((v === 'tiers' && (k === 'spectro' || k === 'pitch' || k === 'pair')) || v === k);
     $('.zoom').hidden = k === 'vowel';
     if (stack) { stack.destroy(); stack = null; }
     const holder = $('#v-tiers'); PG.clear(holder);
@@ -242,6 +244,7 @@
       return;
     }
     if (k === 'vowel') { PG.Vowel.setTrial(t); }
+    else if (k === 'pair') { stack = PG.Cases.renderPair(holder); }
     else {
       PG.Tiers.setDuration(t.inputLen / 48000, true);
       holder.append(h('div.trial-title', {}, h('b', { text: t.name }), h('span', { text: ' ' + t.summary }), t.kept ? null : h('span.badge.draft', { text: 'draft' }),
@@ -323,6 +326,33 @@
       return { name: t.name, settings: t.settings, compiled: S.compile(t.settings).list.map(([k, v]) => [k, Array.isArray(v) ? Array.from(v) : v]), ost: S.compile(t.settings).ost, pcf: S.compile(t.settings).pcf,
         input: Array.from(inp.x), output: Array.from(r.output), fmts: r.fmts.map(a => Array.from(a)), sfmts: r.sfmts.map(a => Array.from(a)), ost_stat: Array.from(r.ost_stat), info: r.info }; },
     stats: () => PG.Engine.stats,
+    // test-case workspace state: selected trials, the settings panel vs the case's own parameters, and the drawn views
+    caseState: () => {
+      const c = PG.Cases.current(), t = PG.current(); if (!c || !t) return null;
+      const w = PG.Cases.work(), v = w.variants.find(x => x.name === (t.caseRef && t.caseRef.base));
+      const map = PG.S.compile(PG.state.settings).map, P = t.caseRef && v ? PG.Cases.paramsAt(v, t.caseRef.trial).P : new Map();
+      const first = x => (Array.isArray(x) ? x[0] : x);
+      const spot = c.spot.map(n => ({ name: n, settings: first(map.get(n)), case: P.get(n) && P.get(n).value ? P.get(n).value[0] : undefined }));
+      const cv = [...document.querySelectorAll('#v-tiers canvas.tier-c')];
+      const rgb = name => { const hex = PG.css(name).replace('#', ''); return [0, 2, 4].map(i => parseInt(hex.slice(i, i + 2), 16)); };
+      const count = (el, col, tol = 40) => { if (!el) return -1; const d = el.getContext('2d').getImageData(0, 0, el.width, el.height).data; let n = 0; for (let i = 0; i < d.length; i += 4) if (Math.abs(d[i] - col[0]) < tol && Math.abs(d[i + 1] - col[1]) < tol && Math.abs(d[i + 2] - col[2]) < tol) n++; return n; };
+      const labs = [...document.querySelectorAll('#v-tiers .tl-name')].map(e => e.textContent);
+      const at = l => cv[labs.indexOf(l)], blue = rgb('--observed'), orange = rgb('--disc');
+      const P2 = PG.Cases.pairFor(t);
+      const rows = [...document.querySelectorAll('#trials li.case-row[data-group="case"]')];
+      return { current: t.name, caseRef: t.caseRef, selected: PG.state.trials.filter(q => PG.state.selected.has(q.id)).map(q => q.name), view: PG.state.view,
+        tierLabels: labs, stacks: document.querySelectorAll('#v-tiers .tiers').length,
+        bluePixelsExpected: count(at((P2 ? P2.eLab : 'Expected') + ' · heard'), blue), bluePixelsObserved: count(at((P2 ? P2.oLab : 'Observed') + ' · heard'), blue),
+        orangePixelsObserved: count(at((P2 ? P2.oLab : 'Observed') + ' · heard'), orange, 30), callout: ($('#pair-callout') || {}).textContent || '',
+        playButtons: ['#pair-play-exp', '#pair-play-obs', '#pair-ab'].filter(q => $(q)).length,
+        diffBands: P2 ? PG.Cases.diffOf(P2.e, P2.o).bands.length : -1,
+        pair: P2 ? { e: P2.e.name, o: P2.o.name, eBuild: P2.e.variant, oBuild: P2.o.variant } : null,
+        rows: rows.length, toggles: rows.filter(r => r.querySelectorAll('.case-tog button').length === 2).length,
+        caseTrials: PG.state.trials.filter(q => q.caseRef && q.caseRef.group === 'case').length,
+        expectedMeans: ($('#case-expected-means') || {}).textContent || '',
+        forks: PG.Cases.forks().map(f => ({ name: f.name, n: f.results.filter(Boolean).length, seqIds: [...new Set(f.results.filter(Boolean).map(q => q.seq && q.seq.id))].length, key: f.key })),
+        spot, set: c.set, sets: c.sets.map(x => x.id), banner: !document.getElementById('case-banner').hidden, whenMode: PG.state.settings.when.mode };
+    },
     // design check: predicted (OST replay on the dry run) vs logged on-frames for the current trial
     designCheck: id => {
       const t = PG.trial(id), r = t.result, P = new Set(r.compiled.meta.perturbStates);
@@ -371,6 +401,7 @@ PG.Transport = (() => {
     pair = null;
     start(tr, kind === 'in' ? 0 : 1);
   }
+  function playTracks(tracks) { pair = null; start(tracks.map(t => ({ ...t })), 0); }
   function playPair(a, b) {
     pair = [a, b];
     start([{ x: a.x, label: 'A' }, { x: b.x, label: 'B' }], 0);
@@ -400,5 +431,5 @@ PG.Transport = (() => {
       h('p.tp-note.muted', { 'aria-live': 'polite' }));
     sync();
   }
-  return { mount, render, play, playPair, toggle };
+  return { mount, render, play, playPair, playTracks, toggle };
 })();

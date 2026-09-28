@@ -68,6 +68,26 @@ NONE = sprintf('0\n\n1\n0, 0.0, 0, 0, 0\n');
 pc = {'warp', WARP; 'zero', ZERO; 'none', NONE};
 for i = 1:3, fid = fopen(sprintf('cfg/report_pt5_%s.pcf', pc{i,1}), 'w'); fprintf(fid, '%s', pc{i,2}); fclose(fid); end
 md = '/h/oct/out/report/pt-5/meas'; if ~exist(md, 'dir'), mkdir(md); end
+if strcmp(getenv('SCEN'), 'cereb')   % fresh process: a warp PCF loaded earlier keeps the vocoder in warp mode even after pcf '' (OST-F5 note)
+% ---- A plausible design with the settings of an unused Audapter runner in blab's cerebTypicalProduction folder (the experiment as wired uses Psychtoolbox, no Audapter feedback; COORD-6 correction): 24 kHz, frameLen 32, nDelay 3, no PCF;
+% a baseline phase runs bPitchShift 0, later phases bPitchShift 1. Real sentence; fb 1 so the speech level can be measured.
+case_mark('cereb');   % Playground test case capture (audit/playground/capture); no-op otherwise
+for b = [0 1]
+  pc5 = getAudapterDefaultParams('female'); pc5.downFact = 2; pc5.sr = 24000; pc5.frameLen = 32; pc5.nDelay = 3; pc5.bPitchShift = b; pc5.fb = 1;
+  Audapter('ost', '', 0); Audapter('pcf', '', 0);
+  d = run_trial(pc5, xw);
+  audiowrite(fullfile(md, sprintf('cereb_b%d_out.wav', b)), d.signalOut, pc5.sr, 'BitsPerSample', 16);
+  if b == 0, audiowrite(fullfile(md, 'cereb_in.wav'), d.signalIn, pc5.sr, 'BitsPerSample', 16); end
+  rc.(sprintf('b%d_db', b)) = 20*log10(rms(d.signalOut(round(0.1*pc5.sr):end)) / rms(d.signalIn(round(0.1*pc5.sr):end)));
+  if b == 1, PC5 = pc5; end
+end
+case_mark('');
+printf('cerebTypicalProduction settings: bPitchShift 0 %+.2f dB, bPitchShift 1 %+.2f dB re input\n', rc.b0_db, rc.b1_db);
+rc.settings = report_settings(PC5, 'female', 'sequence', {{'baseline: bPitchShift 0', 'later phases: bPitchShift 1'}}, ...
+  'switching', 'phase change: bPitchShift 0 in the baseline, 1 afterwards; no OST or PCF', ...
+  'input', sprintf('real speech: CMU ARCTIC %s "There was a change now." (female), first %.2f s', cw, numel(xw) / 48000));
+report_json(fullfile(md, 'cereb.json'), rc); return;
+end
 seqw = {'control', 'warp', 'control', 'warp'};
 for arm = {'exp', 'obs'}
   AudapterIO('init', pw); Audapter('ost', 'cfg/one.ost', 0);
@@ -94,6 +114,8 @@ Audapter('ost', '', 0); Audapter('pcf', '', 0);
 r.warp16 = lv16;
 q = pw; q.bPitchShift = 0; d = run_trial(q, xw);            % reference: no vocoder (e.g. the measureFormants calibration)
 audiowrite(fullfile(md, 'warp_ref_out.wav'), d.signalOut, pw.sr, 'BitsPerSample', 16);
+
+r.cereb = jsondecode(fileread(fullfile(md, 'cereb.json')));   % from SCEN=cereb (fresh process)
 r.warp = struct('clip', cw, 'dur_s', numel(xw) / 48000, 'sequence', {seqw}, 'sr', pw.sr);
 r.settings = report_settings(pw, 'female', 'ost', fileread('cfg/one.ost'), 'pcf', WARP, 'pcf_control', ZERO, ...
   'sequence', {seqw}, 'switching', 'PCF reloaded before every trial (the warp PCF on perturbed trials; on control trials either a zero-length warp row or no warp section); reset() before every trial', ...

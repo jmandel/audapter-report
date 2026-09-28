@@ -57,7 +57,7 @@ PG.DesignUI = (() => {
   function predict() {
     if (!dry) return null;
     const c = S.compile(asDesign()); if (!c.ost || !c.meta.design) return null;
-    const st = PG.OstSim.run(c.ost, dry, dry.frameDur, { patched: PG.state.settings.build === 'patched' }).states;
+    const st = PG.OstSim.run(c.ost, dry, dry.frameDur, { patched: /^(patched|fix-ost-f1)$/.test(PG.state.settings.build) }).states;
     const W = c.meta.design.whatOf, spans = D().blocks.map(() => []);
     let cur = -1, a = 0;
     for (let i = 0; i <= st.length; i++) {

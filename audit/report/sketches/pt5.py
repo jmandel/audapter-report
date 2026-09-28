@@ -46,8 +46,30 @@ def spec(d):
             "callout": "Control trials play 6 dB louder than warp trials: a loudness cue to the condition", "callout_anchor": "end"}
 
 
+def cereb_spec(d):
+    md = os.path.join(d["_dir"], "meas"); dur = d["warp"]["dur_s"]
+    lin = M.span(os.path.join(md, "cereb_in.wav"), 0.1, dur, "level", inner=1.0)
+    lv = {b: M.span(os.path.join(md, f"cereb_b{b}_out.wav"), 0.1, dur, "level", inner=1.0) - lin for b in (0, 1)}
+    trials = []
+    for n, (tag, b) in enumerate((("baseline", 0), ("later phases", 1))):
+        tr = {"n": n + 1, "tag": tag, "dur": dur, "words": [(0.12, dur - 0.1, "“There was a change now.”")]}
+        tr["exp"] = {"pert": [], "none": "same level in every phase", "vals": ["0.0 dB"]}
+        tr["obs"] = {"pert": [(0.02, dur - 0.02, "vocoder on, 0 st")] if b else [], "none": "vocoder off (bPitchShift 0)", "vals": [_db(lv[b])]}
+        if b and abs(lv[1]) > 1:
+            tr["obs"]["diff"] = [(0.12, dur - 0.1)]
+        trials.append(tr)
+    return {"sid": "sk-pt-5c", "trials": trials, "gap": 0.4,
+            "rows": {"words": "Speech", "pert": "Phase vocoder", "vals": "Level heard vs spoken"},
+            "heads": {"exp": "the participant hears their voice at the same level in every phase",
+                      "obs": "bPitchShift 0 in the baseline, 1 afterwards, no PCF"},
+            "between": {1: "phase change"}, "callout": "From the first vocoder phase on, the voice is played 3.5 dB louder", "callout_anchor": "end"}
+
+
 def sketch(d, up):
-    return evlib.render(spec(d))
+    import sketchlib as SL, html
+    h = lambda t: f'<p class="ev-sub">{html.escape(t)}</p>'
+    return (h("A. A plausible design: vocoder switched on after a baseline phase (24 kHz, frameLen 32, nDelay 3)") + evlib.render(cereb_spec(d))
+            + h("B. Time-warp designs (timeAdapt settings): control trials with and without a warp section") + evlib.render(spec(d)))
 
 
 def derive(d, up):
@@ -57,6 +79,8 @@ def derive(d, up):
     for arm in ("exp", "obs"):
         for k in range(len(W["sequence"])):
             v[f"{arm}_t{k+1}_db"] = m[(arm, k)]; v[f"{arm}_t{k+1}_txt"] = _db(m[(arm, k)])
+    cs = cereb_spec(d); v["cereb_b0"] = cs["trials"][0]["obs"]["vals"][0]; v["cereb_b1"] = cs["trials"][1]["obs"]["vals"][0]
+    v["cereb_json_b1"] = d["cereb"]["b1_db"]
     v["ref_db"] = m["ref"]; v["cue_db"] = m[("obs", 0)] - m[("obs", 1)]
     v["w16_none"], v["w16_zero"], v["w16_warp"] = d["warp16"]["none"], d["warp16"]["zero"], d["warp16"]["warp"]
     v["w16_cue"] = d["warp16"]["none"] - d["warp16"]["warp"]

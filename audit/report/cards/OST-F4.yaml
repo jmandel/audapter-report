@@ -5,6 +5,10 @@ notes: notes/ost-pcf.md#f4
 headline: >-
   A PCF with fewer rows than the OST has states makes Audapter read past its arrays, and memory contents decide whether formants are shifted
 severity: med
+studies:
+  status: safe
+  text: >-
+    Safe as run: blab's PCFs have one row per OST state.
 reach_kind: robust
 reach: >-
   Not triggered: blab's PCFs have one row per OST state. Affects any PCF with fewer rows than the OST has states.

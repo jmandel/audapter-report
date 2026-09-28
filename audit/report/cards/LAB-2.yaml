@@ -3,16 +3,21 @@ id: LAB-2
 log: EXP-4
 notes: notes/blab-experiments.md
 headline: >-
-  Was vsaGeneralize's data collected with the committed runner? As committed, baseline trials meant to be unperturbed are
-  perturbed by {s0_min:.0f}–{s0_max:.0f} mel, and training trials get the full, unscaled field
+  An open question for vsaGeneralize: as committed, the runner its experiment script calls perturbs the baseline trials by
+  {s0_min:.0f}–{s0_max:.0f} mel and gives the training trials the full, unscaled field; the lab's logs can settle it
 severity: med
 origin: blab
 since: ''
 status: [H]
+studies:
+  status: affected
+  text: >-
+    vsaGeneralize: its public experiment script calls this public runner, so this is the open question. The lab's later
+    vsaGeneralize2 study is not affected: it sends the mel grids and scales pertAmp2D.
 reach_kind: current
 reach: >-
-  A question about the lab's public experiment code, not an Audapter defect. The runner that collected the data may differ from
-  the committed one. This is a reading of public code, not a claim about published results; the lab's public data (OSF 78z93)
+  A question about the lab's public experiment code, not an Audapter defect. The public experiment script calls this public runner;
+  the version that collected the data could still differ from the committed one. This is a reading of public code, not a claim about published results; the lab's public data (OSF 78z93)
   can settle it.
 labels: {what: What the design intends, scope: What the committed code does, and how it differs, example: Example, cause: The code}
 what: >-

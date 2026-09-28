@@ -10,7 +10,8 @@ def sketch(d, up):
     return vsa.figure("sk-vsa-centralize", [("Real voice (PVQD speaker LA9015, sustained /i/ and /ɑ/), strength 0.5", rr, None),
                                             ("Synthetic vowels at the lab's default means, strength 0.5 (hold phase)", rows, None)], d["centre_hz"],
                       "Expected: " + vsa.describe(rows, "exp") + ". Observed: " + vsa.describe(rows, "obs") + ".",
-                      "Orange: the heard vowel misses the intended one; for /i/, /æ/, /ɪ/ and /ɛ/ it moves away from the centre (F2 up instead of down).")
+                      "Orange: the heard vowel misses the intended one; for /i/, /æ/, /ɪ/ and /ɛ/ it moves away from the centre (F2 up instead of down).",
+                      obs_title="the unused public runner")
 
 
 def derive(d, up):

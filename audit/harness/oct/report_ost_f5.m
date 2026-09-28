@@ -49,6 +49,7 @@ rc(1:numel(rmp)) = rc(1:numel(rmp)) .* rmp; rc(end-numel(rmp)+1:end) = rc(end-nu
 XR = {[1e-4*randn(round(G1*fs),1); rp], [1e-4*randn(round(G1*fs),1); rc; 1e-4*randn(round(TAIL*fs),1)]};
 XR = XR([1 2 1 2]); f0r = est_f0(XR{2}(1:3:end), p.sr); r.real.f0_in = f0r;
 for arm = {'exp', 'obs'}
+  case_mark(['real_' arm{1}]);   % Playground test case capture; no-op otherwise
   AudapterIO('init', p); Audapter('ost', 'cfg/report_ostf5.ost', 0);
   for k = 1:numel(seq)
     if strcmp(seq{k}, 'shift'), Audapter('pcf', 'cfg/report_ostf5_up.pcf', 0);
@@ -60,6 +61,7 @@ for arm = {'exp', 'obs'}
     audiowrite(fullfile(md, sprintf('real_t%d_in.wav', k)), q.d.signalIn / 1.5, p.sr, 'BitsPerSample', 16);
     printf('real %s trial %d (%s): state 2 from %.3f s, output F0 %+.0f cents\n', arm{1}, k, seq{k}, r.real.(arm{1}).st2_on(k), 1200*log2(est_f0(q.d.signalOut, p.sr) / f0r));
   end
+  case_mark('');
 end
 r.real.trial_s = cellfun(@(x) numel(x) / fs, XR); r.real.clip = 'pvqd_SJ7001_a';
 % the same with AudapterIO('init', p) before every trial and catch trials made by clearing the PCF (blab's pitch experiments re-init)
