@@ -9,9 +9,9 @@ set -euo pipefail
 P=$(cd "$(dirname "$0")/.." && pwd); ROOT=$(cd "$P/../.." && pwd); H="$ROOT/audit/harness"
 declare -A SCRIPT=( [OST-F1]=report_ost_f1.m [OST-F2]=report_ost_f2.m [OST-F5]=report_ost_f5.m [COORD-1]=report_coord1.m
                     [I-01]=report_i01.m [LAB-1]=report_vsa.m [F6]=report_f6.m [OST-F8]=report_ost_f8.m [CORPUS-11]=report_corpus11.m
-                    [CORPUS-8-32]=report_corpus8.m [CORPUS-8-64]=report_corpus8.m [I-02]=report_i02.m [PT-5]=report_pt5.m [PT-5-CEREB]=report_pt5.m [OST-F1-REAL]=report_ost_f1.m )
-declare -A SCENV=( [CORPUS-8-32]="32 5" [CORPUS-8-64]="64 7" [PT-5-CEREB]=cereb [OST-F1-REAL]=real )
-IDS=${@:-OST-F1 OST-F2 OST-F5 COORD-1 I-01 LAB-1 F6 OST-F8 CORPUS-11 CORPUS-8-32 CORPUS-8-64 I-02 PT-5 PT-5-CEREB OST-F1-REAL}
+                    [CORPUS-8-32]=report_corpus8.m [CORPUS-8-64]=report_corpus8.m [I-02]=report_i02.m [PT-5]=report_pt5.m [PT-5-CEREB]=report_pt5.m [OST-F1-REAL]=report_ost_f1.m [PT-5-TW]=report_pt5.m )
+declare -A SCENV=( [CORPUS-8-32]="32 5" [CORPUS-8-64]="64 7" [PT-5-CEREB]=cereb [OST-F1-REAL]=real [PT-5-TW]=timewrap )
+IDS=${@:-OST-F1 OST-F2 OST-F5 COORD-1 I-01 LAB-1 F6 OST-F8 CORPUS-11 CORPUS-8-32 CORPUS-8-64 I-02 PT-5 PT-5-CEREB OST-F1-REAL PT-5-TW}
 mkdir -p "$P/capture/tmp" "$P/capture/out"
 cp "$H/build-oct/Audapter.mex" "$P/capture/tmp/AudapterReal.mex"
 for id in $IDS; do

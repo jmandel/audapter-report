@@ -78,11 +78,14 @@ if strcmp(getenv('SCEN'), 'timewrap')   % blab's timeWrap / cerebTimeAdapt setti
   xc = 1e-4*randn(round(1.4*48000), 1); ck = round((0.2:0.2:1.0)*48000); for c = ck, xc(c:c+47) = xc(c:c+47) + 0.5*hanning(48); end
   onset = @(y, sr) arrayfun(@(t) (find(abs(y(round((t-0.01)*sr):round((t+0.1)*sr))) > 0.25*max(abs(y(round((t-0.01)*sr):round((t+0.1)*sr)))), 1) - 1) / sr - 0.01, (0.2:0.2:1.0));
   Audapter('ost', '', 0); Audapter('pcf', '', 0);
+  case_mark('tw_pre');   % Playground test case capture (audit/playground/capture); no-op otherwise
   q = pt; q.bPitchShift = 0; AudapterIO('init', q);
   d0 = run_trial(q, xw, 'init', false); c0 = run_trial(q, xc, 'init', false);
+  case_mark('tw_later');
   q = pt; q.bPitchShift = 1; AudapterIO('init', q); Audapter('ost', 'cfg/one.ost', 0);
   Audapter('pcf', 'cfg/report_pt5_tw_zero.pcf', 0); d1 = run_trial(q, xw, 'init', false); c1 = run_trial(q, xc, 'init', false);
   Audapter('pcf', 'cfg/report_pt5_tw_warp.pcf', 0); d2 = run_trial(q, xw, 'init', false);
+  case_mark('');
   Audapter('ost', '', 0); Audapter('pcf', '', 0);
   audiowrite(fullfile(md, 'tw_in.wav'), d0.signalIn, pt.sr, 'BitsPerSample', 16);
   audiowrite(fullfile(md, 'tw_pre_out.wav'), d0.signalOut, pt.sr, 'BitsPerSample', 16);
@@ -121,6 +124,7 @@ report_json(fullfile(md, 'cereb.json'), rc); return;
 end
 seqw = {'control', 'warp', 'control', 'warp'};
 for arm = {'exp', 'obs'}
+  case_mark(['warp_' arm{1}]);   % Playground test case capture (audit/playground/capture); no-op otherwise
   AudapterIO('init', pw); Audapter('ost', 'cfg/one.ost', 0);
   for k = 1:numel(seqw)
     if strcmp(seqw{k}, 'warp'), f = 'warp'; elseif strcmp(arm{1}, 'exp'), f = 'zero'; else, f = 'none'; end
@@ -131,6 +135,7 @@ for arm = {'exp', 'obs'}
     g = 20*log10(rms(d.signalOut(round(0.1*pw.sr):end)) / rms(d.signalIn(round(0.1*pw.sr):end)));
     printf('warp session %s trial %d (%s, PCF %s): output re input %+.2f dB\n', arm{1}, k, seqw{k}, f, g);
   end
+  case_mark('');
 end
 Audapter('ost', '', 0); Audapter('pcf', '', 0);
 % the same comparison at the blab defaults (16 kHz, frameLen 32), numbers only

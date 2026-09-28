@@ -193,10 +193,12 @@
   "id": "PT-5",
   "title": "The phase vocoder changes loudness",
   "summary": "With bPitchShift on, 0 semitones plays about 3.5 dB louder, and a pitch-shift onset (0 to +2 st at 0.6 s by the OST) steps the level down to about +2 dB.",
-  "key": "Real voice: later phases (bPitchShift 1, 0 st) play about 3.5 dB louder than the baseline; with the gain-normalised build both phases play at the same level.",
+  "key": "From the first post-pre phase on, participants hear themselves about 2.6 dB quieter and 13.3 ms later than in the pre phase.",
   "available": true,
   "sets": [
-   "real",
+   "timewrap",
+   "warp",
+   "cereb",
    "synthetic"
   ],
   "trials": [

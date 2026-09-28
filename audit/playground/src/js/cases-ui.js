@@ -55,6 +55,11 @@ PG.Cases = (() => {
     if (name.startsWith('seg:')) { const [, k, e] = name.split(':'), R = TT.runs(r.sfmts[0], dt, v => v > 0); const g = R[+k]; return g ? (e === 'a' ? g.a : g.b) : NaN; }
     if (name === 'ratio_f1') { const q = []; for (let i = 0; i < n; i++) if (r.sfmts[0][i] > 0) q.push(r.sfmts[0][i] / r.fmts[0][i]); return medianAll(q); }
     if (name === 'pitchhz_med') return medianAll(Array.from(r.pitchHz).filter(v => v > 0));
+    if (name === 'clicklat') {   // report_pt5.m (timewrap): click onsets (first sample above 25 % of the window's peak), out re in, median (ms)
+      const sr = r.params.srate, on = y => [0.2, 0.4, 0.6, 0.8, 1.0].map(t => { const a = Math.round((t - 0.01) * sr) - 1, b = Math.round((t + 0.1) * sr);
+        let mx = 0; for (let i = a; i < b; i++) mx = Math.max(mx, Math.abs(y[i])); for (let i = a; i < b; i++) if (Math.abs(y[i]) > 0.25 * mx) return (i - a) / sr - 0.01; return NaN; });
+      const o = on(r.signalOut), i = on(r.signalIn); return 1000 * medianAll(o.map((v, k) => v - i[k]));
+    }
     if (name === 'rms_out') { let e = 0; for (const v of r.signalOut) e += v * v; return Math.sqrt(e / r.signalOut.length); }
     if (name.startsWith('gainrms:')) {   // report_pt5.m (cereb): RMS of signalOut re signalIn from a (s) to the end, in dB
       const a = Math.round(+name.split(':')[1] * r.params.srate) - 1;
@@ -418,14 +423,20 @@ PG.Cases = (() => {
       const b = biggest(B), i = Math.round((b[0] + b[1]) / 2 / G);
       return { bands: B, text: `${span(b)}: ${no[i] ? 'noise' : 'silence'} (${word} ${ne[i] ? 'noise' : 'silence'})` };
     }
-    if (kind === 'level') {
+    if (kind === 'level' || kind === 'levellat') {
       const de = blocksDb(re.output), dd = blocksDb(ro.output), nb = Math.min(de.length, dd.length), act = [], diff = [];
       for (let k = 0; k < nb; k++) { const a = Math.max(de[k], dd[k]) > -50; act.push(a); diff.push(a ? dd[k] - de[k] : NaN); }
       const flags = grid(tt => { const k = Math.floor(tt / 0.02); return act[k] && Math.abs(diff[k]) > 1; });
       const B = bandsOf(flags, 0.04);
       if (!B.length) return { bands: [], text: 'The output level is the same in both (within 1 dB).' };
       const b = biggest(B), m = medianAll(diff.slice(Math.floor(b[0] / 0.02), Math.ceil(b[1] / 0.02)));
-      return { bands: B, text: `${span(b)}: output ${Math.abs(m).toFixed(1)} dB ${m > 0 ? 'louder' : 'quieter'} than expected (${word} the same level)` };
+      let lat = '';
+      if (kind === 'levellat') {   // delay of the output re the input (cross-correlation of Audapter's own signals, up to 40 ms)
+        const lag = r => { const x = r.signalIn, y = r.signalOut, sr = r.params.srate, L = Math.round(0.04 * sr); let best = 0, bl = 0;
+          for (let l = 0; l <= L; l++) { let c = 0; for (let i = 0; i + l < y.length; i += 2) c += y[i + l] * x[i]; if (c > best) { best = c; bl = l; } } return 1000 * bl / sr; };
+        const dl = lag(ro) - lag(re); if (Math.abs(dl) >= 1) lat = ` and ${Math.abs(dl).toFixed(1)} ms ${dl > 0 ? 'later' : 'earlier'}`;
+      }
+      return { bands: B, text: `${span(b)}: output ${Math.abs(m).toFixed(1)} dB ${m > 0 ? 'louder' : 'quieter'}${lat} than expected (${word} the same level${lat ? ' and latency' : ''})` };
     }
     if (kind === 'heard') {
       const f1 = [metric('heard_f1', ro), metric('heard_f2', ro)], f2 = [metric('heard_f1', re), metric('heard_f2', re)];

@@ -468,3 +468,5 @@ details.cb-trial summary { cursor: pointer; }
 .pair-callout.same { border-left-color: var(--rule-2); background: var(--tint); }
 .cb-sets { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 4px 0 2px; font-size: 0.9rem; }
 .cb-input { font-size: 0.84rem; }
+.cb-sets .seg { flex-wrap: wrap; }
+.cb-sets .seg button { border-bottom: 1px solid var(--rule-2); margin-bottom: -1px; }

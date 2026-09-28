@@ -13,10 +13,11 @@ import { execFileSync } from 'node:child_process';
 import { CASES, NOT_REPLAYABLE } from './cases.spec.mjs';
 
 // RMS of a 16-bit PCM WAV (the report's exported clips), for card numbers that exist only as audio
-function wavRms(f) {
-  const b = fs.readFileSync(f); let o = 12, e = 0, n = 0;
+function wavRms(f, from = 0) {   // from: seconds (as the export's rms(x(round(from*sr):end)))
+  const b = fs.readFileSync(f); let o = 12, e = 0, n = 0, sr = 48000;
   while (o < b.length - 8) { const id = b.toString('ascii', o, o + 4), sz = b.readUInt32LE(o + 4);
-    if (id === 'data') { for (let i = o + 8; i + 1 < o + 8 + sz; i += 2) { const v = b.readInt16LE(i) / 32768; e += v * v; n++; } break; }
+    if (id === 'fmt ') sr = b.readUInt32LE(o + 12);
+    if (id === 'data') { const i0 = o + 8 + 2 * Math.max(0, Math.round(from * sr) - 1); for (let i = i0; i + 1 < o + 8 + sz; i += 2) { const v = b.readInt16LE(i) / 32768; e += v * v; n++; } break; }
     o += 8 + sz + (sz & 1); }
   return Math.sqrt(e / n);
 }
@@ -50,7 +51,9 @@ export function buildCases({ P, A, DIST, hasFlac }) {
     if (!fs.existsSync(path.join(cd, 'log.json'))) { console.warn(`WARN: case ${id} not captured (run tools/capture-cases.sh ${id})`); index.push({ id, title: spec.title, summary: spec.summary, available: false, why: 'not captured in this build' }); continue; }
     // the card's numbers: the export's data.json (harness output), or the report's merged copy if that is where they are
     // Sets: the real-voice example (the card's primary one, where the export has it) first, then the synthetic one.
-    const SETS = spec.real ? [{ ...spec, ...spec.real, id: 'real', setLabel: 'Real voice' }, { ...spec, id: 'synthetic', setLabel: 'Synthetic' }] : [{ ...spec, id: spec.setId || 'synthetic', setLabel: spec.setLabel || 'Synthetic' }];
+    // spec.sets: several real-voice sets (PT-5), in order, before the synthetic one
+    const SETS = spec.sets ? [...spec.sets.map(x => ({ ...spec, ...x, real: true })), { ...spec, id: 'synthetic', setLabel: 'Synthetic' }]
+      : spec.real ? [{ ...spec, ...spec.real, id: 'real', setLabel: 'Real voice', real: true }, { ...spec, id: 'synthetic', setLabel: 'Synthetic' }] : [{ ...spec, id: spec.setId || 'synthetic', setLabel: spec.setLabel || 'Synthetic' }];
     let data = null;
     for (const f of [path.join(A, 'harness/oct/out/report', spec.dir, 'blab', 'data.json'), path.join(A, 'report/prototype/assets', spec.dir, 'data.json')]) {
       if (!fs.existsSync(f)) continue;
@@ -59,6 +62,7 @@ export function buildCases({ P, A, DIST, hasFlac }) {
       const rj = path.join(A, 'harness/oct/out/report', spec.dir, 'meas', 'real.json');
       if (d.real === undefined && fs.existsSync(rj)) d.real = JSON.parse(fs.readFileSync(rj, 'utf8'));
       d._wavRms = rel => wavRms(path.join(A, 'harness/oct/out/report', rel));
+      d._wavLevel = (out, inp, from = 0.1) => 20 * Math.log10(wavRms(path.join(A, 'harness/oct/out/report', out), from) / wavRms(path.join(A, 'harness/oct/out/report', inp), from));
       try { SETS.forEach(st => st.checks(d)); data = d; break; } catch { /* numbers not in this copy */ }
     }
     if (!data) throw new Error(`${id}: no data.json with the card's numbers`);
@@ -97,7 +101,7 @@ export function buildCases({ P, A, DIST, hasFlac }) {
       if (v.warmup && trials.length) trials.unshift({ ...JSON.parse(JSON.stringify(trials[0])), label: 'warm-up (not compared; EXP-10)', warmup: true });
       return { name: v.name, label: v.label, mode: v.mode, build: v.build || spec.build, stateOffset: v.stateOffset || 0, setup, trials };
     });
-    return { id: spec.id, label: spec.setLabel, variants, checks: spec.checks(data), focus: spec.focus || {}, key: spec.key, diff: spec.diff || 'formant-on', expWord: spec.expWord || 'should be',
+    return { id: spec.id, label: spec.setLabel, real: !!spec.real, variants, checks: spec.checks(data), focus: spec.focus || {}, key: spec.key, diff: spec.diff || 'formant-on', expWord: spec.expWord || 'should be',
       metric: spec.metric, ostStates: spec.ostStates, inputDesc: spec.inputDesc || (data.settings && data.settings.input) || '', summary: spec.summary };
     };
     const sets = SETS.map(buildSet), S0 = sets[0], variants = S0.variants;

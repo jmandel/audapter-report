@@ -279,8 +279,33 @@ export const CASES = {
     title: 'The phase vocoder changes loudness', dir: 'pt-5', capture: 'PT-5-CEREB',
     summary: 'With bPitchShift on, 0 semitones plays about 3.5 dB louder, and a pitch-shift onset (0 to +2 st at 0.6 s by the OST) steps the level down to about +2 dB.',
     build: 'lite', metric: 'level', ostStates: true,
-    real: {   // the card's plausible design (A): a real sentence (CMU ARCTIC clb a0018) in two phases
-      ostStates: false, spot: ['bpitchshift', 'ndelay', 'downfact'],
+    sets: [{   // the card's lead (COORD-9): blab's timeWrap and cerebTimeAdapt, pre phase vs later phases (SCEN=timewrap)
+      id: 'timewrap', setLabel: 'timeWrap / cerebTimeAdapt', capture: 'PT-5-TW', ostStates: false, diff: 'levellat', focus: { observed: 0, expected: 0 },
+      summary: 'blab\'s timeWrap and cerebTimeAdapt (24 kHz, downFact 2, frameLen 32, nDelay 3) run the pre phase with bPitchShift 0 and later phases with bPitchShift 1 and a warp-row PCF: from the first post-pre phase on, participants hear themselves about 3 dB quieter and 13 ms later.',
+      inputDesc: 'real voice: CMU ARCTIC clb a0018 "There was a change now." (female), first 1.75 s; a click train for the latency',
+      variants: [
+        { name: 'expected', section: 'tw_pre', mode: 'session', label: 'Expected: the pre phase (bPitchShift 0, no PCF), i.e. the level and latency participants hear before the switch; no code fix build is used here' },
+        { name: 'observed', section: 'tw_later', mode: 'session', pick: [0, 1], label: 'Observed: a later phase (bPitchShift 1, zero-length warp-row PCF), blab\'s timeWrap and cerebTimeAdapt settings (24 kHz, downFact 2, frameLen 32, nDelay 3)' }],
+      trialLabels: () => ['speech (ARCTIC clb a0018)', 'click train (latency)'],
+      checks: d => [
+        { label: 'pre phase: level re input (dB)', variant: 'expected', trial: 0, metric: 'gainrms:0.1', want: d.timewrap.pre_db, tol: 0.1 },
+        { label: 'later phases: level re input (dB)', variant: 'observed', trial: 0, metric: 'gainrms:0.1', want: d.timewrap.later_db, tol: 0.1 },
+        { label: 'pre phase: click latency (ms)', variant: 'expected', trial: 1, metric: 'clicklat', want: d.timewrap.lat_pre_ms, tol: 0.05 },
+        { label: 'later phases: click latency (ms)', variant: 'observed', trial: 1, metric: 'clicklat', want: d.timewrap.lat_later_ms, tol: 0.05 }],
+      key: 'From the first post-pre phase on, participants hear themselves about 2.6 dB quieter and 13.3 ms later than in the pre phase.',
+    }, {   // the card's time-warp designs (timeAdapt settings: 24 kHz, frameLen 48): control trials with or without a warp row
+      id: 'warp', setLabel: 'timeAdapt warp rows', capture: 'PT-5', ostStates: false, diff: 'level', focus: { observed: 0, expected: 0 },
+      summary: 'Time-warp designs at blab\'s timeAdapt settings (24 kHz, frameLen 48, bPitchShift 1): control trials that keep a zero-length warp row play at the warp trials\' level; control trials that drop the warp section play louder.',
+      inputDesc: 'real voice: CMU ARCTIC clb a0018 "There was a change now." (female), first 1.75 s, on every trial',
+      variants: [
+        { name: 'expected', section: 'warp_exp', mode: 'session', label: 'Expected: control trials keep a zero-length warp row (as blab\'s timeWrap does); no code fix applies' },
+        { name: 'observed', section: 'warp_obs', mode: 'session', label: 'Observed: control trials drop the warp section' }],
+      trialLabels: () => ['control', 'warp', 'control', 'warp'],
+      checks: d => ['exp', 'obs'].flatMap(a => [1, 2, 3, 4].map(k => ({ label: `trial ${k} (${['control', 'warp', 'control', 'warp'][k - 1]}): level re input (dB; the card's clip)`, variant: a === 'exp' ? 'expected' : 'observed', trial: k - 1, metric: 'gainrms:0.1',
+        want: d._wavLevel(`pt-5/meas/warp_${a}_t${k}_out.wav`, 'pt-5/meas/warp_in.wav'), tol: 0.1 }))),
+      key: 'Control trials without a warp section play louder than the warp trials around them; with a zero-length warp row they match.',
+    }, {   // the card's hypothetical design: a real sentence (CMU ARCTIC clb a0018) in two phases, no PCF
+      id: 'cereb', setLabel: 'Hypothetical: no PCF', ostStates: false, spot: ['bpitchshift', 'ndelay', 'downfact'],
       summary: 'A plausible design with the settings of an Audapter runner in blab\'s cerebTypicalProduction folder (24 kHz, frameLen 32, nDelay 3, no PCF; the experiment as wired plays no Audapter feedback): the baseline runs bPitchShift 0, later phases bPitchShift 1 at 0 semitones, and from the first vocoder phase the voice plays about 3.5 dB louder.',
       variants: [
         { name: 'expected', section: 'cereb', mode: 'session', build: 'fix-pt-5', label: 'Expected: the same two phases on the build with the PT-5 fix (the vocoder\'s overlap-add divided by its window sum): both phases at the same level' },
@@ -290,8 +315,8 @@ export const CASES = {
         { label: 'baseline: level re input (dB)', variant: 'observed', trial: 0, metric: 'gainrms:0.1', want: d.cereb.b0_db, tol: 0.1 },
         { label: 'later phases: level re input (dB)', variant: 'observed', trial: 1, metric: 'gainrms:0.1', want: d.cereb.b1_db, tol: 0.1 },
         { label: 'with the fix, later phases: level re input equals the baseline (dB)', variant: 'expected', trial: 1, metric: 'gainrms:0.1', want: d.cereb.b0_db, tol: 0.2 }],
-      key: 'Real voice: later phases (bPitchShift 1, 0 st) play about 3.5 dB louder than the baseline; with the gain-normalised build both phases play at the same level.',
-    },
+      key: 'Hypothetical design: later phases (bPitchShift 1, 0 st, no PCF) play about 3.5 dB louder than the baseline; with the gain-normalised build both phases play at the same level.',
+    }],
     variants: [
       { name: 'expected', section: 'observed', mode: 'session', build: 'fix-pt-5', label: 'Expected: the same trials on the build with the PT-5 fix (gain-normalised vocoder)' },
       { name: 'observed', section: 'observed', mode: 'session', label: 'Observed: bypass (bPitchShift 0), vocoder at 0 st, then the 0 to +2 st step at 0.6 s by the OST' }],

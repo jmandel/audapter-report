@@ -60,9 +60,10 @@ It opens in the Explore workspace:
   `audit/report/wasm/variants.yaml`: OST-F1, OST-F2, I-01, I-02, PT-5 gain-normalised; F6's one-shot rule, labelled an
   alternative, not a fix). Where no code fix applies, expected is what the card uses, and the banner says so: COORD-1 the
   runner's two clear lines, the LAB cards the correctly wired settings, OST-F5 the all-zero catch PCF, OST-F8 the hold in
-  field 5, CORPUS-11 the mel units, CORPUS-8 the longer window. PT-5 is the card's plausible design (the settings of an unused
-  Audapter runner in blab's cerebTypicalProduction folder: baseline bPitchShift 0, later phases bPitchShift 1 at 0 st) on
-  a real sentence; its synthetic step trials are an extra group.
+  field 5, CORPUS-11 the mel units, CORPUS-8 the longer window. PT-5 opens on blab's timeWrap and cerebTimeAdapt settings (24 kHz,
+  frameLen 32, nDelay 3): expected is the pre phase (bPitchShift 0, no PCF), observed a later phase (bPitchShift 1, warp-row
+  PCF), 2.6 dB quieter and 13.3 ms later; its secondary sets are the timeAdapt warp-row design, the hypothetical no-PCF
+  design (expected on fix-pt-5) and its synthetic step trials are an extra group.
 - **First view: the key trial side by side** ("Expected vs observed"): expected above observed, one time axis and one
   playhead; output spectrograms with the spoken (tracked), target and heard (LPC) formants; pitch or level strips where
   the case is about pitch or level; OST state and shift-on rows; the difference marked in orange with a one-line callout
@@ -149,7 +150,7 @@ light and dark, with a one-column phone layout:
 
 Test cases: `audit/playground/tools/capture-cases.sh` (docker, the harness image and `audit/harness/build-oct`) writes
 `audit/playground/capture/out/<ID>/` (PT-5's two-phase design is the capture `PT-5-CEREB`, run with
-`SCEN=cereb`; OST-F1's real-voice session is `OST-F1-REAL`, run with `SCEN=real`); the build then packs them and writes `audit/playground/cases.json`, which the
+`SCEN=cereb`; the timeWrap phases are `PT-5-TW`, run with `SCEN=timewrap`; OST-F1's real-voice session is `OST-F1-REAL`, run with `SCEN=real`); the build then packs them and writes `audit/playground/cases.json`, which the
 report build reads to link each card. Without captures the build skips the cases with a warning.
 
 
@@ -192,7 +193,8 @@ fed from `audit/corpus/audio/pvqd_LA9003_a.wav`. Results on 2026-09-27, Chromium
 - Test cases: every example of the 14 cases replays the card's key numbers, for both variants. Real voice (the default where
   it exists): OST-F1 32/32, OST-F2 12/12, COORD-1 10/10, OST-F5 16/16, LAB-1 16/16, LAB-2 16/16, LAB-3 2/2 (RMS of the
   card's real clips), PT-5 3/3. Synthetic: OST-F1 32/32, OST-F2 18/18, COORD-1 10/10, OST-F5 16/16, I-01 4/4, LAB-1 48/48,
-  LAB-2 48/48, LAB-3 2/2, F6 11/11, OST-F8 4/4, CORPUS-11 4/4, CORPUS-8 28/28, I-02 5/5, PT-5 4/4 (341 numbers in all).
+  LAB-2 48/48, LAB-3 2/2, F6 11/11, OST-F8 4/4, CORPUS-11 4/4, CORPUS-8 28/28, I-02 5/5, PT-5 4/4. PT-5's other real-voice sets: timeWrap/cerebTimeAdapt 4/4 (the default: level and click latency),
+  timeAdapt warp rows 8/8 (levels vs the card's clips). 353 numbers in all.
   Tolerances are one frame (2 ms) for times, 1 frame count, 3 Hz for heard formants, 12 cents, 0.1 dB
   (0.2 dB for "PT-5 fix: later phase at the baseline level"), and one lag step for CORPUS-8's logged pitchHz.
   For every example: the key trial opens side by side (one stack, expected above observed, heard-formant dots drawn in both),

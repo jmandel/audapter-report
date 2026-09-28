@@ -218,7 +218,7 @@ await page.evaluate(() => { PG.Vowel.setMode('trial'); PG.setSettings(PG.S.defau
 // view is the key trial side by side (expected above observed, one axis, formant tracks, orange difference, a callout,
 // play buttons); the trial list has one row per trial with an Expected/Observed toggle; the settings panel reflects the
 // case (3 parameters); "expected" is the card's fix build where one exists, otherwise labelled for what it is.
-const FIXB = { 'OST-F1': 'fix-ost-f1', 'OST-F2': 'fix-ost-f2', 'I-01': 'fix-i-01', 'I-02': 'fix-i-02', 'PT-5': 'fix-pt-5', 'F6': 'alt-f6' };
+const FIXB = { 'OST-F1': 'fix-ost-f1', 'OST-F2': 'fix-ost-f2', 'I-01': 'fix-i-01', 'I-02': 'fix-i-02', 'PT-5:cereb': 'fix-pt-5', 'PT-5:synthetic': 'fix-pt-5', 'F6': 'alt-f6' };
 // Cases with a real-voice example (the card's primary one) open with it; the synthetic one is checked the same way.
 const caseSets = await page.evaluate(() => PG.CASES.filter(c => c.available).flatMap(c => c.sets.map((s, i) => [c.id, s, i === 0])));
 const caseRows = [];
@@ -235,7 +235,7 @@ for (const [cid, set, dflt] of caseSets) {
   const st = await page.evaluate(() => PG_TEST.caseState()), info = await page.evaluate(() => { const c = PG.Cases.current(); return { focus: c.focus, n: Math.max(...c.variants.filter(v => /^(expected|observed)$/.test(v.name)).map(v => v.trials.length)), expBuild: (c.variants.find(v => v.name === 'expected') || {}).build }; });
   const bad = C.filter(x => !x.ok);
   caseRows.push([cid, C.length - bad.length, C.length]);
-  if (dflt) { const sets = await page.evaluate(() => PG.Cases.current().sets.map(x => x.id)); T(`test case ${cid}: opens with the real voice where the card has one`, sets.includes('real') ? set === 'real' : true, sets.join(', ')); }
+  if (dflt) { const sets = await page.evaluate(() => PG.Cases.current().sets.map(x => [x.id, x.real])); T(`test case ${cid}: opens with the real voice where the card has one`, sets.some(x => x[1]) ? sets[0][1] && sets[0][0] === set : true, sets.map(x => x[0] + (x[1] ? ' (real)' : '')).join(', ')); }
   T(`test case ${cid}: the replay reproduces the card`, !bad.length, `${C.length - bad.length} of ${C.length} numbers` + (bad.length ? '; ' + bad.slice(0, 3).map(x => `${x.v} ${x.l}: card ${x.want} replay ${x.got}`).join('; ') : ''));
   const keyOk = st && st.caseRef && st.caseRef.variant === 'observed' && st.caseRef.trial === (info.focus.observed ?? 0) && st.banner && st.selected.some(n => n.includes('· expected ·'));
   T(`test case ${cid}: opens with the key trial selected (observed current, expected ticked)`, !!keyOk, st ? `current "${st.current}", ticked ${st.selected.length}` : 'no state');
@@ -247,9 +247,10 @@ for (const [cid, set, dflt] of caseSets) {
   T(`test case ${cid}: the difference is marked in orange with a one-line callout`, !!diffOk, st ? `"${st.callout}"; ${st.diffBands} band(s), ${st.orangePixelsObserved} orange pixels` : '');
   const rowsOk = st && st.rows === info.n && st.toggles === info.n && st.caseTrials >= 2 * info.n;
   T(`test case ${cid}: the trial list has one row per trial with an Expected/Observed toggle`, !!rowsOk, st ? `${st.rows} rows (${info.n} trials), ${st.toggles} toggles, ${st.caseTrials} trial results` : '');
-  const expOk = FIXB[CID] ? info.expBuild === FIXB[CID] && st.pair && st.pair.eBuild === FIXB[CID] && st.pair.oBuild !== FIXB[CID]
-    : info.expBuild === 'lite' && /no code fix applies|no fixed build exists/.test(st.expectedMeans);
-  T(`test case ${cid}: expected is ${FIXB[CID] ? `the same sequence on the ${FIXB[CID]} build` : 'labelled as what the card uses (no fix build)'}`, !!expOk, st ? st.expectedMeans.slice(0, 160) : '');
+  const FB = FIXB[CID + ':' + set] || FIXB[CID];
+  const expOk = FB ? info.expBuild === FB && st.pair && st.pair.eBuild === FB && st.pair.oBuild !== FB
+    : info.expBuild === 'lite' && /no code fix applies|no fixed build exists|no code fix build is used/.test(st.expectedMeans);
+  T(`test case ${cid}: expected is ${FB ? `the same sequence on the ${FB} build` : 'labelled as what the card uses (no fix build)'}`, !!expOk, st ? st.expectedMeans.slice(0, 160) : '');
   const spotOk = st && st.spot.length === 3 && st.spot.every(x => x.case !== undefined && Math.abs(x.settings - x.case) <= 1e-9 * Math.max(1, Math.abs(x.case)));
   T(`test case ${cid}: the settings panel reflects the case`, !!spotOk, st ? st.spot.map(x => `${x.name} ${x.settings} (case ${x.case})`).join(', ') + `; When: ${st.whenMode}` : '');
   if (['OST-F1', 'LAB-1', 'PT-5'].includes(CID) && dflt) { await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(150); await page.screenshot({ path: path.join(SHOTS, `case-${CID.toLowerCase()}-workspace-1440-light.png`) }); }
