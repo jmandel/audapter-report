@@ -1,0 +1,39 @@
+{
+ "card": "INIT-PERSIST",
+ "source": "Hypothetical design: two blocks in one MATLAB session, blab's default female settings.",
+ "preset": "female",
+ "build": "shipped",
+ "params": {},
+ "setparam": {},
+ "ost": "",
+ "pcf": "",
+ "sequence": [
+  "block 1: p.bPitchShift = 1",
+  "block 2: p built without the bPitchShift field"
+ ],
+ "switching": "AudapterIO('init', p) at the start of each block",
+ "input": "real speech: CMU ARCTIC clb a0030",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {},
+  "shift": {
+   "formant": {
+    "on": false
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": [
+  "the trial sequence: the link loads one trial's settings; run several trials as one session in the Playground to see carry-over"
+ ]
+}

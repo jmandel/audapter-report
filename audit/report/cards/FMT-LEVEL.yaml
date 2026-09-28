@@ -44,7 +44,9 @@ example: >-
   Eight real voices (four ARCTIC sentences, two PVQD speakers' sustained /a/ and /i/), each shifted and unshifted with the same
   settings (blab defaults, field mode, fb 1 so the voice can be measured). On the ARCTIC bdl sentence: F1 −125 mel {bdl_dn125:+.1f} dB,
   F1 +125 mel {bdl_up125:+.1f} dB, F1 −20 % {bdl_dn20:+.1f} dB, F1 +20 % {bdl_up20:+.1f} dB, 2-D centralization {bdl_c2d:+.1f} dB, re the
-  unshifted output over the shifted span.
+  unshifted output over the shifted span. Running the public coAdapt and attentionComp experiments with their own scripts (heard level =
+  signalOut × dScale re input, synthetic /ɛ/ words) gives the same pattern within one phase: coAdapt's up- and down-shifted words differ by
+  6.0 dB, and attentionComp's perturbed trials are 1–3 dB louder than its catch trials.
 settings:
   source: "blab's standard formant settings (getAudapterDefaultParams, field mode as in attentionComp and coAdapt: 125 mel, bMelShift 1; ratio shifts ±20 %; the vsaSentence-style 2-D centralization field at strength 0.5 on male voices), with bGainAdapt 0 (as sent) and 1"
   key_params: [bShift, bRatioShift, bMelShift, fb]
@@ -52,6 +54,8 @@ figure_caption: >-
   One dot per voice and perturbation: the RMS level of the shifted output relative to the unshifted output of the same input,
   over the frames Audapter logged as shifted. Solid: <code>bGainAdapt 0</code> (as blab runs). Hollow: <code>bGainAdapt 1</code>.
 table:
+- [coAdapt as run, 'Hold phase, level re input: "bed" F1 +125 mel / "head" unshifted / "ted" F1 −125 mel', '−3.3 / −1.9 / +2.7 dB: 6.0 dB between the up- and down-shifted words']
+- [attentionComp as run, 'Level re input: noShift / shiftAE / shiftIH', '−1.9 / −1.0 / +1.0 dB: perturbed trials 1–3 dB louder than catch trials']
 - [bGainAdapt 0, 'F1 −125 mel: level change across {n_voices} voices (median)', '{dn125_g0_min:+.1f} to {dn125_g0_max:+.1f} dB ({dn125_g0_med:+.1f})']
 - [bGainAdapt 0, 'F1 +125 mel', '{up125_g0_min:+.1f} to {up125_g0_max:+.1f} dB ({up125_g0_med:+.1f})']
 - [bGainAdapt 0, 'F1 −20 % / +20 % (medians)', '{dn20_g0_med:+.1f} / {up20_g0_med:+.1f} dB']
@@ -88,4 +92,6 @@ cause:
 verify:
 - {kind: H, what: report export (eight real voices, five perturbations, bGainAdapt 0 and 1; gain state across trials), name: report_loudcues.m}
 - {kind: R, what: reading, name: notes/formant.md, detail: 'F14: gainAdapt/gainPerturb keep static gain and lastSample across trials'}
+- {kind: H, what: public blab experiments run with their own scripts (labrun), name: labrun/README.md, detail: 'LABRUN-4: per-trial heard level = signalOut × dScale re input, synthetic female /ɛ/ words, bGainAdapt 0 as in every runner'}
+- {kind: H, what: independent check by the coordinator, name: a_fmtlevel.m, detail: 'VERIFY-FMT-LEVEL: F1 −125 mel +4.9 to +7.0 dB, +125 mel −1.0 to −3.8 dB on three ARCTIC sentences'}
 reproduce: cd audit/harness && ./run-oct.sh report_loudcues.m

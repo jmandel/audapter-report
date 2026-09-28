@@ -10,3 +10,10 @@ public code, not a claim about published results.</p>
 (<a class="permalink" href="https://github.com/blab-lab/vsaSentence/blob/c01942f1381237fd8c205e06e7c1472d72e4e685/run_vsaSentence_audapter.m#L67-L71">run_vsaSentence_audapter.m lines 67–71 @c01942f</a>),
 and at strength 0.5 every vowel is heard [[vsaSentence_tc_min:.2f]]–[[vsaSentence_tc_max:.2f]] of the way to the centre
 (intended 0.50). That wiring, also used by the runner vsaCentralize's experiment calls, is the "Expected" in LAB-1 and LAB-2.</p>
+<p><strong>Two small script defects found by running the public code</strong> (see "Running the lab's own code"): free-speech's modelComp
+template calls <code>run_checkLPC(expt, exptPre)</code> with <code>exptPre</code> never defined
+(<a class="permalink" href="https://github.com/carrien/free-speech/blob/ec961b7a04a79199217f4973effda9157afcdf9d/templates/modelExpt/run_modelComp_expt.m#L33">run_modelComp_expt.m line 33 @ec961b7</a>),
+so it stops when the LPC check is chosen; and attentionAdapt's server-down branch assigns <code>expt.session</code> but then reads
+<code>expt.sessionOrder</code>
+(<a class="permalink" href="https://github.com/blab-lab/attentionAAF/blob/0f4ef4301ef10144fcbc2a75b990207a9e9441fd/run_attentionAdapt_expt.m#L126-L136">run_attentionAdapt_expt.m lines 126–136 @0f4ef43</a>),
+so the experiment cannot start when the lab server is unreachable. Neither affects data that was collected.</p>

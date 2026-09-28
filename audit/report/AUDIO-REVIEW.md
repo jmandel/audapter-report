@@ -33,3 +33,16 @@ secondary synthetic clips when the figure shows the real voice, and figures with
 | CORPUS-11 | Audapter's 2008 example trial under today's defaults | the input is itself a real recording (blab_diao1_female) | mel ×1.21 vs ratio ×102.8, +23.8 dB | — | pass (kept) |
 | LIVE-3, LIVE-6 | live-path simulation | none: the live simulation was run with a synthetic vowel (stated) | burst +17.0 dB / raw microphone an octave up | — | pass (kept) |
 | CORPUS-8, CORPUS-10, FMT-F1, OST-F4, LIVE-1/2 | — | — | — | — | figure-only, reason on each card |
+
+### Pitfall pass (REPORT-35)
+
+| Card | Design | Real speech: expected vs observed (measured) | Synthetic | Playhead | Verdict |
+|---|---|---|---|---|---|
+| OST-NUM | hypothetical: 0.2 s F1 shift after a random post-onset delay; correct vs misnumbered OST | PVQD SJ7001 0.35 s vowel, trial 2 (150 ms delay): 140 ms of the vowel shifted vs 46 ms | — | T2 exp (input), T2 exp, T2 obs; A/B — | pass (timing; the late shift is audible as a change only at the vowel's end) |
+| FMT-PATCH | hypothetical ±90 mel /ɛ/ patch, with vs without F1Min..F2Max | — (synthetic tokens place formants exactly) | outlier token 5: 0 vs 64 mel | — (vowel-space figure) | pass, subtle (a 64 mel F1/F2 change) |
+| INIT-PERSIST | hypothetical two-block session; block 2's p lacks bPitchShift | ARCTIC clb a0030: 0.0 vs +3.5 dB | — | exp/obs block 2; A/B — | pass |
+| WARP-48 | timeAdapt settings: the same warp at frameLen 32 and 48 | ARCTIC clb a0018 at both frame lengths (for listening) | sweep: 58.5 vs 44.0 ms delivered of 60 | — | figure-first (a 15 ms timing difference is hard to hear) |
+| TDS-ONSET | hypothetical +2 st step 0.2 s after onset | ARCTIC bdl a0005 (observed only) | — | — | figure-only in substance (the point is timing vs acoustic onset: 56–111 ms) |
+| PVOC-NOISE | hypothetical ±2/±4 st shifts at 24 kHz/frameLen 48 | ARCTIC slt /ʃ/: 0 st vs −4 st, −8.8 dB (ISO 532-1 −9.5 to −10.1 dB-equivalent) | noise band −7.4 to −14.1 dB | — | pass |
+| PB-DSCALE, REINIT-PARAMS, COORD-10 | short cards | — | — | — | no audio (numbers only) |
+

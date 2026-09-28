@@ -1,0 +1,55 @@
+{
+ "card": "WARP-48",
+ "source": "Hypothetical design with the timeAdapt settings (24 kHz, downFact 2, frameLen 48, bPitchShift 1) and, for comparison, frameLen 32.",
+ "preset": "female",
+ "build": "shipped",
+ "params": {
+  "downFact": 2,
+  "frameLen": 48,
+  "sr": 24000,
+  "nDelay": 3,
+  "bPitchShift": 1
+ },
+ "setparam": {},
+ "ost": "# one state\nrmsSlopeWin = 0.030000\n\nn = 1\n0 OST_END NaN NaN {}\n\nn = 0\n",
+ "pcf": "1\n0.30, 0.5, 0.12, 0.30, 2.0\n\n1\n0, 0.0, 0, 0, 0\n",
+ "sequence": [
+  "frameLen 32",
+  "frameLen 48"
+ ],
+ "switching": "the same warp PCF at frameLen 32 and 48 (24 kHz)",
+ "input": "a 300-1260 Hz sweep for the lag measurement; real speech CMU ARCTIC clb a0018 for listening",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {
+   "downfact": 2,
+   "framelen": 48,
+   "srate": 24000,
+   "ndelay": 3,
+   "bpitchshift": 1
+  },
+  "shift": {
+   "formant": {
+    "on": false
+   },
+   "pitch": {
+    "on": true,
+    "method": "pvoc",
+    "semitones": 0.0
+   }
+  },
+  "when": {
+   "mode": "custom",
+   "ost": "# one state\nrmsSlopeWin = 0.030000\n\nn = 1\n0 OST_END NaN NaN {}\n\nn = 0\n",
+   "pcf": "1\n0.30, 0.5, 0.12, 0.30, 2.0\n\n1\n0, 0.0, 0, 0, 0\n"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": [
+  "the trial sequence: the link loads one trial's settings; run several trials as one session in the Playground to see carry-over"
+ ]
+}

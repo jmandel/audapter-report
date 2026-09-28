@@ -1,0 +1,57 @@
+{
+ "card": "OST-NUM",
+ "source": "Hypothetical design: a plausible design, not one blab runs (blab's default female settings, F1 +125 mel in mel units).",
+ "preset": "female",
+ "build": "shipped",
+ "params": {
+  "bShift": 1,
+  "bRatioShift": 0,
+  "bMelShift": 1
+ },
+ "setparam": {},
+ "ost": "rmsSlopeWin = 0.030000\n\nn = 4\n0 INTENSITY_RISE_HOLD 0.02 0.02 {}\n2 ELAPSED_TIME 0.15 NaN {}\n4 ELAPSED_TIME 0.2 NaN {}\n6 OST_END NaN NaN {}\n\nn = 0\n",
+ "pcf": "0\n\n7\n0, 0, 0, 0, 0\n1, 0, 0, 0, 0\n2, 0, 0, 0, 0\n3, 0, 0, 0, 0\n4, 0, 0, 125, 0\n5, 0, 0, 125, 0\n6, 0, 0, 0, 0\n",
+ "sequence": [
+  "delay 0.10 s",
+  "delay 0.15 s",
+  "delay 0.20 s"
+ ],
+ "switching": "the delay row is rewritten before every trial (a random 100-200 ms delay after the detected onset); reset() per trial",
+ "ost_safe": "rmsSlopeWin = 0.030000\n\nn = 4\n0 INTENSITY_RISE_HOLD 0.02 0.02 {}\n2 ELAPSED_TIME 0.15 NaN {}\n3 ELAPSED_TIME 0.2 NaN {}\n4 OST_END NaN NaN {}\n\nn = 0\n",
+ "pcf_catch": "0\n\n5\n0, 0, 0, 0, 0\n1, 0, 0, 0, 0\n2, 0, 0, 0, 0\n3, 0, 0, 125, 0\n4, 0, 0, 0, 0\n",
+ "input": "real voice: PVQD SJ7001 sustained /a/ cut to a 0.35 s vowel (CC BY 4.0)",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {
+   "bshift": 1,
+   "bratioshift": 0,
+   "bmelshift": 1
+  },
+  "shift": {
+   "formant": {
+    "on": true,
+    "units": "mel",
+    "f1": 0,
+    "f2": 0,
+    "field": "all"
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "custom",
+   "ost": "rmsSlopeWin = 0.030000\n\nn = 4\n0 INTENSITY_RISE_HOLD 0.02 0.02 {}\n2 ELAPSED_TIME 0.15 NaN {}\n4 ELAPSED_TIME 0.2 NaN {}\n6 OST_END NaN NaN {}\n\nn = 0\n",
+   "pcf": "0\n\n7\n0, 0, 0, 0, 0\n1, 0, 0, 0, 0\n2, 0, 0, 0, 0\n3, 0, 0, 0, 0\n4, 0, 0, 125, 0\n5, 0, 0, 125, 0\n6, 0, 0, 0, 0\n"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": [
+  "the trial sequence: the link loads one trial's settings; run several trials as one session in the Playground to see carry-over",
+  "the catch-trial PCF (shown above)"
+ ]
+}

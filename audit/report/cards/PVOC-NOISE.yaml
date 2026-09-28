@@ -1,0 +1,59 @@
+# Pitfall card PVOC-NOISE (REPORT-35): pitch-shifting noise-like segments loses level.
+id: PVOC-NOISE
+log: PVOC-NOISE
+notes: notes/pitch-time.md#pt-5
+headline: >-
+  At 24 kHz with frameLen 48, a phase-vocoder pitch shift lowers the level of a fricative far more than that of voiced speech
+  ({sh_max:.0f} to {sh_min:.0f} dB on a real /ʃ/, {vo_max:.0f} to {vo_min:.0f} dB on the vowel after it), so a loudness cue tracks the perturbation
+severity: low
+origin: upstream
+status: [H]
+studies:
+  status: na
+  text: Not applicable to the public blab studies, which do not shift pitch.
+reach_kind: pitfall
+reach: >-
+  Affects phase-vocoder pitch shifts applied across fricatives or other noise-like segments (whole-utterance shifts, or states that
+  include consonants).
+what: >-
+  The phase vocoder is not level-preserving (PT-5): at 0 st it adds 3.5 dB, and any nonzero shift removes some of that, by an amount
+  that depends on the signal. With frameLen 32 or 64 every segment we tried (vowel, /ʃ/, noise band) comes out 3.3 to 5.8 dB
+  below its 0 st level. With frameLen 48 fricatives and noise lose much more, 7 to 19 dB, and the loss does not grow steadily with the shift
+  (−2 st loses more than −4 st).
+scope: >-
+  Matters when the perturbation covers consonants, or when the level of the feedback is analysed or should not cue the condition.
+  <strong>Safe if</strong> the shift is confined to voiced segments (an OST state per vowel), or the level of shifted fricatives is
+  checked and compensated.
+example: >-
+  At 24 kHz, frameLen 48, for shifts of ±2 and ±4 semitones, relative to the same segment at 0 st: the real /ʃ/ of an ARCTIC sentence
+  changes by {sh_min:.1f} to {sh_max:.1f} dB in level (−4 st: {sh_m4:.1f} dB); a /s/-like noise band by {nz_min:.1f} to {nz_max:.1f} dB (−4 st:
+  {nz_m4:.1f} dB); the voiced stretch that follows the /ʃ/ by {vo_min:.1f} to {vo_max:.1f} dB (−4 st: {vo_m4:.1f} dB).
+settings:
+  source: "Hypothetical design: phase-vocoder pitch shifts of −4 to +4 st at the timeAdapt rate settings (24 kHz, frameLen 48)."
+  key_params: [sr, downFact, frameLen, bPitchShift, pitchShiftRatio]
+figure_caption: Level of each shifted segment relative to the same segment at 0 st (the vocoder on in both). Values on the right are for the voiced stretch, the /ʃ/ and the noise band.
+table:
+- [real /ʃ/, 'Level change at −4 / −2 / +2 / +4 st', '{sh_min:.1f} to {sh_max:.1f} dB']
+- [noise band, 'Level change at −4 / −2 / +2 / +4 st', '{nz_min:.1f} to {nz_max:.1f} dB']
+- [voiced stretch (control), 'Level change at −4 / −2 / +2 / +4 st', '{vo_min:.1f} to {vo_max:.1f} dB']
+loudness: ["PVOC-NOISE real /S/: 0 st vs -4 st", "PVOC-NOISE real /S/: 0 st vs +2 st", "PVOC-NOISE /s/-like noise: 0 st vs -4 st"]
+sketch: pvoc_noise
+asset_dir: pvoc-noise
+audio:
+- {file: sh_0.wav, src: meas/sh_real_st+0.wav, role: expected, title: '0 st', label: 'the /ʃ/ of "She", vocoder on, no shift', no_playhead: true}
+- {file: sh_m4.wav, src: meas/sh_real_st-4.wav, role: observed, title: '−4 st', label: '{sh_m4:+.1f} dB', no_playhead: true}
+- {file: sh_ab.wav, src: [meas/sh_real_st+0.wav, meas/sh_real_st-4.wav], gap_s: 0.3, role: ab, title: 'A/B', label: '0 st, then −4 st'}
+audio_note: >-
+  All clips share one playback gain. CMU ARCTIC slt a0036 © 2003 Carnegie Mellon University (<a href="assets/licenses/CMU_ARCTIC_COPYING.txt">licence notice</a>), processed by Audapter.
+cause:
+  summary: The phase vocoder's synthesis does not normalise for the phase coherence of the input; its gain depends on the signal (PT-5).
+  refs:
+  - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [465, 467], hl: [467], expect: 'osamp / 2.0', note: 'The synthesis scaling is a constant; the resulting level depends on the signal.'}
+  fix_label: Safe pattern and fix
+  fix: >-
+    <strong>Safe pattern:</strong> shift only voiced segments, using OST states, and avoid frameLen 48 with the vocoder; compare shifted and 0 st trials at
+    the same vocoder setting and check their level. <strong>Fix:</strong> a running level match after synthesis (PT-5).
+verify:
+- {kind: H, what: report export (real /ʃ/, the voiced stretch after it, and a noise band; five shifts), name: report_pitfalls2.m SCEN=pvocnoise}
+- {kind: H, what: 'frameLen 32 / 48 / 64 comparison (same segments)', name: chk_pvoc_sh.m}
+reproduce: cd audit/harness && SCEN=pvocnoise ./run-oct.sh report_pitfalls2.m

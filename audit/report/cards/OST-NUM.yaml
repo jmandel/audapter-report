@@ -1,0 +1,68 @@
+# Pitfall card OST-NUM (REPORT-35): an OST rule numbered as if it advanced two states runs twice.
+id: OST-NUM
+log: OST-NUM
+notes: notes/ost-pcf.md#f7
+headline: >-
+  An ELAPSED_TIME rule numbered as if it advanced two states runs twice, so a 100–200 ms post-onset delay becomes 200–400 ms
+  and the shift misses a short vowel; Audapter does not check the numbering
+severity: med
+origin: upstream
+status: [H]
+studies:
+  status: na
+  text: >-
+    Not applicable as far as we know: blab's OST files number their rules correctly, apart from free-speech's measureFormants.ost,
+    whose doubled INTENSITY_FALL is harmless there (EXP-2).
+reach_kind: pitfall
+reach: >-
+  Affects OST files where a one-state rule (ELAPSED_TIME, INTENSITY_FALL) is followed by a rule numbered two states later, an easy
+  slip because most level rules do span two states.
+what: >-
+  Each OST rule owns the states from its own number up to the next rule's number. Level rules such as INTENSITY_RISE_HOLD use two
+  states, but ELAPSED_TIME and INTENSITY_FALL move on after one. If the next rule is numbered two higher anyway, the one-state rule
+  is applied again in the unused state in between: its time runs twice, and any PCF rows written for "the rule's two states" apply
+  for twice as long. Audapter accepts the file without a warning.
+scope: >-
+  Matters for timed designs: a random delay after the detected onset, a fixed perturbation duration, or a hold before the next
+  event. <strong>Safe if</strong> every ELAPSED_TIME or INTENSITY_FALL rule is followed by a rule numbered one higher, and the PCF's
+  shifted rows match the states the rules actually use. Checking <code>ost_stat</code> of a pilot trial shows the doubled states.
+example: >-
+  A plausible design, not one blab runs: F1 raised 125 mel for 0.2 s, starting a random 100–200 ms after the detected voice onset,
+  on a short real vowel (0.35 s). Numbered correctly, the shift starts {exp_on1}, {exp_on2} and {exp_on3} after onset and covers
+  {exp_cov1:.0f}, {exp_cov2:.0f} and {exp_cov3:.0f} ms of the vowel. With every rule numbered two apart it starts {obs_on1}, {obs_on2} and
+  {obs_on3} after onset and covers {obs_cov1:.0f}, {obs_cov2:.0f} and {obs_cov3:.0f} ms: at the longest delay the vowel is over before the
+  shift begins. The shift state itself lasts {obs_state1:.2f} s instead of {exp_state1:.2f} s (from <code>ost_stat</code>).
+settings:
+  source: "Hypothetical design: a plausible design, not one blab runs (blab's default female settings, F1 +125 mel in mel units)."
+  key_params: [bShift, bRatioShift, bMelShift, fb]
+figure_caption: >-
+  Three trials with delays of 100, 150 and 200 ms. Expected: rules numbered by the states they use. Observed: every rule numbered two
+  apart, with the PCF shifting both of the rule's states. Values: how much of the vowel is shifted.
+table:
+- [real voice, 'Shift onset after the detected onset, delays 100 / 150 / 200 ms: correct / misnumbered', '{exp_on1}, {exp_on2}, {exp_on3} / {obs_on1}, {obs_on2}, {obs_on3}']
+- [real voice, 'Vowel time shifted (vowel {vowel_ms:.0f} ms): correct / misnumbered', '{exp_cov1:.0f}, {exp_cov2:.0f}, {exp_cov3:.0f} / {obs_cov1:.0f}, {obs_cov2:.0f}, {obs_cov3:.0f} ms']
+- [real voice, 'Time in the shift state(s)', '{exp_state1:.2f} s correct, {obs_state1:.2f} s misnumbered']
+sketch: ost_num
+asset_dir: ost-num
+audio:
+- {file: in.wav, src: meas/in.wav, role: input, title: 'Input, trial 2', label: 'a short real vowel', panel: exp, trial: 2}
+- {file: t2_expected.wav, src: meas/exp_t2.wav, role: expected, title: 'Expected, trial 2', label: 'F1 raised from {exp_on2} after onset', panel: exp, trial: 2}
+- {file: t2_observed.wav, src: meas/obs_t2.wav, role: observed, title: 'Observed, trial 2', label: 'F1 raised only from {obs_on2}: {obs_cov2:.0f} ms of the vowel', panel: obs, trial: 2}
+- {file: t2_ab.wav, src: [meas/exp_t2.wav, meas/obs_t2.wav], gap_s: 0.4, role: ab, title: 'A/B, trial 2', label: 'expected, then observed'}
+audio_note: >-
+  All clips share one playback gain. Real voice: PVQD (Walden 2022), speaker SJ7001, sustained /a/ cut to 0.35 s, processed by Audapter (CC BY 4.0).
+cause:
+  summary: >-
+    <code>osTrack</code> picks the rule whose number range contains the current state, so a rule numbered two below the next one
+    also handles the state in between; ELAPSED_TIME then measures its duration again from that state's onset.
+  refs:
+  - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [358, 364], hl: [361], expect: 'if (stat >= stat0[i] && stat < stat0[i + 1])', note: 'The rule is chosen by number range, not by what the rule uses.'}
+  - {repo: blab-mex, path: TransShiftMex/ost.cpp, lines: [371, 376], hl: [372], expect: 'if (t_mode == ELAPSED_TIME)', note: 'ELAPSED_TIME advances one state, measured from that state''s onset.'}
+  fix_label: Safe pattern and fix
+  fix: >-
+    <strong>Safe pattern:</strong> number each rule by the states the previous rule uses (+1 after ELAPSED_TIME and INTENSITY_FALL, +2
+    after the level rules). <strong>Fix:</strong> reject or warn at load when a rule's range contains more states than its mode uses
+    (the notes' OST F7 check).
+verify:
+- {kind: H, what: report export (three trials, correct vs misnumbered OST), name: report_pitfalls2.m SCEN=ostnum}
+reproduce: cd audit/harness && SCEN=ostnum ./run-oct.sh report_pitfalls2.m

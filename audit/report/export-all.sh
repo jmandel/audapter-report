@@ -17,6 +17,7 @@ SCEN=real ./run-oct.sh report_ost_f1.m > /dev/null   # real-voice session (figur
 run report_ost_f1.m
 run report_ost_f5.m
 run report_loudcues.m                               # FMT-LEVEL and CORPUS-7 clips (level cues)
+for s in ostnum patch pbdscale tdsonset warp48 pvocnoise reinit persist warpabort; do SCEN=$s ./run-oct.sh report_pitfalls2.m > /dev/null; done   # pitfall cards (REPORT-35)
 run report_vsa.m                                    # lab-script cards LAB-1..3 (public VSA runners)
 run report_i01_session.m; runu report_i01_session.m
 # section prose numbers: the lab's public VSA scripts (EXP-4/5) and blab's real switching methods (EXP-6)

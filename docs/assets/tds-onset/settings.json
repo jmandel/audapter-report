@@ -1,0 +1,64 @@
+{
+ "card": "TDS-ONSET",
+ "source": "Hypothetical design: time-domain pitch shifting as in Audapter's time_domain_shift_demo, frameLen 64 / nDelay 7, a +2 st step at 0.2 s.",
+ "preset": "male",
+ "build": "shipped",
+ "params": {
+  "frameLen": 64,
+  "nDelay": 7,
+  "bCepsLift": 1,
+  "bTimeDomainShift": 1,
+  "pitchLowerBoundHz": 70,
+  "pitchUpperBoundHz": 200,
+  "timeDomainPitchShiftSchedule": [
+   [
+    0,
+    1
+   ],
+   [
+    0.2,
+    1
+   ],
+   [
+    0.201,
+    1.122462048309373
+   ],
+   [
+    5,
+    1.122462048309373
+   ]
+  ]
+ },
+ "setparam": {},
+ "ost": "",
+ "pcf": "",
+ "sequence": [],
+ "switching": "one trial per clip",
+ "input": "real speech: CMU ARCTIC bdl a0005, clb a0030, slt a0018, rms a0036; PVQD SJ7001, LA9015 /a/ with a soft 150 ms onset",
+ "playground": {
+  "v": 1,
+  "preset": "male",
+  "build": "lite",
+  "raw": {
+   "framelen": 64,
+   "ndelay": 7,
+   "bcepslift": 1,
+   "btimedomainshift": 1
+  },
+  "shift": {
+   "formant": {
+    "on": false
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": []
+}

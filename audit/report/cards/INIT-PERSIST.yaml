@@ -1,0 +1,58 @@
+# Pitfall card INIT-PERSIST (REPORT-35): optional fields of p persist across AudapterIO('init').
+id: INIT-PERSIST
+log: INIT-PERSIST
+notes: notes/interface.md
+headline: >-
+  AudapterIO('init') only sends the optional fields present in p, so a setting from an earlier block stays on: a formant block after a
+  pitch block keeps the phase vocoder, {obs_db:+.1f} dB louder
+severity: med
+origin: upstream
+status: [H]
+studies:
+  status: safe
+  text: >-
+    Safe as run, as far as we know: blab's runners build p from getAudapterDefaultParams, which always contains bPitchShift. Related to
+    COORD-1 (a PCF that survives init).
+reach_kind: pitfall
+reach: >-
+  Affects sessions that run several blocks in one MATLAB session and build p for a later block without the optional fields an earlier
+  block set (bPitchShift, rmsFF_fb, the time-domain pitch settings, fb gains).
+what: >-
+  <code>AudapterIO('init', p)</code> sends many parameters only <code>if isfield(p, …)</code>. A field missing from <code>p</code> is not
+  reset to a default: Audapter keeps whatever the previous block set. <code>data.params</code> then shows the kept value, but the script's
+  own <code>p</code> does not.
+scope: >-
+  Matters when the parameter struct is built fresh for each block (for example from a saved struct or by hand) rather than from
+  getAudapterDefaultParams. <strong>Safe if</strong> every block starts from getAudapterDefaultParams, or sets every optional field it
+  relies on explicitly, or the MEX is cleared between blocks.
+example: >-
+  A plausible session: block 1 sets <code>p.bPitchShift = 1</code>; block 2's <code>p</code> is built without that field. Audapter keeps
+  bPitchShift = {bps}, so in block 2 the voice is played at {obs_db:+.1f} dB instead of {exp_db:+.1f} dB (real sentence, measured on the
+  audio).
+settings:
+  source: "Hypothetical design: two blocks in one MATLAB session, blab's default female settings."
+  key_params: [fb]
+figure_caption: 'Two blocks in one session. Expected: block 2 without the vocoder. Observed: the vocoder from block 1 is still on.'
+table:
+- [real voice, 'Block 2 level re input: expected / observed', '{exp_db:+.1f} / {obs_db:+.1f} dB']
+- [settings, 'Audapter bPitchShift after block 2''s init', '{bps}']
+loudness: ["INIT-PERSIST block 2: vocoder off (intended) vs left on"]
+sketch: init_persist
+asset_dir: init-persist
+audio:
+- {file: expected.wav, src: meas/expected.wav, role: expected, title: 'Expected, block 2', label: 'vocoder off: {exp_db:+.1f} dB', sketch: sk-init-persist, panel: exp, trial: 2}
+- {file: observed.wav, src: meas/observed.wav, role: observed, title: 'Observed, block 2', label: 'vocoder still on: {obs_db:+.1f} dB', sketch: sk-init-persist, panel: obs, trial: 2}
+- {file: ab.wav, src: [meas/expected.wav, meas/observed.wav], gap_s: 0.4, role: ab, title: 'A/B', label: 'expected, then observed'}
+audio_note: >-
+  Both clips share one playback gain. CMU ARCTIC clb a0030 © 2003 Carnegie Mellon University (<a href="assets/licenses/CMU_ARCTIC_COPYING.txt">licence notice</a>), processed by Audapter.
+cause:
+  summary: AudapterIO sends optional parameters only when the field exists, so an absent field leaves Audapter's current value in place.
+  refs:
+  - {repo: blab-matlab, path: mcode/AudapterIO.m, lines: [193, 199], hl: [198, 199], expect: "if (isfield(p, 'bPitchShift'))", note: 'Sent only if present; otherwise Audapter keeps its current value.'}
+  fix_label: Safe pattern and fix
+  fix: >-
+    <strong>Safe pattern:</strong> build every block's <code>p</code> from getAudapterDefaultParams, or <code>clear Audapter</code> between
+    blocks. <strong>Fix:</strong> have AudapterIO send a default for every parameter it knows, or reset Audapter's parameters at init.
+verify:
+- {kind: H, what: report export (two blocks, real sentence), name: report_pitfalls2.m SCEN=persist}
+reproduce: cd audit/harness && SCEN=persist ./run-oct.sh report_pitfalls2.m

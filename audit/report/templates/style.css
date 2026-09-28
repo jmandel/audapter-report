@@ -398,5 +398,6 @@ td.t-bs, th.t-bs { width: 7.5em; }
 .bs-safe_unused { border-color: var(--pass); white-space: normal; }
 .loud { margin: 0.4rem 0 0.8rem; } .loud summary { cursor: pointer; font-size: 0.92rem; color: var(--ink-2); } .loudtab { font-size: 0.85rem; } .loudtab td, .loudtab th { vertical-align: top; }
 .sk-dot-g0 { fill: var(--observed); } .sk-dot-g1 { fill: var(--surface); stroke: var(--ink-2); stroke-width: 1.4; }
+.sk-dot-g2 { fill: var(--ink-3, #9aa0a6); }
 .sk-jnd { fill: var(--context); }
 .loudline { font-size: 0.92rem; max-width: 80ch; }

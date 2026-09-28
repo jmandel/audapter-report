@@ -1,0 +1,57 @@
+# Pitfall card TDS-ONSET (REPORT-35; with PT-3): the time-domain schedule starts at the first above-threshold frame.
+id: TDS-ONSET
+log: TDS-ONSET
+notes: notes/pitch-time.md#pt-3
+headline: >-
+  A time-domain pitch-shift schedule counts from the first frame above the level threshold, {lag_min:.0f}–{lag_max:.0f} ms after the
+  acoustic onset on real speech, so analyses aligned to acoustic onset misplace the perturbation
+severity: low
+origin: upstream
+status: [H]
+studies:
+  status: safe
+  text: >-
+    blab's time-domain pitch studies use perturbations that do not depend on a precise onset time as far as we know; named public studies
+    do not use the time-domain shifter.
+reach_kind: pitfall
+reach: >-
+  Affects time-domain (bTimeDomainShift) pitch designs with a timed schedule, especially with soft or breathy onsets.
+what: >-
+  The schedule's clock starts when the frame level first exceeds <code>rmsThresh</code>, not at the acoustic onset, and it then runs only
+  on frames above the threshold (PT-3). A step scheduled "0.2 s after onset" therefore comes 0.2 s after the level crossing, which lags the
+  acoustic onset by an amount that depends on how soft the onset is.
+scope: >-
+  Matters for analyses that align responses to the acoustic onset, and for designs comparing speakers or conditions with different onset
+  softness. <strong>Safe if</strong> responses are aligned to the logged perturbation time (from the output or the first above-threshold
+  frame), not to the acoustic onset.
+example: >-
+  Four ARCTIC sentences and two PVQD vowels with a soft onset, a +2 st step scheduled at 0.2 s (frameLen 64, nDelay 7): the first
+  above-threshold frame comes {lag_min:.0f}–{lag_max:.0f} ms after the acoustic onset (level within 40 dB of the clip's peak), so the step
+  is heard that much later than 0.2 s after the acoustic onset.
+settings:
+  source: "Hypothetical design: time-domain pitch shifting as in Audapter's time_domain_shift_demo, frameLen 64 / nDelay 7, a +2 st step at 0.2 s."
+  key_params: [bTimeDomainShift, frameLen, nDelay, bCepsLift]
+figure_caption: >-
+  One trial per clip: when the step starts, relative to the acoustic onset. Hollow: intended (200 ms). Solid: 200 ms after the first
+  above-threshold frame.
+table:
+- [real speech, 'First above-threshold frame after the acoustic onset, {n} clips', '{lag_min:.0f}–{lag_max:.0f} ms']
+sketch: tds_onset
+asset_dir: tds-onset
+audio:
+- {file: bdl_in.wav, src: meas/arctic_bdl_a0005_in.wav, role: input, title: 'Input', label: 'ARCTIC bdl "Will we ever forget it."', no_playhead: true}
+- {file: bdl_out.wav, src: meas/arctic_bdl_a0005_out.wav, role: observed, title: 'Observed', label: '+2 st step scheduled at 0.2 s', no_playhead: true}
+audio_note: >-
+  The timing is the point, not an audible artefact. CMU ARCTIC © 2003 Carnegie Mellon University (<a href="assets/licenses/CMU_ARCTIC_COPYING.txt">licence notice</a>).
+cause:
+  summary: The time-domain shifter is only called on frames above the level threshold, and its clock counts those frames.
+  refs:
+  - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1896, 1902], hl: [1896], expect: 'above_rms && p.bTimeDomainShift', note: 'The shifter runs only on frames above rmsThresh.'}
+  - {repo: blab-mex, path: TransShiftMex/time_domain_shifter.cpp, lines: [243, 243], hl: [243], expect: 'nowSec = static_cast<dtype>(totalLen) / sr', note: 'Schedule time = samples processed so far.'}
+  fix_label: Safe pattern and fix
+  fix: >-
+    <strong>Safe pattern:</strong> align to the first above-threshold frame (from <code>data.rms</code>) or measure the step in the output.
+    <strong>Fix:</strong> run the schedule clock on trial time (PT-3).
+verify:
+- {kind: H, what: report export (six real clips), name: report_pitfalls2.m SCEN=tdsonset}
+reproduce: cd audit/harness && SCEN=tdsonset ./run-oct.sh report_pitfalls2.m

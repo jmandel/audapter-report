@@ -80,3 +80,16 @@ Trial and session figures of the reworked cards now use the expected-vs-observed
 | LAB-3 | new | desktop, 390 px dark | Level bars, intended vs as committed, measured on the audio |
 | F6 | kept (earlier design) | desktop | A comparison of two rules, not expected vs observed in time |
 | Other cards | kept | — | Not trial-sequence figures (memory diagrams, sweeps, live-path timelines) |
+
+## Pitfall pass (REPORT-35) and loudness pass (REPORT-34)
+
+| Figure | Verdict | Notes |
+|---|---|---|
+| FMT-LEVEL | new | One dot per voice and perturbation, solid = bGainAdapt 0, hollow = 1, grey ±1 dB band; the range labels sit right of the plot on desktop and above each row on phones (first draft overlapped the dots) |
+| OST-NUM | new | Two-panel session (three trials, delays 100/150/200 ms), onset markers, shifted vowel time under each trial |
+| FMT-PATCH | new | F1–F2 plane as in LAB-1/2, tokens numbered; orange where an outlier token gets the edge cell's shift |
+| INIT-PERSIST | new | Two-panel, two blocks; the event between blocks names the init with a p lacking bPitchShift |
+| WARP-48 | new | Lag over trial time for frameLen 32 and 48, thin programmed profile vs thick delivered (sweep method) |
+| TDS-ONSET | new | Shift onset re acoustic onset per clip, intended (hollow, 200 ms) vs observed (solid) |
+| PVOC-NOISE | new | Level re 0 st per shift, real /ʃ/ (solid) and noise band (hollow), ±1 dB band |
+| Loudness blocks | new | Text and a collapsible table under "How big, how often"; no graphic |

@@ -62,7 +62,7 @@ def _panel(x0, y0, w, h, rows, cen_hz, kind, title, note=None, mid=""):
             out.append(f'<line class="{cls}" x1="{px:.1f}" y1="{py:.1f}" x2="{tx:.1f}" y2="{ty:.1f}" marker-end="url(#ah-{kind}{mid})">'
                        f'<title>/{IPA[e["vowel"]]}/: {e["prod_hz"][0]:.0f}/{e["prod_hz"][1]:.0f} Hz to {tgt[0]:.0f}/{tgt[1]:.0f} Hz</title></line>')
         out.append(f'<circle class="sk-vdot" cx="{px:.1f}" cy="{py:.1f}" r="4"/>'
-                   f'<text class="sk-in" x="{px + 6:.1f}" y="{py - 6:.1f}">{IPA[e["vowel"]]}</text>')
+                   f'<text class="sk-in" x="{px + 6:.1f}" y="{py - 6:.1f}">{e.get("label") or IPA[e["vowel"]]}</text>')
     if note:
         out.append(f'<text class="sk-sub" x="{x0 + w - 18:.1f}" y="{y0 + 44:.1f}" text-anchor="end">{E(note)}</text>')
     return "".join(out)

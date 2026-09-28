@@ -1,0 +1,58 @@
+{
+ "card": "PVOC-NOISE",
+ "source": "Hypothetical design: phase-vocoder pitch shifts of \u22124 to +4 st at the timeAdapt rate settings (24 kHz, frameLen 48).",
+ "preset": "female",
+ "build": "shipped",
+ "params": {
+  "downFact": 2,
+  "frameLen": 48,
+  "sr": 24000,
+  "nDelay": 3,
+  "bPitchShift": 1,
+  "pitchShiftRatio": 1.2599210498948732
+ },
+ "setparam": {},
+ "ost": "",
+ "pcf": "",
+ "sequence": [
+  "-4 st",
+  "-2 st",
+  "0 st",
+  "+2 st",
+  "+4 st"
+ ],
+ "switching": "one trial per shift",
+ "input": "real /S/ of CMU ARCTIC slt a0036 (\"She ...\"), the voiced stretch after it, and an /s/-like noise band (3.5-9 kHz)",
+ "playground": {
+  "v": 1,
+  "preset": "female",
+  "build": "lite",
+  "raw": {
+   "downfact": 2,
+   "framelen": 48,
+   "srate": 24000,
+   "ndelay": 3,
+   "bpitchshift": 1,
+   "pitchshiftratio": 1.2599210498948732
+  },
+  "shift": {
+   "formant": {
+    "on": false
+   },
+   "pitch": {
+    "on": true,
+    "method": "pvoc",
+    "semitones": 4.0
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": [
+  "the trial sequence: the link loads one trial's settings; run several trials as one session in the Playground to see carry-over"
+ ]
+}

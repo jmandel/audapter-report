@@ -1,0 +1,61 @@
+# Pitfall card FMT-PATCH (REPORT-35; PLAYGROUND-4): a per-vowel 2-D patch sent without its own bounds.
+id: FMT-PATCH
+log: PLAYGROUND-4
+notes: notes/formant.md
+headline: >-
+  A 2-D perturbation patch built for one vowel shifts every formant outside it by the edge cell's amount, unless F1Min..F2Max are
+  set to the patch; tokens {t5_obs:.0f} mel away get a fixed shift instead of none
+severity: med
+origin: blab
+status: [H]
+studies:
+  status: na
+  text: >-
+    The public VSA studies send the field's bounds with the field (calc_pertField returns them), so they are not affected; any design
+    that builds a small patch and leaves F1Min..F2Max at their defaults is.
+reach_kind: pitfall
+reach: >-
+  Affects 2-D field designs whose grid (pertF1/pertF2) covers only part of the formant space, when F1Min..F2Max are not set to the grid.
+what: >-
+  Audapter looks up each frame's F1–F2 on the 2-D grid, but it clamps the lookup to the grid's edge: a formant pair outside the grid gets
+  the shift of the nearest edge cell. Only F1Min..F1Max and F2Min..F2Max decide whether a frame is shifted at all, and they default to
+  the whole range. A patch meant to act only around one vowel therefore also shifts transitions, other vowels and outlier tokens, each
+  by a fixed amount taken from the patch's edge.
+scope: >-
+  Matters for per-vowel or per-token patches (for example scaling each token toward its vowel's centre, or pushing one vowel's
+  variability in or out). <strong>Safe if</strong> F1Min..F1Max and F2Min..F2Max are sent with the patch and equal its grid limits,
+  as calc_pertField does; then formants outside the patch are left alone.
+example: >-
+  A plausible design: a ±90 mel patch around a male /ɛ/ that moves each token half-way to the vowel's centre. Tokens inside the patch
+  are moved as designed in both runs. Two outlier tokens, 150 and 215 mel from the centre, are left alone when the patch's bounds are sent
+  ({t4_exp:.0f} and {t5_exp:.0f} mel of shift) but are shifted by {t4_obs:.0f} and {t5_obs:.0f} mel without them, the edge cell's shift.
+settings:
+  source: "Hypothetical design: a plausible per-vowel patch (blab's default male settings, mel units, 257 × 257 grid over ±90 mel)."
+  key_params: [bShift, bRatioShift, bMelShift, fb]
+figure_caption: >-
+  F1–F2 plane (F2 high to low). Expected: the patch sent with its bounds. Observed: the same patch without F1Min..F2Max. Numbers label
+  the tokens; tokens 4 and 5 lie outside the patch.
+table:
+- [synthetic, 'Outlier tokens 4 / 5: shift with the patch bounds', '{t4_exp:.0f} / {t5_exp:.0f} mel']
+- [synthetic, 'Outlier tokens 4 / 5: shift without them (edge cell)', '{t4_obs:.0f} / {t5_obs:.0f} mel']
+sketch: fmt_patch
+asset_dir: fmt-patch
+audio:
+- {file: tok5_expected.wav, src: meas/exp_tok5.wav, role: expected, title: 'Expected, token 5', label: 'outside the patch: not shifted', no_playhead: true}
+- {file: tok5_observed.wav, src: meas/obs_tok5.wav, role: observed, title: 'Observed, token 5', label: 'shifted by the edge cell: {t5_obs:.0f} mel', no_playhead: true}
+- {file: tok5_ab.wav, src: [meas/exp_tok5.wav, meas/obs_tok5.wav], gap_s: 0.4, role: ab, title: 'A/B, token 5', label: 'expected, then observed'}
+audio_note: >-
+  Synthetic tokens, so the positions are exact; a real vowel's transitions pass through the same edge cells.
+cause:
+  summary: <code>locateF1</code>/<code>locateF2</code> clamp the grid position to the edge; the gate that decides whether to shift uses F1Min..F2Max only.
+  refs:
+  - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2400, 2403], hl: [2402], expect: 'f2mp>=p.F2Min && f2mp<=p.F2Max && f1m>=p.F1Min && f1m<=p.F1Max', note: 'Whether a frame is shifted depends only on F1Min..F2Max.'}
+  - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2692, 2699], hl: [2693, 2696], expect: 'loc = pfNPoints - 1 - 0.000000000001;', note: 'Outside the grid, the position is clamped to the edge cell.'}
+  fix_label: Safe pattern and fix
+  fix: >-
+    <strong>Safe pattern:</strong> send F1Min..F1Max and F2Min..F2Max equal to the patch's grid limits whenever the patch covers part of the
+    plane. <strong>Fix:</strong> treat formants outside the grid as unshifted, or warn when the grid is narrower than F1Min..F2Max.
+verify:
+- {kind: H, what: report export (five tokens, with and without the bounds), name: report_pitfalls2.m SCEN=patch}
+- {kind: H, what: Playground, name: audit/playground/test/run.mjs, detail: 'PLAYGROUND-4: a vowel at F1 800 Hz outside a 500–700 Hz field shifted by the edge value'}
+reproduce: cd audit/harness && SCEN=patch ./run-oct.sh report_pitfalls2.m

@@ -119,7 +119,24 @@ for spk in ("bdl_a0005", "clb_a0030"):
                 continue
             PAIRS[f"FMT level {spk} {nm} bGainAdapt {g}"] = ((f"loudcues/{spk}_unshifted_g{g}.wav",), (f"loudcues/{spk}_{tag}_g{g}.wav",))
 
+PAIRS.update({
+    "PVOC-NOISE real /S/: 0 st vs -4 st": (("pvoc-noise/meas/sh_real_st+0.wav",), ("pvoc-noise/meas/sh_real_st-4.wav",)),
+    "PVOC-NOISE real /S/: 0 st vs +2 st": (("pvoc-noise/meas/sh_real_st+0.wav",), ("pvoc-noise/meas/sh_real_st+2.wav",)),
+    "PVOC-NOISE /s/-like noise: 0 st vs -4 st": (("pvoc-noise/meas/s_noise_st+0.wav",), ("pvoc-noise/meas/s_noise_st-4.wav",)),
+    "INIT-PERSIST block 2: vocoder off (intended) vs left on": (("init-persist/meas/expected.wav",), ("init-persist/meas/observed.wav",)),
+})
+
 def main():
+    only = sys.argv[1:]
+    if only:   # compute only these pairs (id prefixes) and merge into the existing loudness.json
+        res = json.load(open(os.path.join(EXP, "loudness.json")))
+        for k, (e, o) in PAIRS.items():
+            if any(k.startswith(x) for x in only):
+                r = summary(pair(clip(*e), clip(*o))); r["files"] = [e, o]
+                r["sha"] = [hashlib.sha256(open(os.path.join(EXP, f[0]), "rb").read()).hexdigest()[:16] for f in (e, o)]
+                res["pairs"][k] = r
+                print(f'{k}: RMS {r["rms_db"]:+.2f} dB | Zwicker equiv {r["equiv_min"]:+.2f}..{r["equiv_max"]:+.2f} dB | ECMA {r["ecma_dphon_min"]:+.2f}..{r["ecma_dphon_max"]:+.2f}')
+        json.dump(res, open(os.path.join(EXP, "loudness.json"), "w"), indent=1); return
     res = {"model": "ISO 532-1 Zwicker time-varying (mosqito loudness_zwtv, free field), N5; cross-check ECMA-418-2 (mosqito loudness_ecma), 95th percentile",
            "mosqito": __import__("mosqito").__version__, "levels_db_spl_A": LEVELS,
            "calibration": "expected clip's A-weighted active RMS set to each level; observed clip scaled identically; diotic headphones, flat response; normal hearing",

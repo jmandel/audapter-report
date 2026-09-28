@@ -104,6 +104,17 @@
       of the 17 full cards the report then had, 13 rebuilt byte-identical, and the other 4 measure quantities that vary by nature (a click's size, crash counts, time to a
       hang, memory contents). Requires Docker: <code>./reproduce.sh</code> at the repository root rebuilds everything.</p>
   </section>
+  <section id="labrun">
+    <h3>Running the lab's own code</h3>
+    <p>To check findings against the experiments as the lab runs them, we ran each public blab experiment's own entry script, runner and shared
+      helpers, unmodified, under Octave with the real Audapter build behind a virtual sound card on a virtual clock (<code>pause</code> and
+      timers advance the recording instead of waiting), with a synthetic participant and a rule-driven experimenter answering prompts and dialogs
+      through their real callbacks. Per trial it records every Audapter call, the parameters in effect against the script's own, the OST timeline,
+      the logged shift and the heard formants, pitch, level and lag. 12 of the 13 public entry points run end to end (vsaCentralize's stops because
+      the runner it calls is not in its repository); vsaGeneralize and the modelExpt template ran full sessions. Limits: synthetic voices, no
+      real-time scheduling or sound-card timing, simplified Psychtoolbox, and one recorded load-time change (graphics dot notation) in files that
+      fail without it. Details: <a href="https://github.com/jmandel/audapter-report/blob/main/audit/labrun/README.md">audit/labrun/README.md</a>.</p>
+  </section>
   <section id="loudmodel">
     <h3>Level and loudness</h3>
     <p>Every card states level changes as RMS level in dB, measured on the output audio: exact, and what a lab can check in

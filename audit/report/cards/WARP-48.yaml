@@ -1,0 +1,56 @@
+# Pitfall card WARP-48 (REPORT-35): time-warp magnitude at frameLen 48.
+id: WARP-48
+log: WARP-48
+notes: notes/pitch-time.md#pt-5
+headline: >-
+  At frameLen 48 (24 kHz) a time warp delivers only {pct48:.0f} % of the programmed lag: a 60 ms slow-down gives {lag48:.0f} ms
+severity: med
+origin: upstream
+status: [H]
+studies:
+  status: na
+  text: >-
+    Not applicable to public blab studies. It applies to any time-warp design at frameLen 48 with the default pvocHop 64, such as the
+    timeAdapt settings in free-speech's public run_measureDuration_audapter.m.
+reach_kind: pitfall
+reach: >-
+  Affects time-warp (PCF warp) designs run at frameLen 48 with pvocHop 64, where the hop is not a whole multiple of the frame.
+what: >-
+  A PCF warp slows the feedback down and then catches up, creating a programmed lag. At 24 kHz with frameLen 32 the delivered lag matches
+  the programme; at frameLen 48 it is about three quarters of it, the ratio of frameLen to pvocHop (48 / 64). Nothing reports the difference.
+scope: >-
+  Matters whenever the size of the timing perturbation is the independent variable. <strong>Safe if</strong> frameLen divides pvocHop
+  (for example frameLen 32 with pvocHop 64), or the delivered lag is measured and reported instead of the programmed one.
+example: >-
+  A warp that slows to ×0.5 for 0.12 s (programmed lag 60 ms), held for 0.3 s, measured with a frequency sweep through Audapter: the
+  delivered lag during the hold is {lag32:.1f} ms at frameLen 32 ({pct32:.0f} %) and {lag48:.1f} ms at frameLen 48 ({pct48:.0f} %).
+settings:
+  source: "Hypothetical design with the timeAdapt settings (24 kHz, downFact 2, frameLen 48, bPitchShift 1) and, for comparison, frameLen 32."
+  key_params: [sr, downFact, frameLen, nDelay, bPitchShift]
+figure_caption: >-
+  The lag between input and output during the warp, measured with a sweep (output frequency at time t = input frequency at t − lag).
+  Thin line: programmed. Thick: delivered.
+table:
+- [sweep, 'Delivered lag during the hold, programmed 60 ms: frameLen 32 / 48', '{lag32:.1f} / {lag48:.1f} ms']
+sketch: warp48
+asset_dir: warp-48
+audio:
+- {file: speech_fl32.wav, src: meas/speech_fl32.wav, role: expected, title: 'frameLen 32', label: 'the programmed warp on a real sentence', no_playhead: true}
+- {file: speech_fl48.wav, src: meas/speech_fl48.wav, role: observed, title: 'frameLen 48', label: 'the same PCF: a smaller delay', no_playhead: true}
+audio_note: >-
+  The difference is a timing difference of about 15 ms, hard to hear in isolation. CMU ARCTIC © 2003 Carnegie Mellon University (<a href="assets/licenses/CMU_ARCTIC_COPYING.txt">licence notice</a>).
+cause:
+  summary: >-
+    The warp converts the programmed time into vocoder hops (pvocHop samples), but the cache it indexes advances once per processing
+    frame. When pvocHop is not a whole multiple of frameLen the two units differ, and the lag comes out scaled by frameLen/pvocHop. The
+    same frame/hop mismatch is the most likely cause of PT-5's +6 dB at frameLen 48 (not isolated in the code).
+  refs:
+  - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [225, 228], hl: [227, 228], expect: 'cidx0 = pvCtr;', note: 'The cache index counts processing frames (the hop-based version is commented out).'}
+  - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [361, 363], hl: [362, 363], expect: 'warp_t * sr / static_cast<dtype>(pvocHop);', note: 'The warp time is converted to hops.'}
+  fix_label: Safe pattern and fix
+  fix: >-
+    <strong>Safe pattern:</strong> use a frameLen that divides pvocHop (32 at 24 kHz), or measure the delivered lag. <strong>Fix:</strong> convert the
+    warp time with the same unit the cache index uses.
+verify:
+- {kind: H, what: report export (sweep, frameLen 32 and 48), name: report_pitfalls2.m SCEN=warp48}
+reproduce: cd audit/harness && SCEN=warp48 ./run-oct.sh report_pitfalls2.m

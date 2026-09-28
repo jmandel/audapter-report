@@ -1,0 +1,60 @@
+{
+ "card": "FMT-PATCH",
+ "source": "Hypothetical design: a plausible per-vowel patch (blab's default male settings, mel units, 257 \u00d7 257 grid over \u00b190 mel).",
+ "preset": "male",
+ "build": "shipped",
+ "params": {
+  "bShift": 1,
+  "bRatioShift": 0,
+  "bMelShift": 1
+ },
+ "setparam": {
+  "bShift2D": 1,
+  "pertf1": "mel grid 590..770 (257 values)",
+  "pertf2": "mel grid 1345..1525",
+  "pertAmp2D": "half the distance to the /E/ centre (mel)",
+  "pertPhi2D": "toward the centre",
+  "F1Min..F2Max": "expected: the patch bounds; observed: not sent (0..5000 defaults)"
+ },
+ "ost": "",
+ "pcf": "",
+ "sequence": [],
+ "switching": "one trial per token",
+ "input": "synthetic male /E/ tokens (F0 120 Hz) at the vowel centre and at mel offsets inside and outside a +-90 mel patch",
+ "playground": {
+  "v": 1,
+  "preset": "male",
+  "build": "lite",
+  "raw": {
+   "bshift": 1,
+   "bratioshift": 0,
+   "bmelshift": 1
+  },
+  "shift": {
+   "formant": {
+    "on": true,
+    "units": "mel",
+    "f1": 0,
+    "f2": 0,
+    "field": "all"
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": [
+  "the setParam value bShift2D",
+  "the setParam value pertf1",
+  "the setParam value pertf2",
+  "the setParam value pertAmp2D",
+  "the setParam value pertPhi2D",
+  "the setParam value F1Min..F2Max"
+ ]
+}

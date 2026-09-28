@@ -34,6 +34,12 @@ table:
   - {id: COORD-1, sev: med, origin: upstream, status: H, text: "A PCF from an earlier block survives AudapterIO('init') and overrides a later field experiment; blab's runners clear it"}
   - {id: OST-F5, sev: med,  origin: upstream, status: H R, text: "Pitch catch trials made by clearing the PCF get the full shift when the previous trial ended while shifted"}
   - {id: OST-F2, sev: med,  origin: upstream, status: H F, text: "maxIOI timeout: the next ELAPSED_TIME lasts one frame, and without an OST reload the timeout drifts 0.2 s later per trial"}
+  - {id: OST-NUM, sev: med, origin: upstream, status: H, text: "A one-state OST rule numbered as if it used two runs twice: delays and durations double, unchecked"}
+  - {id: FMT-PATCH, sev: med, origin: blab, status: H, text: "A 2-D patch sent without F1Min..F2Max shifts formants outside it by the edge cell's amount"}
+  - {id: INIT-PERSIST, sev: med, origin: upstream, status: H, text: "AudapterIO('init') leaves settings from an earlier block in place when p lacks the field (e.g. bPitchShift)"}
+  - {id: WARP-48, sev: med, origin: upstream, status: H, text: "At frameLen 48 (24 kHz) a time warp delivers about 73 % of the programmed lag"}
+  - {id: TDS-ONSET, sev: low, origin: upstream, status: H, text: "The time-domain pitch schedule starts at the first above-threshold frame, 56-111 ms after the acoustic onset"}
+  - {id: PVOC-NOISE, sev: low, origin: upstream, status: H, text: "Pitch-shifting fricatives with the phase vocoder lowers their level by several dB"}
   - {id: CORPUS-8, sev: med, origin: upstream, status: H, text: "Time-domain pitch tracking at the default frame settings logs pitch wrongly below about 140 Hz (typical adult men)"}
   - {id: CORPUS-10, sev: med, origin: upstream, status: H, text: "Changing frameLen/nDelay at a fixed sample rate within a session can hang runFrame (and the audio callback) at 100 % CPU"}
   - {id: LIVE-1 / LIVE-2, sev: med, origin: upstream, status: D, text: "Loading OST/PCF files or changing DSP parameters while audio runs (always-on designs) crashes MATLAB or reads freed memory"}
@@ -72,8 +78,8 @@ sections:
       <p>None of these is triggered by the blab designs we inspected. Each can affect a plausible design, so each card states the
       settings that trigger it, the safe pattern, and the fix. Examples use the most plausible settings a lab would choose and are
       marked as hypothetical.</p>
-    cards: [CORPUS-8, CORPUS-10, LIVE-1 / LIVE-2, LIVE-3, LIVE-6, CORPUS-11, I-04, I-02, I-03, OST-F8]
-    short: [PT-2 / I-15, PT-3, PT-4, PT-6, FMT-F4, I-09, CORPUS-3, CORPUS-4, LIVE-4, LIVE-5, LIVE-7, LIVE-8]
+    cards: [OST-NUM, FMT-PATCH, INIT-PERSIST, WARP-48, TDS-ONSET, PVOC-NOISE, CORPUS-8, CORPUS-10, LIVE-1 / LIVE-2, LIVE-3, LIVE-6, CORPUS-11, I-04, I-02, I-03, OST-F8]
+    short: [PB-DSCALE, REINIT-PARAMS, COORD-10, PT-2 / I-15, PT-3, PT-4, PT-6, FMT-F4, I-09, CORPUS-3, CORPUS-4, LIVE-4, LIVE-5, LIVE-7, LIVE-8]
     short_title: "Further pitfalls"
   - id: robust
     title: "Robustness"
@@ -417,6 +423,70 @@ short:
       Halve the magnitude of the lowest bin in the phase vocoder, as the formal analysis of the gain shows.
 
 # Other findings: one row each (low severity or narrow conditions). loc = file:line at the pinned blab SHA.
+  - id: PB-DSCALE
+    notes: notes/interface.md
+    sev: low
+    origin: upstream
+    status: H R
+    title: >-
+      playWave plays a stored recording without dScale, so a participant hears it about 2 dB louder than their own live feedback
+    refs:
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2347, 2353], hl: [2353], expect: 'outFrame_ptr[2 * n] = outFrame_ptr[2 * n + 1] = data_pb[pbCounter];', note: 'Playback writes the stored samples as they are.'}
+    - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2221, 2223], hl: [2223], expect: 'p.downFact, p.dScale);', note: 'Live feedback is scaled by dScale on the way out.'}
+    verify: >-
+      Harness (report_pitfalls2.m SCEN=pbdscale): with the bundled calibration (dScale 0.7953) the live feedback of a real sentence leaves
+      the device at −1.99 dB re the microphone signal; playWave sends the stored samples unscaled, so playback is +1.99 dB relative to live
+      feedback. The playback path itself runs only on the live audio path, so that half is by reading.
+    what: >-
+      Live feedback is multiplied by <code>dScale</code> (from the closed-loop-gain calibration) before it reaches the headphones, but
+      <code>Audapter('playWave')</code> sends <code>datapb</code> unscaled. A participant's own recording played back therefore differs in level
+      from what they heard while speaking by −20·log10(dScale): +2.0 dB with the bundled calibration.
+    scope: >-
+      Matters for speak-versus-listen designs (speech-induced suppression, where listening trials replay the speaking trials) and any
+      comparison of self-produced feedback with played-back speech. <strong>Safe if</strong> the recording is multiplied by dScale before it is
+      loaded as datapb.
+    fix: Scale datapb by dScale before playWave, or apply dScale in the playback path.
+  - id: REINIT-PARAMS
+    notes: notes/interface.md
+    sev: low
+    origin: upstream
+    status: H
+    title: Re-initialising Audapter from saved data.params fails, or, once the names are fixed up, silently drops the time-domain pitch settings
+    refs:
+    - {repo: blab-matlab, path: mcode/AudapterIO.m, lines: [21, 24], hl: [23], expect: "Audapter(3,'scale',p.dScale, toPrompt);", note: 'AudapterIO reads MATLAB field names (dScale, preempFact, ...); data.params stores Audapter names (scale, preemp, ...).'}
+    - {repo: blab-matlab, path: mcode/AudapterIO.m, lines: [193, 194], hl: [193], expect: "isfield(p, 'rmsFF_fb')", note: 'rmsFF_fb is logged empty, so it has to be refilled.'}
+    verify: >-
+      Harness (report_pitfalls2.m SCEN=reinit): AudapterIO('init', data.params) stops with "structure has no member 'dScale'"; after mapping
+      the renamed fields and refilling the empty rmsFF_fb (as a re-analysis tool must), init succeeds but bTimeDomainShift and the pitch bounds
+      go to 0, because data.params does not contain them: a +2 st time-domain shift becomes 0 cents.
+    what: >-
+      <code>data.params</code> is Audapter's own parameter dump: it uses Audapter's names, logs <code>rmsFF_fb</code> empty, and leaves out the
+      time-domain pitch settings. Feeding it back into <code>AudapterIO('init')</code> either fails or, after the names are mapped, rebuilds a
+      different configuration without warning.
+    scope: >-
+      Matters for offline re-analysis or OST re-tuning tools that replay trials with the saved parameters. <strong>Safe if</strong> the
+      re-analysis starts from the experiment's own parameter struct (for example <code>expt.audapterParams</code>) rather than data.params.
+    fix: Save the struct passed to AudapterIO with the data, or make getData log MATLAB-style names and every parameter.
+  - id: COORD-10
+    notes: notes/pitch-time.md
+    sev: low
+    origin: upstream
+    status: H
+    title: A zero-length time-warp row anchored on a state that begins in the first ~0.1 s can abort the trial ("predicting the future is impossible")
+    refs:
+    - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [352, 356], hl: [355, 356], expect: 'throw timeWarpFuturePredError();', note: 'A warp offset that rounds to a tiny positive number throws.'}
+    verify: >-
+      Harness (report_pitfalls2.m SCEN=warpabort; 24 kHz, frameLen 32, nDelay 3; warp row anchored on state 1, tBegin 0.05, rate 0.5,
+      dur1 0, hold 0.2): with state 1 entered at frame 26, 27, 29, 30, 34, 37 (and 20, 40) the trial aborts; at 21-25, 28, 31-33, 35, 36, 38, 39 it
+      runs, matching the coordinator's C++ replica of the arithmetic (COORD-10).
+    what: >-
+      A zero-length warp row (dur1 = 0), used for control trials so that every trial keeps a warp section, computes a warp offset that
+      should be exactly 0; floating-point round-off sometimes makes it 1 ulp positive, and Audapter aborts the trial with "Error occurred during
+      phase-vocoder time warping: predicting the future is impossible". Whether it happens depends on the exact frame at which the anchor state begins.
+    scope: >-
+      Only when the anchor state begins within about the first 0.1–0.12 s of the trial; designs anchored on a detected vowel onset essentially
+      never hit it. On the live audio path the error would be raised in the audio callback (untested; possibly a crash).
+    fix: Clamp the warp offset to ≤ 0, or compare it with a small tolerance, before the check.
   - id: COORD-5
     notes: notes/pitch-time.md
     sev: low
