@@ -42,6 +42,7 @@ table:
 - - real speech
   - Mix change at dScale {r_ds_lo:.3f} / {r_ds_hi:.3f}
   - '{r_d_lo:+.1f} / {r_d_hi:+.1f} dB'
+loudness: ["I-02 fb 5 output: closedLoopGain 15 vs 21 dB"]
 sketch: i02
 asset_dir: i-02
 audio:

@@ -104,6 +104,22 @@
       of the 17 full cards the report then had, 13 rebuilt byte-identical, and the other 4 measure quantities that vary by nature (a click's size, crash counts, time to a
       hang, memory contents). Requires Docker: <code>./reproduce.sh</code> at the repository root rebuilds everything.</p>
   </section>
+  <section id="loudmodel">
+    <h3>Level and loudness</h3>
+    <p>Every card states level changes as RMS level in dB, measured on the output audio: exact, and what a lab can check in
+      <code>signalOut</code>, but physical. How loud a change sounds also depends on the spectrum (equal-loudness contours are not flat)
+      and on the presentation level, so where a card compares levels we add a perceptual estimate as a secondary, model-based range:
+      ISO 532-1 time-varying loudness (Zwicker; mosqito 1.2.1, free field), statistic N5 (loudness exceeded 5 % of the time), converted to
+      loudness level in phons and to the equivalent level change (the gain on the expected clip that gives the observed loudness), with
+      ECMA-418-2 (Sottek) as a second model for the spread. The expected clip is presented at 60, 70, 80 and 85 dB SPL (A-weighted), the
+      observed clip at the same gain; we assume diotic headphones with a flat response and a normal-hearing listener. The trade-off:
+      the level is exact but physical, the loudness estimate is perceptual but rests on these assumptions; older or clinical listeners and
+      real headphones may differ. For "noticeable" we use a level change of about 1 dB, the order of the intensity just-noticeable
+      difference for broadband sounds such as speech and noise at moderate levels (Miller 1947, J. Acoust. Soc. Am. 19:609). Sanity check (equal RMS, +2 semitones, 70 dB SPL): a harmonic complex at 120 Hz gains [[LS_hc120_dphon:+.1f]] phon in ISO 532-1,
+      the direction the equal-loudness contours predict; for pure tones (150 Hz, 1 kHz) the two models disagree in sign by under 1.2 phon,
+      so differences below about 1 phon on tones are within the models' resolution. The broadband effects on the cards, 1 dB and more,
+      agree in direction across both models; ECMA-418-2 gives about half to two thirds of the ISO 532-1 magnitude.</p>
+  </section>
   <section id="limits">
     <h3>Limitations</h3>
     <ul>

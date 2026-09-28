@@ -1,0 +1,60 @@
+{
+ "card": "FMT-LEVEL",
+ "source": "blab's standard formant settings (getAudapterDefaultParams, field mode as in attentionComp and coAdapt: 125 mel, bMelShift 1; ratio shifts \u00b120 %; the vsaSentence-style 2-D centralization field at strength 0.5 on male voices), with bGainAdapt 0 (as sent) and 1",
+ "preset": "male",
+ "build": "shipped",
+ "params": {
+  "bShift": 1,
+  "bRatioShift": 0,
+  "bMelShift": 1
+ },
+ "setparam": {
+  "pertAmp": "125 (all 257 values)",
+  "pertPhi": "0 (F1 up) or pi (F1 down)"
+ },
+ "ost": "",
+ "pcf": "",
+ "sequence": [
+  "unshifted",
+  "F1 +125 mel",
+  "F1 -125 mel",
+  "F1 +20 % (bRatioShift 1)",
+  "F1 -20 % (bRatioShift 1)",
+  "2-D centralization 0.5 (male voices)"
+ ],
+ "switching": "each perturbation on the same input; bGainAdapt 0 (getAudapterDefaultParams, sent by AudapterIO) and 1",
+ "input": "real speech: CMU ARCTIC bdl a0005, rms a0018 (male), clb a0030, slt a0036 (female); PVQD LA9015 (male) and SJ7001 (female) sustained /a/ and /i/",
+ "playground": {
+  "v": 1,
+  "preset": "male",
+  "build": "lite",
+  "raw": {
+   "bshift": 1,
+   "bratioshift": 0,
+   "bmelshift": 1
+  },
+  "shift": {
+   "formant": {
+    "on": true,
+    "units": "mel",
+    "f1": 0,
+    "f2": 0,
+    "field": "all"
+   },
+   "pitch": {
+    "on": false
+   }
+  },
+  "when": {
+   "mode": "always"
+  },
+  "hear": {
+   "fb": 1
+  }
+ },
+ "playground_left_out": [
+  "the trial sequence: the link loads one trial's settings; run several trials as one session in the Playground to see carry-over",
+  "the setParam value pertAmp",
+  "the setParam value pertPhi"
+ ]
+}

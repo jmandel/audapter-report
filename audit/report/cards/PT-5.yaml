@@ -62,6 +62,8 @@ table:
 - [pitch onset, 'Level change 0 → +2 st, synthetic, F0 100–260 Hz, /a/ and /i/', '{sweep_min:.1f} to {sweep_max:.1f} dB quieter']
 - [real speech, 'Level at 0 st, no warp section, {r_n_clean} clips (16 kHz)', '{r_g0_lo:+.2f} to {r_g0_hi:+.2f} dB']
 - [real speech, 'Loudness step at a mid-utterance pitch onset, {r_n_utt} clips', '{r_on_lo:.1f} to {r_on_hi:.1f} dB (median {r_on_med:.1f} dB)']
+loudness: ["PT-5 A timeWrap/cerebTimeAdapt pre vs later phase", "PT-5 B timeAdapt control: zero-length warp row vs none", "PT-5 B timeAdapt warp trial vs no-warp control", "PT-5 C no-PCF design: vocoder off vs on", "PT-5 vocoder on at 0 st vs off (synthetic /a/)", "PT-5 pitch onset: 0 st vs +2 st (synthetic /a/, F0 120 Hz)"]
+loudness_note: "Part A is a pure gain change (same spectrum), so the model adds little to the level figure there; the pitch onset moves energy up in frequency, where equal-loudness contours differ, so level and loudness can differ."
 sketch: pt5
 asset_dir: pt-5
 audio:

@@ -41,6 +41,8 @@ table:
 - [real voice, 'fb 4 output level: the 0.98 the line suggests / the default that plays', '{lv_int:.1f} / {lv_obs:.1f} dBFS']
 - [real voice, 'Difference', '+{lv_diff:.1f} dB']
 - [settings, 'fb4GainDB in effect / what 0.98 would be', '{db_obs:.1f} / {db_int:.2f} dB']
+loudness: ["LAB-3 fb 4 noise: 0.98 (intended) vs default"]
+loudness_note: "A pure gain change of the noise, so the model adds little to the level figure."
 sketch: vsa_fb4
 asset_dir: vsa-fb4
 audio:

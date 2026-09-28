@@ -11,7 +11,12 @@ sessions with the lab's settings, catch trials received no perturbation whatever
 collected before April 2026 are not affected (<a href="#I-01">I-01</a>).</li>
 <li><strong>A loudness and latency step in two time-warp studies.</strong> In timeWrap and cerebTimeAdapt the pre phase runs with
 the phase vocoder off and later phases in its time-warp mode, so from the first phase after pre onward participants hear their own
-voice about 3 dB quieter and [[PT5_tw_lat_step:.0f]] ms later. The timeAdapt family is at about 0 dB (<a href="#PT-5">PT-5</a>).</li>
+voice about 3 dB quieter in level (a loudness model puts it at about 2.7 dB) and [[PT5_tw_lat_step:.0f]] ms later. The timeAdapt family is
+at about 0 dB (<a href="#PT-5">PT-5</a>).</li>
+<li><strong>Formant shifts change the level.</strong> blab's MATLAB defaults switch off Audapter's gain adaptation, so a formant shift
+also changes the output level: on real voices, lowering F1 by 125 mel raised it by a median [[FMTLEVEL_dn125_g0_med:.0f]] dB and raising
+F1 lowered it by [[FMTLEVEL_up125_g0_med:.0f]] dB. Perceived loudness changes less (about 1.3–3 dB by a loudness model) but still enough to
+notice, so shifted and unshifted trials differ in loudness in every blab formant study (<a href="#FMT-LEVEL">FMT-LEVEL</a>).</li>
 <li><strong>vsaSentence depends on an undocumented blab change.</strong> The field perturbation switches on again at every vowel;
 on the original Audapter 2.1.5 or another fork, only the first vowel of each sentence would be perturbed (<a href="#F6">F6</a>).</li>
 <li><strong>One open question about the public vsaGeneralize runner.</strong> As committed, it perturbs the baseline trials and

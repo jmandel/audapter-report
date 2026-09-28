@@ -16,6 +16,7 @@ for d in safe leak; do for k in 1 2 3 4 5 6 7 8; do SCEN="real fresh $d $k" ./ru
 SCEN=real ./run-oct.sh report_ost_f1.m > /dev/null   # real-voice session (figure and main clips)
 run report_ost_f1.m
 run report_ost_f5.m
+run report_loudcues.m                               # FMT-LEVEL and CORPUS-7 clips (level cues)
 run report_vsa.m                                    # lab-script cards LAB-1..3 (public VSA runners)
 run report_i01_session.m; runu report_i01_session.m
 # section prose numbers: the lab's public VSA scripts (EXP-4/5) and blab's real switching methods (EXP-6)
@@ -47,3 +48,5 @@ run report_corpus11.m
 run report_coord1.m                                 # COORD-1: stale PCF across init (synthetic and real)
 oct/report_corpus10.sh 60                           # the hang: killed after 60 s without progress
 if [ -x "$R/live/export.sh" ]; then "$R/live/export.sh"; elif [ -f "$R/live/export_live.py" ]; then python3 "$R/live/export_live.py"; fi
+# perceptual loudness estimates (secondary): needs mosqito 1.2.1; set LOUD_PY to a python that has it
+if [ -n "${LOUD_PY:-}" ]; then echo "export: loudness.py"; "$LOUD_PY" "$R/loudness.py" > /dev/null; else echo "note: LOUD_PY not set; loudness.json not recomputed"; fi

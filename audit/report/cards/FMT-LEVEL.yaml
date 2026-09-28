@@ -1,0 +1,91 @@
+# Full finding card FMT-LEVEL (REPORT-34): formant shifts change the output level, because blab's MATLAB defaults switch off
+# Audapter's formant-shift gain adaptation.
+id: FMT-LEVEL
+log: FMT-LEVEL
+notes: notes/formant.md#f14
+headline: >-
+  With gain adaptation off, as in every blab formant experiment, a formant shift changes the output level: on real voices, lowering F1
+  by 125 mel raised the level by a median {dn125_g0_med:+.1f} dB and raising it lowered the level by a median {up125_g0_med:+.1f} dB, so
+  perturbed trials carry a level cue
+severity: med
+origin: upstream
+since: >-
+  getAudapterDefaultParams has set <code>gainAdapt = 0</code> since Audapter 2.1.5 (upstream and blab alike); the C++ default is 1.
+status: [H]
+studies:
+  status: affected
+  text: >-
+    Affected: every blab formant experiment, because getAudapterDefaultParams sets <code>p.gainAdapt = 0</code> and
+    <code>AudapterIO('init')</code> always sends it; no blab runner changes it. The level cue follows the shift direction:
+    attentionComp's shiftIH (F1 down) trials are louder and shiftAE (F1 up) trials quieter than its noShift trials; coAdapt's up and down
+    words differ in level; in simonSingleWord the level changes where the shift direction flips inside "bedhead". The 2-D centralization
+    fields at strength 0.5 (the VSA studies) change the level by about ±1.5 dB.
+reach_kind: current
+reach: >-
+  Affects formant-shift experiments run with <code>bGainAdapt 0</code>, which is what getAudapterDefaultParams sends.
+what: >-
+  Audapter's formant shifter moves the two lowest resonances with a pair of filters. Moving a resonance changes how much of the
+  voice's energy passes through, so the output level changes with the shift (in our runs, mostly up when F1 is lowered and down when it
+  is raised, with exceptions such as a sustained /i/ with a very low F1). Audapter has a gain-adaptation step that computes the filters' gain change and divides it
+  out (<code>bGainAdapt</code>), but the MATLAB defaults switch it off. With it off, the level of every shifted trial differs from an
+  unshifted trial of the same speech, by an amount that depends on the direction and size of the shift and on the vowel.
+scope: >-
+  Matters for designs that compare shifted and unshifted trials (compensation designs with catch trials) or opposite shifts
+  (up vs down), because the level difference goes with the condition, and for any analysis of produced loudness after a shift. For
+  reference, a level change of about 1 dB is noticeable in broadband sounds such as speech (Miller 1947). Natural speech has the
+  opposite tendency (open vowels with high F1 are intrinsically louder), so the cue is also unnatural. Perceived loudness changes less
+  than the level, because much of the change is at low frequencies where the ear is less sensitive: on the ARCTIC voices the model
+  estimates about 1.3–3 dB-equivalent for F1 −125 mel and 1.4–2 dB for F1 +125 mel (ISO 532-1; ECMA-418-2 gives about half), still at
+  or above the ~1 dB just-noticeable difference. <strong>With
+  <code>bGainAdapt 1</code></strong> the level change shrinks to within about ±2 dB on most voices (not on every one: see the table),
+  but the perceived loudness does not follow: gain adaptation restores the RMS, and with F1 lowered the model then estimates the voice
+  as 1.5–3.4 dB-equivalent quieter, so switching it on is not a simple fix for loudness.
+example: >-
+  Eight real voices (four ARCTIC sentences, two PVQD speakers' sustained /a/ and /i/), each shifted and unshifted with the same
+  settings (blab defaults, field mode, fb 1 so the voice can be measured). On the ARCTIC bdl sentence: F1 −125 mel {bdl_dn125:+.1f} dB,
+  F1 +125 mel {bdl_up125:+.1f} dB, F1 −20 % {bdl_dn20:+.1f} dB, F1 +20 % {bdl_up20:+.1f} dB, 2-D centralization {bdl_c2d:+.1f} dB, re the
+  unshifted output over the shifted span.
+settings:
+  source: "blab's standard formant settings (getAudapterDefaultParams, field mode as in attentionComp and coAdapt: 125 mel, bMelShift 1; ratio shifts ±20 %; the vsaSentence-style 2-D centralization field at strength 0.5 on male voices), with bGainAdapt 0 (as sent) and 1"
+  key_params: [bShift, bRatioShift, bMelShift, fb]
+figure_caption: >-
+  One dot per voice and perturbation: the RMS level of the shifted output relative to the unshifted output of the same input,
+  over the frames Audapter logged as shifted. Solid: <code>bGainAdapt 0</code> (as blab runs). Hollow: <code>bGainAdapt 1</code>.
+table:
+- [bGainAdapt 0, 'F1 −125 mel: level change across {n_voices} voices (median)', '{dn125_g0_min:+.1f} to {dn125_g0_max:+.1f} dB ({dn125_g0_med:+.1f})']
+- [bGainAdapt 0, 'F1 +125 mel', '{up125_g0_min:+.1f} to {up125_g0_max:+.1f} dB ({up125_g0_med:+.1f})']
+- [bGainAdapt 0, 'F1 −20 % / +20 % (medians)', '{dn20_g0_med:+.1f} / {up20_g0_med:+.1f} dB']
+- [bGainAdapt 0, '2-D centralization at strength 0.5 (male voices)', '{c2d_g0_min:+.1f} to {c2d_g0_max:+.1f} dB']
+- [bGainAdapt 1, 'F1 −125 mel / +125 mel (medians)', '{dn125_g1_med:+.1f} / {up125_g1_med:+.1f} dB (range {dn125_g1_min:+.1f} to {up125_g1_max:+.1f})']
+- [bGainAdapt 1, 'Trial after a trial that ended while shifted, vs the same trial fresh', '{gs_n} samples differ (the stored gain state does not carry over in this test)']
+loudness: ["FMT level bdl_a0005 F1 -125 mel bGainAdapt 0", "FMT level bdl_a0005 F1 +125 mel bGainAdapt 0", "FMT level clb_a0030 F1 -125 mel bGainAdapt 0", "FMT level clb_a0030 F1 +125 mel bGainAdapt 0", "FMT level bdl_a0005 2-D centralization 0.5 bGainAdapt 0", "FMT level bdl_a0005 F1 -125 mel bGainAdapt 1", "FMT level bdl_a0005 F1 +125 mel bGainAdapt 1"]
+sketch: fmt_level
+asset_dir: fmt-level
+audio:
+- {file: bdl_unshifted.wav, src: ../loudcues/bdl_a0005_unshifted_g0.wav, role: input, title: 'Unshifted', label: 'ARCTIC bdl, bGainAdapt 0', no_playhead: true}
+- {file: bdl_dn125.wav, src: ../loudcues/bdl_a0005_F1down125mel_g0.wav, role: observed, title: 'F1 −125 mel', label: 'bGainAdapt 0: {bdl_dn125:+.1f} dB', no_playhead: true}
+- {file: bdl_up125.wav, src: ../loudcues/bdl_a0005_F1up125mel_g0.wav, role: observed, title: 'F1 +125 mel', label: 'bGainAdapt 0: {bdl_up125:+.1f} dB', no_playhead: true}
+- {file: bdl_ab.wav, src: [../loudcues/bdl_a0005_F1down125mel_g0.wav, ../loudcues/bdl_a0005_F1up125mel_g0.wav], gap_s: 0.4, role: ab, title: 'A/B', label: 'F1 −125 mel, then +125 mel (bGainAdapt 0)'}
+- {file: bdl_dn125_g1.wav, src: ../loudcues/bdl_a0005_F1down125mel_g1.wav, role: expected, title: 'F1 −125 mel, bGainAdapt 1', label: 'with gain adaptation', no_playhead: true}
+audio_note: >-
+  All clips share one playback gain, so the level differences you hear are real. CMU ARCTIC © 2003 Carnegie Mellon University
+  (<a href="assets/licenses/CMU_ARCTIC_COPYING.txt">licence notice</a>), processed by Audapter.
+cause:
+  summary: >-
+    <code>getGain</code> computes the filters' gain change for each shifted window and <code>gainAdapt</code> applies it at the next zero
+    crossing, but only when <code>bGainAdapt</code> is 1. getAudapterDefaultParams sets <code>gainAdapt = 0</code> and AudapterIO sends it.
+  refs:
+  - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [1940, 1944], hl: [1941, 1942], expect: 'if (p.bGainAdapt) {', note: 'Gain adaptation runs only if bGainAdapt is set.'}
+  - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2430, 2440], hl: [2437, 2438], expect: 'dtype Audapter::getGain', note: 'The gain factor of the formant filters, per window.'}
+  - {repo: blab-matlab, path: mcode/getAudapterDefaultParams.m, lines: [96, 96], hl: [96], expect: 'p.gainAdapt', note: 'The MATLAB default switches it off (as in 2.1.5).'}
+  - {repo: blab-matlab, path: mcode/AudapterIO.m, lines: [29, 29], hl: [29], expect: bgainadapt, note: 'AudapterIO always sends it, overriding the C++ default of 1.'}
+  fix_label: Options
+  fix: >-
+    Decide deliberately: set <code>p.gainAdapt = 1</code> if the level should stay constant across shifts (it restores the level to within
+    about ±2 dB on most voices here, but not all), or keep 0 and treat the level as part of the manipulation, logging it
+    (<code>signalOut</code> RMS per trial). Either way, a check of <code>signalOut</code> level by condition in existing data shows the
+    size of the cue. The gain-adaptation state (<code>static gain</code>, formant notes F14) did not carry over between trials in our test.
+verify:
+- {kind: H, what: report export (eight real voices, five perturbations, bGainAdapt 0 and 1; gain state across trials), name: report_loudcues.m}
+- {kind: R, what: reading, name: notes/formant.md, detail: 'F14: gainAdapt/gainPerturb keep static gain and lastSample across trials'}
+reproduce: cd audit/harness && ./run-oct.sh report_loudcues.m
