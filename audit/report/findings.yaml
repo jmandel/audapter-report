@@ -24,8 +24,8 @@ repos:
 # Findings at a glance: one row per full card (text shown in the grouped table). Severity = realistic reach x impact.
 table:
   - {id: I-01,   sev: high, origin: blab-amplified, status: H, text: "Since b2.4 (April 2026), in runners that load the noise once per session, masking noise drops out for 16 ms every 10 s of trial time"}
-  - {id: PT-5,   sev: high, origin: upstream, status: H F, text: "timeWrap and cerebTimeAdapt: from the first phase after pre, the voice is played about 3 dB quieter and 13 ms later (vocoder in warp mode); timeAdapt is at about 0 dB"}
-  - {id: FMT-LEVEL, sev: med, origin: upstream, status: H, text: "With gain adaptation off (the MATLAB default, all blab studies), formant shifts change the output level by several dB, in the direction of the shift: a level cue on perturbed trials"}
+  - {id: PT-5,   sev: high, origin: upstream, status: H F, text: "timeWrap and cerebTimeAdapt: from the first phase after pre, the voice is played [[PT5_tw_q_lo:.1f]]–[[PT5_tw_q_hi:.1f]] dBA quieter and [[PT5_tw_lat_step:.0f]] ms later (vocoder in warp mode); timeAdapt plays at [[PT5_exp_t1_txt]]"}
+  - {id: FMT-LEVEL, sev: med, origin: upstream, status: H, text: "With gain adaptation off (the MATLAB default, all blab studies), formant shifts change the heard level: lowering F1 by 125 mel raises it by a median [[FMTLEVEL_dn125_g0_med:.1f]] dBA, a level cue on perturbed trials"}
   - {id: F6,     sev: med,  origin: blab, status: H, text: "Undocumented blab change that vsaSentence depends on: the field perturbation re-arms on every vowel; minVowelLen has no effect"}
   - {id: LAB-1, sev: low, origin: blab, status: H, text: "Repository note: vsaCentralize ships an unused public runner that looks up the field on the wrong grid; the runner the experiment calls is correct"}
   - {id: LAB-2, sev: med, origin: blab, status: H, text: "Open question: as committed, the public vsaGeneralize runner (called by its experiment script) perturbs baseline trials and never scales the field; vsaGeneralize2 is wired correctly"}
@@ -39,7 +39,7 @@ table:
   - {id: INIT-PERSIST, sev: med, origin: upstream, status: H, text: "AudapterIO('init') leaves settings from an earlier block in place when p lacks the field (e.g. bPitchShift)"}
   - {id: WARP-48, sev: med, origin: upstream, status: H, text: "At frameLen 48 (24 kHz) a time warp delivers about 73 % of the programmed lag"}
   - {id: TDS-ONSET, sev: low, origin: upstream, status: H, text: "The time-domain pitch schedule starts at the first above-threshold frame, 56-111 ms after the acoustic onset"}
-  - {id: PVOC-NOISE, sev: low, origin: upstream, status: H, text: "Pitch-shifting fricatives with the phase vocoder lowers their level by several dB"}
+  - {id: PVOC-NOISE, sev: low, origin: upstream, status: H, text: "Pitch-shifting fricatives with the phase vocoder lowers their level by several dBA"}
   - {id: CORPUS-8, sev: med, origin: upstream, status: H, text: "Time-domain pitch tracking at the default frame settings logs pitch wrongly below about 140 Hz (typical adult men)"}
   - {id: CORPUS-10, sev: med, origin: upstream, status: H, text: "Changing frameLen/nDelay at a fixed sample rate within a session can hang runFrame (and the audio callback) at 100 % CPU"}
   - {id: LIVE-1 / LIVE-2, sev: med, origin: upstream, status: D, text: "Loading OST/PCF files or changing DSP parameters while audio runs (always-on designs) crashes MATLAB or reads freed memory"}
@@ -414,11 +414,14 @@ short:
     verify: 'Harness (harness/oct/corpus_pvoc_lf.m): a sine sweep and a real noisy recording.'
     what: >-
       At 0 semitones the phase vocoder adds +3.5 dB above 150 Hz (PT-5) and more below: +3.6 dB at 100 Hz, +4.0 at 80, +5.7 at 50 and +7.0 dB at 30 Hz.
-      Measured on the audio: the bus noise alone is +7.4 dB in level, which the loudness model estimates as about +3.6 dB-equivalent,
-      because most of the added energy is below 100 Hz where the ear is less sensitive.
+      Measured on the audio, the bus noise alone rises by [[L_CORPUS_7_bus_noise_alone_vocoder_off_vs_on_dba_db:+.1f]] dBA
+      ([[L_CORPUS_7_bus_noise_alone_vocoder_off_vs_on_dphon_min:+.1f]] to [[L_CORPUS_7_bus_noise_alone_vocoder_off_vs_on_dphon_max:+.1f]] phon, ISO 532-1): most of the added
+      energy is below 100 Hz, where the ear is less sensitive, so the heard change is smaller than the unweighted level change.
     scope: >-
-      Affects pitch-shift sessions in rooms with low-frequency noise: in a recording with bus noise, the noise gained +7.4 dB against +3.6 dB for the speech, so the
-      noise is about 4 dB louder relative to the voice at the ear.
+      Affects pitch-shift sessions in rooms with low-frequency noise: in a recording with bus noise, the noise alone rose by
+      [[L_CORPUS_7_bus_noise_alone_vocoder_off_vs_on_dba_db:+.1f]] dBA and the noisy speech as a whole by [[L_CORPUS_7_noisy_speech_vocoder_off_vs_on_dba_db:+.1f]] dBA:
+      the extra low-frequency energy is large in unweighted level but adds little that the ear weights, so the balance of noise and
+      voice at the ear barely changes. It matters more for analyses of unweighted level or of low-frequency content in the output.
     fix: >-
       Halve the magnitude of the lowest bin in the phase vocoder, as the formal analysis of the gain shows.
 
@@ -429,7 +432,7 @@ short:
     origin: upstream
     status: H R
     title: >-
-      playWave plays a stored recording without dScale, so a participant hears it about 2 dB louder than their own live feedback
+      playWave plays a stored recording without dScale, so a participant hears it about 2 dBA louder than their own live feedback (a pure gain)
     refs:
     - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2347, 2353], hl: [2353], expect: 'outFrame_ptr[2 * n] = outFrame_ptr[2 * n + 1] = data_pb[pbCounter];', note: 'Playback writes the stored samples as they are.'}
     - {repo: blab-mex, path: TransShiftMex/Audapter.cpp, lines: [2221, 2223], hl: [2223], expect: 'p.downFact, p.dScale);', note: 'Live feedback is scaled by dScale on the way out.'}

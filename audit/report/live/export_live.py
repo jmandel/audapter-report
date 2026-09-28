@@ -11,6 +11,8 @@ Audio: 48 kHz (device rate, what the headphones get), 16-bit, one shared gain pe
 import json, os, re, sys
 import numpy as np
 import scipy.io.wavfile as wf
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from loudness import a_weight   # A-weighting for the heard level in dBA
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 AUDIT = os.path.dirname(os.path.dirname(HERE))
@@ -221,6 +223,8 @@ def live6():
     v = np.abs(m) > 0.01; n = min(len(m), len(L))
     rms = lambda s: float(np.sqrt(np.mean(s ** 2)))
     rms_heard = rms(L[:n][v[:n]]); rms_mic = rms(m[v]); rms_exp = rms(base[:n, 0][v[:n]])
+    La, ma, ba = a_weight(L, FS), a_weight(m, FS), a_weight(base[:, 0], FS)   # the same, A-weighted (dBA)
+    dba_heard = 20 * np.log10(rms(La[:n][v[:n]]) / rms(ma[v])); dba_exp = 20 * np.log10(rms(ba[:n][v[:n]]) / rms(ma[v]))
     # sketch window: 3 device buffers during voicing
     k0 = int(0.60 * FS) // B
     W0, W1 = k0 * B, (k0 + 3) * B
@@ -237,6 +241,7 @@ def live6():
         "jack_model_err": jerr[jlag], "jack_lag": jlag,
         "half2_mean_abs": half2, "rms_heard": rms_heard, "rms_mic": rms_mic, "rms_expected": rms_exp,
         "heard_re_mic_db": 20 * np.log10(rms_heard / rms_mic), "expected_re_mic_db": 20 * np.log10(rms_exp / rms_mic),
+        "heard_re_mic_dba": dba_heard, "expected_re_mic_dba": dba_exp,
         "gate_hz": FS / B, "buf_ms": B / FS * 1000,
         "win_t0": W0 / FS, "win_k0": k0, "win_mic": m[W0 - mic_lead:W1], "win_mic_t0": (W0 - mic_lead) / FS,
         "win_heard": L[W0:W1], "win_expected": base[W0:W1, 0],

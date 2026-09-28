@@ -1,6 +1,6 @@
 """Independent measurements on the exported WAV files (not Audapter's own tracker or logs).
 
-The report's per-word values ("F1 596 -> 800 Hz", "F0 +200 cents", "level -31 dB") are computed here, at build time, from the
+The report's per-word values ("F1 596 -> 800 Hz", "F0 +200 cents", "level -31 dB"; levels A-weighted where the report quotes dBA) are computed here, at build time, from the
 same WAV files the reader plays. The estimators are ports of the harness's est_formants.m / est_f0.m (autocorrelation LPC
 with pre-emphasis; autocorrelation F0), so the numbers agree with the harness logs to within estimator noise.
 
@@ -74,6 +74,27 @@ def f0(x, fs, fmin=60, fmax=500):
 def level_db(x):
     return float(20 * np.log10(np.sqrt(np.mean(x ** 2)) + 1e-12))
 
+@functools.lru_cache(maxsize=256)
+def load_a(path):
+    """The file A-weighted (loudness.a_weight: IEC 61672), for dBA levels. Filtered over the whole file, then cut."""
+    from loudness import a_weight
+    fs, x = load(path)
+    return fs, a_weight(x, fs)
+
+def cut_a(path, a, b, inner=0.6):
+    fs, x = load_a(path)
+    m = (b - a) * (1 - inner) / 2
+    return fs, x[int(round((a + m) * fs)):int(round((b - m) * fs))]
+
+def dba_active(path, a=None, b=None):
+    """A-weighted active level (dB re full scale) of [a, b] s of the file: loudness.active_rms (20 ms blocks within 40 dB of the
+    loudest) of the A-weighted signal. Differences of two such levels are the report's dBA numbers."""
+    from loudness import active_rms
+    fs, x = load_a(path)
+    if a is not None:
+        x = x[int(a * fs):int(b * fs) if b else None]
+    return float(20 * np.log10(active_rms(x, fs)))
+
 def cut(path, a, b, inner=0.6):
     """Samples of [a, b] s, keeping the middle `inner` fraction (avoids onsets, offsets and the ~10 ms output delay)."""
     fs, x = load(path)
@@ -92,6 +113,8 @@ def span(path, a, b, what, inner=0.6, rmsmin=1e-3):
         return f0(s, fs)
     if what == "level":
         return level_db(s)
+    if what == "levelA":      # A-weighted level over the same span (dBA when differenced)
+        return level_db(cut_a(path, a, b, inner)[1])
     raise ValueError(what)
 
 def silent_runs(path, a, b, thresh=1e-6, min_s=0.002):

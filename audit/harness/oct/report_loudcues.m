@@ -2,7 +2,8 @@
 % phase vocoder at 0 st vs off); (2) does a formant shift itself change the output level? Typical blab perturbations on real
 % speech, with bGainAdapt 0 (as every blab runner sends it) and 1 (the C++ default); (3) gain-adaptation state across trials.
 % Level = RMS of the output over the perturbed span (frames logged as shifted, output read one processing delay later),
-% shifted run vs unshifted run of the same input and settings.
+% shifted run vs unshifted run of the same input and settings; level_dba = the same with both outputs A-weighted first
+% (report_aweight.m, as report/loudness.py), the report's main level measure.
 % Usage: ./run-oct.sh report_loudcues.m    Output: out/report/corpus-7/meas/*.wav, out/report/loudcues/{data.json,*.wav}
 addpath('/a/other/blab-experiments/free-speech/experiment_helpers', '-end');
 FS = '/a/other/blab-experiments/free-speech'; addpath(fullfile(FS, 'utils'), '-end'); addpath(fullfile(FS, 'speech'), '-end'); addpath('/h/oct/exp_shims');
@@ -22,7 +23,7 @@ ids = {'arctic_bdl_a0005', 'M'; 'arctic_rms_a0018', 'M'; 'arctic_clb_a0030', 'F'
        'pvqd_LA9015_a', 'M'; 'pvqd_LA9015_i', 'M'; 'pvqd_SJ7001_a', 'F'; 'pvqd_SJ7001_i', 'F'};
 pert = {'F1 +125 mel', 0, 1, 125, 0; 'F1 -125 mel', 0, 1, 125, pi; 'F1 +20 %', 1, 0, 0.2, 0; 'F1 -20 %', 1, 0, 0.2, pi};
 fm = struct('iy', [342 2322], 'uw', [378 997], 'ae', [588 1952], 'aa', [768 1333]); pf = calc_pertField('in', fm, 1, 0);
-R = struct('clip', {}, 'sex', {}, 'pert', {}, 'gainadapt', {}, 'level_db', {}, 'shift_s', {});
+R = struct('clip', {}, 'sex', {}, 'pert', {}, 'gainadapt', {}, 'level_db', {}, 'level_dba', {}, 'shift_s', {});
 hz2mel = @(f) 1127.01048 * log(1 + f / 700);
 for i = 1:size(ids, 1)
   mm = M(strcmp({M.id}, ids{i,1})); x = corpus_wav(mm); x = x(1:min(end, round(2.0*fs)));
@@ -46,9 +47,12 @@ for i = 1:size(ids, 1)
       s = d1.d.sfmts(:,1) > 0 & abs(d1.d.sfmts(:,1) - d1.d.fmts(:,1)) > 1; lag = q.nDelay;   % frames
       N = q.frameLen; idx = [];
       for f = find(s)', a = (f - 1 + lag) * N + 1; idx = [idx, a:min(a + N - 1, numel(d1.d.signalOut))]; end
-      if isempty(idx), L = NaN; else, L = 20*log10(rms(d1.d.signalOut(idx)) / rms(d0.d.signalOut(idx))); end
-      R(end+1) = struct('clip', ids{i,1}, 'sex', ids{i,2}, 'pert', nm, 'gainadapt', ga, 'level_db', L, 'shift_s', d1.shift_s);
-      printf('%s (%s) %-32s bGainAdapt %d: shifted %.2f s, level %+.2f dB re unshifted\n', ids{i,1}, ids{i,2}, nm, ga, d1.shift_s, L);
+      if isempty(idx), L = NaN; LA = NaN; else
+        L = 20*log10(rms(d1.d.signalOut(idx)) / rms(d0.d.signalOut(idx)));
+        A1 = report_aweight(d1.d.signalOut, q.sr); A0 = report_aweight(d0.d.signalOut, q.sr); LA = 20*log10(rms(A1(idx)) / rms(A0(idx)));
+      end
+      R(end+1) = struct('clip', ids{i,1}, 'sex', ids{i,2}, 'pert', nm, 'gainadapt', ga, 'level_db', L, 'level_dba', LA, 'shift_s', d1.shift_s);
+      printf('%s (%s) %-32s bGainAdapt %d: shifted %.2f s, level %+.2f dB RMS, %+.2f dBA re unshifted\n', ids{i,1}, ids{i,2}, nm, ga, d1.shift_s, L, LA);
       if any(strcmp(ids{i,1}, {'arctic_bdl_a0005', 'arctic_clb_a0030'}))
         tg = sprintf('%s_%s_g%d', strrep(ids{i,1}, 'arctic_', ''), regexprep(strrep(strrep(nm, '+', 'up'), '-', 'down'), '[^A-Za-z0-9]+', ''), ga);
         audiowrite(fullfile(od, [tg '.wav']), d1.d.signalOut, q.sr, 'BitsPerSample', 16);

@@ -3,7 +3,7 @@ id: PT-5
 log: PT-5
 notes: notes/pitch-time.md#pt-5
 headline: >-
-  In blab's timeWrap and cerebTimeAdapt, participants hear their own voice about 3 dB quieter and {tw_lat_step:.0f} ms later from the first phase
+  In blab's timeWrap and cerebTimeAdapt, participants hear their own voice {tw_q_lo:.1f}–{tw_q_hi:.1f} dBA quieter and {tw_lat_step:.0f} ms later from the first phase
   after pre onward, because the later phases switch the phase vocoder into its time-warp mode
 severity: high
 origin: upstream
@@ -13,18 +13,18 @@ studies:
   text: >-
     Affected: timeWrap and cerebTimeAdapt (24 kHz, frameLen 32, nDelay 3; pre phase with <code>bPitchShift 0</code> and no PCF, later
     phases with <code>bPitchShift 1</code> and a warp-row PCF; both experiment scripts call the Audapter runner for both phases).
-    Measured at those settings the voice is played {tw_pre} in the pre phase and {tw_later} afterwards on this sentence (−2.6 to
-    −3.4 dB across four voices), and {tw_lat_step:.1f} ms later. The timeAdapt family (frameLen 48) plays at about 0 dB with its warp
-    rows. No blab study we know of uses the vocoder without a PCF (part C).
+    Measured at those settings the voice is played {tw_pre} in the pre phase and {tw_later} afterwards on this sentence ({tw_v_lo:+.1f} to
+    {tw_v_hi:+.1f} dBA across {tw_v_n} voices), and {tw_lat_step:.1f} ms later. The timeAdapt family (frameLen 48) plays at {exp_t1_txt} with its
+    warp rows. No blab study we know of uses the vocoder without a PCF (part C).
 reach_kind: current
 reach: >-
   Affects designs whose phases differ in how the phase vocoder runs: off in a baseline and in warp mode later (timeWrap,
   cerebTimeAdapt), on without a PCF, or with the warp section dropped on some trials.
 what: >-
   With <code>bPitchShift = 1</code> the phase vocoder processes the voice even at 0 semitones. Without a time-warp section in the
-  PCF, it plays the voice louder than it came in: +3.5 dB at the default 16 kHz / frameLen 32, and +6.0 dB at the 24 kHz / frameLen 48
-  settings blab uses for time warping. With a warp section loaded, even a zero-length one, the vocoder runs in its warp mode for the
-  whole trial, at a different level: 0.0 dB at 24 kHz / frameLen 48, −2.5 dB at 16 kHz / frameLen 32. When a pitch shift starts,
+  PCF, it plays the voice louder than it came in: {w16_none:+.1f} dBA at the default 16 kHz / frameLen 32, and {obs_t1_txt} at the
+  24 kHz / frameLen 48 settings blab uses for time warping. With a warp section loaded, even a zero-length one, the vocoder runs in its
+  warp mode for the whole trial, at a different level: {exp_t1_txt} at 24 kHz / frameLen 48, {w16_zero:+.1f} dBA at 16 kHz / frameLen 32. When a pitch shift starts,
   the level changes again, by an amount that depends on F0 and vowel.
 scope: >-
   Matters when trials or phases differ in whether a warp section is loaded (a loudness cue that tells the participant which trials
@@ -34,34 +34,35 @@ scope: >-
 example: >-
   <strong>A. timeWrap and cerebTimeAdapt.</strong> Their settings on a real sentence: in the pre phase (<code>bPitchShift 0</code>, no
   PCF) the voice is played at {tw_pre}; in the later phases (<code>bPitchShift 1</code>, a PCF with a warp row, here zero-length as on
-  a control trial) at {tw_later}, with a real warp at {tw_warp}. On four voices the step is −2.6 to −3.4 dB. The output also comes
+  a control trial) at {tw_later}, with a real warp at {tw_warp}. On {tw_v_n} voices the step is {tw_v_lo:+.1f} to {tw_v_hi:+.1f} dBA. The output also comes
   later: clicks sent through the same path arrive {tw_lat_pre:.1f} ms after the input in the pre phase and {tw_lat_later:.1f} ms after
   it in the later phases, a {tw_lat_step:.1f} ms step at the phase boundary. <strong>B. Time-warp designs at timeAdapt settings</strong>
   (24 kHz, frameLen 48): if control trials keep a zero-length warp row, both kinds play at the spoken level (control {exp_t1_txt},
-  warp {exp_t2_txt}); if control trials drop the warp section, they play at {obs_t1_txt}, {cue_db:.1f} dB louder than the warp trials
+  warp {exp_t2_txt}); if control trials drop the warp section, they play at {obs_t1_txt}, {cue_db:.1f} dBA louder than the warp trials
   around them. <strong>C. A plausible design, not one blab runs:</strong> the vocoder on without a PCF after a baseline with it off
   (24 kHz, frameLen 32, nDelay 3) plays {cereb_b0} then {cereb_b1}. Clearing a warp PCF with <code>Audapter('pcf', '', 0)</code> leaves
   the vocoder in its warp mode for the rest of the MATLAB session: at the part-C settings a no-PCF trial run after warp trials plays at
-  −2.6 dB instead of +3.5 dB, so the level of a later phase depends on what ran earlier in the session.
+  {cereb_b1_after_warp:+.1f} dBA instead of {cereb_b1_db:+.1f} dBA, so the level of a later phase depends on what ran earlier in the session.
 settings:
   from: timewrap.settings
   source: "blab's timeWrap and cerebTimeAdapt experiments (settings only): 24 kHz (sRate 48000, downFact 2), frameLen 32 (the default), nDelay 3; pre phase bPitchShift 0 and no PCF, later phases bPitchShift 1 and a PCF with a warp row on every trial (the warp timings here are illustrative). fb 1 so the speech level can be measured without the babble. Parts B and C use the timeAdapt and hypothetical settings in the export's data.json (warp, cereb)."
   key_params: [sr, downFact, nDelay, bPitchShift, fb]
 figure_caption: >-
   A: blab's timeWrap / cerebTimeAdapt phases. B: four trials of a time-warp design at timeAdapt settings. C: a hypothetical design.
-  Expected: the level the participant should hear; Observed: what Audapter plays. Values are the output level measured on the audio,
-  relative to the input.
+  Expected: the level the participant should hear; Observed: what Audapter plays. Values are the heard level in dBA (A-weighted),
+  measured on the audio, relative to the input.
 table:
-- [timeWrap / cerebTimeAdapt, 'Level re input: pre phase / later phases (warp-row PCF), this sentence', '{tw_pre} / {tw_later}']
+- [timeWrap / cerebTimeAdapt, 'Heard level re input: pre phase / later phases (warp-row PCF), this sentence', '{tw_pre} / {tw_later}']
+- [timeWrap / cerebTimeAdapt, 'Step pre → later phases, {tw_v_n} voices', '{tw_v_lo:+.1f} to {tw_v_hi:+.1f} dBA']
 - [timeWrap / cerebTimeAdapt, 'Output delay (clicks): pre phase / later phases', '{tw_lat_pre:.1f} / {tw_lat_later:.1f} ms']
-- [plausible design C, 'Level re input: baseline (bPitchShift 0) / later phases (bPitchShift 1)', '{cereb_b0} / {cereb_b1}']
-- [timeAdapt settings, 'Level, control trial without a warp section', '{obs_t1_txt}']
-- [timeAdapt settings, 'Level, control trial with a zero-length warp row / warp trial', '{exp_t1_txt} / {exp_t2_txt}']
-- [timeAdapt settings, 'Loudness cue, no-warp control vs warp trial', '{cue_db:.1f} dB']
-- [blab defaults, 'Level with no warp section / zero-length row / warp (16 kHz, frameLen 32)', '{w16_none:+.1f} / {w16_zero:+.1f} / {w16_warp:+.1f} dB']
-- [pitch onset, 'Level change 0 → +2 st, synthetic, F0 100–260 Hz, /a/ and /i/', '{sweep_min:.1f} to {sweep_max:.1f} dB quieter']
-- [real speech, 'Level at 0 st, no warp section, {r_n_clean} clips (16 kHz)', '{r_g0_lo:+.2f} to {r_g0_hi:+.2f} dB']
-- [real speech, 'Loudness step at a mid-utterance pitch onset, {r_n_utt} clips', '{r_on_lo:.1f} to {r_on_hi:.1f} dB (median {r_on_med:.1f} dB)']
+- [plausible design C, 'Heard level re input: baseline (bPitchShift 0) / later phases (bPitchShift 1)', '{cereb_b0} / {cereb_b1}']
+- [timeAdapt settings, 'Heard level, control trial without a warp section', '{obs_t1_txt}']
+- [timeAdapt settings, 'Heard level, control trial with a zero-length warp row / warp trial', '{exp_t1_txt} / {exp_t2_txt}']
+- [timeAdapt settings, 'Level cue, no-warp control vs warp trial', '{cue_db:.1f} dBA']
+- [blab defaults, 'Heard level with no warp section / zero-length row / warp (16 kHz, frameLen 32)', '{w16_none:+.1f} / {w16_zero:+.1f} / {w16_warp:+.1f} dBA']
+- [pitch onset, 'Level change 0 → +2 st, synthetic, F0 100–260 Hz, /a/ and /i/', '{sweep_min:.1f} to {sweep_max:.1f} dBA quieter']
+- [real speech, 'Heard level at 0 st, no warp section, {r_n_clean} clips (16 kHz)', '{r_g0_lo:+.2f} to {r_g0_hi:+.2f} dBA']
+- [real speech, 'Level drop at a mid-utterance pitch onset (0 → +2 st), {r_n_utt} clips', '{r_on_lo:.1f} to {r_on_hi:.1f} dBA (median {r_on_med:.1f} dBA)']
 loudness: ["PT-5 A timeWrap/cerebTimeAdapt pre vs later phase", "PT-5 B timeAdapt control: zero-length warp row vs none", "PT-5 B timeAdapt warp trial vs no-warp control", "PT-5 C no-PCF design: vocoder off vs on", "PT-5 vocoder on at 0 st vs off (synthetic /a/)", "PT-5 pitch onset: 0 st vs +2 st (synthetic /a/, F0 120 Hz)"]
 loudness_note: "Part A is a pure gain change (same spectrum), so the model adds little to the level figure there; the pitch onset moves energy up in frequency, where equal-loudness contours differ, so level and loudness can differ."
 sketch: pt5
@@ -113,7 +114,7 @@ interactive:
     pitchshiftratio: 1
   text: >-
     The pitch-onset part of this finding: a sustained /a/ at 120 Hz whose PCF steps from 0 to +2 semitones at 0.6 s (16 kHz defaults). This runs that trial through the real Audapter C++ core compiled to WebAssembly from the pinned commit, once as released and
-    once with the overlap-add normalised. Pick the size of the step. Each trace is the output level in 20 ms blocks relative to the same input run with <code>bPitchShift
+    once with the overlap-add normalised. Pick the size of the step. Each trace is the output's RMS level in 20 ms blocks relative to the same input run with <code>bPitchShift
     = 0</code>, so 0 dB is the level a participant should hear.
 cause:
   summary: >-

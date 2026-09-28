@@ -43,7 +43,7 @@ cause:
   summary: >-
     The warp converts the programmed time into vocoder hops (pvocHop samples), but the cache it indexes advances once per processing
     frame. When pvocHop is not a whole multiple of frameLen the two units differ, and the lag comes out scaled by frameLen/pvocHop. The
-    same frame/hop mismatch is the most likely cause of PT-5's +6 dB at frameLen 48 (not isolated in the code).
+    same frame/hop mismatch is the most likely cause of PT-5's gain of 2 (+6 dB) at frameLen 48 (not isolated in the code).
   refs:
   - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [225, 228], hl: [227, 228], expect: 'cidx0 = pvCtr;', note: 'The cache index counts processing frames (the hop-based version is commented out).'}
   - {repo: blab-mex, path: TransShiftMex/phase_vocoder.cpp, lines: [361, 363], hl: [362, 363], expect: 'warp_t * sr / static_cast<dtype>(pvocHop);', note: 'The warp time is converted to hops.'}

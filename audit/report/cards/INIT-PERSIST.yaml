@@ -4,7 +4,7 @@ log: INIT-PERSIST
 notes: notes/interface.md
 headline: >-
   AudapterIO('init') only sends the optional fields present in p, so a setting from an earlier block stays on: a formant block after a
-  pitch block keeps the phase vocoder, {obs_db:+.1f} dB louder
+  pitch block keeps the phase vocoder, {obs_db:+.1f} dBA louder
 severity: med
 origin: upstream
 status: [H]
@@ -27,21 +27,21 @@ scope: >-
   relies on explicitly, or the MEX is cleared between blocks.
 example: >-
   A plausible session: block 1 sets <code>p.bPitchShift = 1</code>; block 2's <code>p</code> is built without that field. Audapter keeps
-  bPitchShift = {bps}, so in block 2 the voice is played at {obs_db:+.1f} dB instead of {exp_db:+.1f} dB (real sentence, measured on the
+  bPitchShift = {bps}, so in block 2 the voice is played at {obs_db:+.1f} dBA instead of {exp_db:+.1f} dBA re the input (real sentence, measured on the
   audio).
 settings:
   source: "Hypothetical design: two blocks in one MATLAB session, blab's default female settings."
   key_params: [fb]
 figure_caption: 'Two blocks in one session. Expected: block 2 without the vocoder. Observed: the vocoder from block 1 is still on.'
 table:
-- [real voice, 'Block 2 level re input: expected / observed', '{exp_db:+.1f} / {obs_db:+.1f} dB']
+- [real voice, 'Block 2 heard level re input: expected / observed', '{exp_db:+.1f} / {obs_db:+.1f} dBA']
 - [settings, 'Audapter bPitchShift after block 2''s init', '{bps}']
 loudness: ["INIT-PERSIST block 2: vocoder off (intended) vs left on"]
 sketch: init_persist
 asset_dir: init-persist
 audio:
-- {file: expected.wav, src: meas/expected.wav, role: expected, title: 'Expected, block 2', label: 'vocoder off: {exp_db:+.1f} dB', sketch: sk-init-persist, panel: exp, trial: 2}
-- {file: observed.wav, src: meas/observed.wav, role: observed, title: 'Observed, block 2', label: 'vocoder still on: {obs_db:+.1f} dB', sketch: sk-init-persist, panel: obs, trial: 2}
+- {file: expected.wav, src: meas/expected.wav, role: expected, title: 'Expected, block 2', label: 'vocoder off: {exp_db:+.1f} dBA', sketch: sk-init-persist, panel: exp, trial: 2}
+- {file: observed.wav, src: meas/observed.wav, role: observed, title: 'Observed, block 2', label: 'vocoder still on: {obs_db:+.1f} dBA', sketch: sk-init-persist, panel: obs, trial: 2}
 - {file: ab.wav, src: [meas/expected.wav, meas/observed.wav], gap_s: 0.4, role: ab, title: 'A/B', label: 'expected, then observed'}
 audio_note: >-
   Both clips share one playback gain. CMU ARCTIC clb a0030 © 2003 Carnegie Mellon University (<a href="assets/licenses/CMU_ARCTIC_COPYING.txt">licence notice</a>), processed by Audapter.

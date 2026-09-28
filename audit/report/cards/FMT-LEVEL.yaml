@@ -4,8 +4,8 @@ id: FMT-LEVEL
 log: FMT-LEVEL
 notes: notes/formant.md#f14
 headline: >-
-  With gain adaptation off, as in every blab formant experiment, a formant shift changes the output level: on real voices, lowering F1
-  by 125 mel raised the level by a median {dn125_g0_med:+.1f} dB and raising it lowered the level by a median {up125_g0_med:+.1f} dB, so
+  With gain adaptation off, as in every blab formant experiment, a formant shift changes the heard level: on real voices, lowering F1
+  by 125 mel raised it by a median {dn125_g0_med:+.1f} dBA and raising it changed it by a median {up125_g0_med:+.1f} dBA, so
   perturbed trials carry a level cue
 severity: med
 origin: upstream
@@ -16,59 +16,61 @@ studies:
   status: affected
   text: >-
     Affected: every blab formant experiment, because getAudapterDefaultParams sets <code>p.gainAdapt = 0</code> and
-    <code>AudapterIO('init')</code> always sends it; no blab runner changes it. The level cue follows the shift direction:
-    attentionComp's shiftIH (F1 down) trials are louder than its noShift trials (its shiftAE trials, F1 up and F2 down, stay within about
-    1 dB of them); coAdapt's up and down words differ in level; in simonSingleWord the level changes where the shift direction flips inside "bedhead". The 2-D centralization
-    fields at strength 0.5 (the VSA studies) change the level by about ±1.5 dB.
+    <code>AudapterIO('init')</code> always sends it; no blab runner changes it. The level goes with the condition: attentionComp's
+    shifted trials are louder than its noShift (catch) trials (shiftIH, F1 down, by {at_ihg_lo:.1f} to {at_ihg_hi:.1f} dBA; shiftAE, F1 up
+    and F2 down, by {at_aeg_lo:.1f} to {at_aeg_hi:.1f} dBA, across voices); coAdapt's down-shifted word is louder than its up-shifted word;
+    in simonSingleWord the level changes where the shift direction flips inside "bedhead". The 2-D centralization fields at strength 0.5 (the VSA studies) change the level by
+    {c2d_g0_min:+.1f} to {c2d_g0_max:+.1f} dBA.
 reach_kind: current
 reach: >-
   Affects formant-shift experiments run with <code>bGainAdapt 0</code>, which is what getAudapterDefaultParams sends.
 what: >-
   Audapter's formant shifter moves the two lowest resonances with a pair of filters. Moving a resonance changes how much of the
-  voice's energy passes through, so the output level changes with the shift (in our runs, mostly up when F1 is lowered and down when it
-  is raised, with exceptions such as a sustained /i/ with a very low F1). Audapter has a gain-adaptation step that computes the filters' gain change and divides it
+  voice's energy passes through, so the output level changes with the shift (in our runs, up when F1 is lowered, with exceptions such
+  as a sustained /i/ with a very low F1; raising F1 changes it less and in either direction). Audapter has a gain-adaptation step that computes the filters' gain change and divides it
   out (<code>bGainAdapt</code>), but the MATLAB defaults switch it off. With it off, the level of every shifted trial differs from an
   unshifted trial of the same speech, by an amount that depends on the direction and size of the shift and on the vowel.
 scope: >-
   Matters for designs that compare shifted and unshifted trials (compensation designs with catch trials) or opposite shifts
   (up vs down), because the level difference goes with the condition, and for any analysis of produced loudness after a shift. For
   reference, a level change of about 1 dB is noticeable in broadband sounds such as speech (Miller 1947). Natural speech has the
-  opposite tendency (open vowels with high F1 are intrinsically louder), so the cue is also unnatural. Perceived loudness changes less
-  than the level, because much of the change is at low frequencies where the ear is less sensitive: on the ARCTIC voices the model
-  estimates about 1.3–3 dB-equivalent for F1 −125 mel and 1.4–2 dB for F1 +125 mel (ISO 532-1; ECMA-418-2 gives about half), still at
-  or above the ~1 dB just-noticeable difference. <strong>With
-  <code>bGainAdapt 1</code></strong> the level change shrinks to within about ±2 dB on most voices (not on every one: see the table),
-  but the perceived loudness does not follow: gain adaptation restores the RMS, and with F1 lowered the model then estimates the voice
-  as 1.5–3.4 dB-equivalent quieter, so switching it on is not a simple fix for loudness.
+  opposite tendency (open vowels with high F1 are intrinsically louder), so the cue is also unnatural. Lowering F1 mostly boosts the
+  strong low harmonics, to which the ear is less sensitive, so the heard change is smaller than the unweighted level suggests: on the
+  two ARCTIC voices whose clips are below, the loudness model gives {ph_dn125_g0_lo:+.1f} to {ph_dn125_g0_hi:+.1f} phon for F1 −125 mel and
+  {ph_up125_g0_lo:+.1f} to {ph_up125_g0_hi:+.1f} phon for F1 +125 mel (ISO 532-1, 60–85 dB SPL). <strong>With <code>bGainAdapt 1</code></strong>
+  the cue does not go away but reverses: gain adaptation equalises the unweighted level, so the heard level then drops when F1 is lowered
+  (median {dn125_g1_med:+.1f} dBA, {ph_dn125_g1_lo:+.1f} to {ph_dn125_g1_hi:+.1f} phon on the two ARCTIC voices) and rises when it is raised
+  (median {up125_g1_med:+.1f} dBA). Switching it on is not a simple fix.
 example: >-
   Eight real voices (four ARCTIC sentences, two PVQD speakers' sustained /a/ and /i/), each shifted and unshifted with the same
-  settings (blab defaults, field mode, fb 1 so the voice can be measured). On the ARCTIC bdl sentence: F1 −125 mel {bdl_dn125:+.1f} dB,
-  F1 +125 mel {bdl_up125:+.1f} dB, F1 −20 % {bdl_dn20:+.1f} dB, F1 +20 % {bdl_up20:+.1f} dB, 2-D centralization {bdl_c2d:+.1f} dB, re the
-  unshifted output over the shifted span. Running the public coAdapt and attentionComp experiments with their own scripts, spoken by eight
-  AI-generated voices (heard level = signalOut × dScale re input), gives the same pattern within one phase: coAdapt's down-shifted word is
-  4.5–6.8 dB louder than its up-shifted word, and attentionComp's shiftIH (F1 down) trials are 1.7–3.6 dB louder than its catch trials.
+  settings (blab defaults, field mode, fb 1 so the voice can be measured). On the ARCTIC bdl sentence: F1 −125 mel {bdl_dn125:+.1f} dBA,
+  F1 +125 mel {bdl_up125:+.1f} dBA, F1 −20 % {bdl_dn20:+.1f} dBA, F1 +20 % {bdl_up20:+.1f} dBA, 2-D centralization {bdl_c2d:+.1f} dBA, re the
+  unshifted output over the shifted span. Running the public coAdapt and attentionComp experiments with their own scripts, spoken by
+  {co_n} AI-generated voices (heard level = signalOut × dScale re input), shows level differences by condition within one phase: coAdapt's
+  down-shifted word is {co_gap_lo:.1f}–{co_gap_hi:.1f} dBA (median {co_gap_med:.1f}) louder than its up-shifted word, and attentionComp's
+  shiftIH and shiftAE trials are up to {at_ihg_hi:.1f} and {at_aeg_hi:.1f} dBA louder than its catch trials.
 settings:
   source: "blab's standard formant settings (getAudapterDefaultParams, field mode as in attentionComp and coAdapt: 125 mel, bMelShift 1; ratio shifts ±20 %; the vsaSentence-style 2-D centralization field at strength 0.5 on male voices), with bGainAdapt 0 (as sent) and 1"
   key_params: [bShift, bRatioShift, bMelShift, fb]
 figure_caption: >-
-  One dot per voice and perturbation: the RMS level of the shifted output relative to the unshifted output of the same input,
-  over the frames Audapter logged as shifted. Solid: <code>bGainAdapt 0</code> (as blab runs). Hollow: <code>bGainAdapt 1</code>.
+  One dot per voice and perturbation: the A-weighted level (dBA) of the shifted output relative to the unshifted output of the same
+  input, over the frames Audapter logged as shifted. Solid: <code>bGainAdapt 0</code> (as blab runs). Hollow: <code>bGainAdapt 1</code>.
 table:
-- [coAdapt as run, 'Hold phase, level re input, eight AI-generated voices: "bed" F1 +125 mel / "head" unshifted / "ted" F1 −125 mel', '−3.8 to −4.9 / −1.9 / +0.7 to +2.7 dB: 4.5–6.8 dB (median 5.7) between the up- and down-shifted words']
-- [attentionComp as run, 'Level re input, eight AI-generated voices: noShift / shiftAE / shiftIH', '−1.9 / −2.8 to −1.1 / −0.2 to +1.7 dB: shiftIH trials 1.7–3.6 dB louder than catch trials; shiftAE within 0.9 dB of them']
-- [bGainAdapt 0, 'F1 −125 mel: level change across {n_voices} voices (median)', '{dn125_g0_min:+.1f} to {dn125_g0_max:+.1f} dB ({dn125_g0_med:+.1f})']
-- [bGainAdapt 0, 'F1 +125 mel', '{up125_g0_min:+.1f} to {up125_g0_max:+.1f} dB ({up125_g0_med:+.1f})']
-- [bGainAdapt 0, 'F1 −20 % / +20 % (medians)', '{dn20_g0_med:+.1f} / {up20_g0_med:+.1f} dB']
-- [bGainAdapt 0, '2-D centralization at strength 0.5 (male voices)', '{c2d_g0_min:+.1f} to {c2d_g0_max:+.1f} dB']
-- [bGainAdapt 1, 'F1 −125 mel / +125 mel (medians)', '{dn125_g1_med:+.1f} / {up125_g1_med:+.1f} dB (range {dn125_g1_min:+.1f} to {up125_g1_max:+.1f})']
+- [coAdapt as run, 'Hold phase, heard level re input, {co_n} AI-generated voices: "bed" F1 +125 mel / "head" unshifted / "ted" F1 −125 mel', '{co_bed_lo:+.1f} to {co_bed_hi:+.1f} / {co_head:+.1f} / {co_ted_lo:+.1f} to {co_ted_hi:+.1f} dBA: {co_gap_lo:.1f}–{co_gap_hi:.1f} dBA (median {co_gap_med:.1f}) between the up- and down-shifted words']
+- [attentionComp as run, 'Heard level re input, {at_n} AI-generated voices: noShift / shiftAE / shiftIH', '{at_ns:+.1f} / {at_ae_lo:+.1f} to {at_ae_hi:+.1f} / {at_ih_lo:+.1f} to {at_ih_hi:+.1f} dBA: shiftIH {at_ihg_lo:+.1f} to {at_ihg_hi:+.1f} dBA and shiftAE {at_aeg_lo:+.1f} to {at_aeg_hi:+.1f} dBA re catch trials']
+- [bGainAdapt 0, 'F1 −125 mel: heard level change across {n_voices} voices (median)', '{dn125_g0_min:+.1f} to {dn125_g0_max:+.1f} dBA ({dn125_g0_med:+.1f})']
+- [bGainAdapt 0, 'F1 +125 mel', '{up125_g0_min:+.1f} to {up125_g0_max:+.1f} dBA ({up125_g0_med:+.1f})']
+- [bGainAdapt 0, 'F1 −20 % / +20 % (medians)', '{dn20_g0_med:+.1f} / {up20_g0_med:+.1f} dBA']
+- [bGainAdapt 0, '2-D centralization at strength 0.5 (male voices)', '{c2d_g0_min:+.1f} to {c2d_g0_max:+.1f} dBA']
+- [bGainAdapt 1, 'F1 −125 mel / +125 mel (medians)', '{dn125_g1_med:+.1f} / {up125_g1_med:+.1f} dBA (ranges {dn125_g1_min:+.1f} to {dn125_g1_max:+.1f} / {up125_g1_min:+.1f} to {up125_g1_max:+.1f})']
 - [bGainAdapt 1, 'Trial after a trial that ended while shifted, vs the same trial fresh', '{gs_n} samples differ (the stored gain state does not carry over in this test)']
 loudness: ["FMT level bdl_a0005 F1 -125 mel bGainAdapt 0", "FMT level bdl_a0005 F1 +125 mel bGainAdapt 0", "FMT level clb_a0030 F1 -125 mel bGainAdapt 0", "FMT level clb_a0030 F1 +125 mel bGainAdapt 0", "FMT level bdl_a0005 2-D centralization 0.5 bGainAdapt 0", "FMT level bdl_a0005 F1 -125 mel bGainAdapt 1", "FMT level bdl_a0005 F1 +125 mel bGainAdapt 1"]
 sketch: fmt_level
 asset_dir: fmt-level
 audio:
 - {file: bdl_unshifted.wav, src: ../loudcues/bdl_a0005_unshifted_g0.wav, role: input, title: 'Unshifted', label: 'ARCTIC bdl, bGainAdapt 0', no_playhead: true}
-- {file: bdl_dn125.wav, src: ../loudcues/bdl_a0005_F1down125mel_g0.wav, role: observed, title: 'F1 −125 mel', label: 'bGainAdapt 0: {bdl_dn125:+.1f} dB', no_playhead: true}
-- {file: bdl_up125.wav, src: ../loudcues/bdl_a0005_F1up125mel_g0.wav, role: observed, title: 'F1 +125 mel', label: 'bGainAdapt 0: {bdl_up125:+.1f} dB', no_playhead: true}
+- {file: bdl_dn125.wav, src: ../loudcues/bdl_a0005_F1down125mel_g0.wav, role: observed, title: 'F1 −125 mel', label: 'bGainAdapt 0: {bdl_dn125:+.1f} dBA', no_playhead: true}
+- {file: bdl_up125.wav, src: ../loudcues/bdl_a0005_F1up125mel_g0.wav, role: observed, title: 'F1 +125 mel', label: 'bGainAdapt 0: {bdl_up125:+.1f} dBA', no_playhead: true}
 - {file: bdl_ab.wav, src: [../loudcues/bdl_a0005_F1down125mel_g0.wav, ../loudcues/bdl_a0005_F1up125mel_g0.wav], gap_s: 0.4, role: ab, title: 'A/B', label: 'F1 −125 mel, then +125 mel (bGainAdapt 0)'}
 - {file: bdl_dn125_g1.wav, src: ../loudcues/bdl_a0005_F1down125mel_g1.wav, role: expected, title: 'F1 −125 mel, bGainAdapt 1', label: 'with gain adaptation', no_playhead: true}
 audio_note: >-
@@ -85,13 +87,13 @@ cause:
   - {repo: blab-matlab, path: mcode/AudapterIO.m, lines: [29, 29], hl: [29], expect: bgainadapt, note: 'AudapterIO always sends it, overriding the C++ default of 1.'}
   fix_label: Options
   fix: >-
-    Decide deliberately: set <code>p.gainAdapt = 1</code> if the level should stay constant across shifts (it restores the level to within
-    about ±2 dB on most voices here, but not all), or keep 0 and treat the level as part of the manipulation, logging it
-    (<code>signalOut</code> RMS per trial). Either way, a check of <code>signalOut</code> level by condition in existing data shows the
-    size of the cue. The gain-adaptation state (<code>static gain</code>, formant notes F14) did not carry over between trials in our test.
+    Decide deliberately. <code>p.gainAdapt = 1</code> equalises the unweighted level but not the heard level (with it on, lowering F1
+    makes the voice quieter, median {dn125_g1_med:+.1f} dBA here), so it does not remove the cue. Keep 0 and treat the level as part of the
+    manipulation, logging it (A-weighted <code>signalOut</code> level per trial), or match the A-weighted level per condition. Either way,
+    a check of <code>signalOut</code> level by condition in existing data shows the size of the cue. The gain-adaptation state (<code>static gain</code>, formant notes F14) did not carry over between trials in our test.
 verify:
 - {kind: H, what: report export (eight real voices, five perturbations, bGainAdapt 0 and 1; gain state across trials), name: report_loudcues.m}
 - {kind: R, what: reading, name: notes/formant.md, detail: 'F14: gainAdapt/gainPerturb keep static gain and lastSample across trials'}
-- {kind: H, what: public blab experiments run with their own scripts (labrun), name: labrun/README.md, detail: 'LABRUN-4, VOICES-3: per-trial heard level = signalOut × dScale re input, eight AI-generated voices (labrun/voices/README.md), bGainAdapt 0 as in every runner'}
-- {kind: H, what: independent check by the coordinator, name: a_fmtlevel.m, detail: 'VERIFY-FMT-LEVEL: F1 −125 mel +4.9 to +7.0 dB, +125 mel −1.0 to −3.8 dB on three ARCTIC sentences'}
+- {kind: H, what: public blab experiments run with their own scripts (labrun), name: labrun/README.md, detail: 'LABRUN-4, VOICES-3: per-trial heard level = signalOut × dScale re input (summary.tsv gain_dBA; gain_dB unweighted), eight AI-generated voices (labrun/voices/README.md), bGainAdapt 0 as in every runner'}
+- {kind: H, what: independent check by the coordinator (plain RMS), name: a_fmtlevel.m, detail: 'VERIFY-FMT-LEVEL: F1 −125 mel +4.9 to +7.0 dB RMS, +125 mel −1.0 to −3.8 dB RMS on three ARCTIC sentences'}
 reproduce: cd audit/harness && ./run-oct.sh report_loudcues.m

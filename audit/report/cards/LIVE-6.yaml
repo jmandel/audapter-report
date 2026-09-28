@@ -32,7 +32,7 @@ scope: >-
   audio code, built with GCC on Linux, with a modelled ASIO driver), so rates are indicative.
 example: >-
   A 128-sample device buffer instead of 96: over {callbacks} callbacks, Audapter processed nothing, <code>getData</code> returned {getdata_rows} row, and the participant
-  heard the unprocessed voice decimated by 2 and gated on and off {gate_hz:.0f} times a second, {heard_re_mic_db:.1f} dB relative to the microphone.
+  heard the unprocessed voice decimated by 2 and gated on and off {gate_hz:.0f} times a second, {heard_re_mic_dba:.1f} dBA relative to the microphone.
 figure_caption: 'Three 128-sample device buffers: what the callback does with each, and what reaches the headphones.'
 table:
 - - live simulation
@@ -43,7 +43,7 @@ table:
   - '{callbacks} / {getdata_rows}'
 - - live simulation
   - Heard level re microphone
-  - '{heard_re_mic_db:.1f} dB, gated at {gate_hz:.0f} Hz'
+  - '{heard_re_mic_dba:.1f} dBA, gated at {gate_hz:.0f} Hz'
 sketch: live6
 asset_dir: live-6
 audio:

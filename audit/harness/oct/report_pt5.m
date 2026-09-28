@@ -5,6 +5,9 @@
 % Usage: ./run-oct.sh report_pt5.m
 % Output: out/report/pt-5/blab/{*.wav,data.json}
 p = defparams('female'); fs = p.sr * p.downFact; fr = p.frameLen / p.sr;
+% A-weighted level of output re input from sample a on (dBA, report_aweight.m): the report's main level measure
+lvA = @(d, sr, ix) 20*log10(rms(report_aweight(d.signalOut, sr)(ix)) / rms(report_aweight(d.signalIn, sr)(ix)));
+from = @(d, a) a:numel(d.signalOut);
 fid = fopen('cfg/report_step.ost', 'w'); fprintf(fid, 'rmsSlopeWin = 0.030000\n\nn = 2\n0 ELAPSED_TIME 0.6 NaN {}\n1 OST_END NaN NaN {}\n\nn = 0\n'); fclose(fid);
 fid = fopen('cfg/report_step.pcf', 'w'); fprintf(fid, '0\n\n2\n0, 0, 0, 0, 0\n1, 2, 0, 0, 0\n'); fclose(fid);
 F0D = 120;   % as in t_pitch.m; the F0/vowel sweep below shows how the step size varies
@@ -46,14 +49,15 @@ printf('ampnorm: %s | %s\n', r.ampnorm(1).result, r.ampnorm(2).result);
 % Sweep: steady-state gain at 0 st and +2 st (constant ratio), over F0 and vowel
 V = struct('name', {'a', 'i'}, 'F', {[850 1220 2810 3800], [300 2300 3000 3800]}); sw = [];
 for iv = 1:2, for f0 = [100 120 150 180 220 260]
-  xs = synth_vowel(fs, 0.8, f0, V(iv).F, [80 100 150 200]); g = [];
+  xs = synth_vowel(fs, 0.8, f0, V(iv).F, [80 100 150 200]); g = []; ga = [];
   for st = [0 2]
     q = p; q.bPitchShift = 1; q.pitchShiftRatio = 2^(st/12); d = run_trial(q, xs); mm = round(0.35*p.sr):round(0.75*p.sr);
-    g(end+1) = 20*log10(rms(d.signalOut(mm)) / rms(d.signalIn(mm)));
+    g(end+1) = 20*log10(rms(d.signalOut(mm)) / rms(d.signalIn(mm))); ga(numel(g)) = lvA(d, p.sr, mm);
   end
-  sw(end+1,:) = [iv, f0, g]; printf('sweep /%s/ F0 %d: 0 st %+.2f dB, +2 st %+.2f dB, step %.2f dB\n', V(iv).name, f0, g(1), g(2), g(2)-g(1));
+  sw(end+1,:) = [iv, f0, g, ga]; printf('sweep /%s/ F0 %d: 0 st %+.2f dB, +2 st %+.2f dB, step %.2f dB RMS, %.2f dBA\n', V(iv).name, f0, g(1), g(2), g(2)-g(1), ga(2)-ga(1));
 end, end
-r.sweep = struct('vowel', {V(sw(:,1)).name}, 'f0', num2cell(sw(:,2))', 'gain0_db', num2cell(round(sw(:,3)*100)/100)', 'gain2_db', num2cell(round(sw(:,4)*100)/100)');
+r.sweep = struct('vowel', {V(sw(:,1)).name}, 'f0', num2cell(sw(:,2))', 'gain0_db', num2cell(round(sw(:,3)*100)/100)', 'gain2_db', num2cell(round(sw(:,4)*100)/100)', ...
+  'gain0_dba', num2cell(round(sw(:,5)*100)/100)', 'gain2_dba', num2cell(round(sw(:,6)*100)/100)');
 
 % ---- Main example (EXP-11, COORD-4): a time-warp experiment at blab's timeAdapt settings (free-speech
 % run_measureDuration_audapter.m: sRate 48000, downFact 2 -> 24 kHz, frameLen 48, bPitchShift = 1 "needed if time warping
@@ -92,7 +96,8 @@ if strcmp(getenv('SCEN'), 'timewrap')   % blab's timeWrap / cerebTimeAdapt setti
   audiowrite(fullfile(md, 'tw_later_out.wav'), d1.signalOut, pt.sr, 'BitsPerSample', 16);
   audiowrite(fullfile(md, 'tw_later_warp_out.wav'), d2.signalOut, pt.sr, 'BitsPerSample', 16);
   o0 = onset(c0.signalOut, pt.sr) - onset(c0.signalIn, pt.sr); o1 = onset(c1.signalOut, pt.sr) - onset(c1.signalIn, pt.sr);
-  rt = struct('pre_db', lv(d0), 'later_db', lv(d1), 'later_warp_db', lv(d2), 'lat_pre_ms', 1000*median(o0), 'lat_later_ms', 1000*median(o1), ...
+  la = @(d) lvA(d, pt.sr, from(d, round(0.1*pt.sr)));
+  rt = struct('pre_db', lv(d0), 'later_db', lv(d1), 'later_warp_db', lv(d2), 'pre_dba', la(d0), 'later_dba', la(d1), 'later_warp_dba', la(d2), 'lat_pre_ms', 1000*median(o0), 'lat_later_ms', 1000*median(o1), ...
               'lat_pre_all_ms', 1000*o0, 'lat_later_all_ms', 1000*o1);
   printf('timeWrap/cerebTimeAdapt settings: pre %+.2f dB, later (zero-length warp row) %+.2f dB, later (warp trial) %+.2f dB; click latency pre %.1f ms, later %.1f ms\n', ...
          rt.pre_db, rt.later_db, rt.later_warp_db, rt.lat_pre_ms, rt.lat_later_ms);
@@ -100,6 +105,20 @@ if strcmp(getenv('SCEN'), 'timewrap')   % blab's timeWrap / cerebTimeAdapt setti
      'sequence', {{'pre phase: bPitchShift 0, no PCF', 'later phases: bPitchShift 1 with a warp-row PCF'}}, ...
      'switching', 'pre phase: bPitchShift 0 and no PCF; later phases: bPitchShift 1 and a PCF with a warp row on every trial (zero-length on control trials)', ...
      'input', sprintf('real speech: CMU ARCTIC %s "There was a change now." (female), first %.2f s; clicks (Hann, 1 ms) for latency', cw, numel(xw) / 48000));
+  % the pre -> later step on four voices (both presets), same phase order and settings
+  vw = {'arctic_bdl_a0005', 'male'; 'arctic_rms_a0018', 'male'; 'arctic_clb_a0018', 'female'; 'arctic_slt_a0036', 'female'};
+  rt.voices = struct('clip', {}, 'pre_db', {}, 'later_db', {}, 'pre_dba', {}, 'later_dba', {});
+  for i = 1:size(vw, 1)
+    xv = corpus_wav(M(strcmp({M.id}, vw{i,1}))); xv = xv(1:min(end, round(1.75*48000)));
+    pv = getAudapterDefaultParams(vw{i,2}); pv.downFact = 2; pv.sr = 24000; pv.frameLen = 32; pv.nDelay = 3; pv.fb = 1;
+    Audapter('ost', '', 0); Audapter('pcf', '', 0);
+    q = pv; q.bPitchShift = 0; AudapterIO('init', q); e0 = run_trial(q, xv, 'init', false);
+    q = pv; q.bPitchShift = 1; AudapterIO('init', q); Audapter('ost', 'cfg/one.ost', 0); Audapter('pcf', 'cfg/report_pt5_tw_zero.pcf', 0);
+    e1 = run_trial(q, xv, 'init', false);
+    rt.voices(end+1) = struct('clip', vw{i,1}, 'pre_db', lv(e0), 'later_db', lv(e1), 'pre_dba', la(e0), 'later_dba', la(e1));
+    printf('timeWrap settings, %s (%s preset): pre %+.2f dB RMS / %+.2f dBA, later %+.2f dB RMS / %+.2f dBA\n', vw{i,1}, vw{i,2}, lv(e0), la(e0), lv(e1), la(e1));
+  end
+  Audapter('ost', '', 0); Audapter('pcf', '', 0);
   report_json(fullfile(md, 'timewrap.json'), rt); return;
 end
 if strcmp(getenv('SCEN'), 'cereb')   % fresh process: a warp PCF loaded earlier keeps the vocoder in warp mode even after pcf '' (OST-F5 note)
@@ -113,10 +132,16 @@ for b = [0 1]
   audiowrite(fullfile(md, sprintf('cereb_b%d_out.wav', b)), d.signalOut, pc5.sr, 'BitsPerSample', 16);
   if b == 0, audiowrite(fullfile(md, 'cereb_in.wav'), d.signalIn, pc5.sr, 'BitsPerSample', 16); end
   rc.(sprintf('b%d_db', b)) = 20*log10(rms(d.signalOut(round(0.1*pc5.sr):end)) / rms(d.signalIn(round(0.1*pc5.sr):end)));
+  rc.(sprintf('b%d_dba', b)) = lvA(d, pc5.sr, from(d, round(0.1*pc5.sr)));
   if b == 1, PC5 = pc5; end
 end
 case_mark('');
-printf('cerebTypicalProduction settings: bPitchShift 0 %+.2f dB, bPitchShift 1 %+.2f dB re input\n', rc.b0_db, rc.b1_db);
+% the same no-PCF phase after warp trials in the same session: the vocoder stays in warp mode after pcf '' (OST-F5 note)
+Audapter('ost', 'cfg/one.ost', 0); Audapter('pcf', 'cfg/report_pt5_warp.pcf', 0); run_trial(PC5, xw, 'init', false);
+Audapter('ost', '', 0); Audapter('pcf', '', 0); d = run_trial(PC5, xw);
+rc.b1_after_warp_db = 20*log10(rms(d.signalOut(round(0.1*PC5.sr):end)) / rms(d.signalIn(round(0.1*PC5.sr):end)));
+rc.b1_after_warp_dba = lvA(d, PC5.sr, from(d, round(0.1*PC5.sr)));
+printf('cerebTypicalProduction settings: bPitchShift 0 %+.2f dB, bPitchShift 1 %+.2f dB re input; no-PCF trial after warp trials %+.2f dB (%+.2f dBA)\n', rc.b0_db, rc.b1_db, rc.b1_after_warp_db, rc.b1_after_warp_dba);
 rc.settings = report_settings(PC5, 'female', 'sequence', {{'baseline: bPitchShift 0', 'later phases: bPitchShift 1'}}, ...
   'switching', 'phase change: bPitchShift 0 in the baseline, 1 afterwards; no OST or PCF', ...
   'input', sprintf('real speech: CMU ARCTIC %s "There was a change now." (female), first %.2f s', cw, numel(xw) / 48000));
@@ -144,10 +169,11 @@ for f = {'none', 'zero', 'warp'}
   AudapterIO('init', p16); Audapter('ost', 'cfg/one.ost', 0); Audapter('pcf', sprintf('cfg/report_pt5_%s.pcf', f{1}), 0);
   d = run_trial(p16, xw, 'init', false);
   lv16.(f{1}) = 20*log10(rms(d.signalOut(round(0.1*p16.sr):end)) / rms(d.signalIn(round(0.1*p16.sr):end)));
+  lv16a.([f{1} '_dba']) = lvA(d, p16.sr, from(d, round(0.1*p16.sr)));
 end
 printf('16 kHz / frameLen 32: no warp section %+.2f dB, zero-length warp row %+.2f dB, warp %+.2f dB\n', lv16.none, lv16.zero, lv16.warp);
 Audapter('ost', '', 0); Audapter('pcf', '', 0);
-r.warp16 = lv16;
+r.warp16 = lv16; for f = fieldnames(lv16a)', r.warp16.(f{1}) = lv16a.(f{1}); end
 q = pw; q.bPitchShift = 0; d = run_trial(q, xw);            % reference: no vocoder (e.g. the measureFormants calibration)
 audiowrite(fullfile(md, 'warp_ref_out.wav'), d.signalOut, pw.sr, 'BitsPerSample', 16);
 

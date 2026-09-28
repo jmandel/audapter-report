@@ -88,6 +88,10 @@ One visual grammar for every finding, drawn from data by `build.py` (inline SVG,
   - Context (previous trial, OST states for reference): pale grey fill.
 - **Continuous values** (F0, level) as line tiers with 2–3 hairline gridlines labelled inside the plot. There is never a
   second y-axis. Level is plotted *relative to a reference run* (e.g. `bPitchShift = 0`), so the expected line is 0 dB.
+- **Level units** (convention since 2026-09-28): level differences are A-weighted, in **dBA** (20·log10 of the ratio of
+  A-weighted RMS; `loudness.a_weight`/`active_rms`, harness `report_aweight.m`, `measure.span(..., "levelA")`); perceived loudness
+  is the ISO 532-1 loudness-level difference in **phon**, as a range over 60–85 dB SPL (`loudness.py`). Plain RMS appears only
+  in evidence sections, labelled RMS. Gains, peaks and parameter values (dB settings, peak ratios) stay in dB.
 - **Identity is never colour alone**: sub-labels, direct labels, the shape (circle /a/, square /i/) plus a legend in the sweep chart.
 - **Every figure has** an SVG `<title>`/`<desc>` generated from the same numbers, `<title>` tooltips on marks, a
   "Numbers behind this figure" table, and a link to `data.json`.

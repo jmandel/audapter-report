@@ -1,10 +1,10 @@
-"""vsaGeneralize fb 4 gain (EXP-5): p.fb4Gain is not forwarded by AudapterIO; the level difference, measured on the WAVs."""
+"""vsaGeneralize fb 4 gain (EXP-5): p.fb4Gain is not forwarded by AudapterIO; the A-weighted level difference (dBA), measured on the WAVs."""
 import os
 import measure as M
 
 
 def _lv(d, f):
-    return M.span(os.path.join(d["_dir"], "..", "vsa-meas", f), 0.3, 1.1, "level", inner=1.0)
+    return M.span(os.path.join(d["_dir"], "..", "vsa-meas", f), 0.3, 1.1, "levelA", inner=1.0)
 
 
 def sketch(d, up):
@@ -20,15 +20,15 @@ def sketch(d, up):
         else:
             out.append(f'<text class="sk-lab" x="{X0 - 8}" y="{y + 18}" text-anchor="end">{html.escape(lab)}</text>')
         out.append(f'<rect class="{cls}" x="{X0}" y="{y + 4}" width="{x(v) - X0:.1f}" height="20" rx="2"/>'
-                   f'<text class="sk-val" x="{x(v) + 6:.1f}" y="{y + 19}">{v:.1f} dBFS</text>'); y += 32
+                   f'<text class="sk-val" x="{x(v) + 6:.1f}" y="{y + 19}">{v:.1f} dBFS(A)</text>'); y += 32
     out.append(f'<rect class="sk-disc" x="{x(a):.1f}" y="{y - 30}" width="{x(b) - x(a):.1f}" height="24"/>')
-    out.append(f'<text class="sk-note" x="{X0 if SL.NARROW else x(a):.1f}" y="{y + 12}">+{b - a:.1f} dB louder{"" if SL.NARROW else " masking noise"} than the script sets</text>'); y += 24
+    out.append(f'<text class="sk-note" x="{X0 if SL.NARROW else x(a):.1f}" y="{y + 12}">+{b - a:.1f} dBA louder{"" if SL.NARROW else " masking noise"} than the script sets</text>'); y += 24
     for t in (-45, -40, -35, -30, -25, -20):
         out.append(f'<text class="sk-tick" x="{x(t):.1f}" y="{y + 12}" text-anchor="middle">{t}</text>')
-    out.append(f'<text class="sk-axlab" x="{X1}" y="{y + 28}" text-anchor="end">fb 4 output level, dBFS (measured)</text>'); y += 34
+    out.append(f'<text class="sk-axlab" x="{X1}" y="{y + 28}" text-anchor="end">fb 4 output level, A-weighted, dB re full scale (measured)</text>'); y += 34
     sfx = "-n" if SL.NARROW else ""
     return (f'<svg class="sketch sk-{SL.LAYOUT}" id="sk-vsa-fb4{sfx}" viewBox="0 0 {W} {y}" role="img" aria-label="fb 4 output level: '
-            f'{a:.1f} dBFS intended, {b:.1f} dBFS as committed">{"".join(out)}</svg>')
+            f'{a:.1f} dBFS A-weighted intended, {b:.1f} dBFS A-weighted as committed">{"".join(out)}</svg>')
 
 
 def derive(d, up):

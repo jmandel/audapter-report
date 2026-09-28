@@ -27,7 +27,7 @@ scope: >-
 example: >-
   Audapter's own 2008 example trial <code>diao1_female</code>, replayed with its saved parameters (mel-unit <code>pertAmp</code> up to 164) merged into today's defaults.
   In mel mode, as in 2008, F1 is raised ×{mel_r:.3f}. Under today's ratio default F1 is multiplied by {ratio_r:.1f}, targets reach {ratio_max:.0f} Hz with a {nyq:.0f}
-  Hz Nyquist frequency, and the output is {ratio_gain:+.1f} dB louder than the input, peaking at {ratio_peak:.1f} times full scale.
+  Hz Nyquist frequency, and the output is {ratio_gain:+.1f} dBA louder than the input, peaking at {ratio_peak:.1f} times full scale.
 figure_caption: >-
   One trial: tracked F1 and the shifted F1 target in mel mode and in ratio mode, on a log frequency axis.
 table:
@@ -39,7 +39,7 @@ table:
   - '{ratio_max:.0f} Hz (Nyquist {nyq:.0f} Hz)'
 - - real recording
   - Output re input, ratio mode
-  - '{ratio_gain:+.1f} dB, peak {ratio_peak:.2f} × full scale'
+  - '{ratio_gain:+.1f} dBA, peak {ratio_peak:.2f} × full scale'
 sketch: corpus11
 asset_dir: corpus-11
 audio:

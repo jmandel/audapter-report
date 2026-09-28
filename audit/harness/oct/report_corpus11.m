@@ -18,18 +18,19 @@ case_mark('observed');   % Playground test case capture (audit/playground/captur
 for i = 1:2
   q = p; q.bRatioShift = modes{i,2}; q.bMelShift = modes{i,3}; d = run_trial(q, x); k = d.sfmts(:,1) > 0;
   s = struct('ratio_F1', median(d.sfmts(k,1) ./ d.fmts(k,1)), 'max_sF1_hz', max(d.sfmts(:,1)), 'shifted_frames', nnz(k), ...
-    'gain_db', 20*log10(rms(d.signalOut) / rms(d.signalIn)), 'peak', max(abs(d.signalOut)));
+    'gain_db', 20*log10(rms(d.signalOut) / rms(d.signalIn)), 'peak', max(abs(d.signalOut)), ...
+    'gain_dba', 20*log10(rms(report_aweight(d.signalOut, q.sr)) / rms(report_aweight(d.signalIn, q.sr))));   % A-weighted (dBA)
   kk = 1:2:size(d.fmts, 1);
   s.t = round((kk-1) * r.frame_s * 1e4) / 1e4; s.F1 = round(d.fmts(kk,1))'; s.sF1 = round(d.sfmts(kk,1))';
   r.(modes{i,1}) = s; D.(modes{i,1}) = d;
 end
 case_mark('');
 k = G.sfmts(:,1) > 0; r.online_ratio_F1 = median(G.sfmts(k,1) ./ G.fmts(k,1)); r.online_shifted_frames = nnz(k);
-printf('ratio: x%.1f, max sF1 %.0f Hz, %+.1f dB, peak %.2f | mel: x%.3f (online x%.3f)\n', r.ratio.ratio_F1, r.ratio.max_sF1_hz, r.ratio.gain_db, r.ratio.peak, r.mel.ratio_F1, r.online_ratio_F1);
+printf('ratio: x%.1f, max sF1 %.0f Hz, %+.1f dB RMS (%+.1f dBA), peak %.2f | mel: x%.3f (online x%.3f)\n', r.ratio.ratio_F1, r.ratio.max_sF1_hz, r.ratio.gain_db, r.ratio.gain_dba, r.ratio.peak, r.mel.ratio_F1, r.online_ratio_F1);
 od = report_outdir('corpus-11');
 c = struct('name', {'input', 'output_mel', 'output_ratio'}, 'x', {D.mel.signalIn, D.mel.signalOut, D.ratio.signalOut}, ...
   'label', {'Input: the 2008 recording (Mandarin syllable)', 'Output with mel shift, as in the 2008 session', 'Output with the same parameters under today''s ratio default'}, ...
-  'warn', {'', '', 'Very loud: the ratio-mode output is about +24 dB and clips; the clip is scaled down so its peak is at -1 dBFS.'});
+  'warn', {'', '', sprintf('Very loud: the ratio-mode output is about %+.0f dBA above the input and clips; the clip is scaled down so its peak is at -1 dBFS.', r.ratio.gain_dba)});
 r.audio = report_wavgroup(od, p.sr, c);
 r.settings = report_settings(p, corpus_preset(m), 'switching', 'one trial per shift mode', 'input', m.id);
 report_json(fullfile(od, 'data.json'), r);

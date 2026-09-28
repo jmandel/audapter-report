@@ -98,7 +98,7 @@ end
 fclose(sfid);
 mkdir(fullfile(work, 'mex')); copyfile(getenv('LR_MEX'), fullfile(work, 'mex', 'AudapterReal.mex'));
 mkdir(fullfile(work, 'lib'));
-for f = {'synth_vowel.m', 'est_formants.m', 'est_f0.m'}, copyfile(fullfile(getenv('LR_HARNESS'), f{1}), fullfile(work, 'lib', f{1})); end
+for f = {'synth_vowel.m', 'est_formants.m', 'est_f0.m', 'report_aweight.m'}, copyfile(fullfile(getenv('LR_HARNESS'), f{1}), fullfile(work, 'lib', f{1})); end
 % --- path: (front) labrun shims, MEX; expt dir; repos (genpath); audapter_matlab mcode; (back) analysis lib ---
 addpath(fullfile(work, 'repos', 'audapter_matlab', 'mcode'));
 roots = plan.paths; if isempty(roots) || all(ismember(roots, markers(:, 1))), roots = [repos, roots]; end

@@ -4,9 +4,10 @@ import measure as M
 from sketches import evlib
 
 
-def lv(d, f):
-    md = os.path.join(d["_dir"], "meas"); lin = M.span(os.path.join(md, "in.wav"), 0.1, 1.7, "level", inner=1.0)
-    return M.span(os.path.join(md, f), 0.1, 1.7, "level", inner=1.0) - lin
+def lv(d, f, what="levelA"):
+    """Heard level re spoken over the sentence: dBA (A-weighted; what="level" gives the plain RMS difference, for evidence)."""
+    md = os.path.join(d["_dir"], "meas"); lin = M.span(os.path.join(md, "in.wav"), 0.1, 1.7, what, inner=1.0)
+    return M.span(os.path.join(md, f), 0.1, 1.7, what, inner=1.0) - lin
 
 
 def sketch(d, up):
@@ -16,14 +17,15 @@ def sketch(d, up):
         if key == "b1":
             tr["exp"] = tr["obs"] = {"pert": [(0.02, dur - 0.02, "vocoder on (p.bPitchShift 1)")], "vals": ["as designed"]}
         else:
-            tr["exp"] = {"pert": [], "none": "vocoder off (field absent from p)", "vals": [f"{e:+.1f} dB"]}
-            tr["obs"] = {"pert": [(0.02, dur - 0.02, "vocoder still on")], "vals": [f"{o:+.1f} dB"], "diff": [(0.1, dur - 0.1)]}
+            tr["exp"] = {"pert": [], "none": "vocoder off (field absent from p)", "vals": [f"{e:+.1f} dBA"]}
+            tr["obs"] = {"pert": [(0.02, dur - 0.02, "vocoder still on")], "vals": [f"{o:+.1f} dBA"], "diff": [(0.1, dur - 0.1)]}
         trials.append(tr)
     return evlib.render({"sid": "sk-init-persist", "trials": trials, "gap": 0.4,
-                         "rows": {"words": "Speech", "pert": "Phase vocoder", "vals": "Level heard vs spoken"},
+                         "rows": {"words": "Speech", "pert": "Phase vocoder", "vals": "Heard level, dBA"},
                          "between": {1: "AudapterIO('init', p) with a p that has no bPitchShift field"},
-                         "callout": "Block 2 keeps block 1's vocoder: the voice is 3.5 dB louder", "callout_anchor": "end"})
+                         "callout": f"Block 2 keeps block 1's vocoder: the voice is {o - e:.1f} dBA louder", "callout_anchor": "end"})
 
 
 def derive(d, up):
-    return {"exp_db": lv(d, "expected.wav"), "obs_db": lv(d, "observed.wav"), "bps": d["bpitchshift_after"]}
+    return {"exp_db": lv(d, "expected.wav"), "obs_db": lv(d, "observed.wav"), "bps": d["bpitchshift_after"],
+            "exp_rms": lv(d, "expected.wav", "level"), "obs_rms": lv(d, "observed.wav", "level")}

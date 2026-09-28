@@ -207,6 +207,10 @@ replay> within +-0.03, i.e. about +-0.25 dB, and level no more than 2 dB above t
 difference|, Hz) and `gain_voice_dB` (the replay re input); summary.md counts the replays that failed. Heard levels,
 WAVs and every reported number use the recorded `signalOut`; the replay is only an independent view of the voice.
 
+**Heard level.** `gain_dB` is the heard signal (`signalOut` × `params.scale`, i.e. dScale, aligned to the input) re the input,
+plain RMS over the input's voiced samples (20 ms envelope above 0.1 × its maximum). `gain_dBA` is the same with both signals
+A-weighted first (harness `report_aweight.m`, identical to the report's `loudness.a_weight`); the report quotes level differences in dBA.
+
 **Intended vs actual.** At every `start` the runner's parameter struct (`p`, `params` or `expt.audapterParams`,
 read from its workspace) is compared with what Audapter reports through `getParam`, using the field→parameter map
 parsed from the `AudapterIO.m` on the path. `mismatch`: the struct holds a value Audapter does not have (e.g. a

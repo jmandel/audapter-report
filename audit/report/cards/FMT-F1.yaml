@@ -26,7 +26,7 @@ scope: >-
 example: >-
   A 100-value trajectory at 700 Hz on a vowel. Audapter copies 2048 values, {n_past} of them from past MATLAB's array. In this run the clamp followed the 100 values,
   then memory values until the first zero at element {first_zero}, and held a target of {stuck} Hz: F1 pushed to 0 Hz, and the output peaked at {short_out_max:.0f}
-  times full scale, {gain_db:.0f} dB above the padded control.
+  times full scale, a peak {gain_db:.0f} dB above the padded control's.
 figure_caption: >-
   The array MATLAB passed and the part Audapter reads; below, one trial's logged F1 target. Values past element 100 are from this run and change between runs.
 table:

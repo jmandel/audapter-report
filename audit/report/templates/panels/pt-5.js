@@ -36,7 +36,7 @@ AudPanels.register('pt-5', async function (P) {
       function () { P.play(ref.signalOut, 16000, GAIN); });
     P.variants.forEach(function (v) {
       var d = R[v][k];
-      h += P.row(v === 'shipped' ? 'As released' : 'With the fix', 'level re input, 20 ms', P.line(d.lev, dt, T1, -4.5, 5, v === 'shipped' ? 'observed' : 'expected', [-3, 0, 3], ' dB'),
+      h += P.row(v === 'shipped' ? 'As released' : 'With the fix', 'RMS level re input, 20 ms', P.line(d.lev, dt, T1, -4.5, 5, v === 'shipped' ? 'observed' : 'expected', [-3, 0, 3], ' dB'),
         'before ' + sgn(d.before) + ' dB<br>after ' + sgn(d.after) + ' dB<br>step ' + sgn(d.after - d.before) + ' dB',
         function () { P.play(d.signalOut, 16000, GAIN); });
     });

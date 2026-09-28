@@ -185,36 +185,44 @@ def load_loudness():
             if not os.path.exists(p) or __import__("hashlib").sha256(open(p, "rb").read()).hexdigest()[:16] != sha:
                 fail(f"loudness.json is stale for '{k}' ({rel} changed): re-run report/loudness.py")
 
-JND_DB = 1.0
+JND_PHON = 1.0
 def loud_verdict(r):
-    a, b = r["equiv_min"], r["equiv_max"]
-    if min(abs(a), abs(b)) >= JND_DB and a * b > 0:
-        return "above the ~1 dB just-noticeable difference at every level"
-    if max(abs(a), abs(b)) < JND_DB:
-        return "below the ~1 dB just-noticeable difference at every level"
+    a, b = r["dphon_min"], r["dphon_max"]
+    if min(abs(a), abs(b)) >= JND_PHON and a * b > 0:
+        return "at least 1 phon at every presentation level, above the ~1 dB just-noticeable difference"
+    if max(abs(a), abs(b)) < JND_PHON:
+        return "under 1 phon at every presentation level, below the ~1 dB just-noticeable difference"
     return "near the ~1 dB just-noticeable difference; depends on presentation level"
 
+def loud_name(k):
+    return k.split(": ", 1)[-1] if ": " in k else k
+
 def loud_html(ids, note=""):
+    """Level (dBA) and loudness level (phon, ISO 532-1) of the card's expected-vs-observed pairs (loudness.json). The plain RMS
+    difference appears only in the collapsed evidence table."""
     if not LOUD.get("pairs"):
         return ""
     rows = []
     for k in ids:
         r = LOUD["pairs"].get(k)
-        if r is None:
-            fail(f"loudness pair '{k}' not in loudness.json")
-        rows.append(f'<tr><th scope="row">{E(k)}</th><td>{r["rms_db"]:+.1f} dB</td>'
-                    f'<td>{r["dphon_min"]:+.1f} to {r["dphon_max"]:+.1f} phon (≈ {r["equiv_min"]:+.1f} to {r["equiv_max"]:+.1f} dB); ratio {r["ratio_min"]:.2f}–{r["ratio_max"]:.2f}</td>'
-                    f'<td>{r["ecma_dphon_min"]:+.1f} to {r["ecma_dphon_max"]:+.1f}</td><td>{E(loud_verdict(r))}</td></tr>')
-    r0 = LOUD["pairs"][ids[0]]
-    line = (f'<p class="loudline"><strong>Perceived loudness (model estimate):</strong> for {E(ids[0].split(": ", 1)[-1] if ": " in ids[0] else ids[0])}, '
-            f'a level change of {r0["rms_db"]:+.1f} dB sounds like {r0["equiv_min"]:+.1f} to {r0["equiv_max"]:+.1f} dB '
-            f'({r0["dphon_min"]:+.1f} to {r0["dphon_max"]:+.1f} phon) across presentation levels of 60–85 dB SPL (ISO 532-1); '
-            f'ECMA-418-2 gives {r0["ecma_dphon_min"]:+.1f} to {r0["ecma_dphon_max"]:+.1f} phon-equivalent. {E(loud_verdict(r0)[0].upper() + loud_verdict(r0)[1:])}.{" The model adds little here: the change is close to a pure gain." if abs((r0["equiv_min"] + r0["equiv_max"]) / 2 - r0["rms_db"]) < 0.5 else " Level and loudness differ here because the change also reshapes the spectrum."}</p>')
-    return line + (f'<details class="loud"><summary>All loudness estimates for this card, and the assumptions</summary>'
-            f'<table class="plain loudtab"><thead><tr><th scope="col">Comparison (expected → observed)</th><th scope="col">Level (RMS, exact)</th>'
-            f'<th scope="col">Loudness, ISO 532-1 Zwicker N5, at 60–85 dB SPL</th><th scope="col">ECMA-418-2, phon-equivalent</th><th scope="col">Noticeable?</th></tr></thead>'
-            f'<tbody>{"".join(rows)}</tbody></table><p class="norm">Model estimates for a normal-hearing listener on headphones with a flat response, '
-            f'the expected clip presented at 60, 70, 80 and 85 dB SPL (A-weighted) and the observed clip at the same gain. '
+        if r is None or "dba_db" not in r:
+            fail(f"loudness pair '{k}' not in loudness.json (or computed before dBA was added): re-run report/loudness.py")
+        rows.append(f'<tr><th scope="row">{E(k)}</th><td>{r["dba_db"]:+.1f} dBA</td>'
+                    f'<td>{r["dphon_min"]:+.1f} to {r["dphon_max"]:+.1f} phon (loudness ratio {r["ratio_min"]:.2f}–{r["ratio_max"]:.2f})</td>'
+                    f'<td>{r["rms_db"]:+.1f} dB</td><td>{E(loud_verdict(r))}</td></tr>')
+    r0 = LOUD["pairs"][ids[0]]; mid = (r0["dphon_min"] + r0["dphon_max"]) / 2
+    agree = (" Level and loudness agree here: the change is close to a pure gain." if abs(mid - r0["dba_db"]) < 0.5 else
+             f' The loudness level changes {"less" if abs(mid) < abs(r0["dba_db"]) else "more"} than the A-weighted level because the change also reshapes the spectrum.')
+    v = loud_verdict(r0)
+    line = (f'<p class="loudline"><strong>Level and loudness:</strong> for {E(loud_name(ids[0]))}, the heard level changes by '
+            f'{r0["dba_db"]:+.1f} dBA and the loudness level by {r0["dphon_min"]:+.1f} to {r0["dphon_max"]:+.1f} phon (ISO 532-1, 60–85 dB SPL): '
+            f'{E(v)}.{agree}</p>')
+    return line + (f'<details class="loud"><summary>All level and loudness estimates for this card, and the assumptions</summary>'
+            f'<table class="plain loudtab"><thead><tr><th scope="col">Comparison (expected → observed)</th><th scope="col">Level, dBA</th>'
+            f'<th scope="col">Loudness level, phon (ISO 532-1, 60–85 dB SPL)</th><th scope="col">Plain RMS level</th><th scope="col">Noticeable?</th></tr></thead>'
+            f'<tbody>{"".join(rows)}</tbody></table><p class="norm">dBA: the A-weighted level difference, measured on the audio. Phon: model estimates '
+            f'(ISO 532-1, Zwicker) for a normal-hearing listener on headphones with a flat response, the expected clip presented at 60, 70, 80 and 85 dB SPL '
+            f'(A-weighted) and the observed clip at the same gain. Plain RMS: the unweighted level difference, for reference. '
             f'Older or clinical listeners and real headphones may differ. {note} <a href="#loudmodel">How this is computed</a>.</p></details>')
 
 def card_html(repos, card, tests, data, up, asset_rel, variants):
@@ -465,8 +473,8 @@ def short_html(repos, items):
   <p class="short-meta"><span class="fid">{E(r["id"])}</span> <span class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev}</span>
     <span class="vk-l">{r["status"]}</span></p>
   <h3 id="{slug(r["id"])}-h">{E(r["title"])}</h3>
-  <p><strong>What happens.</strong> {r["what"]}</p>
-  <p><strong>When it matters.</strong> {r["scope"]}</p>
+  <p><strong>What happens.</strong> {section_text(r["what"])}</p>
+  <p><strong>When it matters.</strong> {section_text(r["scope"])}</p>
   {loud_html(r.get("loudness", []), r.get("loudness_note", "")) if r.get("loudness") else ""}
   {refs}
   <p class="since">{r.get("since", SINCE_LINE[r["origin"]])}</p>
@@ -496,7 +504,7 @@ def table_html(rows, short=(), sections=()):
         sev, sevc = SEV[r["sev"]]
         bs = r.get("bs") or STUDIES.get(r["id"], "na")
         return (f'<tr><td class="t-id"><a href="#{href}">{E(r["id"])}</a></td><td><span class="sev {sevc}"><span class="glyph" aria-hidden="true"></span>{sev}</span></td>'
-                f'<td>{E(text)}</td><td class="t-bs"><span class="bs bs-{bs}">{BS[bs]}</span></td><td><span class="vk-l">{r["status"]}</span></td><td class="t-since">{SINCE[r["origin"]]}</td></tr>')
+                f'<td>{E(section_text(text))}</td><td class="t-bs"><span class="bs bs-{bs}">{BS[bs]}</span></td><td><span class="vk-l">{r["status"]}</span></td><td class="t-since">{SINCE[r["origin"]]}</td></tr>')
     out = []
     for sec in sections:
         items = [byid[i] for i in sec.get("cards", []) if i in byid]
@@ -702,7 +710,7 @@ def main():
             SECVALS[nk + '_dphon'] = LOUD['sanity'][k]['dphon_min']
     for k, r in LOUD.get('pairs', {}).items():
         key = 'L_' + re.sub(r'[^A-Za-z0-9]+', '_', k).strip('_')
-        SECVALS.update({key + '_' + x: r[x] for x in ('rms_db', 'equiv_min', 'equiv_max', 'dphon_min', 'dphon_max')})
+        SECVALS.update({key + '_' + x: r[x] for x in ('rms_db', 'dba_db', 'dphon_min', 'dphon_max') if x in r})
     variants = load_variants()
     os.makedirs(OUT, exist_ok=True)
     cards, manifest = {}, {"cards": {}}
@@ -757,7 +765,7 @@ def main():
     unplaced = [c["id"] for c in y["cards"] if c["id"] not in placed] + [i for i in shorts if i not in placed]
     if unplaced:
         fail(f"cards or short cards not placed in any section: {unplaced}")
-    page = (tpl.replace("{{CSS}}", css).replace("{{JS}}", js).replace("{{TITLE}}", E(y["report"]["title"]))
+    page = (section_text(tpl).replace("{{CSS}}", css).replace("{{JS}}", js).replace("{{TITLE}}", E(y["report"]["title"]))
                .replace("{{DATE}}", y["report"]["date"]).replace("{{TABLE}}", table_html(y["table"], y.get("short", []), y["sections"]))
                .replace("{{SECTIONS}}", "\n".join(body)).replace("{{DIFF}}", diff_html(tests))
                .replace("{{INTRO_FOUND}}", section_text(y["intro_found"])))

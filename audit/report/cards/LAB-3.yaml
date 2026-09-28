@@ -29,17 +29,17 @@ scope: >-
   without a warning. Audapter therefore uses its default of 10 dB, not the −0.18 dB that 0.98 corresponds to.
 example: >-
   A real sentence (CMU ARCTIC bdl "Will we ever forget it.") in fb 4 with the bundled babble. Measured on the audio: at the gain the
-  line suggests (0.98) the output would be {lv_int:.1f} dBFS; at the default level that actually plays, {lv_obs:.1f} dBFS
-  ({lv_diff:.1f} dB louder).
+  line suggests (0.98) the output would be {lv_int:.1f} dBFS (A-weighted); at the default level that actually plays,
+  {lv_obs:.1f} dBFS ({lv_diff:.1f} dBA louder).
 settings:
   source_html: "blab's <a href=\"https://github.com/blab-lab/vsaGeneralize/blob/0ec575ae1cde8402628b6cb5cd756467a95dd11d/run_vsaGeneralize_audapter.m#L62-L66\">vsaGeneralize run_vsaGeneralize_audapter.m lines 62–66 @0ec575a</a> (fb 4, p.fb4Gain = 0.98), bundled babble via free-speech get_noiseSource. Expected: fb4GainDB = 20·log10(0.98)."
   source: "blab's vsaGeneralize generalization phases (public runner)"
   input: "real: CMU ARCTIC bdl a0005 \"Will we ever forget it.\" (male); synthetic: male /ɑ/, 1 s"
   key_params: [fb, fb4Gain]
-figure_caption: Level of what the participant hears in fb 4 (speech-modulated babble), measured on the audio.
+figure_caption: A-weighted level of what the participant hears in fb 4 (speech-modulated babble), measured on the audio.
 table:
-- [real voice, 'fb 4 output level: the 0.98 the line suggests / the default that plays', '{lv_int:.1f} / {lv_obs:.1f} dBFS']
-- [real voice, 'Difference', '+{lv_diff:.1f} dB']
+- [real voice, 'fb 4 output level, A-weighted: the 0.98 the line suggests / the default that plays', '{lv_int:.1f} / {lv_obs:.1f} dBFS']
+- [real voice, 'Difference', '+{lv_diff:.1f} dBA']
 - [settings, 'fb4GainDB in effect / what 0.98 would be', '{db_obs:.1f} / {db_int:.2f} dB']
 loudness: ["LAB-3 fb 4 noise: 0.98 (intended) vs default"]
 loudness_note: "A pure gain change of the noise, so the model adds little to the level figure."
@@ -47,8 +47,8 @@ sketch: vsa_fb4
 asset_dir: vsa-fb4
 audio:
 - {file: fb4_input.wav, src: ../vsa-meas/fb4_real_in.wav, role: input, title: 'Input', label: 'the spoken sentence (not heard in fb 4)', no_playhead: true}
-- {file: fb4_expected.wav, src: ../vsa-meas/fb4_real_intended.wav, role: expected, title: 'Expected', label: 'noise at the gain the line suggests: {lv_int:.1f} dBFS', no_playhead: true}
-- {file: fb4_observed.wav, src: ../vsa-meas/fb4_real_committed.wav, role: observed, title: 'Observed', label: 'noise at the default level (what plays): {lv_obs:.1f} dBFS (+{lv_diff:.1f} dB)', no_playhead: true}
+- {file: fb4_expected.wav, src: ../vsa-meas/fb4_real_intended.wav, role: expected, title: 'Expected', label: 'noise at the gain the line suggests: {lv_int:.1f} dBFS (A-weighted)', no_playhead: true}
+- {file: fb4_observed.wav, src: ../vsa-meas/fb4_real_committed.wav, role: observed, title: 'Observed', label: 'noise at the default level (what plays): {lv_obs:.1f} dBFS (A-weighted, +{lv_diff:.1f} dBA)', no_playhead: true}
 - {file: fb4_ab.wav, src: [../vsa-meas/fb4_real_intended.wav, ../vsa-meas/fb4_real_committed.wav], gap_s: 0.4, role: ab, title: 'A/B', label: 'expected, then observed', no_playhead: true}
 audio_note: >-
   All clips share one playback gain, so the level difference you hear is real. The noise follows the loudness of the sentence
@@ -64,5 +64,5 @@ cause:
     warned:</strong> <code>AudapterIO('init')</code> should list fields of <code>p</code> it does not forward.
 verify:
 - {kind: H, what: report export, name: report_vsa.m}
-- {kind: H, what: gain check, name: exp_vsa_field.m, detail: 'EXP-5: +10.2 dB'}
+- {kind: H, what: gain check, name: exp_vsa_field.m, detail: 'EXP-5: +10.2 dB RMS'}
 reproduce: cd audit/harness && ./run-oct.sh report_vsa.m

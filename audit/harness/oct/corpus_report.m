@@ -110,13 +110,29 @@ if want('pt-5') && ~UP
         median(s2(i)), min(s2(i)), max(s2(i)), median(sm2(i)), min(sm2(i)), max(sm2(i)));
       G.by_group.(g{1}) = struct('n', nnz(i), 'step_up2_median', median(s2(i)), 'step_up2_range', [min(s2(i)) max(s2(i))], 'step_down2_median', median(sm2(i)), 'step_down2_range', [min(s2(i)) max(s2(i))]);
     end
+    % A-weighted gains (report_aweight.m; the report's main level measure): the same pvoc runs and voiced-frame rule as
+    % corpus_shift.m, both signals A-weighted first; gain_db is recomputed alongside as a check against corpus_shift.csv
+    for i = 1:numel(tab)
+      m = clip(M, tab(i).id); x = corpus_wav(m); p0 = defparams(corpus_preset(m)); ga = nan(1, 3); gr = nan(1, 3); sts = [0 2 -2];
+      for j = 1:3
+        p = p0; p.bPitchShift = 1; p.pitchShiftRatio = 2^(sts(j)/12); d = run_trial(p, x);
+        v = d.rms(:,1) > p.rmsThresh; vi = repelem(v, p.frameLen); n = min(numel(vi), numel(d.signalIn)); vi = vi(1:n);
+        ai = report_aweight(d.signalIn, p.sr); ao = report_aweight(d.signalOut, p.sr);
+        gr(j) = 20*log10(rms(d.signalOut(vi)) / rms(d.signalIn(vi))); ga(j) = 20*log10(rms(ao(vi)) / rms(ai(vi)));
+      end
+      tab(i).g0_a = ga(1); tab(i).gp2_a = ga(2); tab(i).gm2_a = ga(3); tab(i).g0_chk = gr(1); tab(i).gp2_chk = gr(2);
+      printf('PT-5 dBA %-28s 0 st %+.2f dBA (RMS %+.2f, csv %+.2f) | +2 st %+.2f dBA (RMS %+.2f, csv %+.2f)\n', tab(i).id, ga(1), gr(1), tab(i).g0, ga(2), gr(2), tab(i).gp2);
+    end
+    s2a = [tab.gp2_a] - [tab.g0_a];
+    G.gain0_dba_range = [min([tab(clean).g0_a]) max([tab(clean).g0_a])]; G.step_0_to_up2_dba_range = [min(s2a(clean)) max(s2a(clean))];
+    G.step_0_to_up2_dba_median = median(s2a(clean)); G.per_clip = tab;
     ni = ~clean; printf('PT-5 noisy clips (vbd): 0 st gain %+.2f..%+.2f dB (noise-dominated; see CORPUS pvoc low-frequency boost)\n', min([tab(ni).g0]), max([tab(ni).g0]));
     G.noisy_gain0_db_range = [min([tab(ni).g0]) max([tab(ni).g0])];
   end
   % (b) the step as heard inside one utterance: example ost + pitch_pert.pcf (+2 st in state 4); output level
   %     change across the state-4 onset minus the input level change (100 ms each side)
   ids = {'arctic_bdl_a0005', 'arctic_rms_a0018', 'arctic_slt_a0005', 'arctic_clb_a0018', 'libri_2078-142845-0026', 'libri_84-121123-0000', 'so762_0003_0', 'so762_0049_64', 'blab_trial_1_2'};
-  S = struct('clip', {}, 'group', {}, 't_state4_s', {}, 'out_step_db', {}, 'in_step_db', {}, 'heard_step_db', {});
+  S = struct('clip', {}, 'group', {}, 't_state4_s', {}, 'out_step_db', {}, 'in_step_db', {}, 'heard_step_db', {}, 'heard_step_dba', {});
   for k = 1:numel(ids)
     m = clip(M, ids{k}); x = corpus_wav(m); p = pp(m); p.bPitchShift = 1;
     d = run_trial(p, x, 'ost', [EX 'ost'], 'pcf', [EX 'pitch_pert.pcf']);
@@ -124,13 +140,15 @@ if want('pt-5') && ~UP
     t4 = st_time(d, p, 4); if isnan(t4), continue; end
     t5 = st_time(d, p, 5); if isnan(t5), t5 = t4 + 0.48; end
     oi = lvl(d.signalIn, t4 + 0.02, t5, p.sr) - lvl(d.signalIn, t4 - 0.2, t4, p.sr); oo = lvl(so, t4 + 0.02, t5, p.sr) - lvl(so, t4 - 0.2, t4, p.sr);
-    S(end+1) = struct('clip', m.id, 'group', m.group, 't_state4_s', t4, 'out_step_db', oo, 'in_step_db', oi, 'heard_step_db', oo - oi);
-    printf('PT-5 in-utterance %-24s state4 %.2f s: heard level step at +2 st onset %+.2f dB\n', m.id, t4, oo - oi);
+    ai = report_aweight(d.signalIn, p.sr); ao = report_aweight(so, p.sr);   % the same step, A-weighted (dBA)
+    oia = lvl(ai, t4 + 0.02, t5, p.sr) - lvl(ai, t4 - 0.2, t4, p.sr); ooa = lvl(ao, t4 + 0.02, t5, p.sr) - lvl(ao, t4 - 0.2, t4, p.sr);
+    S(end+1) = struct('clip', m.id, 'group', m.group, 't_state4_s', t4, 'out_step_db', oo, 'in_step_db', oi, 'heard_step_db', oo - oi, 'heard_step_dba', ooa - oia);
+    printf('PT-5 in-utterance %-24s state4 %.2f s: heard level step at +2 st onset %+.2f dB RMS, %+.2f dBA\n', m.id, t4, oo - oi, ooa - oia);
     if k == 1, dx = d; end
   end
   aud = report_wavgroup(od, p.sr, [wavc('pcf_pitch_input', dx.signalIn, 'Input (ARCTIC bdl, "Will we ever forget it.")'), wavc('pcf_pitch_output', dx.signalOut, 'Output: +2 st from the end of word 1 (example ost + pitch_pert.pcf)')]);
   report_json(fullfile(od, 'data.json'), struct('finding', 'PT-5', 'steady', G, 'in_utterance', S, 'audio', aud, ...
-    'note', 'gain = output/input RMS over supra-threshold frames; in-utterance step = (output level change) - (input level change) across the state-4 onset'));
+    'note', 'gain = output/input RMS over supra-threshold frames (_a / _dba: both A-weighted first); in-utterance step = (output level change) - (input level change) across the state-4 onset'));
 end
 
 %% ---------------------------------------------------------------- formant shifting (real vowels): audio + numbers

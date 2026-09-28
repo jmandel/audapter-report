@@ -19,4 +19,4 @@ def sketch(d, up):
 
 def derive(d, up):
     return {"mel_r": d["mel"]["ratio_F1"], "ratio_r": d["ratio"]["ratio_F1"], "ratio_max": d["ratio"]["max_sF1_hz"], "online_r": d["online_ratio_F1"],
-            "ratio_gain": d["ratio"]["gain_db"], "ratio_peak": d["ratio"]["peak"], "nyq": d["sr"] / 2}
+            "ratio_gain": d["ratio"]["gain_dba"], "ratio_gain_rms": d["ratio"]["gain_db"], "ratio_peak": d["ratio"]["peak"], "nyq": d["sr"] / 2}

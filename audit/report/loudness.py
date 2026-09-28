@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-"""Perceptual loudness estimates for the report's level claims (secondary to the RMS level, which stays the primary fact).
+"""Level and loudness of the report's expected-vs-observed pairs.
 
-Models (mosqito 1.2.1, pinned; install into a venv: pip install mosqito==1.2.1):
-  - ISO 532-1:2017 (Zwicker), time-varying (mosqito loudness_zwtv), free field. Statistic: N5, the loudness exceeded 5 % of the
-    time, over the whole clip; loudness level in phons from N5 (LN = 40 + 10 log2 N for N >= 1 sone).
-  - ECMA-418-2:2022 (Sottek hearing model; mosqito loudness_ecma) as a second model for the spread. Statistic: its 95th
-    percentile of the loudness-vs-time trace.
-  (Moore-Glasberg ISO 532-2 has no vetted Python implementation we could pin, so it is not used.)
+Reported quantities (reader-facing):
+  - dBA: the A-weighted level difference, 20 log10 of the ratio of A-weighted active RMS (a_weight + active_rms below:
+    IEC 61672 A-weighting, then RMS over the 20 ms blocks within 40 dB of the loudest block). The report's main level number.
+  - phon (ISO 532-1): the loudness-level difference from ISO 532-1:2017 (Zwicker), time-varying (mosqito 1.2.1 loudness_zwtv,
+    free field), statistic N5 (loudness exceeded 5 % of the time, i.e. the 95th percentile of the loudness-vs-time trace) over the
+    whole clip, converted to loudness level (LN = 40 + 10 log2 N for N >= 1 sone), at presentation levels 60, 70, 80 and 85 dB SPL;
+    reported as the range over those levels.
+  - rms_db: the plain (unweighted) RMS level difference, kept for evidence sections only.
 Calibration: diotic headphone presentation with a flat response is assumed. The EXPECTED clip is scaled so that its A-weighted RMS
-over active 20 ms blocks equals L dB SPL (L = 60, 70, 80, 85); the OBSERVED clip gets the same scale factor, so the RMS level
-difference is preserved. Normal hearing is assumed (the models' reference listener).
-Equivalent level: the gain (dB) that, applied to the expected clip, gives the observed clip's Zwicker N5 (secant search, 3 steps).
+over active 20 ms blocks equals L dB SPL (L = 60, 70, 80, 85); the OBSERVED clip gets the same scale factor, so level differences
+are preserved. Normal hearing is assumed (the model's reference listener). mosqito is pinned (pip install mosqito==1.2.1).
 
   python3 loudness.py            # writes harness/oct/out/report/loudness.json (run with the venv interpreter)
 """
@@ -48,44 +49,31 @@ def zw_n5(x):
     N = loudness_zwtv(x, 48000, field_type="free")[0]
     return float(np.percentile(N, 95))
 
-def ec_n5(x):
-    from mosqito.sq_metrics import loudness_ecma
-    r = loudness_ecma(x, 48000)
-    return float(np.percentile(r[1], 95))
-
 def phon(n):
     return 40 + 10 * math.log2(n) if n >= 1 else 40 * (n + 0.0005) ** 0.35
 
+def dba_db(o, e, fs=48000):
+    """A-weighted level difference (dBA) of o re e: ratio of A-weighted active RMS."""
+    return 20 * math.log10(active_rms(a_weight(o, fs), fs) / active_rms(a_weight(e, fs), fs))
+
 def pair(e, o, levels=LEVELS):
-    """e, o: 48 kHz float arrays (full scale). Returns per-level loudness and the RMS level difference."""
+    """e, o: 48 kHz float arrays (full scale). Returns the dBA and RMS level differences and the loudness level per presentation level."""
     d_rms = 20 * math.log10(active_rms(o, 48000) / active_rms(e, 48000))
-    ea = active_rms(a_weight(e, 48000), 48000); out = {"rms_db": d_rms, "levels": []}
+    ea = active_rms(a_weight(e, 48000), 48000); out = {"rms_db": d_rms, "dba_db": dba_db(o, e), "levels": []}
     for L in levels:
         g = P0 * 10 ** (L / 20) / ea
         ne, no = zw_n5(g * e), zw_n5(g * o)
-        # equivalent level: gain on the expected clip giving the observed N5 (secant on log N)
-        x0, x1 = 0.0, d_rms if abs(d_rms) > 0.05 else 1.0
-        f = lambda db: math.log(zw_n5(g * 10 ** (db / 20) * e)) - math.log(no)
-        f0, f1 = math.log(ne) - math.log(no), f(x1)
-        for _ in range(3):
-            if abs(f1 - f0) < 1e-9: break
-            x0, x1, f0 = x1, x1 - f1 * (x1 - x0) / (f1 - f0), f1
-            f1 = f(x1)
-        ce, co = ec_n5(g * e), ec_n5(g * o)
-        out["levels"].append({"spl": L, "zw_exp_sone": ne, "zw_obs_sone": no, "zw_ratio": no / ne, "zw_dphon": phon(no) - phon(ne),
-                              "zw_equiv_db": x1, "ecma_ratio": co / ce})
+        out["levels"].append({"spl": L, "zw_exp_sone": ne, "zw_obs_sone": no, "zw_ratio": no / ne, "zw_dphon": phon(no) - phon(ne)})
     return out
 
 def summary(r):
-    z = [l["zw_equiv_db"] for l in r["levels"]]; p = [l["zw_dphon"] for l in r["levels"]]; q = [l["zw_ratio"] for l in r["levels"]]
-    ec = [10 * math.log2(l["ecma_ratio"]) for l in r["levels"]]     # loudness-level difference implied by the ECMA ratio (10 phon per doubling)
-    r["equiv_min"], r["equiv_max"] = min(z), max(z); r["dphon_min"], r["dphon_max"] = min(p), max(p)
-    r["ratio_min"], r["ratio_max"] = min(q), max(q); r["ecma_dphon_min"], r["ecma_dphon_max"] = min(ec), max(ec)
+    p = [l["zw_dphon"] for l in r["levels"]]; q = [l["zw_ratio"] for l in r["levels"]]
+    r["dphon_min"], r["dphon_max"] = min(p), max(p); r["ratio_min"], r["ratio_max"] = min(q), max(q)
     return r
 
 def sanity():
     """Equal-RMS pitch shifts of a sine and of a harmonic complex: +2 st should sound slightly louder at low F0 (equal-loudness
-    contours slope down towards ~1-4 kHz) and the models should agree on the sign."""
+    contours slope down towards ~1-4 kHz)."""
     fs = 48000; t = np.arange(int(1.0 * fs)) / fs; out = {}
     def hc(f0):
         y = sum((1 / k) * np.sin(2 * np.pi * k * f0 * t) for k in range(1, int(4000 / f0) + 1)); return y / np.sqrt(np.mean(y ** 2)) * 0.05
@@ -126,6 +114,10 @@ PAIRS.update({
     "INIT-PERSIST block 2: vocoder off (intended) vs left on": (("init-persist/meas/expected.wav",), ("init-persist/meas/observed.wav",)),
 })
 
+def line(k, r):
+    return (f'{k}: {r["dba_db"]:+.2f} dBA | {r["dphon_min"]:+.2f}..{r["dphon_max"]:+.2f} phon (ISO 532-1, 60-85 dB SPL) | '
+            f'RMS {r["rms_db"]:+.2f} dB | ratio {r["ratio_min"]:.3f}..{r["ratio_max"]:.3f}')
+
 def main():
     only = sys.argv[1:]
     if only:   # compute only these pairs (id prefixes) and merge into the existing loudness.json
@@ -134,10 +126,10 @@ def main():
             if any(k.startswith(x) for x in only):
                 r = summary(pair(clip(*e), clip(*o))); r["files"] = [e, o]
                 r["sha"] = [hashlib.sha256(open(os.path.join(EXP, f[0]), "rb").read()).hexdigest()[:16] for f in (e, o)]
-                res["pairs"][k] = r
-                print(f'{k}: RMS {r["rms_db"]:+.2f} dB | Zwicker equiv {r["equiv_min"]:+.2f}..{r["equiv_max"]:+.2f} dB | ECMA {r["ecma_dphon_min"]:+.2f}..{r["ecma_dphon_max"]:+.2f}')
+                res["pairs"][k] = r; print(line(k, r))
         json.dump(res, open(os.path.join(EXP, "loudness.json"), "w"), indent=1); return
-    res = {"model": "ISO 532-1 Zwicker time-varying (mosqito loudness_zwtv, free field), N5; cross-check ECMA-418-2 (mosqito loudness_ecma), 95th percentile",
+    res = {"model": "ISO 532-1 Zwicker time-varying (mosqito loudness_zwtv, free field), N5; loudness-level difference in phon",
+           "level": "dba_db: A-weighted level difference (IEC 61672 A-weighting, active 20 ms blocks within 40 dB of the loudest); rms_db: unweighted",
            "mosqito": __import__("mosqito").__version__, "levels_db_spl_A": LEVELS,
            "calibration": "expected clip's A-weighted active RMS set to each level; observed clip scaled identically; diotic headphones, flat response; normal hearing",
            "pairs": {}, "sanity": sanity()}
@@ -148,11 +140,9 @@ def main():
         r = summary(pair(clip(*e), clip(*o)))
         r["files"] = [e, o]
         r["sha"] = [hashlib.sha256(open(os.path.join(EXP, f[0]), "rb").read()).hexdigest()[:16] for f in (e, o)]
-        res["pairs"][k] = r
-        print(f'{k}: RMS {r["rms_db"]:+.2f} dB | Zwicker equiv {r["equiv_min"]:+.2f}..{r["equiv_max"]:+.2f} dB, '
-              f'{r["dphon_min"]:+.2f}..{r["dphon_max"]:+.2f} phon, ratio {r["ratio_min"]:.3f}..{r["ratio_max"]:.3f} | ECMA {r["ecma_dphon_min"]:+.2f}..{r["ecma_dphon_max"]:+.2f} phon-equiv')
+        res["pairs"][k] = r; print(line(k, r))
     for k, r in res["sanity"].items():
-        print(f'sanity {k}: RMS {r["rms_db"]:+.2f} dB, Zwicker {r["dphon_min"]:+.2f} phon (equiv {r["equiv_min"]:+.2f} dB), ECMA {r["ecma_dphon_min"]:+.2f}')
+        print(f'sanity {k}: RMS {r["rms_db"]:+.2f} dB, {r["dba_db"]:+.2f} dBA, Zwicker {r["dphon_min"]:+.2f} phon')
     json.dump(res, open(os.path.join(EXP, "loudness.json"), "w"), indent=1)
 
 if __name__ == "__main__":

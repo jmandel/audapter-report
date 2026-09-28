@@ -95,7 +95,7 @@ cols = {'k', 'mode', 'itrial', 'word', 'cond', 'shiftInfo', 't0', 'dur', 'pumped
   'ost', 'shift_s', 'shift_span', 'shift_F1_Hz', 'shift_F2_Hz', 'shift_F1_mel', 'shift_F2_mel', ...
   'in_F1', 'in_F2', 'out_F1', 'out_F2', 'span_in_F1', 'span_in_F2', 'span_out_F1', 'span_out_F2', ...
   'in_f0', 'out_f0', 'pitch_cents', 'gain_dB', 'heard_peak', 'lag_ms', 'in_rms_dB', 'noise_zero_runs', 'noise_zero_at', ...
-  'play_s', 'play_rms_dB', 'play_peak', 'read_s', 'lost_s', 'replay_ok', 'replay_match', 'gain_voice_dB', 'input'};
+  'play_s', 'play_rms_dB', 'play_peak', 'read_s', 'lost_s', 'replay_ok', 'replay_match', 'gain_voice_dB', 'gain_dBA', 'input'};
 fid = fopen(fullfile(outdir, 'summary.tsv'), 'w'); fprintf(fid, '%s\n', strjoin(cols, "\t"));
 for i = 1:numel(rows)
   c = cell(1, numel(cols));
@@ -190,7 +190,10 @@ W = round(0.02 * sr); env = sqrt(filter(ones(W, 1) / W, 1, x.^2)); act = env > m
 row.in_rms_dB = 20 * log10(max(sqrt(mean(x(act).^2)), 1e-12));
 if any(act)
   row.gain_dB = 20 * log10(sqrt(mean(ya(act).^2)) / max(sqrt(mean(x(act).^2)), 1e-12));
-else, row.gain_dB = NaN; end
+  % the same over A-weighted signals (harness report_aweight.m): the heard level re input in dBA, the report's main level measure
+  xw = report_aweight(x, sr); yw = report_aweight(ya, sr);
+  row.gain_dBA = 20 * log10(sqrt(mean(yw(act).^2)) / max(sqrt(mean(xw(act).^2)), 1e-12));
+else, row.gain_dB = NaN; row.gain_dBA = NaN; end
 row.heard_peak = max(abs(y));
 % formants (independent LPC at 16 kHz)
 fsA = 16000; if sr ~= fsA, xa = resample(x, fsA, sr); yb = resample(ya, fsA, sr); else, xa = x; yb = ya; end
