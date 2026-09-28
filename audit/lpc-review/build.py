@@ -5,7 +5,7 @@ from audit/labrun/README.md, "Participant setup: the LPC check"), and the order 
 
 Inputs per talker: a labrun result dir (pretest trials, talker.json) and the per-order tracks written by
 audit/harness/oct/lpc_orders.m (SCEN='<run dir>|lpc/<talker>'). Praat tracks come from the voice bank.
-Usage: python3 audit/lpc-review/build.py <run_dir> [<run_dir> ...]   (tracks read from audit/harness/oct/out/lpc/<talker>/)
+Usage: python3 audit/lpc-review/build.py audit/labrun/results/lpccheck/*/   (labrun's per-talker LPC-check records)
 Writes audit/lpc-review/dist/ (staged to docs/lpc-review/ by audit/publish/stage.sh).
 """
 import csv, html, json, os, re, sys
@@ -147,70 +147,97 @@ def score_svg(scores, preset, chosen, best):
 
 
 # ---------------------------------------------------------------------------------------------------- page
-def build(runs):
+def load_check(d):
+    """One talker's LPC-check record written by labrun (results/lpccheck/<talker>/check.json): the tool's own re-run
+    tracks at every order, the Praat reference with its quality check, the rule's scores and decision."""
+    c = json.load(open(os.path.join(d, "check.json")))
+    toks = []
+    for t in c["tokens"]:
+        fs, x = wavfile.read(os.path.join(d, t["audio"])); x = x.astype(float) / (32768 if x.dtype == np.int16 else 1)
+        n = len(t["audapter"][str(c["preset"])]["F1"]); tf = t["t0"] + np.arange(n) * t["frameLen"] / t["sr"]
+        tracks = {int(o): np.column_stack([np.asarray(v["F1"], float), np.asarray(v["F2"], float)]) for o, v in t["audapter"].items()}
+        pt = np.asarray(t["praat"]["t"], float)
+        p1 = np.array([np.nan if v is None else v for v in t["praat"]["F1"]], float); p2 = np.array([np.nan if v is None else v for v in t["praat"]["F2"]], float)
+        toks.append(dict(k=t["trial"], word=t["word"], x=x, sr=fs, nucleus=tuple(t["vowel_nucleus"]), tf=tf, tracks=tracks,
+                         praat=(pt, p1, p2), qc=t["reference"].get("qc", ""), cost={int(o): v for o, v in t["per_token_cost"].items()}))
+    return c, toks
+
+
+def parts_of(o):
+    A, B, C = o.get("A"), o.get("B") or 0.0, o.get("C")
+    if A is None and C is None: return (0.0, o["cost"], 0.0)
+    if A is None: return (0.0, 0.5 * B, 0.5 * C)
+    if C is None: return (A * 0.5 / 0.75, B * 0.25 / 0.75, 0.0)
+    return (0.5 * A, 0.25 * B, 0.25 * C)
+
+
+def build(dirs):
     os.makedirs(os.path.join(OUT, "assets"), exist_ok=True)
     tabs, sections, summary, data = [], [], [], {}
-    for ti, run in enumerate(runs):
-        run = os.path.normpath(run); talker = os.path.basename(run)
-        meta = json.load(open(os.path.join(run, "talker.json"))) if os.path.exists(os.path.join(run, "talker.json")) else {}
-        toks = load_tokens(run, talker)
-        preset = toks[0]["nlpc_run"]
-        # the preset run must reproduce the recorded trial exactly (validates the re-run)
-        dev = max(float(np.max(np.abs(t["tracks"][preset][:len(t["logged"])] - t["logged"][:len(t["tracks"][preset])]))) for t in toks)
-        scores = {o: score(toks, o) for o in ORDERS}; best, chosen = choose(scores, preset)
-        gain = 100 * (1 - scores[best]["cost"] / scores[preset]["cost"])
-        tid = f"t{ti}"; td = dict(orders=ORDERS, preset=preset, chosen=chosen, tokens=[], scatter={})
+    for ti, d in enumerate(dirs):
+        c, toks = load_check(os.path.normpath(d)); talker = c["talker"]; preset = int(c["preset"]); chosen = int(c["chosen"])
+        nm = int(c["chosen_no_margin"]); wins, ntok = c.get("best_wins_tokens"), c.get("n_tokens")
+        scores = {int(o): dict(v, parts=parts_of(v)) for o, v in c["orders"].items()}
+        gain = 100 * (1 - scores[nm]["cost"] / scores[preset]["cost"])
+        tid = f"t{ti}"; td = dict(orders=ORDERS, preset=preset, chosen=chosen, best=nm, tokens=[], scatter={},
+                                  cost={o: round(scores[o]["cost"], 2) for o in ORDERS})
         for tok in toks:
             base = f"{tid}_{tok['k']:04d}"; t0, t1 = spectro_png(tok, os.path.join(OUT, "assets", base + ".png"))
             wavfile.write(os.path.join(OUT, "assets", base + ".wav"), tok["sr"], (np.clip(tok["x"], -1, 1) * 32767).astype(np.int16))
-            pt, p1, p2 = tok["praat"]; ps = (pt >= t0) & (pt <= t1)
-            trk = {}
-            for o in ORDERS:
-                F = tok["tracks"][o]; tf = frame_times(tok, len(F)); m = (tf >= t0) & (tf <= t1)
-                trk[o] = [[round(float(a - t0), 4), round(float(f1), 1) if f1 > 0 else None, round(float(f2), 1) if f1 > 0 else None]
-                          for a, f1, f2 in zip(tf[m], F[m, 0], F[m, 1])]
-            err = {}
-            for o in ORDERS:
-                pp = per_trial(tok, o)
-                err[o] = None if pp is None else round(100 * float(np.mean([abs(np.log(pp["aud"][i] / pp["ref"][i])) for i in (0, 1)])), 1)
-            td["tokens"].append(dict(err=err, img=f"assets/{base}.png", wav=f"assets/{base}.wav", word=tok["word"], trial=tok["k"], dur=t1 - t0,
-                                     nucleus=[tok["nucleus"][0] - t0, tok["nucleus"][1] - t0], mid=[m_ - t0 for m_ in mid_half(tok)],
-                                     praat=[[round(float(a - t0), 4), None if np.isnan(b) else round(float(b), 1), None if np.isnan(c) else round(float(c), 1)]
-                                            for a, b, c in zip(pt[ps], p1[ps], p2[ps])], tracks=trk))
-        td["cost"] = {o: round(scores[o]["cost"], 2) for o in ORDERS}; td["best"] = best
-        for o in ORDERS: td["scatter"][o] = scores[o]["scatter"]
+            pt, p1, p2 = tok["praat"]; ps = (pt >= t0) & (pt <= t1); tf = tok["tf"]; m = (tf >= t0) & (tf <= t1)
+            trk = {o: [[round(float(a - t0), 4), round(float(f1), 1) if f1 > 0 else None, round(float(f2), 1) if f1 > 0 else None]
+                       for a, f1, f2 in zip(tf[m], F[m, 0], F[m, 1])] for o, F in tok["tracks"].items()}
+            a, b = tok["nucleus"]; q = (b - a) / 4
+            td["tokens"].append(dict(err={o: (None if tok["cost"].get(o) is None else round(float(tok["cost"][o]), 1)) for o in ORDERS},
+                                     qc=tok["qc"], img=f"assets/{base}.png", wav=f"assets/{base}.wav", word=tok["word"], trial=tok["k"], dur=t1 - t0,
+                                     nucleus=[a - t0, b - t0], mid=[a + q - t0, b - q - t0],
+                                     praat=[[round(float(u - t0), 4), None if np.isnan(v) else round(float(v), 1), None if np.isnan(w) else round(float(w), 1)]
+                                            for u, v, w in zip(pt[ps], p1[ps], p2[ps])], tracks=trk))
+        for o in ORDERS: td["scatter"][o] = [[p["word"], p["F1"], p["F2"]] for p in c["scatter"][str(o)]]
         td["sane"] = [o for o in ORDERS if scores[o]["cost"] <= 2 * scores[preset]["cost"]]
         data[tid] = td
-        rows = "".join(f'<tr class="{"chosen" if o == chosen else ""}{" preset" if o == preset else ""}"><td>{o}</td><td>{s["A"]:.1f}</td><td>{s["B"]:.1f}</td>'
-                       f'<td>{"–" if s["C"] is None else f"{s["C"]:.1f}"}</td><td>{s["cost"]:.1f}</td></tr>' for o, s in scores.items())
-        g = (re.search(r"perceived (female|male)", meta.get("note", "")) or [None, ""])[1]
+        nA = [scores[o].get("nA") for o in ORDERS]
+        rows = "".join(f'<tr class="{"chosen" if o == chosen else ""}{" preset" if o == preset else ""}"><td>{o}</td>'
+                       f'<td>{"–" if v.get("A") is None else f"{v["A"]:.1f}"}</td><td>{v.get("B") or 0:.1f}</td>'
+                       f'<td>{"–" if v.get("C") is None else f"{v["C"]:.1f}"}</td><td>{v["cost"]:.2f}</td></tr>' for o, v in scores.items())
+        g = c.get("gender", "")
         dname = f"the {g} default ({preset})" if g else f"the default ({preset})"
-        verdict = (f"Keeps {dname}: order {best} scores {gain:.0f}% better, short of the 15% needed to switch." if chosen == preset and best != preset
-                   else f"Keeps {dname}: it is already the best order." if chosen == preset
-                   else f"Switches from {dname} to order {chosen}, which scores {gain:.0f}% better.")
-        summary.append(f'<tr><td>{E(meta.get("name", talker))}</td><td>{E(str(meta.get("gender") or (re.search(r"perceived (female|male)", meta.get("note", "")) or [None, ""])[1]))}</td><td>{preset}</td><td>{best}</td>'
-                       f'<td><b>{chosen}</b></td><td>{gain:.0f}%</td><td>{"yes" if chosen != preset else "no"}</td></tr>')
-        tabs.append(f'<button type="button" data-t="{tid}"{" class=on" if not tabs else ""}>{E(meta.get("name", talker))}</button>')
+        if chosen != preset:
+            verdict = f"Switches from {dname} to order {chosen}: {gain:.0f}% lower cost, and better on {wins} of {ntok} tokens."
+        elif nm == preset:
+            verdict = f"Keeps {dname}: it has the lowest cost of all orders."
+        else:
+            why = []
+            if scores[nm]["cost"] > MARGIN * scores[preset]["cost"]: why.append(f"only {gain:.0f}% lower cost (15% needed)")
+            if wins is not None and ntok and wins < 2 * ntok / 3: why.append(f"better on only {wins} of {ntok} tokens (two thirds needed)")
+            verdict = f"Keeps {dname}: order {nm} has the lowest cost, but " + " and ".join(why or ["not clearly enough"]) + "."
+        nref = sum(1 for t in toks if t["qc"] == "ok")
+        summary.append(f'<tr><td>{E(talker)}</td><td>{E(g)}</td><td>{preset}</td><td>{nm}</td><td>{gain:.0f}%</td>'
+                       f'<td>{"–" if wins is None else f"{wins} of {ntok}"}</td><td><b>{chosen}</b></td><td>{"yes" if chosen != preset else "no"}</td>'
+                       f'<td>{nref} of {len(toks)}</td></tr>')
+        tabs.append(f'<button type="button" data-t="{tid}"{" class=on" if not tabs else ""}>{E(talker)}</button>')
+        excluded = [f"trial {t['k']} “{t['word']}”: {t['qc']}" for t in toks if t["qc"] != "ok"]
         sections.append(f"""<section id="{tid}" class="talker"{'' if not sections else ' hidden'}>
-<p class="who"><b>{E(meta.get('name', talker))}</b> · {E(meta.get('kind', ''))}. {E(meta.get('note', ''))}</p>
+<p class="who"><b>{E(talker)}</b> · {E(c.get('voice', ''))}; {E(g)}; study {E(c.get('study', ''))}.</p>
 <p class="verdict">{E(verdict)}</p>
 <h2>Why this order</h2>
 <p>Each bar is one LPC order; its height is the rule's cost, built from three parts (legend below). The outlined bar
-is the order used.</p>
-{score_svg(scores, preset, chosen, best)}
-<p class="legend"><span class="lg pA"></span>tracking error against Praat (×0.5)
-<span class="lg pB"></span>track jumps (×0.25) <span class="lg pC"></span>vowel-cluster spread (×0.25)
-<span class="lg chosen"></span>used <span class="lg preset"></span>default (from the male/female setting)</p>
-<details><summary>Scores by order</summary><table class="scores"><tr><th>order</th><th>A, error %</th><th>B, jumps %</th><th>C, spread %</th><th>cost</th></tr>{rows}</table></details>
+is the order used.{' The Praat reference passed its quality check on ' + str(nref) + ' of ' + str(len(toks)) + ' tokens; tokens that failed are left out of the tracking-error part.' if excluded else ''}</p>
+{score_svg(scores, preset, chosen, nm)}
+<p class="legend"><span class="lg pA"></span>tracking error against Praat <span class="lg pB"></span>track jumps
+<span class="lg pC"></span>vowel-cluster spread <span class="lg chosen"></span>used <span class="lg preset"></span>default (from the male/female setting)</p>
+<details><summary>Scores by order</summary><table class="scores"><tr><th>order</th><th>A, error %</th><th>B, jumps %</th><th>C, spread %</th><th>cost</th></tr>{rows}</table>
+{'<p>References left out: ' + E('; '.join(excluded)) + '.</p>' if excluded else ''}</details>
 <h2>Every order, every token</h2>
 <p>Each row is one LPC order and each column one pretest token. Read down a column to see how one token is tracked as
-the order changes, or along a row to see one order across all tokens. The number in each cell is that token's
-tracking error against Praat (%); the last column shows the vowel clusters for that order.</p>
+the order changes, or along a row to see one order across all tokens. The number in each cell is that token's cost at
+that order (lower is better; orange above 10); the last column shows the vowel clusters as the lab's tool plots them.
+A column marked “no reference” is a token whose Praat reference failed its quality check.</p>
 <p class="legend"><span class="lg trk"></span>Audapter's F1, F2 at that order <span class="lg ref"></span>Praat (independent reference)
 <span class="lg nuc"></span>middle of the vowel (where accuracy is scored) <span class="lg chosen"></span>order used
 <span class="lg preset"></span>default</p>
 <div class="gridwrap"><table class="grid" id="{tid}-grid"></table></div>
-<p class="note">Re-running the default order reproduces the tracks Audapter logged in the experiment to within {dev:.2g} Hz.</p>
+<p class="note">Tracks are the ones the lab's LPC-check tool computed when the simulated experimenter selected each order.</p>
 </section>""")
     page = (TEMPLATE.replace("{{TABS}}", "".join(tabs)).replace("{{SECTIONS}}", "\n".join(sections))
             .replace("{{SUMMARY}}", "".join(summary)).replace("{{DATA}}", json.dumps(data, separators=(",", ":"))))
@@ -266,7 +293,7 @@ table.grid .cell .e { position: absolute; right: 2px; top: 1px; font-size: 10.5p
 table.grid .cell .e.hi { color: #fff; background: #eb6834; }
 table.grid tr.used .cell, table.grid tr.used .vw { outline: 2.5px solid var(--observed); }
 table.grid tr.dflt .cell, table.grid tr.dflt .vw { outline: 1.5px dashed var(--ink-2); }
-table.grid .vw { width: 96px; height: 81px; background: var(--paper); border: 1px solid var(--rule); display: block; }
+.noref { color: #eb6834; font-size: .9em; } table.grid .vw { width: 96px; height: 81px; background: var(--paper); border: 1px solid var(--rule); display: block; }
 .note { font-size: .85em; color: var(--ink-3); }
 </style></head><body>
 <p><a href="../">← Audapter report</a> · <a href="../voices-demo/">coAdapt with realistic voices</a></p>
@@ -275,19 +302,21 @@ table.grid .vw { width: 96px; height: 81px; background: var(--paper); border: 1p
 The male/female setting, which the experimenter picks from the participant's apparent height, gives a default order (17 for male, 15 for female); the experimenter then opens the lab's LPC-check tool on a few pretest
 recordings, tries orders 10 to 20, and keeps the one whose formant tracks follow the formants and whose vowels form tight,
 separate clusters.</p>
-<p class="lede">Our simulated experimenter does this with a fixed rule, written down before it was run. For each order it
-scores three things: how far Audapter's F1 and F2 are from an independent Praat measurement over the middle of each
+<p class="lede">Our simulated experimenter does this with a fixed rule, written down before it was run. For each order
+it scores three things: how far Audapter's F1 and F2 are from an independent Praat measurement over the middle of each
 vowel (half the weight), how often the tracks jump (a quarter), and how spread out each vowel's cluster is relative to
-the distance between vowels (a quarter). Like an experimenter, it keeps the default unless another order is clearly
-better: at least 15% lower cost. The talkers are AI-generated voices (OpenAI gpt-audio-1.5) saying the pretest words of
-the lab's coAdapt experiment.</p>
+the distance between vowels (a quarter). Praat measurements are used only if they pass a quality check (two Praat
+settings agree, and the values are plausible for the vowel). Like an experimenter, it keeps the default unless another
+order is clearly better: at least 15% lower cost, and better on at least two thirds of the tokens. The talkers are
+AI-generated voices (OpenAI gpt-audio-1.5) saying the pretest words of the lab's coAdapt experiment; the lab's own
+LPC-check tool computes every track.</p>
 <p class="lede">Use this page to judge whether the choices look right: pick a talker and scan the grid of every order against every token, comparing the blue tracks with the dashed Praat reference.</p>
 <h2>All talkers</h2>
-<div class="gridwrap"><table><tr><th>talker</th><th>male/female setting</th><th>default order</th><th>lowest-cost order</th><th>order used</th><th>best vs default</th><th>changed from default?</th></tr>{{SUMMARY}}</table></div>
-<p class="preview"><b>Preview, results provisional.</b> Two parts of the selection rule are being revised before it is
-used at scale: the Praat reference is wrong on some tokens (visible below, e.g. marin's "bat" tokens), so a quality check
-on the reference is being added; and the 15% margin will also require the better order to win on most tokens, since a
-relative margin is easy to meet when every good order scores near zero. The choices below use the rule as first written.</p>
+<div class="gridwrap"><table><tr><th>talker</th><th>male/female setting</th><th>default order</th><th>lowest-cost order</th><th>its cost vs default</th><th>better on tokens</th><th>order used</th><th>changed?</th><th>usable references</th></tr>{{SUMMARY}}</table></div>
+<p class="preview"><b>Preview.</b> This covers the coAdapt pretest for eight AI-generated voices. The rule was revised
+twice before this run, for stated reasons: a quality check on the Praat reference (it mistracks some tokens), and the
+two-thirds-of-tokens condition (a 15% margin alone is easy to meet when every good order scores near zero). Other studies
+and a validation on real recordings are in progress.</p>
 <nav class="talkers">{{TABS}}</nav>
 {{SECTIONS}}
 <script>
@@ -298,7 +327,7 @@ function path(pts, i, w, h, dur) { var d = '', pen = false; pts.forEach(function
 function m(f) { return 1127.01048 * Math.log(1 + f / 700); }
 function drawGrid(tid) {
   var D = DATA[tid], g = document.getElementById(tid + '-grid'), w = 118, h = 81;
-  var head = '<thead><tr><th></th>' + D.tokens.map(function (tk, j) { return '<th>“' + tk.word + '”<button type="button" data-j="' + j + '">play</button></th>'; }).join('') + '<th>vowels</th></tr></thead>';
+  var head = '<thead><tr><th></th>' + D.tokens.map(function (tk, j) { return '<th title="' + (tk.qc === 'ok' ? '' : 'Praat reference left out: ' + tk.qc) + '">“' + tk.word + '”<button type="button" data-j="' + j + '">play</button>' + (tk.qc === 'ok' ? '' : '<br><span class="noref">no reference</span>') + '</th>'; }).join('') + '<th>vowels</th></tr></thead>';
   g.innerHTML = head + '<tbody></tbody>';
   var audios = D.tokens.map(function (tk) { return new Audio(tk.wav); });
   g.querySelectorAll('thead button').forEach(function (b) { b.onclick = function () { var a = audios[+b.dataset.j]; a.currentTime = 0; a.play(); }; });
@@ -317,11 +346,11 @@ function drawGrid(tid) {
       var s = el('svg', { viewBox: '0 0 ' + w + ' ' + h, preserveAspectRatio: 'none' });
       s.appendChild(el('rect', { x: tk.mid[0] / tk.dur * w, y: 0, width: (tk.mid[1] - tk.mid[0]) / tk.dur * w, height: h, fill: 'rgba(42,120,214,.13)' }));
       [1, 2].forEach(function (i) {
-        s.appendChild(el('path', { d: path(tk.praat, i, w, h, tk.dur), fill: 'none', stroke: '#1d2530', 'stroke-width': 1.1, 'stroke-dasharray': '3 2' }));
+        s.appendChild(el('path', { d: path(tk.praat, i, w, h, tk.dur), fill: 'none', stroke: tk.qc === 'ok' ? '#1d2530' : '#aab2bb', 'stroke-width': 1.1, 'stroke-dasharray': '3 2' }));
         s.appendChild(el('path', { d: path(tk.tracks[o], i, w, h, tk.dur), fill: 'none', stroke: '#2a78d6', 'stroke-width': 1.8 }));
       });
       c.appendChild(s);
-      var e = tk.err[o]; if (e != null) { var sp = document.createElement('span'); sp.className = 'e' + (e > 10 ? ' hi' : ''); sp.textContent = e.toFixed(0) + '%'; c.appendChild(sp); }
+      var e = tk.qc === 'ok' ? tk.err[o] : null; if (tk.qc !== 'ok') { var sp0 = document.createElement('span'); sp0.className = 'e'; sp0.textContent = '–'; sp0.title = 'no usable reference for this token'; c.appendChild(sp0); } if (e != null) { var sp = document.createElement('span'); sp.className = 'e' + (e > 10 ? ' hi' : ''); sp.textContent = e < 10 ? e.toFixed(1) : e.toFixed(0); c.appendChild(sp); }
       td.appendChild(c); tr.appendChild(td);
     });
     var tv = document.createElement('td'), sv = el('svg', { viewBox: '0 0 96 81', 'class': 'vw' });
@@ -346,4 +375,4 @@ document.querySelectorAll('nav.talkers button').forEach(function (b) {
 """
 
 if __name__ == "__main__":
-    build(sys.argv[1:])
+    build([d for d in sys.argv[1:] if os.path.exists(os.path.join(d, "check.json"))])
