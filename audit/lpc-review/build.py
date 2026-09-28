@@ -222,7 +222,7 @@ TEMPLATE = r"""<!doctype html>
   --context:#2a3037; --pA:#b9c1ca; --pB:#7d8792; --pC:#4a535d; } }
 body { font: 17px/1.55 var(--serif); color: var(--ink); background: var(--paper); max-width: 860px; margin: 0 auto; padding: 16px; }
 h1 { font-size: 1.55em; line-height: 1.2; margin: .3em 0; } h2 { font-size: 1.15em; margin: 1.6em 0 .4em; } h3 { font-size: 1em; margin: 1.2em 0 .3em; }
-a { color: var(--observed); } p { margin: .5em 0; } .lede { color: var(--ink-2); }
+a { color: var(--observed); } p { margin: .5em 0; } .lede { color: var(--ink-2); } .preview { border-left: 3px solid #eb6834; padding: 6px 10px; background: rgba(235,104,52,.08); font-size: .92em; }
 nav.talkers, .orders { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 6px; }
 nav.talkers { position: sticky; top: 0; z-index: 2; background: var(--paper); padding: 8px 0; border-bottom: 1px solid var(--rule); }
 nav.talkers button, .orders button { font: inherit; font-size: .85em; padding: 3px 10px; border: 1px solid var(--rule); background: transparent; color: var(--ink); border-radius: 14px; cursor: pointer; }
@@ -265,6 +265,10 @@ the lab's coAdapt experiment.</p>
 <p class="lede">Use this page to judge whether the choices look right: pick a talker, step through the orders, and compare the blue tracks with the grey default and the dashed Praat reference.</p>
 <h2>All talkers</h2>
 <table><tr><th>talker</th><th>male/female setting</th><th>default order</th><th>lowest-cost order</th><th>order used</th><th>best vs default</th><th>changed from default?</th></tr>{{SUMMARY}}</table>
+<p class="preview"><b>Preview, results provisional.</b> Two parts of the selection rule are being revised before it is
+used at scale: the Praat reference is wrong on some tokens (visible below, e.g. marin's "bat" tokens), so a quality check
+on the reference is being added; and the 15% margin will also require the better order to win on most tokens, since a
+relative margin is easy to meet when every good order scores near zero. The choices below use the rule as first written.</p>
 <nav class="talkers">{{TABS}}</nav>
 {{SECTIONS}}
 <script>

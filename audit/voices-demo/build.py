@@ -323,7 +323,7 @@ TEMPLATE = """<!doctype html>
   --observed:#3987e5; --context:#2a3037; --disc:#d95926; } }
 body { font: 17px/1.55 var(--serif); color: var(--ink); background: var(--paper); max-width: 820px; margin: 0 auto; padding: 16px; }
 h1 { font-size: 1.55em; line-height: 1.2; margin: 0.3em 0; } h2 { font-size: 1.15em; margin: 1.6em 0 0.4em; }
-a { color: var(--observed); } p { margin: 0.5em 0; } .lede { color: var(--ink-2); }
+a { color: var(--observed); } p { margin: 0.5em 0; } .lede { color: var(--ink-2); } .preview { border-left: 3px solid #eb6834; padding: 6px 10px; background: rgba(235,104,52,.08); font-size: .92em; }
 nav.talkers { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 4px; position: sticky; top: 0; z-index: 2; background: var(--paper); padding: 8px 0; border-bottom: 1px solid var(--rule); }
 nav.talkers button { font: inherit; font-size: 0.85em; padding: 3px 11px; border: 1px solid var(--rule); background: transparent; color: var(--ink); border-radius: 14px; cursor: pointer; }
 nav.talkers button.on { background: var(--observed); color: #fff; border-color: var(--observed); }
@@ -338,7 +338,7 @@ svg.sketch { width: 100%; height: auto; display: block; margin: 8px 0; font-fami
 .lg { display: inline-block; width: 11px; height: 11px; border-radius: 50%; vertical-align: -1px; margin: 0 5px 0 14px; }
 .lg.exp { border-radius: 0; height: 0; width: 18px; border-top: 2px dashed var(--ink-2); vertical-align: 3px; margin-left: 0; }
 .lg.obs { background: var(--observed); } .lg.disc { background: var(--disc); }
-table.hold { border-collapse: collapse; font-size: 0.9em; margin: 14px 0; }
+table.hold { border-collapse: collapse; font-size: 0.9em; margin: 14px 0; display: block; overflow-x: auto; }
 table.hold caption { text-align: left; font-weight: 600; margin-bottom: 4px; }
 table.hold th, table.hold td { border-top: 1px solid var(--rule); padding: 3px 14px 3px 0; text-align: left; }
 details { margin: 10px 0; font-size: 0.9em; } summary { cursor: pointer; color: var(--ink-2); }
@@ -367,6 +367,9 @@ audio above 12 kHz. Choose a talker.</p>
 actually happened (observed: the shift from Audapter's own log, the level measured on the audio), and orange marks
 where the two differ. Levels are RMS; the report's
 <a href="../#FMT-LEVEL">FMT-LEVEL</a> card estimates how much of a level difference like this a listener perceives.</p>
+<p class="preview"><b>Preview, results provisional.</b> The simulated participants here use the default LPC order for their
+male/female setting; a simulated LPC check (see <a href="../lpc-review/">how the LPC order was chosen</a>) is being added
+and may change the order for some voices. The independent formant check is shown where it is available.</p>
 <nav class="talkers">{{TABS}}</nav>
 {{SECTIONS}}
 <script>
