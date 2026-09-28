@@ -174,6 +174,7 @@ def build(runs):
                                      praat=[[round(float(a - t0), 4), None if np.isnan(b) else round(float(b), 1), None if np.isnan(c) else round(float(c), 1)]
                                             for a, b, c in zip(pt[ps], p1[ps], p2[ps])], tracks=trk))
         for o in ORDERS: td["scatter"][o] = scores[o]["scatter"]
+        td["sane"] = [o for o in ORDERS if scores[o]["cost"] <= 2 * scores[preset]["cost"]]
         data[tid] = td
         rows = "".join(f'<tr class="{"chosen" if o == chosen else ""}{" preset" if o == preset else ""}"><td>{o}</td><td>{s["A"]:.1f}</td><td>{s["B"]:.1f}</td>'
                        f'<td>{"–" if s["C"] is None else f"{s["C"]:.1f}"}</td><td>{s["cost"]:.1f}</td></tr>' for o, s in scores.items())
@@ -294,7 +295,8 @@ function drawTokens(tid, o) {
   });
   var sc = document.getElementById(tid + '-scatter'), pts = DATA[tid].scatter[o], W = 360, H = 260;
   var m = function (f) { return 1127.01048 * Math.log(1 + f / 700); };
-  var all = []; Object.keys(DATA[tid].scatter).forEach(function (k) { DATA[tid].scatter[k].forEach(function (p) { all.push(p); }); });
+  // axes fitted to the orders that track sensibly (cost within 2x the default's), so bad orders don't squash the view
+  var all = []; Object.keys(DATA[tid].scatter).forEach(function (k) { if (DATA[tid].sane.indexOf(+k) >= 0 || +k === +o) DATA[tid].scatter[k].forEach(function (p) { all.push(p); }); });
   var x0 = Math.min.apply(null, all.map(function (p) { return m(p[2]); })) - 40, x1 = Math.max.apply(null, all.map(function (p) { return m(p[2]); })) + 40;
   var y0 = Math.min.apply(null, all.map(function (p) { return m(p[1]); })) - 40, y1 = Math.max.apply(null, all.map(function (p) { return m(p[1]); })) + 40;
   var s2 = el('svg', { viewBox: '0 0 ' + W + ' ' + H }); s2.appendChild(el('rect', { x: 30, y: 4, width: W - 34, height: H - 34, fill: 'none', stroke: '#dde2e7' }));
