@@ -87,7 +87,7 @@ def lpc_formants(x, sr, hop, order=12):
 
 def replay_ok(t):
     """Use the voice-only replay only if the heard mix minus the replay is pure masking noise: no trace of the voice
-    (|correlation with the replay| < 0.05) and no louder than the noise alone before the word (+2 dB; babble is not steady, so quieter is fine). Audapter's
+    (regression of the residual on the replay |beta| < 0.03, i.e. under ~0.25 dB of gain difference) and no louder than the noise alone before the word (+2 dB; babble is not steady, so quieter is fine). Audapter's
     own checks (identical input and formant logs) are made when the replay is recorded."""
     v, y, x, sr = t["v"], t["y"], t["x"], t["sr"]
     if v is None: return False
@@ -95,9 +95,9 @@ def replay_ok(t):
     W = int(0.02 * sr); env = np.sqrt(np.convolve(x[:n] ** 2, np.ones(W) / W, "same")); voiced = env > env.max() * 0.1
     first = np.argmax(voiced); quiet = slice(0, max(W, first - W))
     if voiced.sum() < W or first < 3 * W: return False
-    c = abs(np.dot(res[voiced], v[voiced])) / (np.linalg.norm(res[voiced]) * np.linalg.norm(v[voiced]) + 1e-12)
+    beta = np.dot(res[voiced], v[voiced]) / (np.dot(v[voiced], v[voiced]) + 1e-12)   # fraction of the voice left in the residual
     lv = 20 * np.log10(np.sqrt(np.mean(res[voiced] ** 2)) / (np.sqrt(np.mean(y[quiet] ** 2)) + 1e-12))
-    return bool(c < 0.05 and lv < 2.0)
+    return bool(abs(beta) < 0.03 and lv < 2.0)
 
 
 def measured_shift(t):
